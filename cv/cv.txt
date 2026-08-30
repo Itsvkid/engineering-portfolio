@@ -8,9 +8,11 @@ Design engineer with an aerospace propulsion background. Produces release-ready
 mechanical design work - dimensioned detail and general arrangement drawings with
 geometric tolerancing to ISO 1101, limits and fits to ISO 286, tolerance stack-up,
 sheet-metal flat patterns and design-for-manufacture checks - from parametric CAD
-models built in CATIA V5, CadQuery and pyOCC. Verifies geometry rather than
-assuming it. MSc Thermal Power and Propulsion at Cranfield. Seeking an entry-level
-design engineering role in aerospace or propulsion hardware.
+models built in CATIA V5, CadQuery and pyOCC, and sizes them against load cases
+with finite-element analysis. Verifies geometry rather than assuming it, and
+treats a simulation result as a claim to be tested rather than an answer. MSc
+Thermal Power and Propulsion at Cranfield. Seeking an entry-level design
+engineering role in aerospace or propulsion hardware.
 
 -------------------------------------------------------------------------------
 TECHNICAL SKILLS
@@ -23,6 +25,10 @@ Mechanical Design   Geometric tolerancing (ISO 1101), limits and fits (ISO 286),
 CAD                 CATIA V5 (proficient), CadQuery, pyOCC / Open CASCADE,
                     ANSYS DesignModeler, STEP and DXF interchange, parametric
                     geometry (iCST)
+
+Structural         Finite-element analysis (CalculiX, gmsh, FreeCAD FEM), static
+Analysis           load cases, mesh convergence studies, identifying stress
+                   singularities, hand calculation as an independent check
 
 CFD & Simulation    ANSYS Fluent, ANSYS ICEM CFD / Meshing, OpenFOAM, k-epsilon /
                     k-omega turbulence modelling, grid-independence studies
@@ -47,9 +53,14 @@ Parametric Actuator and Gearbox Generators with Drawing Pack
   ballooned assembly GA - carrying ISO 286 fits (35 H8 bore, 21 f7 rod), ISO 1101
   geometric tolerances, a chosen datum scheme, surface finishes, a parts list and
   a five-contributor tolerance stack (390 mm nominal, worst case +/-0.90, RSS
-  +/-0.44). Verification found five real defects, including a mirrored involute
-  profile that produced an invalid solid and a housing that did not enclose its
-  own gear. 83 automated tests.
+  +/-0.44). Verification found six real defects, including a housing that did not
+  enclose its own gear, and meshing teeth that physically intersected by 424 mm3
+  in every exported assembly because the two gears were never phased - fixed by
+  offsetting one by half a tooth pitch, which is parity-dependent and wrong to
+  apply to an odd gear. Checked the test suite by reintroducing a known sign
+  error: it is caught only by testing that the tooth narrows toward its tip,
+  while pitch-circle thickness and solid-validity checks both still pass.
+  132 automated tests.
   Tech: Python, CadQuery, OpenCASCADE, ISO 286, ISO 1101, STEP
 
 Formed Sheet-Metal Equipment Bracket
@@ -57,13 +68,35 @@ Formed Sheet-Metal Equipment Bracket
   Parametric formed bracket with its flat pattern derived from a K-factor neutral
   axis, not assumed - 101.52 mm blank against 105.00 mm of summed outside legs.
   Validated by conservation of volume: the formed solid and the flat blank agree
-  to 1.07%, against 5.12% for a naively summed blank. Five design-for-manufacture
+  to 0.25%, against 5.12% for a naively summed blank - a bound tightened from 2%
+  after the looser one was found to be hiding two missing holes. Five
+  design-for-manufacture
   rules (minimum bend radius, flange length, hole-to-bend distance, fastener edge
   distance, minimum hole diameter) with a material trade that has a real answer:
   2024-T3 is twice as strong as 5052-H32 and cannot make the fold, needing 4T
   minimum bend radius against 1T. Detail drawing with bend table; STEP and DXF
   export.
   Tech: Python, CadQuery, sheet-metal forming, DFM
+
+Structural Sizing and Redesign of That Bracket
+(FEA, mesh convergence, design trade study)
+  Sized the bracket against a 9g equipment crash load in CalculiX, driven
+  headlessly through FreeCAD. Ran a five-density mesh convergence study rather
+  than a single solve, which is what made the result usable: deflection converged
+  to 0.06% and bulk stress to 0.28%, while peak stress climbed 12% and never
+  settled - a singularity at the edge of a fixed constraint, so the 545 MPa
+  headline is a boundary condition rather than a stress. The converged 196.7 MPa
+  against a 193 MPa yield condemns the part marginally, not by the 2.8x a single
+  mesh reports. Screened four fixes analytically before modelling any: stiffening
+  flanges up the upright make that leg 7.4x stronger and change the margin by
+  nothing, because both legs carry the same moment through the same section and
+  the governing stress moves to the untouched base. Selected 2.0 mm gauge, solved
+  it to confirm (126.1 MPa, +53% margin, deflection halved), and re-issued the
+  drawing - the bend deduction changes with gauge, so a shop cutting the old
+  blank would make the wrong part. Cross-checked against closed-form beam theory
+  sharing no code, which reads 16% conservative at both gauges to within 0.2 of a
+  point. 66 automated tests.
+  Tech: CalculiX, gmsh, FreeCAD FEM, Python, CadQuery
 
 -------------------------------------------------------------------------------
 PROPULSION AND ANALYSIS PROJECTS

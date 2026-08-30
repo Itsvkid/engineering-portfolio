@@ -2,11 +2,10 @@
 %
 % Target: graduate design engineer, aerospace/propulsion hardware.
 %
-% Compile with pdfLaTeX. There is no LaTeX engine on the machine this was
-% written on, so it has not been compiled here -- Overleaf (a blank
-% project, upload this file, Recompile) is the quickest route, and is
-% almost certainly where the previous version came from: the old PDF's
-% metadata reads pdfTeX-1.40.27.
+% Build:  tectonic -X compile cv.tex --outdir .
+%
+% Tectonic is installed on this machine and fetches what it needs, so the
+% PDF is built here rather than on Overleaf. See README.md.
 %
 % Only stock packages are used, so this compiles on any TeX Live without
 % a custom class file. Keep this source in version control and treat the
@@ -70,7 +69,9 @@ release-ready mechanical design work --- dimensioned detail and general
 arrangement drawings with geometric tolerancing to ISO~1101, limits and
 fits to ISO~286, tolerance stack-up, sheet-metal flat patterns and
 design-for-manufacture checks --- from parametric CAD models built in
-CATIA~V5, CadQuery and pyOCC. Verifies geometry rather than assuming it.
+CATIA~V5, CadQuery and pyOCC, and sizes them against load cases with
+finite-element analysis. Verifies geometry rather than assuming it, and
+treats a simulation result as a claim to be tested rather than an answer.
 MSc Thermal Power and Propulsion at Cranfield. Seeking an entry-level
 design engineering role in aerospace or propulsion hardware.}
 
@@ -84,6 +85,9 @@ design engineering role in aerospace or propulsion hardware.}
 \skillrow{CAD}{CATIA V5 (proficient), CadQuery, pyOCC / Open CASCADE,
   ANSYS DesignModeler, STEP and DXF interchange, parametric geometry
   (iCST)}
+\skillrow{Structural Analysis}{Finite-element analysis (CalculiX, gmsh,
+  FreeCAD FEM), static load cases, mesh convergence studies, identifying
+  stress singularities, hand calculation as an independent check}
 \skillrow{CFD \& Simulation}{ANSYS Fluent, ANSYS ICEM CFD / Meshing,
   OpenFOAM, $k$-$\varepsilon$ / $k$-$\omega$ turbulence modelling,
   grid-independence studies}
@@ -108,9 +112,14 @@ design engineering role in aerospace or propulsion hardware.}
   fits (\O{}35~H8 bore, \O{}21~f7 rod), ISO~1101
   geometric tolerances, a chosen datum scheme, surface finishes, a parts
   list and a five-contributor tolerance stack (390~mm nominal, worst case
-  $\pm$0.90, RSS $\pm$0.44). Verification found five real defects,
-  including a mirrored involute profile that produced an invalid solid
-  and a housing that did not enclose its own gear. 83 automated tests.
+  $\pm$0.90, RSS $\pm$0.44). Verification found six real defects, including
+  a housing that did not enclose its own gear, and meshing teeth that
+  physically intersected by 424~mm$^3$ in every exported assembly because
+  the two gears were never phased --- fixed by offsetting one by half a
+  tooth pitch, which is parity-dependent and wrong to apply to an odd gear.
+  Checked the test suite by reintroducing a known sign error: it is caught
+  only by testing that the tooth narrows toward its tip, while pitch-circle
+  thickness and solid-validity checks both still pass. 132 automated tests.
   \textit{Tech: Python, CadQuery, OpenCASCADE, ISO 286, ISO 1101, STEP}
 
 \item \textbf{Formed Sheet-Metal Equipment Bracket} ---
@@ -118,13 +127,36 @@ design engineering role in aerospace or propulsion hardware.}
   Parametric formed bracket with its flat pattern derived from a
   K-factor neutral axis, not assumed --- 101.52~mm blank against 105.00~mm
   of summed outside legs. Validated by conservation of volume: the formed
-  solid and the flat blank agree to 1.07\%, against 5.12\% for a naively
-  summed blank. Five design-for-manufacture rules (minimum bend radius,
+  solid and the flat blank agree to 0.25\%, against 5.12\% for a naively
+  summed blank --- a bound tightened from 2\% after the looser one was
+  found to be hiding two missing holes. Five design-for-manufacture rules (minimum bend radius,
   flange length, hole-to-bend distance, fastener edge distance, minimum
   hole diameter) with a material trade that has a real answer: 2024-T3 is
   twice as strong as 5052-H32 and cannot make the fold, needing 4T
   minimum bend radius against 1T. Detail drawing with bend table; STEP
   and DXF export. \textit{Tech: Python, CadQuery, sheet-metal forming, DFM}
+
+\item \textbf{Structural Sizing and Redesign of That Bracket} ---
+  \textbf{(FEA, mesh convergence, design trade study)}:
+  Sized the bracket against a 9g equipment crash load in CalculiX, driven
+  headlessly through FreeCAD. Ran a five-density mesh convergence study
+  rather than a single solve, which is what made the result usable:
+  deflection converged to 0.06\% and bulk stress to 0.28\%, while peak
+  stress climbed 12\% and never settled --- a singularity at the edge of a
+  fixed constraint, so the 545~MPa headline is a boundary condition rather
+  than a stress. The converged 196.7~MPa against a 193~MPa yield condemns
+  the part marginally, not by the 2.8$\times$ a single mesh reports.
+  Screened four fixes analytically before modelling any: stiffening flanges
+  up the upright make that leg 7.4$\times$ stronger and change the margin by
+  nothing, because both legs carry the same moment through the same section
+  and the governing stress moves to the untouched base. Selected 2.0~mm
+  gauge, solved it to confirm (126.1~MPa, $+$53\% margin, deflection
+  halved), and re-issued the drawing --- the bend deduction changes with
+  gauge, so a shop cutting the old blank would make the wrong part.
+  Cross-checked against closed-form beam theory sharing no code, which
+  reads 16\% conservative at both gauges to within 0.2 of a point.
+  66 automated tests.
+  \textit{Tech: CalculiX, gmsh, FreeCAD FEM, Python, CadQuery}
 \end{itemize}
 
 \section{Propulsion and Analysis Projects}
@@ -192,9 +224,9 @@ Tunnel Techniques, Non-Destructive Testing, Aircraft Design
        {Thiruvananthapuram, India}
 \subheaded{Engineering Intern, Aircraft Maintenance}{Mar 2025 -- Apr 2025}
 \begin{itemize}
-\item Rotational internship across Component Overhaul,
-  Material/Production Planning and Stores at a 737 base-maintenance
-  facility servicing Air India Express.
+\item Rotational internship across Component Overhaul, Material and
+  Production Planning, and Stores at a 737 base-maintenance facility
+  servicing Air India Express.
 \item Documented wheel and brake overhaul procedures to specification
   (torque 158~lb-ft, tyre pressure 205~$\pm$~5~psi) and Eddy Current
   Testing for non-destructive flaw detection.
