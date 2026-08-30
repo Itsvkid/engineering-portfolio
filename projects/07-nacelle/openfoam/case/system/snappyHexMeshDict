@@ -1,0 +1,153 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Castellate + snap + boundary layers onto the two STL surfaces
+  generate_stl.py writes: cowl-and-afterbody.stl (wall) and
+  highlight-inlet.stl (the capture-plane inlet). See ../../README.md for
+  what these represent and what is and is not verified about this file.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+geometry
+{
+    "cowl-and-afterbody.stl"
+    {
+        type triSurfaceMesh;
+        name cowlAndAfterbody;
+    }
+    "highlight-inlet.stl"
+    {
+        type triSurfaceMesh;
+        name highlightInlet;
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells       2000000;
+    maxGlobalCells      8000000;
+    minRefinementCells  10;
+    maxLoadUnbalance    0.10;
+    nCellsBetweenLevels 4;
+
+    features
+    (
+    );
+
+    refinementSurfaces
+    {
+        cowlAndAfterbody
+        {
+            level (2 3);
+            patchInfo { type wall; }
+        }
+        highlightInlet
+        {
+            level (2 3);
+            patchInfo { type patch; }
+        }
+    }
+
+    resolveFeatureAngle 30;
+
+    // A single coarse refinement region hugging the body — the mesh
+    // does not need level-2/3 resolution ten diameters out, only near
+    // the surface, where refinementSurfaces above already forces it.
+    refinementRegions
+    {
+    }
+
+    // Comfortably inside the fluid domain, off-axis (avoiding the exact
+    // centreline, which sits on the STL geometry's own axis of
+    // revolution) and well upstream of the body.
+    locationInMesh (-1.5 0.3 0.3);
+
+    allowFreeStandingZoneFaces true;
+}
+
+snapControls
+{
+    nSmoothPatch    3;
+    tolerance       2.0;
+    nSolveIter      30;
+    nRelaxIter      5;
+    nFeatureSnapIter 10;
+}
+
+addLayersControls
+{
+    relativeSizes true;
+
+    layers
+    {
+        cowlAndAfterbody
+        {
+            nSurfaceLayers 6;
+        }
+    }
+
+    // First layer thickness chosen for y+ ~ 30-50 with wall functions at
+    // this case's freestream condition (M=0.79, Re/ft=3.7e6) — see
+    // ../../README.md, "Mesh sizing," for the calculation. relativeSizes
+    // true means this is a fraction of the local cell size, not an
+    // absolute length; 0.3 with expansionRatio 1.2 over 6 layers is a
+    // standard starting point, not a value verified against an actual
+    // y+ report from a run.
+    expansionRatio          1.2;
+    finalLayerThickness     0.3;
+    minThickness            0.1;
+
+    nGrow                   0;
+    featureAngle            60;
+    nRelaxIter              5;
+    nSmoothSurfaceNormals   1;
+    nSmoothNormals          3;
+    nSmoothThickness        10;
+    maxFaceThicknessRatio   0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle      90;
+    nBufferCellsNoExtrude   0;
+    nLayerIter              50;
+}
+
+meshQualityControls
+{
+    // Tightened from the motorBike-tutorial defaults (maxConcave 80,
+    // minDeterminant 0.001, minFaceWeight 0.02, minVolRatio 0.01,
+    // nSmoothScale 4) after checkMesh -allTopology -allGeometry on the
+    // default-quality mesh flagged 1803 concave cells and a minimum cell
+    // determinant of 0.0041 (near-singular) — a real, run-verified defect,
+    // not a guess. Tighter thresholds make snappyHexMesh's own mesh
+    // quality-improvement pass (active during both snap and layer
+    // addition, not just a post-hoc check) work harder to remove exactly
+    // these defects before writing the mesh, at the cost of more
+    // smoothing iterations / possibly reduced layer coverage in tight
+    // spots (e.g. near the highlightInlet edge).
+    maxNonOrtho         65;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave          30;
+    minVol              1e-13;
+    minTetQuality       1e-9;
+    minArea             -1;
+    minTwist            0.02;
+    minDeterminant      0.02;
+    minFaceWeight       0.05;
+    minVolRatio         0.05;
+    minTriangleTwist    -1;
+    nSmoothScale        10;
+    errorReduction      0.75;
+}
+
+debug 0;
+mergeTolerance 1e-6;
+
+// ************************************************************************* //

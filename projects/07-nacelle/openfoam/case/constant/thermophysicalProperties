@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Perfect-gas air, matching freestream_conditions.py's constants exactly
+  (gamma=1.4, R=287.05287) so the freestream state computed there and the
+  state this case actually solves for are the same gas model.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermophysicalProperties;
+}
+
+thermoType
+{
+    type            hePsiThermo;
+    mixture         pureMixture;
+    transport       sutherland;
+    thermo          hConst;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        molWeight   28.9647; // R = 8314.47/28.9647 = 287.0553 J/(kg*K) —
+                              // matches freestream_conditions.R_AIR
+                              // (287.05287) to 0.001%, the small residual
+                              // being which rounding of the universal gas
+                              // constant is used
+    }
+    thermodynamics
+    {
+        Cp          1005.0;
+        Hf          0;
+    }
+    transport
+    {
+        // Sutherland's law coefficients in OpenFOAM's As/Ts form:
+        // mu = As*sqrt(T) / (1 + Ts/T). Converted from the standard
+        // mu0/T0/S form freestream_conditions.py uses (mu0=1.716e-5,
+        // T0=273.15, S=110.4): As = mu0*(T0+S)/T0^1.5, Ts = S. Verified
+        // numerically against freestream_conditions.dynamic_viscosity()
+        // at 200/288.15/400 K (agrees to machine precision) before being
+        // written here, not hand-computed and trusted.
+        As          1.4579327e-06;
+        Ts          110.4;
+    }
+}
+
+// ************************************************************************* //

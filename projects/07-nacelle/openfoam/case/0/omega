@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Freestream omega = sqrt(k) / (Cmu^0.25 * L), Cmu=0.09, turbulent length
+  scale L = 0.07*Dmax = 0.032 m (Dmax = 0.4572 m, a common external-
+  aerodynamics estimate — CHOSEN, not measured): omega = 93.9 1/s.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      omega;
+}
+
+dimensions      [0 0 -1 0 0 0 0];
+
+internalField   uniform 93.9;
+
+boundaryField
+{
+    farFieldInlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 93.9;
+        value           uniform 93.9;
+    }
+    farFieldOutlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 93.9;
+        value           uniform 93.9;
+    }
+    farFieldSide
+    {
+        type            inletOutlet;
+        inletValue      uniform 93.9;
+        value           uniform 93.9;
+    }
+    cowlAndAfterbody
+    {
+        type            omegaWallFunction;
+        value           uniform 93.9;
+    }
+    highlightInlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 93.9;
+        value           uniform 93.9;
+    }
+}
+
+// ************************************************************************* //

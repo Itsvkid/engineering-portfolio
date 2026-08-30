@@ -1,0 +1,142 @@
+VINAYKUMAR VENKATESHKUMAR
+Cranfield, United Kingdom
+kumarvsvinay@gmail.com | +44 7742 914241
+linkedin.com/in/vinaykumar-venkateshkumar | github.com/Itsvkid | vinaykumar.is-a.dev
+Work authorisation: sponsorship required | Available: September 2026
+
+Design engineer with an aerospace propulsion background. Produces release-ready
+mechanical design work - dimensioned detail and general arrangement drawings with
+geometric tolerancing to ISO 1101, limits and fits to ISO 286, tolerance stack-up,
+sheet-metal flat patterns and design-for-manufacture checks - from parametric CAD
+models built in CATIA V5, CadQuery and pyOCC. Verifies geometry rather than
+assuming it. MSc Thermal Power and Propulsion at Cranfield. Seeking an entry-level
+design engineering role in aerospace or propulsion hardware.
+
+-------------------------------------------------------------------------------
+TECHNICAL SKILLS
+
+Mechanical Design   Geometric tolerancing (ISO 1101), limits and fits (ISO 286),
+                    tolerance stack-up (worst-case and RSS), design for
+                    manufacture, sheet-metal forming (bend allowance, flat
+                    patterns), detail and GA drawings, BOM generation
+
+CAD                 CATIA V5 (proficient), CadQuery, pyOCC / Open CASCADE,
+                    ANSYS DesignModeler, STEP and DXF interchange, parametric
+                    geometry (iCST)
+
+CFD & Simulation    ANSYS Fluent, ANSYS ICEM CFD / Meshing, OpenFOAM, k-epsilon /
+                    k-omega turbulence modelling, grid-independence studies
+
+Programming         Python (NumPy, SciPy, Matplotlib, pytest), MATLAB, Git,
+                    automated test suites
+
+Engineering Domains Gas turbine performance, propulsion, turbomachinery
+                    aerodynamics, thermodynamics, aircraft structures,
+                    non-destructive testing
+
+-------------------------------------------------------------------------------
+DESIGN PROJECTS
+
+Parametric Actuator and Gearbox Generators with Drawing Pack
+(Mechanical design, GD&T, CadQuery)
+  Wrote two parametric generators that size a design before drawing it: a
+  hydraulic flight-control actuator family across four aircraft classes, and an
+  engine accessory gearbox across five power ratings (5-50 kW), with involute
+  gear geometry, Lewis bending-stress module sizing and SKF 60xx bearing
+  selection. Produced a four-sheet A4 drawing pack - three detail drawings and a
+  ballooned assembly GA - carrying ISO 286 fits (35 H8 bore, 21 f7 rod), ISO 1101
+  geometric tolerances, a chosen datum scheme, surface finishes, a parts list and
+  a five-contributor tolerance stack (390 mm nominal, worst case +/-0.90, RSS
+  +/-0.44). Verification found five real defects, including a mirrored involute
+  profile that produced an invalid solid and a housing that did not enclose its
+  own gear. 83 automated tests.
+  Tech: Python, CadQuery, OpenCASCADE, ISO 286, ISO 1101, STEP
+
+Formed Sheet-Metal Equipment Bracket
+(Sheet-metal design, DFM)
+  Parametric formed bracket with its flat pattern derived from a K-factor neutral
+  axis, not assumed - 101.52 mm blank against 105.00 mm of summed outside legs.
+  Validated by conservation of volume: the formed solid and the flat blank agree
+  to 1.07%, against 5.12% for a naively summed blank. Five design-for-manufacture
+  rules (minimum bend radius, flange length, hole-to-bend distance, fastener edge
+  distance, minimum hole diameter) with a material trade that has a real answer:
+  2024-T3 is twice as strong as 5052-H32 and cannot make the fold, needing 4T
+  minimum bend radius against 1T. Detail drawing with bend table; STEP and DXF
+  export.
+  Tech: Python, CadQuery, sheet-metal forming, DFM
+
+-------------------------------------------------------------------------------
+PROPULSION AND ANALYSIS PROJECTS
+
+Installation Aerodynamics of Aero-Engine Nacelles
+Cranfield Individual Research Project (Parametric CAD, CFD)
+  Fitted a Class-Shape Transformation curve directly to NASA TM 110300's
+  published NACA 1-85-100 cowl ordinates, reproducing them to 0.019% RMS of
+  maximum radius. Built and converged a compressible RANS OpenFOAM case
+  (rhoSimpleFoam, k-omega SST) at Mach 0.79, meshed with snappyHexMesh at 108,904
+  cells, and compared surface pressure against the same report's wind-tunnel data
+  - RMS Cp error 0.65 over 17 matched stations, reported including where the
+  model misses the leading-edge suction peak.
+  Tech: pyOCC, Open CASCADE, iCST, OpenFOAM, Python (Ongoing, expected Sep 2026)
+
+Twin-Spool Turbofan Cycle Model
+(Gas turbine performance)
+  Station-by-station separate-exhaust cycle solver with every turbine pressure
+  ratio matched to the power its own spool demands rather than assumed. 57.67 kN
+  net thrust, 46.7% thermal efficiency at the reference design point, validated
+  against the closed-form ideal-Brayton limit to within 0.01%. 82 tests.
+  Tech: Python, Matplotlib, pytest, MATLAB/Simulink cross-check
+
+Investigation of Controlled Jets for Enhanced Mixing Rates
+BEng Final Year Project, team of 3 (CFD, experimental validation)
+  Investigated passive flow-control tab geometries (Delta Tandem Tab, M Delta
+  Tandem Tab) for jet mixing using ANSYS Fluent across Mach 0.6-1.0, with
+  grid-independence studies to 3.4M+ nodes, validated against experimental
+  shadowgraph imaging. Achieved 64-76% core-length reduction against an
+  uncontrolled baseline at Mach 0.8 with no significant thrust penalty.
+  Tech: ANSYS Fluent, ANSYS DesignModeler, ANSYS ICEM CFD (Mar 2025)
+
+Further work at vinaykumar.is-a.dev: airfoil panel method written from scratch and
+cross-checked against XFoil (lift agreeing to 0.047 RMS), flight-performance
+calculator validated against three aircraft, OpenFOAM NACA 0012 study (GCI 6.4%),
+parametric wing and compressor blade-row generators.
+
+-------------------------------------------------------------------------------
+EDUCATION
+
+Cranfield University                                          Cranfield, UK
+MSc Thermal Power and Propulsion                              Oct 2025 - Sep 2026
+  Modules: Gas Turbine Performance, Combustion, Turbomachinery Aerodynamics,
+  Propulsion System Design
+  Research project (ongoing): Installation aerodynamics of aero-engine nacelles
+
+KCG College of Technology, Anna University                    Chennai, India
+BEng Aeronautical Engineering - CGPA 7.37/10                  2021 - 2025
+  Courses: Air Breathing Propulsion, Rocket Propulsion, Aero Engineering
+  Thermodynamics, Aerodynamics I & II, Computational Fluid Dynamics, Aircraft
+  Structures I & II, Finite Element Methods, Wind Tunnel Techniques,
+  Non-Destructive Testing, Aircraft Design
+
+-------------------------------------------------------------------------------
+EXPERIENCE
+
+AI Engineering Services Limited (AIESL) - Boeing 737 MRO Base
+Thiruvananthapuram, India
+Engineering Intern, Aircraft Maintenance                      Mar 2025 - Apr 2025
+  - Rotational internship across Component Overhaul, Material/Production Planning
+    and Stores at a 737 base-maintenance facility servicing Air India Express.
+  - Documented wheel and brake overhaul procedures to specification (torque
+    158 lb-ft, tyre pressure 205 +/- 5 psi) and Eddy Current Testing for
+    non-destructive flaw detection.
+  - Used AMOS and RAMCO systems to track parts issuance, stock levels and
+    task-card compliance.
+
+-------------------------------------------------------------------------------
+CERTIFICATIONS AND ACHIEVEMENTS
+
+  - CATIA V5 (Proficient) - CADD Centre Training Services, 80 hrs - 2024
+  - IELTS Academic - Overall Band 6.5 (L 7.0, R 6.5, W 6.5, S 5.5); UKVI B2 -
+    Jan 2025
+  - MATLAB Essential Training - LinkedIn Learning - 2024
+  - Machine Learning with Python; Deep Learning with TensorFlow - IBM /
+    Cognitive Class - 2024

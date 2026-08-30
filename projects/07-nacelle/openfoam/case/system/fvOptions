@@ -1,0 +1,34 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Missing from this case until a real control run exposed it: OpenFOAM's own
+  compressible/rhoSimpleFoam/aerofoilNACA0012 tutorial, run unmodified in
+  this same environment as a sanity check after the highlightInlet BC type,
+  mesh quality remediation, and a ramped mass flow were each independently
+  ruled out as the cause of a first-iteration pressure blowup and iteration-2
+  crash, converged CLEANLY (Time=667+, residuals ~1e-7) -- proving the
+  environment itself is fine and the problem was specific to this case's
+  setup. The one thing present in every iteration of that working run and
+  absent here: this limitTemperature fvOption, clipping T back into a
+  physical range before it can propagate into the thermophysical property
+  evaluation (Sutherland's law, Cp/Cv) that this case's own crash stack
+  trace points at (libfluidThermophysicalModels, immediately after the
+  same severe first-iteration pressure swing every attempt has shown).
+  min/max reused directly from the tutorial -- a generic safety bound, not
+  case-specific tuning.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+
+limitT
+{
+    type       limitTemperature;
+    min        101;
+    max        1000;
+    selectionMode all;
+}
+
+// ************************************************************************* //

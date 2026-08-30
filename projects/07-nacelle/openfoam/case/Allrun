@@ -1,0 +1,26 @@
+#!/bin/sh
+# Standard OpenFOAM run sequence. Requires:
+#   - case/constant/triSurface/cowl-and-afterbody.stl and highlight-inlet.stl
+#     to already exist (run `conda run -n pyocc_env python -m
+#     openfoam.generate_stl` from projects/07-nacelle/ first — this script
+#     does not regenerate them, since it may run in an environment without
+#     pyocc_env)
+#   - a working OpenFOAM install with rhoSimpleFoam (see ../README.md if
+#     your version has merged this into a unified compressible simpleFoam)
+cd "${0%/*}" || exit 1
+
+. "$WM_PROJECT_DIR"/bin/tools/RunFunctions
+
+for f in constant/triSurface/cowl-and-afterbody.stl constant/triSurface/highlight-inlet.stl; do
+    if [ ! -f "$f" ]; then
+        echo "Missing $f -- run generate_stl.py first (see ../README.md)." 1>&2
+        exit 1
+    fi
+done
+
+runApplication blockMesh
+runApplication snappyHexMesh -overwrite
+runApplication checkMesh -allTopology -allGeometry
+runApplication rhoSimpleFoam
+
+echo "Done. See ../compare_to_reference.py to compare postProcessing/cowlSurfaceSample against reference_data.py."

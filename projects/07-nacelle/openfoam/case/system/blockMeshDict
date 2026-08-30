@@ -1,0 +1,92 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  A single coarse background box, purely so snappyHexMesh has somewhere to
+  castellate from — every wall/inlet feature comes from the STL geometry
+  in snappyHexMeshDict, not from anything shaped here. This is the lower-
+  risk choice deliberately: a hand-built multi-block mesh following the
+  cowl's curved profile is the more "correct" way to mesh an axisymmetric
+  body, but is much harder to get topologically right without a mesher to
+  iterate against (see ../../README.md, "What's verified here"). A simple
+  box is easy to get right blind and lets snappyHexMesh do the hard part.
+
+  Domain, relative to the highlight (x=0):
+    x: -2.286 to 7.567 m  (-5 to +15 max diameters; more room downstream
+                            for the wake than upstream)
+    y, z: +-4.572 m       (10 max diameters, full 3D — not a wedge/
+                            symmetry-plane slice; see README for why a
+                            full box was chosen over an axisymmetric
+                            wedge despite alpha=0 being truly axisymmetric)
+
+  Coarse background resolution (cells refine heavily near the body via
+  snappyHexMesh, not here): adjust nx/ny/nz for a mesh-independence study.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+
+convertToMeters 1;
+
+xMin -2.286;
+xMax 7.56666;
+r    4.572;
+
+vertices
+(
+    ($xMin -$r -$r)
+    ($xMax -$r -$r)
+    ($xMax  $r -$r)
+    ($xMin  $r -$r)
+    ($xMin -$r  $r)
+    ($xMax -$r  $r)
+    ($xMax  $r  $r)
+    ($xMin  $r  $r)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (60 40 40) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    farFieldInlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    farFieldOutlet
+    {
+        type patch;
+        faces
+        (
+            (1 2 6 5)
+        );
+    }
+    farFieldSide
+    {
+        type patch;
+        faces
+        (
+            (0 1 5 4)
+            (3 7 6 2)
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

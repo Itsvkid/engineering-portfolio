@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Standard steady-RANS schemes for rhoSimpleFoam — bounded, upwind-biased,
+  the conservative default choice for a first run rather than anything
+  tuned for accuracy on this specific case.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSchemes;
+}
+
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default              none;
+    div(phi,U)           bounded Gauss linearUpwindV grad(U);
+    div(phi,e)           bounded Gauss upwind;
+    div(phi,h)           bounded Gauss upwind;
+    div(phi,K)           bounded Gauss upwind;
+    div(phid,p)          bounded Gauss upwind;
+    div(phi,k)           bounded Gauss upwind;
+    div(phi,omega)       bounded Gauss upwind;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+wallDist
+{
+    method meshWave;
+}
+
+// ************************************************************************* //

@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Freestream static pressure 66829.5 Pa — freestream_conditions.freestream_
+  state(0.79, 3.7e6)["pressure_pa"], the value solved to reproduce NASA TM
+  110300's stated Reynolds number per foot at M=0.79 (see that module and
+  ../../README.md).
+
+  farFieldInlet/Outlet/Side all use freestreamPressure -- matched to
+  OpenFOAM's own compressible/rhoSimpleFoam/aerofoilNACA0012 tutorial
+  after waveTransmissive (the first attempt) turned out to require a
+  transient ddt context this steady-state case doesn't have:
+  "FOAM FATAL ERROR: steadyState on patch farFieldInlet of field p", from
+  advectiveFvPatchField -- caught by actually running the solver, not
+  guessed in advance.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+
+dimensions      [1 -1 -2 0 0 0 0];
+
+internalField   uniform 66829.5;
+
+boundaryField
+{
+    farFieldInlet
+    {
+        type            freestreamPressure;
+        freestreamValue uniform 66829.5;
+    }
+    farFieldOutlet
+    {
+        type            freestreamPressure;
+        freestreamValue uniform 66829.5;
+    }
+    farFieldSide
+    {
+        type            freestreamPressure;
+        freestreamValue uniform 66829.5;
+    }
+    cowlAndAfterbody
+    {
+        type            zeroGradient;
+    }
+    highlightInlet
+    {
+        type            zeroGradient;
+    }
+}
+
+// ************************************************************************* //

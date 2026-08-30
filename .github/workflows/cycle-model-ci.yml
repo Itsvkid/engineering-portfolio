@@ -1,0 +1,31 @@
+name: Cycle model CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["projects/08-cycle-model/**"]
+  pull_request:
+    branches: [main]
+    paths: ["projects/08-cycle-model/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/08-cycle-model
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # No pyOCC anywhere in this project — a cycle model is thermodynamics,
+      # not geometry, so unlike projects 06 and 07 every test here runs on
+      # a plain runner. No pyocc_env-only split needed.
+      - run: pip install pytest matplotlib
+      - run: python -m pytest -q

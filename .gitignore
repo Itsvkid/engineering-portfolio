@@ -1,0 +1,41 @@
+node_modules
+.next
+.vercel
+.DS_Store
+.env*.local
+.env*
+
+# JetBrains IDE
+.idea/
+
+# ── Project simulation output ───────────────────────────────────────────────
+# Commit the inputs (case dictionaries, scripts, geometry) and the figures.
+# Everything below regenerates from those, and gets large fast.
+projects/**/case/[0-9]*
+!projects/**/case/0/
+projects/**/constant/polyMesh/
+projects/**/*.foam
+projects/**/log.*
+projects/**/processor*/
+projects/**/postProcessing/
+*.vtk
+*.vtu
+*.vtm
+*.pvsm
+*.cgns
+*.msh
+*.FCStd1
+
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+projects/**/exports/*.iges
+
+# CAD-Projects is its own repository (github.com/Itsvkid/CAD-Projects),
+# checked out inside this one. Ignore it here rather than committing a
+# gitlink to it.
+CAD-Projects/

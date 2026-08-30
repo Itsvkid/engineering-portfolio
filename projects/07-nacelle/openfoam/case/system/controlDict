@@ -1,0 +1,96 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Compressible steady RANS, isolated axisymmetric nacelle cowl.
+  Converges in 555 iterations (OpenFOAM 2406, via Docker/Colima) after
+  real debugging -- see ../../README.md, "Getting the solve to converge,"
+  for the four bugs found and fixed and the fvOptions safeguard that
+  actually stopped the crash. "Results" there has the real Cp comparison
+  against NASA TM 110300 -- a converged, honestly-imperfect match, not a
+  guess.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      controlDict;
+}
+
+// rhoSimpleFoam: steady-state compressible RANS. M=0.79 is high subsonic —
+// genuinely compressible, not a regime an incompressible solver (simpleFoam)
+// can approximate. If your OpenFOAM build has merged rhoSimpleFoam into a
+// unified compressible simpleFoam (some recent ESI/foam-extend releases),
+// substitute that solver name here and in Allrun — the case files
+// themselves (thermophysicalProperties, boundary conditions) do not change.
+application     rhoSimpleFoam;
+
+startFrom       startTime;
+startTime       0;
+stopAt          endTime;
+
+// Iteration count for a STEADY solve, not a physical time — typical for
+// this class of problem to need several hundred to reach convergence.
+// Watch residuals (see fvSolution's residualControl) rather than trusting
+// this number blindly; extend if forces/Cp are still moving at 1000.
+endTime         1000;
+deltaT          1;
+writeControl    timeStep;
+writeInterval   100;
+purgeWrite      2;
+writeFormat     binary;
+writePrecision  8;
+writeCompression off;
+timeFormat      general;
+timePrecision   8;
+runTimeModifiable true;
+
+functions
+{
+    // Forces on the cowl+afterbody wall — a first physical-plausibility
+    // check before trusting any Cp comparison. The solved case actually
+    // gives a net UPSTREAM (thrust-like) force here, not drag -- that
+    // turned out to be a real, plausible result (nacelle lip suction at
+    // this capture ratio), not a red flag; see ../../README.md,
+    // "Results," for why. Check the force MAGNITUDE is a sane order (a
+    // few times q_inf * frontal area), not its sign. rhoInf must be set
+    // to the freestream density freestream_conditions.py prints (density
+    // at Re/ft=3.7e6, M=0.79) — left as a literal to set explicitly
+    // rather than a cross-file reference, since function-object variable
+    // substitution syntax is one of the more version-sensitive corners
+    // of an OpenFOAM dictionary; see ../../README.md.
+    forces
+    {
+        type            forces;
+        libs            (forces);
+        patches         (cowlAndAfterbody);
+        rho             rhoInf;
+        rhoInf          0.80796; // kg/m^3 — freestream_conditions.freestream_state(0.79, 3.7e6)
+        CofR            (0 0 0);
+        writeControl    timeStep;
+        writeInterval   100;
+    }
+
+    // Static pressure on every boundary face of the cowl+afterbody wall,
+    // written with face-centre coordinates so compare_to_reference.py can
+    // pick out the top-meridian trace (y=0 face centres) itself — simpler
+    // and more robust than trying to define an exact curved-line sample
+    // in this dictionary. "type patch" samples an EXISTING boundary
+    // patch directly, the plainest form of sampledSurface there is.
+    cowlSurfaceSample
+    {
+        type            surfaces;
+        libs            (sampling);
+        writeControl    writeTime;
+        surfaceFormat   raw;
+        fields          (p);
+        surfaces
+        {
+            cowlPatch
+            {
+                type    patch;
+                patches (cowlAndAfterbody);
+            }
+        }
+    }
+}
+
+// ************************************************************************* //

@@ -1,0 +1,22 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  k-omega SST — the standard, robust RANS choice for external
+  aerodynamics with wall functions, not tuned for this case specifically.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      turbulenceProperties;
+}
+
+simulationType RAS;
+
+RAS
+{
+    RASModel        kOmegaSST;
+    turbulence      on;
+    printCoeffs     on;
+}
+
+// ************************************************************************* //

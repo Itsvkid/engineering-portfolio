@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Freestream U = (268.83, 0, 0) m/s (M=0.79, freestream_conditions.py).
+  highlightInlet represents captured mass flow (reference_data.
+  MASS_FLOW_RATIO = 0.71) leaving the external domain into the unmodeled
+  engine: mdot = mfr*rho*V_inf*A_highlight = 18.447481306189033 kg/s.
+
+  Originally a fixedValue (190.87 0 0) — a fully-constrained velocity
+  vector at a patch immersed in the flow domain (not a domain edge) —
+  which is the prime suspect for the severe iteration-1 pressure blowup
+  seen across every solver attempt (p swinging +275525/-750791 Pa vs an
+  ambient of 66829.5 Pa) even after fixing fvSchemes term names, the
+  SIMPLE/SIMPLEC relaxation mismatch, and the waveTransmissive p BC.
+  Switched to flowRateInletVelocity, matching OpenFOAM's own
+  compressible/rhoPorousSimpleFoam/angledDuct tutorial pattern, which
+  lets the solver relax the velocity magnitude via the pressure-correction
+  loop instead of hard-pinning it.
+
+  Sign convention (confirmed from that tutorial's 0.orig/U + 0.orig/p:
+  the flowRateInletVelocity patch there is paired with p type zeroGradient,
+  exactly like highlightInlet's p already is): flowRateInletVelocity
+  builds U as (massFlowRate / (rho*A)) directed AGAINST the patch's
+  outward normal, i.e. positive massFlowRate always means flow entering
+  the domain. highlightInlet's outward normal points downstream (+x, out
+  of this domain into the engine) and the captured flow must LEAVE
+  through it, so massFlowRate must be NEGATIVE here to reverse that
+  convention into an outflow.
+
+  This alone did not fix it: switching from fixedValue to a full-strength
+  flowRateInletVelocity from iteration 1 reproduced the same severe
+  first-iteration pressure blowup (p ~+270000/-750000 Pa vs an ambient of
+  66829.5 Pa) seen with fixedValue, and regenerating the mesh with
+  tightened snappyHexMeshDict quality controls (targeting the 1803
+  concave cells checkMesh flagged) did not change it either -- ruling out
+  both the highlightInlet BC type and mesh conditioning as the driver.
+  massFlowRate is a Function1<scalar> (confirmed in
+  flowRateInletVelocityFvPatchVectorField.C), so it can be RAMPED natively
+  within one continuous run via OpenFOAM's scale+linearRamp composition
+  (see tutorials/multiphase/potentialFreeSurfaceFoam/oscillatingBox for
+  the pattern) -- letting the exterior freestream field establish over
+  the first 200 iterations before the capture sink reaches full strength,
+  rather than imposing it at full strength against a still-uniform
+  initial field.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (268.83 0 0);
+
+boundaryField
+{
+    farFieldInlet
+    {
+        type            freestreamVelocity;
+        freestreamValue uniform (268.83 0 0);
+        value           uniform (268.83 0 0);
+    }
+    farFieldOutlet
+    {
+        type            freestreamVelocity;
+        freestreamValue uniform (268.83 0 0);
+        value           uniform (268.83 0 0);
+    }
+    farFieldSide
+    {
+        type            freestreamVelocity;
+        freestreamValue uniform (268.83 0 0);
+        value           uniform (268.83 0 0);
+    }
+    cowlAndAfterbody
+    {
+        type            noSlip;
+    }
+    highlightInlet
+    {
+        type            flowRateInletVelocity;
+        massFlowRate
+        {
+            type    scale;
+            value   -18.447481306189033;
+            scale   { type linearRamp; start 0; duration 200; }
+        }
+        value           uniform (190.87 0 0);
+    }
+}
+
+// ************************************************************************* //

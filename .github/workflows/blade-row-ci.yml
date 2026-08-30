@@ -1,0 +1,36 @@
+name: Blade row CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["projects/06-blade-row/**"]
+  pull_request:
+    branches: [main]
+    paths: ["projects/06-blade-row/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/06-blade-row
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Only the pyOCC-free half: velocity_triangles.py and blade_section.py
+      # decide the blade's twist, meridional.py decides how much a
+      # converging annulus narrows, and deviation.py corrects that twist
+      # for real-cascade deviation — all plain Python, tested here. The
+      # geometry-kernel tests (blade.py, annulus.py, stage.py, export.py)
+      # need pythonocc-core, which is a conda package with no pip wheel for
+      # this runner — those only run locally in the pyocc_env conda
+      # environment.
+      - run: pip install pytest
+      - run: python -m pytest tests/test_velocity_triangles.py tests/test_blade_section.py tests/test_meridional.py tests/test_deviation.py -q

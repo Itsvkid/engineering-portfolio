@@ -1,0 +1,216 @@
+% Vinaykumar Venkateshkumar — CV
+%
+% Target: graduate design engineer, aerospace/propulsion hardware.
+%
+% Compile with pdfLaTeX. There is no LaTeX engine on the machine this was
+% written on, so it has not been compiled here -- Overleaf (a blank
+% project, upload this file, Recompile) is the quickest route, and is
+% almost certainly where the previous version came from: the old PDF's
+% metadata reads pdfTeX-1.40.27.
+%
+% Only stock packages are used, so this compiles on any TeX Live without
+% a custom class file. Keep this source in version control and treat the
+% PDF as a build artefact -- the previous CV existed only as a binary
+% nobody could diff.
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1.45cm]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+% Small-caps section heading with a rule under it, matching the previous
+% layout.
+\titleformat{\section}
+  {\normalsize\scshape}{}{0pt}{}[\vspace{-0.55em}\rule{\textwidth}{0.4pt}]
+\titlespacing{\section}{0pt}{0.72em}{0.3em}
+
+\setlist[itemize]{leftmargin=1.1em, itemsep=0.14em, topsep=0.14em,
+                  parsep=0pt, label=\textbullet}
+
+% Skills row: bold label in a fixed column, content flowing in the rest.
+\newcommand{\skillrow}[2]{\textbf{#1} & #2 \\[0.28em]}
+
+% Heading line with something flush left and something flush right.
+\newcommand{\headed}[2]{\textbf{#1}\hfill #2\\}
+\newcommand{\subheaded}[2]{\textit{#1}\hfill \textit{#2}\\}
+
+\begin{document}
+
+% ── Header ────────────────────────────────────────────────────────────
+\begin{minipage}[t]{0.62\textwidth}
+  {\LARGE\bfseries Vinaykumar Venkateshkumar}\\[0.35em]
+  \href{https://linkedin.com/in/vinaykumar-venkateshkumar}%
+       {linkedin.com/in/vinaykumar-venkateshkumar}\\
+  \href{https://github.com/Itsvkid}{github.com/Itsvkid} \quad\textperiodcentered\quad
+  \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}\\
+  Cranfield, United Kingdom
+\end{minipage}%
+\begin{minipage}[t]{0.38\textwidth}
+  \raggedleft
+  \vspace{0.9em}
+  \href{mailto:kumarvsvinay@gmail.com}{kumarvsvinay@gmail.com}\\
+  +44 7742 914241\\
+  Work authorisation: sponsorship required\\
+  Available: September 2026
+\end{minipage}
+
+\vspace{0.7em}
+\textit{Design engineer with an aerospace propulsion background. Produces
+release-ready mechanical design work --- dimensioned detail and general
+arrangement drawings with geometric tolerancing to ISO~1101, limits and
+fits to ISO~286, tolerance stack-up, sheet-metal flat patterns and
+design-for-manufacture checks --- from parametric CAD models built in
+CATIA~V5, CadQuery and pyOCC. Verifies geometry rather than assuming it.
+MSc Thermal Power and Propulsion at Cranfield. Seeking an entry-level
+design engineering role in aerospace or propulsion hardware.}
+
+% ── Skills ────────────────────────────────────────────────────────────
+\section{Technical Skills}
+\begin{tabularx}{\textwidth}{@{}p{4.3cm}X@{}}
+\skillrow{Mechanical Design}{Geometric tolerancing (ISO 1101), limits and
+  fits (ISO 286), tolerance stack-up (worst-case and RSS), design for
+  manufacture, sheet-metal forming (bend allowance, flat patterns),
+  detail and GA drawings, BOM generation}
+\skillrow{CAD}{CATIA V5 (proficient), CadQuery, pyOCC / Open CASCADE,
+  ANSYS DesignModeler, STEP and DXF interchange, parametric geometry
+  (iCST)}
+\skillrow{CFD \& Simulation}{ANSYS Fluent, ANSYS ICEM CFD / Meshing,
+  OpenFOAM, $k$-$\varepsilon$ / $k$-$\omega$ turbulence modelling,
+  grid-independence studies}
+\skillrow{Programming}{Python (NumPy, SciPy, Matplotlib, pytest), MATLAB,
+  Git, automated test suites}
+\skillrow{Engineering Domains}{Gas turbine performance, propulsion,
+  turbomachinery aerodynamics, thermodynamics, aircraft structures,
+  non-destructive testing}
+\end{tabularx}
+
+% ── Projects ──────────────────────────────────────────────────────────
+\section{Design Projects}
+\begin{itemize}
+\item \textbf{Parametric Actuator and Gearbox Generators with Drawing
+  Pack} --- \textbf{(Mechanical design, GD\&T, CadQuery)}:
+  Wrote two parametric generators that size a design before drawing it: a
+  hydraulic flight-control actuator family across four aircraft classes,
+  and an engine accessory gearbox across five power ratings (5--50~kW),
+  with involute gear geometry, Lewis bending-stress module sizing and
+  SKF 60xx bearing selection. Produced a four-sheet A4 drawing pack ---
+  three detail drawings and a ballooned assembly GA --- carrying ISO~286
+  fits (\O{}35~H8 bore, \O{}21~f7 rod), ISO~1101
+  geometric tolerances, a chosen datum scheme, surface finishes, a parts
+  list and a five-contributor tolerance stack (390~mm nominal, worst case
+  $\pm$0.90, RSS $\pm$0.44). Verification found five real defects,
+  including a mirrored involute profile that produced an invalid solid
+  and a housing that did not enclose its own gear. 83 automated tests.
+  \textit{Tech: Python, CadQuery, OpenCASCADE, ISO 286, ISO 1101, STEP}
+
+\item \textbf{Formed Sheet-Metal Equipment Bracket} ---
+  \textbf{(Sheet-metal design, DFM)}:
+  Parametric formed bracket with its flat pattern derived from a
+  K-factor neutral axis, not assumed --- 101.52~mm blank against 105.00~mm
+  of summed outside legs. Validated by conservation of volume: the formed
+  solid and the flat blank agree to 1.07\%, against 5.12\% for a naively
+  summed blank. Five design-for-manufacture rules (minimum bend radius,
+  flange length, hole-to-bend distance, fastener edge distance, minimum
+  hole diameter) with a material trade that has a real answer: 2024-T3 is
+  twice as strong as 5052-H32 and cannot make the fold, needing 4T
+  minimum bend radius against 1T. Detail drawing with bend table; STEP
+  and DXF export. \textit{Tech: Python, CadQuery, sheet-metal forming, DFM}
+\end{itemize}
+
+\section{Propulsion and Analysis Projects}
+\begin{itemize}
+\item \textbf{Installation Aerodynamics of Aero-Engine Nacelles} ---
+  \textbf{Cranfield Individual Research Project (Parametric CAD, CFD)}:
+  Fitted a Class-Shape Transformation curve directly to NASA TM 110300's
+  published NACA 1-85-100 cowl ordinates, reproducing them to 0.019\% RMS
+  of maximum radius. Built and converged a compressible RANS OpenFOAM
+  case (rhoSimpleFoam, $k$-$\omega$ SST) at Mach 0.79, meshed with
+  snappyHexMesh at 108,904 cells, and compared surface pressure against
+  the same report's wind-tunnel data --- RMS $C_p$ error 0.65 over 17
+  matched stations, reported including where the model misses the
+  leading-edge suction peak.
+  \textit{Tech: pyOCC, Open CASCADE, iCST, OpenFOAM, Python (Ongoing,
+  expected Sep 2026)}
+
+\item \textbf{Twin-Spool Turbofan Cycle Model} ---
+  \textbf{(Gas turbine performance)}:
+  Station-by-station separate-exhaust cycle solver with every turbine
+  pressure ratio matched to the power its own spool demands rather than
+  assumed. 57.67~kN net thrust, 46.7\% thermal efficiency at the
+  reference design point, validated against the closed-form ideal-Brayton
+  limit to within 0.01\%. 82 tests.
+  \textit{Tech: Python, Matplotlib, pytest, MATLAB/Simulink cross-check}
+
+\item \textbf{Investigation of Controlled Jets for Enhanced Mixing Rates}
+  --- \textbf{BEng Final Year Project, team of 3 (CFD, experimental
+  validation)}: Investigated passive flow-control tab geometries (Delta
+  Tandem Tab, M Delta Tandem Tab) for jet mixing using ANSYS Fluent
+  across Mach 0.6--1.0, with grid-independence studies to 3.4M+ nodes,
+  validated against experimental shadowgraph imaging. Achieved 64--76\%
+  core-length reduction against an uncontrolled baseline at Mach 0.8 with
+  no significant thrust penalty.
+  \textit{Tech: ANSYS Fluent, ANSYS DesignModeler, ANSYS ICEM CFD (Mar 2025)}
+\end{itemize}
+
+\vspace{0.2em}
+\textit{Further work at \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}:
+airfoil panel method written from scratch and cross-checked against
+XFoil (lift agreeing to 0.047 RMS), flight-performance calculator
+validated against three aircraft, OpenFOAM NACA 0012 study (GCI 6.4\%),
+parametric wing and compressor blade-row generators.}
+
+% ── Education ─────────────────────────────────────────────────────────
+\section{Education}
+\headed{Cranfield University}{Cranfield, UK}
+\subheaded{MSc Thermal Power and Propulsion}{Oct 2025 -- Sep 2026}
+\textit{Modules:} Gas Turbine Performance, Combustion, Turbomachinery
+Aerodynamics, Propulsion System Design\\
+\textit{Research project (ongoing):} Installation aerodynamics of
+aero-engine nacelles
+
+\vspace{0.45em}
+\headed{KCG College of Technology, Anna University}{Chennai, India}
+\subheaded{BEng Aeronautical Engineering --- CGPA 7.37/10}{2021 -- 2025}
+\textit{Courses:} Air Breathing Propulsion, Rocket Propulsion, Aero
+Engineering Thermodynamics, Aerodynamics I \& II, Computational Fluid
+Dynamics, Aircraft Structures I \& II, Finite Element Methods, Wind
+Tunnel Techniques, Non-Destructive Testing, Aircraft Design
+
+% ── Experience ────────────────────────────────────────────────────────
+\section{Experience}
+\headed{AI Engineering Services Limited (AIESL) --- Boeing 737 MRO Base}%
+       {Thiruvananthapuram, India}
+\subheaded{Engineering Intern, Aircraft Maintenance}{Mar 2025 -- Apr 2025}
+\begin{itemize}
+\item Rotational internship across Component Overhaul,
+  Material/Production Planning and Stores at a 737 base-maintenance
+  facility servicing Air India Express.
+\item Documented wheel and brake overhaul procedures to specification
+  (torque 158~lb-ft, tyre pressure 205~$\pm$~5~psi) and Eddy Current
+  Testing for non-destructive flaw detection.
+\item Used AMOS and RAMCO systems to track parts issuance, stock levels
+  and task-card compliance.
+\end{itemize}
+
+% ── Certifications ────────────────────────────────────────────────────
+\section{Certifications and Achievements}
+\begin{itemize}
+\item CATIA V5 (Proficient) --- CADD Centre Training Services, 80 hrs --- 2024
+\item IELTS Academic --- Overall Band 6.5 (L 7.0, R 6.5, W 6.5, S 5.5);
+  UKVI B2 --- Jan 2025
+\item MATLAB Essential Training --- LinkedIn Learning --- 2024
+\item Machine Learning with Python; Deep Learning with TensorFlow ---
+  IBM / Cognitive Class --- 2024
+\end{itemize}
+
+\end{document}

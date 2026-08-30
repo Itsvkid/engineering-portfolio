@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Freestream k = 1.5*(I*Uinf)^2 with I = 0.5% (a low, wind-tunnel-typical
+  turbulence intensity, a CHOSEN input — the report does not state one)
+  and Uinf = 268.83 m/s: k = 1.5*(0.005*268.83)^2 = 2.71 m^2/s^2.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      k;
+}
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 2.71;
+
+boundaryField
+{
+    farFieldInlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 2.71;
+        value           uniform 2.71;
+    }
+    farFieldOutlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 2.71;
+        value           uniform 2.71;
+    }
+    farFieldSide
+    {
+        type            inletOutlet;
+        inletValue      uniform 2.71;
+        value           uniform 2.71;
+    }
+    cowlAndAfterbody
+    {
+        type            kqRWallFunction;
+        value           uniform 2.71;
+    }
+    highlightInlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 2.71;
+        value           uniform 2.71;
+    }
+}
+
+// ************************************************************************* //

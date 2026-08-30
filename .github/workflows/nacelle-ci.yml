@@ -1,0 +1,33 @@
+name: Nacelle CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["projects/07-nacelle/**"]
+  pull_request:
+    branches: [main]
+    paths: ["projects/07-nacelle/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/07-nacelle
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Only the pyOCC-free half: cst.py, profile.py and fit.py decide the
+      # shape and are plain Python (plus numpy for the least-squares fit),
+      # tested here. nacelle.py and export.py need pythonocc-core, a conda
+      # package with no pip wheel for this runner — those only run locally
+      # in the pyocc_env conda environment.
+      - run: pip install pytest numpy scipy
+      - run: python -m pytest tests/test_cst.py tests/test_profile.py tests/test_fit.py tests/test_openfoam_reference.py -q

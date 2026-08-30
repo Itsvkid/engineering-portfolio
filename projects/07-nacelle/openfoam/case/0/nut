@@ -1,0 +1,46 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Turbulent viscosity — calculated everywhere except the wall, where the
+  wall function computes it from k, omega and y+.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      nut;
+}
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    farFieldInlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    farFieldOutlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    farFieldSide
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    cowlAndAfterbody
+    {
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+    highlightInlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+}
+
+// ************************************************************************* //
