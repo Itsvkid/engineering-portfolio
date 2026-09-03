@@ -39,3 +39,6 @@ projects/**/exports/*.iges
 # checked out inside this one. Ignore it here rather than committing a
 # gitlink to it.
 CAD-Projects/
+
+# PF-09 reference PDFs: fetched by fetch-sources.sh, public domain, not committed
+projects/09-e3-engine/sources/

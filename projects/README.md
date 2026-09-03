@@ -1,6 +1,6 @@
 # Portfolio projects
 
-Five self-contained aerospace projects, each free to run and each ending in
+Nine self-contained aerospace projects, each free to run and each ending in
 something a reviewer can look at. They exist to put evidence behind the claim
 the site makes: engine and aircraft geometry designed and analysed in code.
 
@@ -15,14 +15,25 @@ Environment setup and versions: [SETUP.md](SETUP.md).
 | 03 | [Flight performance calculator](03-flight-performance-python/) → [own repo](https://github.com/Itsvkid/flight-performance-calculator) | Python | Installable package, plots, tests, validation report | **Complete** |
 | 04 | [Parametric wing](04-parametric-wing/) | pyOCC + FreeCAD | STEP/IGES geometry + dimensioned drawing | **Complete** |
 | 05 | [OpenFOAM airfoil](05-openfoam-airfoil/) → [own repo](https://github.com/Itsvkid/naca0012-openfoam) | OpenFOAM | C-grid generator, GCI 6.4%, ten-angle polar | **Complete** |
+| 06 | [Parametric blade row](06-blade-row/) | pyOCC (`pyocc_env`) | Free-vortex rotor + stator twist laws, two-row stage assembly, Carter's-rule deviation correction, GA drawing, STEP/glTF, 96 tests | **v1** |
+| 07 | [Parametric nacelle](07-nacelle/) | pyOCC (`pyocc_env`) | CST cowl + internal duct as a hollow shell, fit-recovery demo, OpenFOAM case fitted to NASA wind-tunnel data (written, not run), STEP/glTF, 71 tests | **v1** |
+| 08 | [Turbofan cycle model](08-cycle-model/) | Python | Twin-spool separate-exhaust cycle solved station by station, closed-form ideal-cycle validation, spool power balance, C-D nozzle and part-throttle options, 82 tests | **v1** |
+| 09 | [E³ engine, rebuilt from its design report](09-e3-engine/) | Python + hand CAD | Whole twin-spool turbofan: cycle validated against NASA's published design point, annulus computed from that cycle and overlaid on NASA's own cross-sections, blade rows generated, structure and bearings modelled, sectioned cutaway | **Planned** |
 
 Update the status column as each moves through `Not started → In progress →
 Complete`. Each project's own README carries its work log.
 
+**`v1` is not the same as `Complete`.** Projects 06–08 are built, tested and
+exportable, and each one's README carries an *Outstanding* section naming what
+a v2 would add — real off-design compressor and turbine maps for 08, the
+unexecuted OpenFOAM run for 07. Say "v1" in an interview and then say what is
+missing; it reads better than "complete" does.
+
 ## Suggested order
 
-**03 → 01 → 04 → 05 → 02.** (Historical — 01, 03, 04 and 05 are now done; 02
-is what's left.)
+**03 → 01 → 04 → 05 → 02.** (Historical, and it covers only the first five.
+01, 03, 04 and 05 are done; 06, 07 and 08 were added afterwards and are at
+v1; **02 is the only one never started.**)
 
 Start with **03 (Python)** because it needs no external tool, produces a real
 GitHub repository on day one, and is the project that most directly backs the
@@ -45,6 +56,11 @@ compute specifically, not just a tool preference.
 
 04 exports STEP → feeds 02 and 05.
 01 gives the 2D baseline that 05's results should be checked against.
+08 sizes the engine → 06 and 07 are the geometry that engine would be built
+from, which is why the three read as one piece of work rather than three.
+**09 is where that chain closes**: it validates 08 against NASA's published
+E³ design point, then drives 06's blade rows and 07's cowl off the validated
+cycle to assemble one complete engine. Three separate CV lines become one.
 
 Chained projects are worth more than isolated ones. Say so explicitly in each
 README and on LinkedIn.
