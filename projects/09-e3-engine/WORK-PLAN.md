@@ -228,7 +228,16 @@ casing through named bearings. If you cannot, the model is a shape.
 ## Phase C3 · Assembly, section and render · 8 h
 
 - [ ] Assemble on the axis with real constraints, not by dragging
-- [ ] Interference check — zero clashes, the same discipline as CAD-01's
+- [ ] **Make it turn.** A revolute joint per spool about the engine axis —
+      the LP group (fan, booster, LP shaft, 5 LPT discs) and the HP group
+      (10 HPC discs, HP shaft, 2 HPT discs) as two independent rotating
+      bodies; everything else (casings, vanes, OGVs, frames, sumps) grounded
+- [ ] Motion study at the E³ speed ratio, LP : HP ≈ 3,480 : 12,645 ≈ 1 : 3.6,
+      both spools **co-rotating** as the E³ is. Nothing is simulated — no
+      aero, no loads — the engine turns, it does not run. Say so on the page
+- [ ] Interference check **through a full rotation**, not only at rest —
+      blade tips against casing, rotating seals against static, the LP shaft
+      inside the HP spool. Zero clashes, the same discipline as CAD-01's
       `test_tolerances.py`
 - [ ] Blade-tip and interstage seal clearances set to the published values
       in Fig. 29–31, not eyeballed
@@ -303,7 +312,13 @@ beats a clean render, and interviewers know the difference.
 ## Phase E2 · Site and viewer · 3 h
 
 - [ ] glTF to `viewer.autodesk.com`, referenced from `cadModels` in
-      `app/data.js`
+      `app/data.js` — static, for inspection
+- [ ] **A rotating cutaway on the site.** Export the glTF with bodies grouped
+      by spool (`lp`, `hp`, `static`), then reuse the per-spool `useFrame`
+      rotation the site's `TurbineStage.js` already does — LP and HP groups
+      at the 1 : 3.6 ratio, stopped under `prefers-reduced-motion`. The
+      existing `ModelViewer` `autoRotate` is a turntable, not this; the
+      spool pattern is in `TurbineStage`
 - [ ] Project entry in `app/data.js` — **meridional plot first, render
       second.** Resist leading with the pretty one
 - [ ] Dimensioned GA drawing with stations labelled, following PF-06's
