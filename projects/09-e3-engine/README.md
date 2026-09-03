@@ -10,16 +10,19 @@ drawing.**
 [REFERENCES.md](REFERENCES.md), published data transcribed with citations in
 [`data/e3-fps-published.yaml`](data/e3-fps-published.yaml).
 
-The only thing built so far is the architecture itself: the gas path and the
-spool arrangement are encoded as data and held there by
-[`tests/test_topology.py`](tests/test_topology.py) — 11 tests, passing on a
-plain interpreter with no CAD backend.
+What is built so far is the data layer: the architecture, the cycle, the
+per-stage compressor blading, the HPT flowpath and blading, the bearing
+arrangement and the module masses, all transcribed from the reports with a
+page reference on every value — and held to themselves by 37 tests
+([`tests/`](tests/)) that make independent routes to the same number agree.
+Plain interpreter, no CAD backend. [DATA-INDEX.md](DATA-INDEX.md) says what
+is transcribed, what is located, and what must be digitised.
 
 ```
-gas path   fan -> booster (LPC) -> HPC -> combustor -> HPT -> LPT -> mixer -> nozzle
-stations    2        21             25        3          4      45      5        8
-LP spool   [--]     [--]                                       [--]
-HP spool                           [--]                 [--]
+gas path   fan -> booster (1/4-stage) -> HPC (10) -> combustor -> HPT (2) -> LPT (5) -> mixer -> nozzle
+stations    2          21                  25          3           4          45        5         8
+LP spool   [--]       [--]                                                   [--]     bearings 1, 2, 5
+HP spool                                  [--]                    [--]                bearings 3, 4
 ```
 
 The shafts cross the gas path: the **LP** spool takes the first compressors

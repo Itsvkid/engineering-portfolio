@@ -190,22 +190,29 @@ def test_the_ordering_agrees_with_the_cycle_model(topology):
     assert ours.index("combustor") < ours.index("hpt") < ours.index("lpt")
 
 
-def test_the_booster_is_not_quietly_missing(published):
-    """The booster was omitted from the first draft of the architecture block.
-    It is a real component on the LP spool: leave it out and the LP power
-    balance is wrong and the HPC inlet lands at the wrong radius.
+def test_the_booster_is_a_single_quarter_stage(published):
+    """The booster was omitted from the first draft of the architecture block,
+    then assumed to be a multi-stage LPC like the GE90's. It is neither. The
+    E3 has a single "quarter-stage" booster under an untrapped island
+    (CR-168219 sec 5.1 p.37) — one rotor row, on the LP spool.
 
-    Its stage count is not yet established, so this asserts the gap is
-    RECORDED rather than that it is filled.
+    Getting this wrong in either direction breaks the LP power balance and
+    puts the HPC inlet at the wrong radius, so the count is pinned here.
     """
-    booster = published["architecture"]["booster_lpc_stages"]
-    assert "settle_at" in booster, (
-        "booster stage count is unknown; the entry must say where to settle it"
-    )
-    if booster["value"] is None:
-        assert booster["verified"] is False
-    else:
-        assert booster["value"] > 0
+    arch = published["architecture"]["booster_lpc_stages"]
+    assert arch["value"] == 1
+    assert arch["verified"] is True
+    assert "quarter-stage" in arch["src"]
+
+    booster = published["booster"]
+    assert booster["stages"] == 1
+    rows = {r["row"]: r["count"] for r in booster["rows"]}
+    assert rows == {"booster_stage1_vane": 60, "booster_blade": 56, "inner_ogv": 64}
+
+    # And it must NOT resemble the GE90's booster, which the context block
+    # records for comparison only.
+    ge90 = published["ge90_context"]["baseline_ge90"]["lpc_booster_stages"]
+    assert ge90 != booster["stages"], "E3 and GE90 boosters are different engines"
 
 
 def test_unverified_values_are_labelled_not_guessed(published):

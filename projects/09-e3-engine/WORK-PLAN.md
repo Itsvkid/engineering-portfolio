@@ -32,21 +32,32 @@ No CAD licence, no tool decision, nothing blocked. Start here today.
 
 ## Phase A1 · Acquire and read the primary source · 6 h
 
-- [ ] Download CR-168219 to `data/sources/` and add it to `.gitignore`
+- [x] Download the reference set to `sources/`, gitignored
       (mirror the `fetch-library.sh` convention — script committed, binary not)
-- [ ] Write `fetch-sources.sh` so a clean clone can reproduce the reference set
-- [ ] Read §3 Features, §4 Cycle, §5.1 Fan, §5.2 Compressor
-- [ ] Read §5.7 Sumps, Drives, Configuration — the bearing system
-- [ ] Settle every row in REFERENCES.md → "To verify before quoting"
-- [ ] **Find the booster stage count** — §5.1 and Fig. 13. It is currently
-      `null` in the YAML. The booster is on the LP spool; omit it and the LP
-      power balance is wrong and the HPC inlet lands at the wrong radius
-- [ ] Update `data/e3-fps-published.yaml`: flip `verified: false` to `true`
-      with the page you found it on, or correct the value
-- [ ] Re-run `pytest tests/` — the topology tests must stay green
+- [x] Write `fetch-sources.sh` so a clean clone can reproduce the reference set
+      — 7 documents, 1,678 pages, 67 MB
+- [ ] Read §3 Features, §4 Cycle in full
+- [x] Read §5.1 Fan, §5.2 Compressor, §5.3 Combustor, §5.4 HPT, §5.5 LPT
+- [x] Read §5.7 Sumps, Drives, Configuration — the bearing system
+- [x] Read §5.8 Exhaust
+- [x] Settle every row in REFERENCES.md → "To verify before quoting"
+- [x] **Find the booster stage count** — it is a single **quarter-stage**
+      under an untrapped island, not a multi-stage LPC. Rows 60 / 56 / 64
+- [x] Transcribe HPC Table X (per-stage rotor summary), HPT Table III and
+      IV, HPT Fig. 3 flowpath, bearing arrangement, combustor counts
+- [x] `data/e3-fps-published.yaml`: every architecture entry `verified: true`
+      with its page
+- [x] `tests/test_published_data.py` — transcription checked against itself
+      wherever the reports give two routes to one number
+- [ ] Transcribe HPC Table XXII (rotor section geometry, 5 pages) and
+      Table XXI (stators, 40 pages) — the blade-angle data
+- [ ] Transcribe LPT blade counts per stage — LPT report §4.2.1, Fig. 52
+- [ ] Settle which of rows 60 / 56 is the booster vane and which the blade
 
 *Closes when:* no `verified: false` remains in the architecture block, and
-every `settle_at` has become a `src`.
+every `settle_at` has become a `src`. **The architecture block closed on
+3 September.** What remains in A1 is the blade-level geometry transcription,
+which DATA-INDEX.md ranks by what it unlocks.
 
 > [!note] Topology is already asserted, not assumed
 > `data/e3-fps-published.yaml → topology` encodes the gas path

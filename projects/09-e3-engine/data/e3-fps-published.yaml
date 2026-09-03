@@ -1,49 +1,143 @@
 # NASA/GE Energy Efficient Engine (E3) — Flight Propulsion System
 # Published design data, transcribed for use as validation targets.
 #
-# SOURCE OF TRUTH: NASA CR-168219, "Energy Efficient Engine Flight Propulsion
+# PRIMARY SOURCE: NASA CR-168219, "Energy Efficient Engine Flight Propulsion
 # System Final Analysis and Design Report", General Electric Company for NASA
 # Lewis Research Center, contract NAS3-20643. US Government work, public use
 # permitted.  https://ntrs.nasa.gov/citations/19900019242
 #
-# EVERY value carries `src:` naming the table or figure and the report page.
-# A value without a `src:` is an assumption and must say so in `note:`.
-# Tests read this file; they must never hardcode a number that lives here.
+# COMPONENT SOURCES (same programme, same licence):
+#   HPC  — "E3 High Pressure Compressor Detail Design Report", NTRS 19850002690
+#   HPT  — NASA CR-167955, "E3 HPT Test Hardware Detailed Design", NTRS 19850002687
+#   LPT  — "E3 LPT Test Hardware Detailed Design", NTRS 19850002686
 #
-# Units are SI. Where the report gives US customary first, the SI value it
-# prints alongside is used and the customary value is kept in `as_printed`.
+# EVERY value carries `src:` naming the report, the table or figure, and the
+# printed page. A value without a `src:` is an assumption and must say so.
+# Tests read this file; they must never hardcode a number that lives here.
+# DATA-INDEX.md says what is transcribed, what is located, what is missing.
+#
+# Units are SI. Where the report prints US customary alongside, the printed
+# SI value is used; where only US customary is printed, the conversion is
+# noted.
 
 meta:
   engine: E3 Flight Propulsion System (FPS)
   designer: General Electric Company
   programme: NASA Aircraft Energy Efficiency (ACEE), Energy Efficient Engine
   contract: NAS3-20643
-  report: NASA CR-168219
-  ntrs_id: '19900019242'
-  licence: US Government work, public use permitted
+  primary_report: NASA CR-168219
   transcribed: 2026-09-03
-  verified_pages: [32, 33, 34, 35, 140]   # pages actually read, not inferred
+  verified_pages:
+    CR-168219: [4, 32, 33, 34, 35, 37, 38, 41, 43, 45, 46, 47, 48, 49, 51, 52,
+                57, 58, 59, 61, 62, 65, 66, 70, 82, 83, 85, 86, 96, 97, 98, 99,
+                100, 101, 102, 103, 104, 140]
+    HPC: [64, 65, 66, 153, 154, 155]
+    HPT: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    LPT: [5, 6, 7, 8]
 
 # ─────────────────────────────────────────────────────────────────────────
-# Design point.  The cycle match point is MAX CLIMB, not cruise or takeoff —
-# getting this wrong invalidates every comparison downstream.
+# Design point.  The cycle match point is MAX CLIMB, not cruise or takeoff.
 # ─────────────────────────────────────────────────────────────────────────
 design_point:
   condition: max_climb
   altitude_m: 10668.0
   altitude_ft: 35000
   mach: 0.8
-  src: "CR-168219 sec 4.4, p.33"
+  day: ISA +10 C
+  src: "CR-168219 sec 4.4 p.33; sec 5.2.1 p.50"
   note: >
-    Climb and cruise points are both quoted at 10.67 km / Mach 0.8. All points
-    are for dry air, zero bleed and power extraction, and 100% inlet-ram
-    recovery — match these assumptions in the cycle model or the comparison
-    is not like-for-like.
+    All cycle points are for dry air, zero bleed and power extraction, and
+    100% inlet-ram recovery. Match these assumptions in the cycle model or
+    the comparison is not like-for-like. The compressor and both turbines
+    were all designed to this same max-climb point (pp.50, 65, 85).
 
 flat_rating:
   takeoff_delta_isa_K: 15
   climb_cruise_delta_isa_K: 10
-  src: "CR-168219 sec 4.4, p.33"
+  src: "CR-168219 sec 4.4 p.33"
+
+# ─────────────────────────────────────────────────────────────────────────
+# TOPOLOGY.  Gas path in order, and which components share a shaft.
+#
+# The gas path is a straight line; the shafts cross it. LP takes the first
+# compressors and the last turbine, HP takes the two in the middle. Getting
+# that pairing backwards makes every work split wrong while the model still
+# looks plausible — so it is data, and tests/test_topology.py holds it.
+#
+# Station numbers follow the aero-engine convention and match the
+# `Stations` dataclass in projects/08-cycle-model/src/cycle.py.
+# ─────────────────────────────────────────────────────────────────────────
+topology:
+  gas_path:
+    - {component: inlet,     station: 1,  note: freestream to fan face}
+    - {component: fan,       station: 2,  note: fan face; flow splits after this}
+    - {component: booster,   station: 21, note: quarter-stage under the island, core stream, LP spool}
+    - {component: hpc,       station: 25, note: HPC inlet; W25 is the cooling-flow datum}
+    - {component: combustor, station: 3,  note: compressor discharge (CPD)}
+    - {component: hpt,       station: 4,  note: combustor exit; T41 = HPT rotor inlet}
+    - {component: lpt,       station: 45, note: HPT exit; T49 = LPT inlet}
+    - {component: mixer,     station: 5,  note: LPT exit; core and bypass mix here}
+    - {component: nozzle,    station: 8,  note: single mixed C-D nozzle}
+  bypass_path:
+    - {component: fan,         station: 2}
+    - {component: bypass_duct, station: 13, note: fan exit, bypass stream, Mach 0.40-0.45}
+    - {component: mixer,       station: 5,  note: rejoins the core — E3 is mixed-flow}
+  spools:
+    lp:
+      driven_by: lpt
+      drives: [fan, booster]
+      note: >
+        One shaft carries the fan, the quarter-stage booster and the 5-stage
+        LP turbine. It runs the full length of the engine, passing through
+        the HP spool, supported by bearings No.1, No.2 and No.5.
+    hp:
+      driven_by: hpt
+      drives: [hpc]
+      note: >
+        The core spool: 10-stage HPC and 2-stage HPT. Short and stiff,
+        concentric around the LP shaft, on bearings No.3 and No.4.
+  power_balance:
+    - {turbine: hpt, compressor: hpc}
+    - {turbine: lpt, compressor: [fan, booster]}
+  cross_check: >
+    PF-08's Stations dataclass declares fan_face, fan_exit,
+    bypass_nozzle_inlet, booster_exit, hpc_exit, combustor_exit, hpt_exit,
+    lpt_exit, then the nozzles — the same order as gas_path above.
+    tests/test_topology.py asserts it.
+  known_difference_from_pf08: >
+    PF-08 solves a SEPARATE-exhaust turbofan. The E3 is MIXED-flow with an
+    18-lobe mixer. Phase A2 must resolve this (add a mixer model, or compare
+    core-only) and say which in the README.
+
+# ─────────────────────────────────────────────────────────────────────────
+# BEARINGS AND SUMPS.  The thing every student engine model omits, and a
+# tenth of this engine's mass.
+# ─────────────────────────────────────────────────────────────────────────
+bearings:
+  src: "CR-168219 sec 5.7.1-5.7.3 pp.96-99; Fig.37 p.97; Fig.38 p.99"
+  arrangement: five bearings, two sumps
+  list:
+    - {number: 1, type: ball,   role: LP thrust,        sump: forward, supports: lp}
+    - {number: 2, type: roller, role: LP shaft support, sump: forward, supports: lp,
+       note: just ahead of the PTO drive gear; carries the LP speed pickup}
+    - {number: 3, type: ball,   role: HP (core) thrust, sump: forward, supports: hp,
+       note: centering-spring housing, fluid-damped multishim, piston-ring end seals}
+    - {number: 4, type: roller, role: intershaft,       sump: aft,     supports: hp,
+       note: outer race in a controlled-spring-rate housing on the LP shaft; inner ring on the aft HP stub shaft. Eliminates a hot frame}
+    - {number: 5, type: roller, role: aft support,      sump: aft,     supports: [lp, hp],
+       note: mounted to the aft turbine frame; reacts both rotor systems via the intershaft No.4}
+  lp_bearing_count: 3     # "a ball and two roller bearings" — p.96
+  hp_bearing_count: 2     # "forward thrust bearing and aft intershaft roller" — p.96
+  forward_sump: [1, 2, 3]
+  aft_sump: [4, 5]
+  pto: driven directly from the compressor stub shaft, radially out through the bottom front-frame strut
+  sealing: labyrinth seals pressurised by fan discharge air, both sumps; vented through the LP fan shaft to the aft centre vent tube
+  lubrication: jet or underrace; single supply element, separate scavenge elements per sump
+  secondary_air_uses:
+    stage_5_bleed: aft-compressor clearance control, then LPT vane cooling
+    stage_7_bleed: HPT stage-2 nozzle cooling
+    fan_air: HPT and LPT active clearance control by casing impingement
+    src: "CR-168219 sec 5.7.4 p.100; sec 5.2.1 p.52"
 
 # ─────────────────────────────────────────────────────────────────────────
 # THE VALIDATION TARGET.  Run the cycle model with the component performance
@@ -51,7 +145,7 @@ flat_rating:
 # ─────────────────────────────────────────────────────────────────────────
 cycle_definition:
   src: "CR-168219 Table XII, p.35"
-  max_climb:                        # the cycle match point
+  max_climb:
     sfc_kg_per_N_hr: 0.0541
     sfc_lbm_per_lbf_hr: 0.530
     overall_pressure_ratio: 38.4
@@ -82,15 +176,10 @@ cycle_definition:
     hpt_rotor_inlet_temperature_C: 1365
     hpt_rotor_inlet_temperature_K: 1638.15
   note: >
-    HPT rotor inlet temperature is quoted AT THE FLAT-RATING TEMPERATURE, not
-    at standard day. sfc values are uninstalled, standard day. The fan has two
-    separate pressure ratios (bypass and hub) because it is a single fan
-    feeding two streams at different work levels — a separate-stream cycle
-    model with one fan pressure ratio cannot reproduce both.
+    HPT rotor inlet temperature is quoted at the flat-rating temperature.
+    sfc is uninstalled, standard day. The fan has two pressure ratios because
+    one fan feeds two streams at different work levels.
 
-# ─────────────────────────────────────────────────────────────────────────
-# The inputs that make the validation fair.  Feed these in; do not tune them.
-# ─────────────────────────────────────────────────────────────────────────
 component_performance:
   src: "CR-168219 Table XI, p.34"
   condition: max_cruise
@@ -108,44 +197,378 @@ component_performance:
   nozzle_coefficient: 0.996
 
 cooling_flows:
-  src: "CR-168219 Table XI, p.34"
-  basis: fraction of W25 (compressor inlet flow)
-  cpd_nonchargeable: 0.0746   # reintroduced upstream of HPT vane 1 throat
-  cpd_chargeable: 0.0533      # reintroduced downstream of HPT vane 1 throat
-  stage_7_cooling_and_purge: 0.0195
-  stage_5_cooling_and_purge: 0.0140
+  src: "CR-168219 Table XI, p.34; bleed locations sec 5.2.1 p.52"
+  basis: fraction of W25 (HPC inlet flow)
+  cpd_nonchargeable: 0.0746   # rejoins upstream of HPT vane 1 throat — still does turbine work
+  cpd_chargeable: 0.0533      # rejoins downstream — does not
+  stage_7_cooling_and_purge: 0.0195   # extracted at stage-7 exit; HPT stage-2 nozzles
+  stage_5_cooling_and_purge: 0.0140   # extracted at stator-5 exit; aft HPC clearance, then LPT vanes
+  hpt_cooling_and_leakage_fraction_W2c: 0.182   # HPT report Table III p.10, %W2c basis
   note: >
-    Chargeable vs nonchargeable is the distinction that trips people up:
-    nonchargeable cooling rejoins upstream of the vane 1 throat and so still
-    does work in the turbine; chargeable rejoins downstream and does not.
-    Total secondary air here is about 15% of W25 — compare against the ~20%
-    of core flow rule of thumb in the recall drills.
+    Sum of the four Table XI streams is ~15% of W25. Compare with the ~20%
+    of core flow rule of thumb in the recall drills, and explain the gap:
+    the E3 was designed for low cooling flow, and the HPT report's 18.2%
+    is on a different basis (W2c) and includes leakage.
 
 # ─────────────────────────────────────────────────────────────────────────
-# Size and thrust
+# Size, flow and thrust
 # ─────────────────────────────────────────────────────────────────────────
 size:
   fan_tip_diameter_m: 2.11
   fan_tip_diameter_in: 83
+  fan_inlet_radius_ratio: 0.342
+  fan_specific_flow_kg_s_m2: 208.9
+  fan_specific_flow_lbm_s_ft2: 42.8
   core_inlet_corrected_flow_kg_s: 54.4
   core_inlet_corrected_flow_lbm_s: 120
-  core_flow_condition: max_climb matching point
-  src: "CR-168219 sec 4.3, p.32"
+  src: "fan diameter and core flow: CR-168219 sec 4.3 p.32; radius ratio and specific flow: sec 5.1.1 p.41"
+
+fan_flow:
+  src: "CR-168219 sec 5.1.1 p.41"
+  aero_design_point:
+    corrected_flow_kg_s: 643.3
+    bypass_pressure_ratio: 1.65
+    core_pressure_ratio: 1.67
+  cycle_match_point:
+    corrected_flow_kg_s: 646.0
+    bypass_pressure_ratio: 1.68
+    core_pressure_ratio: 1.70
+  fraction_supercharged_by_quarter_stage: 0.22
+  fraction_of_booster_flow_returned_to_bypass: 0.42
+  note: >
+    The quarter-stage island splits the fan flow so ~22% passes through the
+    booster rotor; downstream, 42% of that re-enters the bypass and the rest
+    goes through the transition duct into the core. The aero design point
+    and the cycle match point differ after the final cycle rematch.
 
 thrust:
   initial_design_takeoff_N: 162360
   initial_design_takeoff_lbf: 36500
   final_takeoff_N: 173500
   final_takeoff_lbf: 39000
-  src: "CR-168219 sec 4.3, p.32"
-  note: >
-    Thrust rose from 162.4 to 173.5 kN through better components and
-    rematching; hardware size did NOT change. Use the final figure with the
-    final cycle in Table XII.
+  src: "CR-168219 sec 4.3 p.32"
 
 # ─────────────────────────────────────────────────────────────────────────
-# MASS VALIDATION.  Module-level, which is far more useful than a total:
-# a 10% error on one module is findable, a 10% error on the sum is not.
+# FAN AND BOOSTER MODULE
+# ─────────────────────────────────────────────────────────────────────────
+fan:
+  src: "CR-168219 sec 5.1 pp.37-46; Fig.13 p.38"
+  stages: 1
+  blade_count: 32
+  blade_count_src: "sec 5.1.2 p.45 ('32 solid titanium blades with 50% span shrouds'); Fig.13 annotation"
+  blade_construction: solid titanium, part-span shrouds at 50% span, low aspect ratio
+  ogv_count: 34
+  ogv_count_src: "Fig.13 p.38 annotation"
+  ogv_position: integral with the fan frame, 1.9 chord lengths aft of the fan blade (acoustic)
+  corrected_tip_speed_m_s: 411.5
+  corrected_tip_speed_ft_s: 1350
+  tip_relative_mach: 1.4
+  mach_at_78pct_flow: 1.02
+  hub_mach: 0.70
+  aero_design: transonic sections outboard, subsonic near hub; 12 axisymmetric streamsurfaces; GE Streamsurface Blade Section program
+  aero_src: "sec 5.1.1 pp.41, 43"
+  materials:
+    src: "sec 5.1.2 p.45"
+    fan_blade: titanium
+    fan_frame_and_ogv: graphite composite with aluminium hub
+    spinner: composite
+    containment_liner: aluminium
+  efficiency:
+    src: "Table XIII p.46, Final FPS Requirement"
+    bypass: {max_climb: 0.888, max_cruise: 0.894, takeoff: 0.891}
+    hub_and_booster: {max_climb: 0.905, max_cruise: 0.906, takeoff: 0.909}
+
+booster:
+  src: "CR-168219 sec 5.1 p.37; sec 5.1.2 p.45; Fig.13 p.38"
+  stages: 1
+  configuration: quarter-stage booster under an untrapped island
+  note: >
+    NOT a multi-stage LPC. GE's "quarter-stage" is a single booster rotor
+    row behind the fan hub, partially spanning under an island splitter.
+    The untrapped island centrifuges debris into the bypass — one-half to
+    two-thirds of ingested contaminants are separated from the core (p.41).
+    For contrast, the GE90 baseline booster has 3 stages and the -100
+    series 4 (see ge90_context).
+  rows:
+    - {row: booster_stage1_vane, count: 60, material: aluminium,
+       src: "Fig.13 annotation, assignment by upstream position; material p.45"}
+    - {row: booster_blade,       count: 56, material: titanium,
+       src: "Fig.13 annotation, assignment by position; material p.45"}
+    - {row: inner_ogv,           count: 64, material: aluminium,
+       src: "sec 5.1.1 p.43 ('the 64 vanes are swept aft and leaned'); material p.45"}
+  inner_ogv_geometry:
+    src: "sec 5.1.1 pp.43-44; Fig.17 p.44"
+    sweep_deg: 60
+    lean_deg_od: 0
+    lean_deg_id: 20
+    note: blade axis swept aft 60 deg from radial; lean varies 0 at OD to 20 at ID, pressure side toward the axis
+  island_material: titanium and graphite composite
+
+# ─────────────────────────────────────────────────────────────────────────
+# HIGH PRESSURE COMPRESSOR
+# ─────────────────────────────────────────────────────────────────────────
+hpc:
+  src: "CR-168219 sec 5.2 pp.45-56; HPC report Table X pp.65-66"
+  stages: 10
+  design_pressure_ratio_operating_line: 23.0
+  design_pressure_ratio_src: "CR-168219 sec 5.2 p.45, sec 5.2.1 p.48, Table XIV p.51"
+  corrected_tip_speed_m_s: 456
+  corrected_tip_speed_ft_s: 1495
+  corrected_tip_speed_src: "CR-168219 sec 5.2.1 p.48"
+  variable_geometry:
+    fps_product: IGV plus stators 1-5
+    e3_development: IGV plus stators 1-6
+    cr168219_says: IGV plus stators 1-4
+    src: "HPC report sec 3.3 p.64; CR-168219 sec 5.2 p.45 and sec 5.2.1 p.52"
+    note: the two reports disagree on the count of variable rows; record both, use the HPC report for the FPS product
+  transonic_rotors: [1, 2, 3, 4]
+  transonic_src: "CR-168219 sec 5.2.1 p.52"
+  bleed_ports:
+    stator_5_exit: customer bleed and active clearance control
+    stage_7_exit: HPT cooling air
+    src: "CR-168219 sec 5.2.1 p.52"
+  rotor_construction: inertia-welded forward and aft sections joined by a single bolt joint; bore cooled by fan discharge air
+  rotor_construction_src: "CR-168219 sec 5.2.2 p.52"
+  cycle_match:
+    src: "CR-168219 Table XIV p.51"
+    condition: max_climb
+    corrected_speed_pct_design: 98.4
+    corrected_airflow_kg_s: 54.4
+    total_pressure_ratio: 23.0
+    adiabatic_efficiency: 0.860
+    polytropic_efficiency: 0.906
+    inlet_temperature_K: 304.8
+    inlet_pressure_Pa: 60469
+  efficiency:
+    src: "CR-168219 Table XV p.58, Final FPS Required"
+    max_climb: 0.860
+    max_cruise: 0.861
+    takeoff: 0.863
+  spool_speed_rpm:
+    src: "HPC report Table X footnotes p.65"
+    xnhr_100pct: 12303
+    xnh_max_climb_aero_dp: 12645
+    nc_deteriorated_engine: 13948
+    note: XNH is the physical HP speed at the max-climb aero design point (FPS cycle case 41); Nc deteriorated is the max-pressure/max-temperature case used for stress
+  stator_10_vane_count: 140
+  stator_10_src: "HPC report Table XXI p.153"
+  # Per-stage rotor blade summary. Metric as printed, with two corrections
+  # noted. Radii are at the stacking axis unless suffixed _le.
+  rotor_stages:
+    src: "HPC report Table X p.65 (metric) and p.66 (US), NTRS 19850002690"
+    stage:                  [1,      2,      3,      4,      5,      6,      7,      8,      9,      10]
+    blade_count:            [28,     38,     50,     60,     70,     80,     82,     84,     86,     94]
+    airfoil_length_cm:      [15.657, 10.617, 7.579,  5.717,  4.582,  3.691,  3.078,  2.616,  2.332,  2.094]
+    radius_root_cm:         [19.068, 22.837, 25.143, 26.312, 26.866, 27.102, 27.287, 27.308, 27.341, 27.343]
+    radius_tip_le_cm:       [35.083, 33.604, 32.832, 32.118, 31.511, 30.848, 30.427, 29.957, 29.703, 29.467]
+    radius_root_le_cm:      [17.795, 22.050, 24.785, 26.154, 26.825, 27.069, 27.249, 27.269, 27.308, 27.313]
+    orient_angle_tip_deg:   [65.21,  60.93,  58.98,  57.50,  56.318, 55.910, 54.071, 55.53,  57.95,  57.48]
+    orient_angle_root_deg:  [23.18,  28.29,  30.88,  32.92,  32.731, 36.836, 38.282, 42.74,  45.21,  47.65]
+    camber_tip_deg:         [9.66,   12.96,  20.36,  22.35,  10.996, 23.178, 25.844, 27.65,  27.55,  29.22]
+    camber_root_deg:        [64.04,  50.34,  46.59,  39.84,  36.837, 33.381, 38.282, 34.04,  33.36,  32.02]
+    chord_tip_cm:           [10.276, 7.034,  5.034,  4.002,  3.427,  2.919,  2.845,  2.718,  2.540,  2.286]
+    chord_root_cm:          [10.106, 6.548,  4.633,  3.919,  3.350,  2.867,  2.845,  2.713,  2.540,  2.286]
+    aspect_ratio_tip:       [1.523,  1.509,  1.505,  1.4287, 1.337,  1.264,  1.082,  0.964,  0.918,  0.916]
+    aspect_ratio_root:      [1.549,  1.621,  1.636,  1.459,  1.368,  1.287,  1.082,  0.964,  0.918,  0.916]
+    radius_ratio_aero:      [0.507,  0.656,  0.7549, 0.814,  0.85,   0.877,  0.895,  0.91,   0.919,  0.926]
+    tm_over_c_tip:          [0.02502, 0.02597, 0.02605, 0.0334, 0.03341, 0.03526, 0.039, 0.038, 0.039, 0.0435]
+    tm_over_c_root:         [0.09655, 0.08699, 0.1087, 0.0810, 0.08039, 0.08042, 0.096, 0.080, 0.075, 0.0850]
+    te_over_c_tip:          [0.0046, 0.0078, 0.0086, 0.0118, 0.0116, 0.0116, 0.011, 0.011, 0.011, 0.011]
+    te_over_c_root:         [0.016,  0.0148, 0.0144, 0.0164, 0.0166, 0.0168, 0.015, 0.015, 0.015, 0.015]
+    solidity_tip:           [1.318,  1.271,  1.224,  1.19,   1.212,  1.207,  1.222,  1.214,  1.17,   1.164]
+    solidity_root:          [2.367,  1.737,  1.487,  1.431,  1.391,  1.347,  1.361,  1.376,  1.27,   1.25]
+    pretwist_deg:           [1.213,  1.256,  0.897,  1.018,  0.727,  0.642,  0.470,  0.424,  0.400,  0.350]
+    airfoil_family:         [Special, Special, Special, BiConvex, BiConvex, BiConvex, Series65, Series65, Series65, Series65]
+    airfoil_weight_kg:      [0.284,  0.0786, 0.0356, 0.018,  0.0198, 0.0122, 0.0094, 0.0066, 0.0045, 0.0040]
+    blade_weight_kg:        [0.55,   0.1833, 0.0824, 0.0477, 0.0628, 0.0445, 0.0433, 0.0295, 0.0201, 0.0155]
+    tip_area_cm2:           [1.897,  0.944,  0.537,  0.417,  0.313,  0.238,  0.216,  0.204,  0.183,  0.163]
+    root_area_cm2:          [6.915,  2.596,  1.634,  0.908,  0.665,  0.485,  0.542,  0.418,  0.344,  0.313]
+    material:               [Ti-8-1-1, Ti-8-1-1, Ti-8-1-1, Ti-8-1-1, Ti-8-1-1, Ti-8-1-1, Inco718, Inco718, Inco718, Inco718]
+    metal_temperature_C:    [113,    178,    235,    249,    361,    423,    480,    540,    599,    655]
+    max_root_stress_kN_cm2: [36.5,   27.6,   34.5,   20.7,   30.3,   28.3,   25.5,   24.8,   30.3,   29.6]
+    centrifugal_stress_kN_cm2: [21.1, 16.5,  13.1,   11,     17.2,   14.5,   11,     9,      8.3,    7.6]
+    transcription_notes:
+      - "Stage 10 airfoil length: metric print reads 1.094 cm, US print reads 0.8245 in = 2.094 cm. The US value is consistent with the stage-9 to stage-10 trend and is used."
+      - "Stage 7 camber_root prints as 38.282 in both units, identical to its orient_angle_root. Possibly a typesetting duplication in the original. Taken as printed; flag if Table XXII disagrees."
+      - "Tilt (tangential, rad) omitted: stages 8-10 print as percentage LMI rather than radians."
+      - "Root stress from cycle case 26 (max pressure) / 27 (max temperature), deteriorated engine, Nc = 13948 rpm."
+
+# ─────────────────────────────────────────────────────────────────────────
+# COMBUSTOR — double annular.  Not cannular.
+# ─────────────────────────────────────────────────────────────────────────
+combustor:
+  src: "CR-168219 sec 5.3 pp.57-62; Fig.22 p.59"
+  type: double annular, short length
+  zones:
+    outer: pilot — used alone at low power, tuned for low fuel-air ratio
+    inner: main — used with pilot at high power, tuned for higher fuel-air ratio
+  swirl_cup_count: 60
+  fuel_nozzle_count: 30
+  fuel_nozzle_type: dual-tip duplex, both tips on one stem, independent metering per nozzle
+  support_pin_count: 30
+  counts_src: "sec 5.3.2 p.61"
+  prediffuser:
+    type: split duct
+    outer_passage_fraction: 0.48   # to pilot dome
+    inner_passage_fraction: 0.52   # to main dome
+    src: "sec 5.3.1 p.57"
+  dome_cups: axial primary swirler plus counter-rotating radial secondary swirler, each cup
+  liner:
+    construction: double wall, segmented shingles, impingement plus spent-film cooling
+    shingle_rows_axial: 3
+    holes: laser drilled into forged support liners
+    src: "sec 5.3.1 p.61, sec 5.3.2 pp.61-62"
+  seals: fishmouth at combustor-to-stator interface
+  materials:
+    src: "sec 5.3 p.57"
+    casing: Inco 718
+    diffuser: Inco 718
+    fuel_nozzle_body: stainless steel
+    dome: Hastelloy X
+    shingles: X-40
+    thermal_barrier_coating: on dome and shingle liners
+  pressure_drop: 0.050
+  pressure_drop_note: set by the minimum required for the HPT vane cooling air circuit — sec 5.3.3 p.62
+  test_hours: {rig: 320, core_and_icls_engine: 109}
+  test_hours_src: "sec 5.3.3 p.62"
+
+# ─────────────────────────────────────────────────────────────────────────
+# HIGH PRESSURE TURBINE
+# ─────────────────────────────────────────────────────────────────────────
+hpt:
+  src: "CR-168219 sec 5.4 pp.65-81; HPT report CR-167955"
+  stages: 2
+  stages_src: "CR-168219 sec 5.4.1 p.65; HPT report sec 2.2.1 p.3"
+  loading: moderate
+  cycle_match:
+    src: "CR-168219 Table XVIII p.70 (final cycle)"
+    condition: max_climb
+    inlet_temperature_T41_K: 1517
+    energy_dh_over_T_J_kgK: 355.5
+    speed_N_over_sqrtT_rad_s_sqrtK: 33.47
+    speed_N_over_sqrtT_rpm_sqrtR: 238.3
+    corrected_flow_g_sqrtK_s_Pa: 0.8643
+  earlier_requirements:
+    src: "HPT report Table I p.4 (FPS columns, pre-rematch cycle)"
+    max_climb:  {T41_K: 1557, dh_over_T: 355.5, N_over_sqrtT: 33.56, corrected_flow: 0.8643, loading_dh_2U2: 0.624, efficiency: 0.924}
+    max_cruise: {T41_K: 1515, dh_over_T: 353.4, N_over_sqrtT: 33.68, corrected_flow: 0.8638, loading_dh_2U2: 0.616, efficiency: 0.924}
+    slto_plus_27F: {T41_K: 1618, dh_over_T: 354.6, N_over_sqrtT: 34.22, corrected_flow: 0.8628, loading_dh_2U2: 0.599, efficiency: 0.921}
+    note: T41 fell 40 K at max climb between this table and CR-168219 Table XVIII after the final cycle rematch (sec 4.3 p.32 says 38 C).
+  stage_work_split_stage1: 0.565
+  stage_work_split_src: "HPT report sec 2.2.4 p.6, Fig.2 p.8 — chosen to permit 7th-stage (not 8th) coolant extraction for the stage-2 vane"
+  stage_aerodynamics:
+    src: "HPT report Table III p.10 (values in parentheses are with A41 +4%)"
+    stage:                    [1,     2]
+    pressure_ratio:           [2.25,  2.11]
+    pressure_ratio_a41_plus4: [2.18,  2.18]
+    loading_dh_over_2U2:      [0.74,  0.56]
+    tip_speed_takeoff_m_s:    [513.9, 535.2]
+    exit_mach:                [0.34,  0.42]
+    reaction:                 [0.34,  0.33]
+    exit_swirl_deg:           [16,    0]
+    vane_count:               [46,    48]
+    blade_count:              [76,    70]
+    radius_ratio_Dh_Dt:       [0.88,  0.82]
+    tip_clearance_pct:        [1.0,   0.6]
+    cooling_and_leakage_pct_W2c: 18.2
+  preliminary_trade:
+    src: "HPT report Table II p.5 (free-vortex, preliminary)"
+    two_stage: {stage1: {PR: 2.25, loading: 0.74, vane_exit_M: 0.89, blade_exit_M: 0.84, turning_deg: 118, swirl_deg: 17, stage_exit_M: 0.36},
+                stage2: {PR: 2.11, loading: 0.56, vane_exit_M: 0.82, blade_exit_M: 0.83, turning_deg: 99,  swirl_deg: 1,  stage_exit_M: 0.41},
+                efficiency: 0.924}
+    one_stage:  {PR: 5.01, loading: 0.92, vane_exit_M: 1.36, blade_exit_M: 1.2, turning_deg: 132, swirl_deg: 24, stage_exit_M: 0.57}
+  blading_geometry:
+    src: "HPT report Table IV p.12"
+    row:                  [stage1_vane, stage2_vane, stage1_blade, stage2_blade]
+    count:                [46,          48,          76,           70]
+    solidity_AW_over_t:   [0.71,        1.07,        0.96,         1.06]
+    zweifel:              [0.67,        0.79,        1.08,         1.03]
+    te_blockage_pct:      [7.2,         6.6,         8.1,          7.4]
+    aspect_ratio_h_d0:    [3.3,         4.4,         3.8,          4.6]
+    unguided_turn_deg:    [8.4,         11.0,        13.0,         15.5]
+  flowpath:
+    src: "HPT report Fig.3 p.9 — dimensioned drawing, cm (in)"
+    axial_length_cm: 20
+    stations:
+      - {location: stage1_vane_inlet,  r_tip_cm: 37.2,  r_hub_cm: 31.5,  x_cm: 0,    note: read off drawing; not dimensioned}
+      - {location: stage1_vane_exit,   r_tip_cm: 36.58, r_hub_cm: 32.58, x_cm: 3.5}
+      - {location: stage1_blade_exit,  r_tip_cm: 36.60, r_hub_cm: 32.33, x_cm: 8.5}
+      - {location: stage2_vane_exit,   r_tip_cm: 38.05, r_hub_cm: 31.22, x_cm: 15.5}
+      - {location: stage2_blade_exit,  r_tip_cm: 38.10, r_hub_cm: 31.12, x_cm: 20}
+    note: axial positions of the dimensioned radii are read off the drawing's cm scale, +-0.3 cm; the radii themselves are printed
+  annulus_area_design_m2:
+    src: "HPT report Fig.1 p.7, design-point markers, read off graph"
+    stage1_exhaust: 0.0895
+    stage2_exhaust: 0.151
+  active_clearance_control: fan air impinged on the casing; hot CPD air circuit for warm-up
+  acc_src: "CR-168219 sec 5.4 p.65"
+  stator_flow_area_increase_pct: 4
+  stator_flow_area_src: "HPT report sec 2.1 p.3 — A41 +4% for compressor stall margin"
+
+# ─────────────────────────────────────────────────────────────────────────
+# LOW PRESSURE TURBINE
+# ─────────────────────────────────────────────────────────────────────────
+lpt:
+  src: "CR-168219 sec 5.5 pp.82-91; LPT report NTRS 19850002686"
+  stages: 5
+  stages_src: "CR-168219 sec 5.5 p.82 ('five stage'), sec 5.5.1 p.85; LPT report Fig.49, Fig.52"
+  description: moderately loaded, low throughflow, tip-shrouded high-aspect-ratio blading
+  outer_wall_slope_deg: 25
+  transition_duct_axial_length_cm: 7.62
+  casing: full 360 deg structure, nozzle stators in multivane segments
+  rotor: disks joined by bolted flanges in low-stress areas; supported by a single bearing cone
+  acoustic: stage-4 vane-to-blade gap 1.4 chords and stage-4 blade count raised for cutoff tuning
+  geometry_src: "CR-168219 sec 5.5 p.82, sec 5.5.1 p.85"
+  cycle_match:
+    src: "CR-168219 Table XXI p.86 (final cycle)"
+    condition: max_climb
+    inlet_temperature_T49_K: 1056.3
+    energy_dh_over_T_J_kgK: 326.5
+    speed_N_over_sqrtT_rad_s_sqrtK: 11.21
+    speed_N_over_sqrtT_rpm_sqrtR: 79.79
+    corrected_flow_g_sqrtK_s_Pa: 3.936
+  earlier_requirements:
+    src: "LPT report Table I p.5 (FPS columns, pre-rematch cycle)"
+    max_climb:  {T49_K: 1083.2, dh_over_T: 326.5, N_over_sqrtT: 11.26, corrected_flow: 3.936, loading: 1.283, efficiency: 0.917}
+    max_cruise: {T49_K: 1054.6, dh_over_T: 322.3, N_over_sqrtT: 11.08, corrected_flow: 3.947, loading: 1.308, efficiency: 0.916}
+    slto_plus_27F: {T49_K: 1128.7, dh_over_T: 306.2, N_over_sqrtT: 10.61, corrected_flow: 3.967, loading: 1.555, efficiency: 0.921}
+  active_clearance_control: fan bleed from pylon scoops to an impingement manifold
+  blade_counts_per_stage:
+    status: not_transcribed
+    settle_at: "LPT report sec 4.2.1 pp.82-101; Fig.52 p.83"
+
+# ─────────────────────────────────────────────────────────────────────────
+# EXHAUST AND MIXER
+# ─────────────────────────────────────────────────────────────────────────
+exhaust:
+  src: "CR-168219 sec 5.8 pp.101-104"
+  type: full-length duct, mixed flow, single exhaust nozzle
+  nozzle: converging-diverging, low area ratio
+  mixer:
+    lobes: 18
+    lobe_type: scalloped, with matching corrugations in the centerbody
+    material: Inco 718
+    centerbody_material: Inco 625
+    src: "sec 5.8 p.102; Fig.39 p.103"
+  fan_duct_mach: [0.40, 0.45]
+  fan_duct_mach_note: separate-flow nacelles run 0.45-0.50; E3 is lower for pressure loss
+  centre_vent_tube: from the tail cone through the nozzle exit plane; vents aft sump and turbine frame cavities
+  mixer_performance:
+    src: "Table XXIII p.104"
+    fps_projection: {mixing_effectiveness: 0.85, pressure_loss_dP_P: 0.0057, sfc_improvement: 0.029}
+    best_scale_model: {mixing_effectiveness: 0.79, pressure_loss_dP_P: 0.0057, sfc_improvement: 0.026}
+    original_goal:  {mixing_effectiveness: 0.75, pressure_loss_dP_P: 0.0020, sfc_improvement: 0.031}
+
+nacelle:
+  src: "CR-168219 sec 5.9 pp.102-114"
+  fan_frame: integral composite; outer portion forms the nacelle outer surface
+  containment: Kevlar
+  reverser: contained entirely in the nacelle outer wall, no bifurcation
+  exhaust_duct: long duct, mixed flow
+  general_arrangement: "Fig.40 p.106 — not yet digitised"
+
+# ─────────────────────────────────────────────────────────────────────────
+# MASS.  Module-level, which is far more useful than a total.
 # ─────────────────────────────────────────────────────────────────────────
 weights:
   src: "CR-168219 Table XXVI, p.140"
@@ -182,136 +605,51 @@ weights:
     subtotal: 992
   installed_engine_total: 4465
   note: >
-    Note what "Miscellaneous" contains: sumps, drives and seals alone are
-    320 kg, more than the entire combustor, casing and diffuser at 137 kg.
-    Any model that omits the bearing system is omitting a tenth of the
-    engine's mass.
+    Sumps, drives and seals alone are 320 kg — more than twice the
+    combustor, casing and diffuser at 137 kg. A model that omits the
+    bearing system omits a tenth of the engine.
 
 # ─────────────────────────────────────────────────────────────────────────
-# TOPOLOGY.  The gas path in order, and — the part that actually matters —
-# which components share a shaft.
-#
-# The gas path is a straight line: fan -> booster (LPC) -> HPC -> combustor
-# -> HPT -> LPT -> mixer -> nozzle. The SHAFTS cross it. The LP spool picks
-# up the first and last items (booster and LPT); the HP spool picks up the
-# two in the middle (HPC and HPT). Getting that pairing backwards would make
-# every work-split calculation in Phase B1 wrong while still producing a
-# model that looks entirely plausible, which is exactly why it is written
-# down here rather than left implicit.
-#
-# Station numbers follow the usual aero-engine convention and match the
-# `Stations` dataclass in projects/08-cycle-model/src/cycle.py.
-# ─────────────────────────────────────────────────────────────────────────
-topology:
-  gas_path:                      # in flow order, core stream
-    - {component: inlet,     station: 1,  note: freestream to fan face}
-    - {component: fan,       station: 2,  note: fan face; flow splits after this}
-    - {component: booster,   station: 21, note: LPC, core stream only, on the LP spool}
-    - {component: hpc,       station: 25, note: booster exit = HPC inlet; W25 is the cooling-flow datum}
-    - {component: combustor, station: 3,  note: HPC exit = compressor discharge (CPD)}
-    - {component: hpt,       station: 4,  note: combustor exit = turbine entry temperature}
-    - {component: lpt,       station: 45, note: HPT exit}
-    - {component: mixer,     station: 5,  note: LPT exit; E3 mixes core and bypass here}
-    - {component: nozzle,    station: 8,  note: single mixed nozzle}
-  bypass_path:
-    - {component: fan,       station: 2}
-    - {component: bypass_duct, station: 13, note: fan exit, bypass stream}
-    - {component: mixer,     station: 5,  note: rejoins the core here — E3 is mixed-flow}
-  spools:
-    lp:
-      driven_by: lpt
-      drives: [fan, booster]
-      note: >
-        One shaft carries the fan, the booster and the LP turbine. The LP
-        shaft runs the full length of the engine, passing THROUGH the HP
-        spool — which is why it needs a stated running clearance and its own
-        bearing support, and why the forward and aft sumps exist.
-    hp:
-      driven_by: hpt
-      drives: [hpc]
-      note: >
-        The core spool. Short, stiff, and concentric around the LP shaft.
-  power_balance:
-    - {turbine: hpt, compressor: hpc, note: HPT work must equal HPC work plus losses}
-    - {turbine: lpt, compressor: [fan, booster], note: LPT work must equal fan plus booster work plus losses}
-  cross_check: >
-    PF-08's Stations dataclass declares fan_face, fan_exit,
-    bypass_nozzle_inlet, booster_exit, hpc_exit, combustor_exit, hpt_exit,
-    lpt_exit, then the nozzles — the same order as gas_path above. If the two
-    ever disagree, one of them is wrong. tests/test_topology.py asserts it.
-  known_difference_from_pf08: >
-    PF-08 solves a SEPARATE-exhaust turbofan: two nozzles, no mixer. The E3
-    is MIXED-flow — Table XI quotes a mixer effectiveness of 83.8%, and the
-    LPT module weight in Table XXVI includes a mixer. This is a real
-    architectural difference, not a detail, and Phase A2 must resolve it
-    (add a mixer model, or compare core-only) and say which in the README.
-
-# ─────────────────────────────────────────────────────────────────────────
-# Architecture.  UNVERIFIED entries must be settled before they enter a
-# drawing or a claim — see REFERENCES.md "To verify before quoting".
+# Architecture summary.  Every entry now verified in the source.
 # ─────────────────────────────────────────────────────────────────────────
 architecture:
   fan_stages: 1
-  booster_lpc_stages:
-    value: null
-    verified: false
-    note: >
-      NOT YET ESTABLISHED. CR-168219 describes a "debris-separating booster
-      module" but the stage count has not been read. The booster is a real
-      component on the LP spool and it cannot be omitted — leaving it out
-      would break the LP power balance and put the HPC inlet radius at the
-      wrong place. For comparison the GE90 baseline has 3 booster stages and
-      the -100 series has 4 (see ge90_context).
-    settle_at: "CR-168219 sec 5.1 Fan, pp.37-46, and Fig.13 p.38"
-  fan_blade_count:
-    value: 32
-    verified: false
-    src: "search summary of CR-168219; NOT read in the report"
-    settle_at: "CR-168219 sec 5.1, pp.37-46"
-  hpc_stages:
-    value: 10
-    verified: false
-    settle_at: "CR-168219 Fig.18 p.47, and NTRS 19850002690"
-  hpc_pressure_ratio_design:
-    value: 22.6
-    verified: false
-    settle_at: "NTRS 19850002690"
-  hpt_stages:
-    value: 2
-    verified: false
-    settle_at: "CR-168219 Fig.24 p.66"
-  lpt_stages:
-    value: 5
-    verified: false
-    note: "Figure list implies 5; the GE90 has 6. Settle before quoting."
-    settle_at: "CR-168219 sec 5.5, pp.82-91"
-  exhaust: mixed-flow (duct mixer fitted)
-  exhaust_src: "CR-168219 Table XI, p.34 — mixer effectiveness is quoted"
+  fan_blade_count: {value: 32, verified: true, src: "CR-168219 sec 5.1.2 p.45"}
+  booster_lpc_stages: {value: 1, verified: true, src: "CR-168219 sec 5.1 p.37 — quarter-stage",
+                       note: "single quarter-stage booster, not a multi-stage LPC"}
+  hpc_stages: {value: 10, verified: true, src: "CR-168219 sec 5.2 p.45; HPC report Table X"}
+  hpc_pressure_ratio_design: {value: 23.0, verified: true, src: "CR-168219 Table XIV p.51",
+                              note: HPC report abstract quotes 22.6:1; the FPS operating-line design value is 23.0}
+  hpt_stages: {value: 2, verified: true, src: "CR-168219 sec 5.4.1 p.65"}
+  lpt_stages: {value: 5, verified: true, src: "CR-168219 sec 5.5 p.82"}
+  exhaust: mixed-flow, 18-lobe mixer, single C-D nozzle
+  exhaust_src: "CR-168219 sec 5.8 pp.101-102"
+  combustor: double annular
+  combustor_src: "CR-168219 sec 5.3 p.57"
 
 # ─────────────────────────────────────────────────────────────────────────
-# Flowpath geometry — NOT YET DIGITISED.  This is Phase A3's whole job.
-# The report gives cross-section FIGURES, not coordinate TABLES, so the
-# radii must be scaled off the drawings against the known fan tip diameter.
+# Flowpath — whole engine.  Only the HPT and HPC have dimensioned data so
+# far; the rest is Phase A3's digitising job.
 # ─────────────────────────────────────────────────────────────────────────
 flowpath:
-  status: not_digitised
+  status: partial — hpt.flowpath and hpc.rotor_stages are dimensioned; fan, booster, combustor, lpt, nacelle are figures only
   method: >
-    Scale each cross-section figure against a known dimension — the fan tip
-    diameter of 2.11 m is the natural ruler, and it appears in Fig.1 and
-    Fig.13. Record hub and tip radius at each blade row leading and trailing
-    edge, with a stated digitising uncertainty.
+    Scale each remaining cross-section against the known fan tip diameter,
+    2.11 m (Fig.1, Fig.13), or against the HPT's dimensioned Fig.3 where it
+    overlaps (Fig.24). Record hub and tip radius at each blade row LE/TE
+    with a stated digitising uncertainty.
   figures:
-    overall: "Fig.1, p.4"
-    fan_and_booster: "Fig.13, p.38"
-    compressor: "Fig.18, p.47"
-    combustor: "Fig.22, p.59"
-    hpt: "Fig.24, p.66"
-    lpt: "Fig.32, p.83"
-  stations: []   # filled by Phase A3
+    overall: "CR-168219 Fig.1 p.4"
+    fan_and_booster: "CR-168219 Fig.13 p.38"
+    compressor: "CR-168219 Fig.18 p.47; HPC report Fig.15 p.27"
+    combustor: "CR-168219 Fig.22 p.59"
+    hpt: "CR-168219 Fig.24 p.66; HPT report Fig.3 p.9 (dimensioned)"
+    lpt: "CR-168219 Fig.32 p.83; LPT report Fig.6 p.12"
+    nacelle: "CR-168219 Fig.40 p.106"
 
 # ─────────────────────────────────────────────────────────────────────────
 # Context only.  The GE90 is what this technology became. Its geometry is
-# proprietary — these figures exist to frame the project, never to build it.
+# proprietary — these exist to frame the project, never to build it.
 # ─────────────────────────────────────────────────────────────────────────
 ge90_context:
   src: "CAA NZ Type Acceptance Report TAR 11/21B/7, Rev.0, 21 Oct 2010, validating FAA TC E00049EN"

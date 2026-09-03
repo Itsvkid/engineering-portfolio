@@ -44,22 +44,25 @@ turbofan. Verified contents, with report page numbers:
 | §4.3 — Final Cycle Refinement | p. 32 | Fan tip diameter, core corrected flow, thrust |
 
 **Sections read and verified in preparing this project:** Foreword, Tables of
-Contents / Illustrations / Tables, §4.3, §4.4, Table XI, Table XII, Table XXVI.
-Everything else above is located from the report's own figure and table lists
-and still needs opening.
+Contents / Illustrations / Tables, Fig. 1, §4.3, §4.4, Tables XI, XII, XIII,
+XIV, XV, XVIII, XXI, XXIII, XXVI; §5.1 (fan, incl. Figs. 13–17), §5.2
+(compressor, incl. Fig. 18), §5.3 (combustor, incl. Figs. 22–23), §5.4
+(HPT, incl. Figs. 24–27), §5.5 (LPT, incl. Figs. 32–33), §5.7 (sumps and
+bearings, incl. Figs. 37–38), §5.8 (exhaust, incl. Fig. 39), §5.9 opening.
+What each gave is in [DATA-INDEX.md](DATA-INDEX.md).
 
 ### [2] Sister E³ component design reports
 
 Same programme, same licence, all on NTRS. Each is the depth behind one
 module of [1]. Open these when a component needs more than [1] gives.
 
-| Report | NTRS ID | Gives |
+| Report | NTRS ID | Gives — verified contents |
 |---|---|---|
-| E³ High Pressure Compressor, detail design | `19850002690` | 10-stage, 22.6:1 design; blading detail |
-| E³ HPT test hardware, detailed design (CR-167955) | `19850002687` | Converged annulus through stage-1 stator, contoured end walls |
-| E³ LPT test hardware, detailed design | `19850002686` | LPT aero, heat transfer and mechanical design |
-| E³ Preliminary Design (CR-135444) | `19780023165` | The trade studies behind the configuration |
-| E³ Core design and performance | `19900019243` | Core as tested |
+| E³ High Pressure Compressor, detail design (170 pp.) | `19850002690` | **Table X pp. 65–66: per-stage rotor summary** — blade count, radii, angles, chord, solidity, material, temperature, stress, HP spool rpm. **Table XXI pp. 112–153: stator vector diagrams and geometry. Table XXII pp. 154–158: rotor airfoil section geometry.** Campbell diagrams per stage, clearances, casing bolting |
+| E³ HPT test hardware, detailed design, CR-167955 (195 pp.) | `19850002687` | **Fig. 3 p. 9: dimensioned flowpath. Table III p. 10: stage aero, blade counts 46/48/76/70, tip speeds, clearances. Table IV p. 12: solidity, Zweifel, aspect ratio. Fig. 6 p. 14: airfoil shapes hub/pitch/tip.** §5.2.1: every disc, shaft and retainer with stress and LCF |
+| E³ LPT test hardware, detailed design (188 pp.) | `19850002686` | **Table I p. 5: three-point operating data.** §2.5–2.7 final flowpath and vector diagrams; Figs. 9–18 vane and blade shapes per stage; §4.2 blades, dovetails, discs, seals |
+| E³ Preliminary Design, CR-135444 (402 pp.) | `19780023165` | The trade studies behind the configuration — not yet opened |
+| E³ Core design and performance (538 pp.) | `19900019243` | Core as tested — not yet opened |
 
 Fetch pattern: `https://ntrs.nasa.gov/api/citations/<ID>/downloads/<ID>.pdf`
 
@@ -103,17 +106,31 @@ Use it to confirm dimensions and ratings independently of [3].
 
 ---
 
-## To verify before quoting
+## Verified 3 September — the architecture block is closed
 
-Listed explicitly so nothing here leaks into the model as fact.
+Everything that was on the "to verify" list has now been read in the source.
+What each turned out to be, since two of them were not what was assumed:
+
+| Claim | Settled as | Where |
+|---|---|---|
+| E³ fan blade count | **32**, solid titanium, 50 % span shrouds — *not* wide-chord unshrouded | [1] §5.1.2 p. 45; Fig. 13 p. 38 |
+| E³ booster | **A single quarter-stage** under an untrapped island — *not* a multi-stage LPC. Rows 60 / 56 / 64 | [1] §5.1 p. 37, §5.1.1 p. 43; Fig. 13 |
+| E³ HPC | 10 stages, **23.0** on the operating line at the max-climb match ([2]'s abstract quotes 22.6 as the design value), 0.860 adiabatic, 0.906 polytropic | [1] §5.2 p. 45, Table XIV p. 51 |
+| E³ LPT stage count | **5** | [1] §5.5 p. 82, §5.5.1 p. 85 |
+| E³ combustor | **Double annular**, 60 cups, 30 nozzles | [1] §5.3 pp. 57–62 |
+
+## Still to verify before quoting
 
 | Claim | Current status | Where to settle it |
 |---|---|---|
-| E³ fan has 32 wide-chord blades | From a search summary of [1], **not read in the report** | [1] §5.1, pp. 37–46 |
 | GE90-115B fan diameter 128 in / 3.25 m | Sources seen disagree (10.5 ft vs 128 in) | [4], or GE's own published data |
-| E³ HPC 22.6:1, 86.1% adiabatic / 90.6% polytropic | From a search summary of [2] | [2] `19850002690` |
-| E³ LPT stage count | [1] figure list implies 5 stages; GE90 is 6 | [1] §5.5, pp. 82–91 |
 | GE90-115B dry weight | Not sourced | [4] or manufacturer data |
+| Booster rows 60 / 56 — which is the vane and which the blade | Assigned by upstream/downstream position in Fig. 13; 64 is confirmed in text as the inner OGV | [1] §5.1.1 pp. 41–45, read again with the figure |
+| HPC variable-stator row count | [1] says IGV + stators 1–4 (pp. 45, 52); [2] says IGV + five rows for the product engine (p. 64) | Use [2] for the FPS product; note both |
+| LPT blade counts per stage | Not yet transcribed | LPT report §4.2.1 pp. 82–101, Fig. 52 p. 83 |
+
+Full inventory of what is transcribed, located, or must be digitised:
+[DATA-INDEX.md](DATA-INDEX.md).
 
 ---
 
