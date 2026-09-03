@@ -55,6 +55,13 @@ ntrs e3-preliminary-design-CR-135444.pdf        19780023165
 ntrs e3-core-design-and-performance.pdf         19900019243
 
 echo
+echo "NASA design methods -- the textbooks that are public domain"
+# Johnsen & Bullock, 1965. The compressor design method: diffusion factor,
+# cascade data, radial equilibrium, loss and deviation, stall. Still the
+# reference everything since is measured against.
+ntrs nasa-sp36-axial-compressor-design.pdf         19650013744
+
+echo
 echo "GE90 -- context only, never a geometry source"
 get ge90-100-type-acceptance-NZ.pdf \
   "https://www.aviation.govt.nz/assets/aircraft/type-acceptance-reports/Gen_Electric_GE90-100_Series.pdf"

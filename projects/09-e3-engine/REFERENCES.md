@@ -64,6 +64,15 @@ module of [1]. Open these when a component needs more than [1] gives.
 | E³ Preliminary Design, CR-135444 (402 pp.) | `19780023165` | The trade studies behind the configuration — not yet opened |
 | E³ Core design and performance (538 pp.) | `19900019243` | Core as tested — not yet opened |
 
+### [2b] NASA SP-36 — *Aerodynamic Design of Axial-Flow Compressors*
+
+Johnsen & Bullock (eds.), Lewis Research Center, 1965. NTRS `19650013744`.
+**Public use permitted.** Consolidates the declassified 1956 research
+memoranda into the compressor design method: Lieblein diffusion factor,
+cascade loss and deviation correlations, radial equilibrium, stall. The
+reference every later compressor text is measured against, and the method
+behind the E³ HPC. Fetched by `fetch-sources.sh`.
+
 Fetch pattern: `https://ntrs.nasa.gov/api/citations/<ID>/downloads/<ID>.pdf`
 
 > **These are scanned documents.** Text extraction fails; they must be read
