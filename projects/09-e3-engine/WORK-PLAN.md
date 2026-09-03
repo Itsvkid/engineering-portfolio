@@ -1,378 +1,594 @@
 # Work plan — PF-09
 
-Five stages, fourteen phases. Each phase ends in something checkable, and
-**no phase starts until the previous one's check has closed.** That rule is
-the only thing standing between this and a three-week render.
+**Ten stages, forty-one phases, roughly 510 hours.** A no-compromise rebuild
+of the NASA/GE Energy Efficient Engine: every discipline taken to the
+fidelity the published data can check, every method validated on a NASA test
+case before it is applied, every result compared against what NASA measured.
 
-Tick as you go. Study progress lives in the vault; *this* is the build.
-
-| Stage | What it produces | Hours | Needs CAD? |
-|---|---|---|---|
-| **A** | Published data, a validated cycle, a computed flowpath | 26 | no |
-| **B** | Every bladed row and the nacelle, generated | 22 | no |
-| **C** | Static structure, bearings, assembly, the cutaway | 34 | **yes** |
-| **D** | Mass, stress and clearance verification | 16 | partly |
-| **E** | Site entry, drawing pack, the post | 10 | no |
-| | | **108** | 34 in a GUI |
-
-At ten hours a week that is eleven weeks; at twenty, six. **Stage A alone is
-a portfolio piece** and needs no CAD licence — if the tool question drags,
-Stage A and B still stand on their own.
+This replaces the 108-hour plan of 3 September, which produced a checkable
+*shape*. This produces a checkable *design*.
 
 > [!important] The one rule that outranks this document
 > The twenty-minute weekly job block comes first, every week, without
 > exception. This project makes an interview go well. It does not produce
-> one. If a week only has twenty minutes in it, they go to Chain A.
+> one. Five hundred hours with zero applications sent is a failure.
 
 ---
 
-# STAGE A — Foundation
+## What "close to real" means here, precisely
 
-No CAD licence, no tool decision, nothing blocked. Start here today.
+Three levels of fidelity, and the level this plan commits to per discipline.
 
-## Phase A1 · Acquire and read the primary source · 6 h
+| Level | Meaning | Example |
+|---|---|---|
+| **L1 Geometric** | it looks like the component | the reference model in the screenshot |
+| **L2 Parametric** | the numbers are right at stage level, from the source | HPC Table X transcribed: 28 blades, r_tip 35.08 cm, stagger 65.2° |
+| **L3 Physical** | an analysis with a *validated* method reproduces the published performance to a stated tolerance | mean-line with SP-36 losses gives HPC η_ad within 1 point of Table XIV's 0.860 |
 
-- [x] Download the reference set to `sources/`, gitignored
-      (mirror the `fetch-library.sh` convention — script committed, binary not)
-- [x] Write `fetch-sources.sh` so a clean clone can reproduce the reference set
-      — 7 documents, 1,678 pages, 67 MB
-- [ ] Read §3 Features, §4 Cycle in full
-- [x] Read §5.1 Fan, §5.2 Compressor, §5.3 Combustor, §5.4 HPT, §5.5 LPT
-- [x] Read §5.7 Sumps, Drives, Configuration — the bearing system
-- [x] Read §5.8 Exhaust
-- [x] Settle every row in REFERENCES.md → "To verify before quoting"
-- [x] **Find the booster stage count** — it is a single **quarter-stage**
-      under an untrapped island, not a multi-stage LPC. Rows 60 / 56 / 64
-- [x] Transcribe HPC Table X (per-stage rotor summary), HPT Table III and
-      IV, HPT Fig. 3 flowpath, bearing arrangement, combustor counts
-- [x] `data/e3-fps-published.yaml`: every architecture entry `verified: true`
-      with its page
-- [x] `tests/test_published_data.py` — transcription checked against itself
-      wherever the reports give two routes to one number
-- [ ] Transcribe HPC Table XXII (rotor section geometry, 5 pages) and
-      Table XXI (stators, 40 pages) — the blade-angle data
-- [ ] Transcribe LPT blade counts per stage — LPT report §4.2.1, Fig. 52
-- [ ] Settle which of rows 60 / 56 is the booster vane and which the blade
+**Commitment:** L3 wherever the E³ publishes a result to check against.
+L2 wherever it publishes geometry but no result. Where it publishes neither
+(fan blade sections), a stated assumption produced by a validated method.
+No discipline is left at L1.
 
-*Closes when:* no `verified: false` remains in the architecture block, and
-every `settle_at` has become a `src`. **The architecture block closed on
-3 September.** What remains in A1 is the blade-level geometry transcription,
-which DATA-INDEX.md ranks by what it unlocks.
+## The validation ladder
 
-> [!note] Topology is already asserted, not assumed
-> `data/e3-fps-published.yaml → topology` encodes the gas path
-> (fan → booster → HPC → combustor → HPT → LPT → mixer → nozzle) and the
-> crossed spool arrangement (LP drives fan + booster, HP drives HPC), and
-> `tests/test_topology.py` holds both to it — including cross-checking
-> against PF-08's own `Stations` ordering. 11 tests, passing. Nothing
-> downstream can quietly put a component in the wrong place.
+No analysis is trusted on the E³ until it has reproduced a published NASA
+result on a case built for the purpose. Every method climbs the same four
+rungs, in order:
 
-## Phase A2 · Validate the cycle model against published data · 8 h
+```mermaid
+flowchart LR
+    A["1 · Validate the method<br/>on a NASA test case<br/>with published data"]
+    B["2 · Apply it<br/>to the E³ geometry"]
+    C["3 · Compare with the E³<br/>published result"]
+    D["4 · Publish the gap<br/>and its cause"]
+    A --> B --> C --> D
+    D -. "gap too large" .-> A
+```
 
-The phase that turns PF-08 from "a cycle model" into "a cycle model that has
-been checked against a real engine's published design point".
+| Method | Rung 1 — validate on | Rung 3 — compare with |
+|---|---|---|
+| Compressor loss / deviation / DF | NACA TN 3916 65-series cascades | HPC Tables XIV, XV; Table X angles |
+| Compressor CFD | NASA Rotor 37 (TP-1337, CFD-validation report) | HPC rotor 1 loss and turning |
+| Turbine loss | Ainley–Mathieson R&M 2974 worked cases; SP-290 | HPT Table III, LPT Table I efficiencies |
+| Through-flow / radial equilibrium | SP-36 ch. VIII; HPT report Fig. 5 | HPC Table XXI stator vector diagrams |
+| Internal cooling correlations | TP-2232 data | HPT report Figs. 27, 33, 35 metal temperatures |
+| Blade and disc FEA | CAD-05's converged bracket; HPT report Figs. 61–72 | HPC Table X root stresses; HPT disc LCF |
+| Campbell | HPC report Figs. 33–42 (all ten stages published) | same |
+| Cycle | closed-form ideal cycle (PF-08 already) | Table XII, three rating points |
 
-- [ ] Add an E³ design point to PF-08 using **only** the published component
-      efficiencies and pressure ratios from Table XI — no tuning
-- [ ] Solve at max climb, 10.67 km, Mach 0.8, dry air, zero bleed, 100% ram
-- [ ] Compare against Table XII: OPR, BPR, sfc, HPT rotor inlet temperature
-- [ ] Write the comparison as a test that asserts agreement to a **stated**
-      tolerance, and states it in the failure message
-- [ ] **Handle the two structural differences honestly:**
-  - [ ] E³ is **mixed-flow** (mixer effectiveness 83.8%); PF-08 is
-        separate-exhaust. Either add a mixer model or compare core-only —
-        and say which, in the README
-  - [ ] E³ quotes **separate fan bypass and hub pressure ratios** (1.68 /
-        1.70); PF-08 has one fan pressure ratio. Decide and document
-- [ ] Add the cooling flows as chargeable / nonchargeable and check the
-      effect on turbine work
+## The flaws in the reference model, and where each is designed out
 
-*Closes when:* sfc agrees with 0.0541 kg/N/hr within a tolerance you chose
-before running it, **or** you can name which assumption accounts for the
-gap. A gap you can explain is a better result than agreement you cannot.
+| Flaw in the screenshot | Why it is wrong | Designed out in |
+|---|---|---|
+| Blades read as untwisted plates | a real blade turns ~30° hub to tip because r·c_θ is held | C2 through-flow, C3 sections from Table XXII |
+| LPT flares into a bell | E³ LPT outer wall slopes 25°, not 60°; annulus grows with expansion, not by eye | B4 annulus from the cycle, A3 digitised Fig. 32 |
+| No bearings, shafts float | five bearings, two sumps, an intershaft roller — a tenth of the engine's mass | E4, H3 |
+| Combustor is a gap | double-annular, 60 cups, 30 nozzles, shingled liner, 48/52 prediffuser | D2, G3 |
+| No flanges, no module joints | the engine is built and maintained in modules | H2 |
+| Proportions from a photograph | nothing knows what the engine is for | B (all), C1 |
+| No clearances | 1 % of span costs 1–2 % efficiency; E³ ran ACC to hold 1.0 / 0.6 % | D4, H4 |
+| Single material, no temperature | Ti runs out at 500 °C; the E³ switches to Ni between HPC stages 6 and 7 | F1 |
+| Nothing can be checked | every number here has a page, a test, or a stated tolerance | all |
 
-> This is the single highest-value phase in the project. "My turbofan cycle
-> model reproduces the NASA E³ design point sfc to within X%" is a sentence
-> almost no graduate can say, and it costs eight hours.
+## The discipline loop
 
-## Phase A3 · Digitise the flowpath · 8 h
+The stages are not a line. Aero sets the geometry, thermal sets the metal
+temperature, mechanical sets the wall thickness, materials set the
+allowable, mass feeds back into the cycle through the aircraft — and a
+change anywhere re-runs everything downstream. `build.py` is the loop.
 
-The report gives cross-section *figures*, not coordinate *tables*. So this
-is a measurement exercise with an uncertainty attached — which is itself the
-engineering.
-
-- [ ] Extract Fig. 1, 13, 18, 22, 24, 32 as images at full resolution
-- [ ] Establish scale on each from the known fan tip diameter, 2.11 m
-- [ ] Digitise hub and tip radius at every blade row leading and trailing edge
-- [ ] Record axial positions on a common datum (fan face = x 0)
-- [ ] **State the digitising uncertainty** — ±mm, from pixel size and how
-      cleanly the scanned line reads
-- [ ] Write the result into `flowpath.stations` in the YAML, each with `src`
-- [ ] Cross-check: does the digitised fan tip radius return 2.11 m diameter?
-      Does the core inlet area give 54.4 kg/s corrected at the design point?
-
-*Closes when:* two independent checks on the digitised geometry close, and
-every station carries an uncertainty.
-
-## Phase A4 · The computed annulus, and the disagreement · 4 h
-
-Now the part nobody else does: **compute** the annulus from your own cycle
-and compare it to the one you just measured.
-
-- [ ] From PF-08's `Stations`, compute required annulus area at each station
-      by continuity at a chosen axial Mach number
-- [ ] Convert area to hub and tip radii on a stated hub-line assumption
-- [ ] Plot computed radii over digitised radii, same axes
-- [ ] Write up where they differ and why — axial Mach assumption, hub line,
-      cooling flow bookkeeping, real-gas effects
-
-*Closes when:* **the meridional plot exists.** Computed flowpath and NASA's
-published flowpath, overlaid, with the disagreement quantified.
-
-> [!success] This figure is the project
-> It is the one image that says the geometry was derived rather than drawn,
-> and it is what a gas turbine engineer will stop scrolling for. Everything
-> in Stages B and C is downstream of it. Lead every write-up with it.
+```mermaid
+flowchart TD
+    B["B · Cycle<br/>T, p, ṁ at every station"]
+    C["C · Aero<br/>annulus, angles, sections, losses"]
+    D["D · Thermal<br/>cooling flows, metal temperature"]
+    E["E · Mechanical<br/>stress, life, vibration"]
+    F["F · Materials & mass"]
+    G["G · Geometry"]
+    B --> C --> D --> E --> F --> G
+    D -- "cooling flow changes<br/>turbine work" --> B
+    E -- "thicker wall,<br/>more blades" --> C
+    F -- "mass → thrust/weight" --> B
+```
 
 ---
 
-# STAGE B — Generated geometry
+## Budget
 
-Reuses PF-06 and PF-07 almost unchanged. Still no CAD licence.
+| Stage | What it produces | Hours | CAD? |
+|---|---|---|---|
+| **A** Foundation | every source on disk; every table transcribed; topology asserted | 40 | no |
+| **B** Thermodynamic design | validated cycle at three ratings, with mixer, secondary air and real gas | 40 | no |
+| **C** Aerodynamic design | mean-line, through-flow, sections, CFD — each validated, each compared | 120 | no |
+| **D** Thermal design | HPT cooling reproduced; combustor; secondary-air map; clearance control | 60 | no |
+| **E** Mechanical design | blades, discs, vibration, shafts, bearings, attachments — with FEA | 90 | no |
+| **F** Materials and mass | alloys with allowables at temperature; mass per module | 20 | no |
+| **G** Geometry generation | every part generated from the validated design tables | 40 | no |
+| **H** Hand CAD and assembly | structure, sumps, joints, motion, section | 50 | **yes** |
+| **I** Whole-engine verification | cross-discipline consistency; `FINDINGS.md` | 30 | partly |
+| **J** Publication | site, drawings, the write-up | 20 | no |
+| | | **510** | 50 in a GUI |
 
-## Phase B1 · Blade rows from the flowpath · 10 h
-
-- [ ] Build a `BladeRow` per row — fan, booster, 10 HPC, 2 HPT, LPT stages —
-      at the Phase A3 radii
-- [ ] Split each spool's total work across its stages from the cycle, and
-      **derive the stage count** rather than copying it
-- [ ] Compare derived stage count against the published count; explain gaps
-- [ ] Free-vortex twist per row, from `velocity_triangles.py`
-- [ ] Blade counts from a chosen pitch-chord ratio, cited
-- [ ] Export STEP per row; glTF for the web viewer
-- [ ] Tests: n-fold symmetry, throat area passes station mass flow, no
-      self-intersection, hub and tip radii match the YAML
-
-*Closes when:* every row exports clean, and the derived stage counts are
-either matched or explained.
-
-## Phase B2 · Nacelle, bypass duct and core cowl · 6 h
-
-- [ ] Fit a CST cowl (PF-07) to the nacelle GA in Fig. 40
-- [ ] Bypass duct inner and outer lines from the digitised flowpath
-- [ ] Core cowl and the mixer/centrebody region
-- [ ] Check: bypass area at the nozzle consistent with BPR 6.7
-
-*Closes when:* bypass and core exit areas reproduce the cycle's flow split.
-
-## Phase B3 · Compound assembly and export · 6 h
-
-- [ ] Place every generated body on a common axis and datum
-- [ ] One compound STEP, one glTF for `viewer.autodesk.com`
-- [ ] Boolean interference check across all generated bodies — zero clashes
-- [ ] `build.py` regenerates everything from the YAML in one command
-
-*Closes when:* `python build.py` on a clean clone reproduces every export.
+At ten hours a week this is a year; at twenty, six months. **Stages A–F need
+no CAD licence** and are 370 of the 510 hours. Each stage is a publishable
+result in itself; the plan is ordered so that stopping after any stage
+leaves a complete piece of work.
 
 ---
 
-# STAGE C — Hand CAD
+# STAGE A — Foundation · 40 h
 
-**Gated.** Do not start until both gates below are green. This is the stage
-that moves the empty right-hand column of the skills matrix.
+## A1 · Every source on disk · 4 h
+- [x] `fetch-sources.sh` — 41 documents across every discipline, all
+      public domain or openly published; `--check` lists what is missing
+- [ ] Run it; confirm every file is a PDF and readable as page images
+- [ ] Record each report's front-matter page offset in `DATA-INDEX.md`
 
-## Phase C0 · Gates and warm-up · 4 h
+*Closes when:* `./fetch-sources.sh --check` reports zero missing.
 
-- [ ] **Gate 1 — which tool?** Read it off two live adverts from the actual
-      target employers. NX/Teamcenter or CATIA. Not a generalisation
-- [ ] **Gate 2 — does it run?** Fusion's install on this machine was corrupt;
-      the Spotlight-exclusion fix is unverified. Confirm launch *and* STEP
-      export before planning around it. If NX or CATIA via the Cranfield VDI
-      is the answer, confirm the catalogue has it
-- [ ] Warm-up: rebuild the hydraulic cylinder body by hand in the chosen
-      tool — **113,588.21 mm³**, 7 faces, 1 solid
+## A2 · Transcribe the tables completely · 24 h
+The blade-level data is what separates L2 from L1. All of it goes into
+`data/`, every value with a page, every table with a consistency test.
+- [x] CR-168219 Tables XI–XV, XVIII, XXI, XXIII, XXVI; §4.3, §5.1–5.8
+- [x] HPC Table X — per-stage rotor summary, all ten stages
+- [x] HPT Tables I–IV; Fig. 3 dimensioned flowpath; Fig. 1 annulus areas
+- [x] LPT Table I; bearing arrangement; combustor counts; mixer
+- [ ] **HPC Table XXII** pp. 154–158 — section geometry for all ten rotors:
+      chord, camber, stagger, β1*, β2*, tm/c, %c, te/c, ~12 sections each
+- [ ] **HPC Table XXI** pp. 112–153 — every stator row: vector diagrams
+      (radius, PR, TR, Mach, c_z, α, φ) and section geometry; vane counts
+- [ ] HPC Figs. 10–20 — stagewise aspect ratio, solidity, Mach, swirl,
+      temperature rise, diffusion factor, work input; Fig. 15 CAFD flowpath
+- [ ] HPC Table XVI clearances; Table XVII casing bolting; Figs. 61–62
+- [ ] HPT report §3 cooling — flows per row, film rows, supply pressures;
+      Figs. 27, 33, 35 metal temperatures; Figs. 44–47 clearances
+- [ ] HPT report §5.2.1 — every disc, shaft and retainer: geometry, stress,
+      LCF; Figs. 51–52 materials; Fig. 5 flow angles and energy vs span
+- [ ] LPT report §2.5–2.7 — final flowpath, vector diagrams, blade shapes
+      per stage; §4.2 blades, dovetails, discs; **blade counts per stage**
+- [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
+      dovetail, containment
+- [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,
+      cooling flow split, exit profile, emissions
+- [ ] E³ HP turbine cooling model 19810018555 — the cooling design method
+- [ ] ICLS CR-168211 — measured engine performance: the *tested* numbers
+      against which the FPS *design* numbers can be compared
 
-*Closes when:* the warm-up volume matches to within a few mm³. If it does
-not, find which dimension you misread before touching this project.
+*Closes when:* every table in `DATA-INDEX.md` marked **L** is marked **T**,
+and `tests/test_published_data.py` holds every new table to at least one
+independent cross-check.
 
-## Phase C1 · Static structure · 12 h
+## A3 · Digitise every flowpath · 8 h
+- [ ] Fan and booster — CR-168219 Fig. 13, scaled to 2.11 m; fan hardware
+      report may give dimensions directly
+- [ ] HPC — HPC report Fig. 15 CAFD flowpath against Table X radii
+- [ ] Combustor — Fig. 22, and the combustor report
+- [ ] HPT — already dimensioned (HPT Fig. 3); confirm against CR-168219 Fig. 24
+- [ ] LPT — LPT report Fig. 6 (final Block II) and CR-168219 Fig. 32
+- [ ] Transition duct, mixer, nozzle — Figs. 39, 40
+- [ ] Whole engine — Fig. 1 as the master; every component must land on it
+- [ ] State a digitising uncertainty per figure from pixel size and line weight
 
-The half your code cannot do, and the half a design office screens on.
+*Closes when:* one `flowpath.stations` list runs fan face to nozzle with hub
+and tip at every row LE/TE, and the HPT segment agrees with the dimensioned
+Fig. 3 to within the stated uncertainty.
 
-- [ ] Fan case and containment
-- [ ] Core casings, split into the report's own **module boundaries**
-- [ ] **Bolted flanges at every module joint** — an engine is assembled and
-      maintained in modules, and the flanges are where that happens
-- [ ] Fan frame and OGVs; turbine frame from Fig. 35/36
-- [ ] Combustor: outer casing, inner liner, dome, diffuser (Fig. 22)
-- [ ] Struts, and the service passages through them
+## A4 · Topology, asserted · 4 h
+- [x] Gas path, station convention, crossed spools, power balance, bearings
+- [x] `tests/test_topology.py`, `tests/test_published_data.py` — 37 tests
+- [ ] Extend: every bleed source and sink; every cavity; every bearing's
+      load path to a casing — as data, with tests
 
-*Closes when:* every module boundary in Table XXVI's weight breakdown is a
-real, separable joint in the model.
-
-## Phase C2 · Rotating structure, sumps and bearings · 10 h
-
-The single clearest differentiator against every student engine model.
-
-- [ ] LP and HP shafts, concentric, LP passing through the HP spool with
-      stated running clearance
-- [ ] Forward sump and aft sump per Fig. 37 and Fig. 38
-- [ ] **Every bearing placed, with its type and the load it takes** — thrust
-      versus radial. Write it down per bearing
-- [ ] Discs for each rotor stage; blade retention features at the rims
-- [ ] Spinner and nose cone
-
-*Closes when:* you can point at each shaft and trace its load path to a
-casing through named bearings. If you cannot, the model is a shape.
-
-## Phase C3 · Assembly, section and render · 8 h
-
-- [ ] Assemble on the axis with real constraints, not by dragging
-- [ ] **Make it turn.** A revolute joint per spool about the engine axis —
-      the LP group (fan, booster, LP shaft, 5 LPT discs) and the HP group
-      (10 HPC discs, HP shaft, 2 HPT discs) as two independent rotating
-      bodies; everything else (casings, vanes, OGVs, frames, sumps) grounded
-- [ ] Motion study at the E³ speed ratio, LP : HP ≈ 3,480 : 12,645 ≈ 1 : 3.6,
-      both spools **co-rotating** as the E³ is. Nothing is simulated — no
-      aero, no loads — the engine turns, it does not run. Say so on the page
-- [ ] Interference check **through a full rotation**, not only at rest —
-      blade tips against casing, rotating seals against static, the LP shaft
-      inside the HP spool. Zero clashes, the same discipline as CAD-01's
-      `test_tolerances.py`
-- [ ] Blade-tip and interstage seal clearances set to the published values
-      in Fig. 29–31, not eyeballed
-- [ ] Section on an axial plane; style the cut faces distinctly
-- [ ] Exploded view by module — nearly free once constrained, and it shows
-      you understand the maintenance architecture
-- [ ] Renders: cutaway, exploded, and a plain GA
-
-*Closes when:* zero clashes, and every rotating-to-static gap is a number
-you chose from the report.
+*Closes when:* the secondary-air and load-path graphs are data, and no
+component, bleed or bearing can be placed inconsistently without a test failing.
 
 ---
 
-# STAGE D — Verification
+# STAGE B — Thermodynamic design · 40 h
 
-Without this stage the project is a picture. With it, it is the only one of
-its kind.
+The cycle is the root of everything downstream; it has to be right at three
+rating points, not one, and it has to carry the flows the real engine carries.
 
-## Phase D1 · Mass, module by module · 6 h
+## B1 · Mixed-flow cycle · 12 h
+- [ ] Add a mixer model to PF-08: constant-area or constant-pressure mixing
+      of core and bypass, mixing effectiveness as an input (E³: 0.838
+      Table XI; 0.85 FPS projection Table XXIII), duct losses per Table XI
+- [ ] Single C-D nozzle with the published coefficient 0.996
+- [ ] Two fan pressure ratios — bypass and hub streams — as the E³ quotes them
+- [ ] Real-gas properties: cp(T) for air and for products at the
+      fuel–air ratio; PF-08 `gas.py` extended, not replaced
 
-- [ ] Assign materials by module — Ti fan and forward compressor, Ni
-      superalloy hot section, steel shafts, composite fan case
-- [ ] Total mass per module, in Table XXVI's own categories
-- [ ] Compare against the published breakdown, module by module
-- [ ] **Explain the largest single discrepancy** rather than the total
+*Closes when:* the mixer model reproduces Table XXIII's sfc improvement of
+2.9 % for 85 % effectiveness against a separate-flow baseline of the same
+core.
 
-*Closes when:* a comparison table exists with a written explanation of the
-worst row. Expect to be light — student models always omit the fasteners,
-the fluid systems and the sumps, and the sumps alone are 320 kg.
+## B2 · Secondary air in the cycle · 8 h
+- [ ] Every Table XI stream at its published fraction and its published
+      source and sink: CPD nonchargeable (upstream of vane-1 throat),
+      CPD chargeable (downstream), stage 7 → HPT vane 2, stage 5 → LPT
+- [ ] Chargeable vs nonchargeable handled correctly in turbine work
+- [ ] Zero customer bleed and power extraction, 100 % ram — as the report
 
-## Phase D2 · Mechanical checks · 6 h
+*Closes when:* turbine work per spool changes by the amount the cooling
+bookkeeping predicts, and the HPT work split still lands at 56.5 % stage 1.
 
-- [ ] HPT blade centrifugal root stress by hand:
-      `σ ≈ ρ·ω²·(r_tip² − r_hub²)/2`. Compare against the ~220 MPa figure
-      in the recall drills
-- [ ] Fan tip speed and relative tip Mach number — is it in the transonic
-      band a real fan runs in? If it reads 1.8, a speed assumption is wrong
-- [ ] Disc rim load from blade count × blade centrifugal load
-- [ ] Creep check on the HPT blade: Larson–Miller at the metal temperature
-      implied by the cooling effectiveness, against a target life.
-      **An HP blade is creep-limited, not yield-limited** — sizing it against
-      yield is the clearest signal of someone who has not worked in this field
-- [ ] Cross-check total secondary air (≈15% of W₂₅ from Table XI) against
-      the ~20% of core flow rule of thumb, and explain the difference
+## B3 · Three rating points · 12 h
+- [ ] Max climb (the match point), max cruise, sea-level takeoff at the
+      flat-rating temperatures in §4.4
+- [ ] Component maps or scalings so off-design points follow from the
+      match point rather than being re-matched — PF-08 `off_design.py`
+- [ ] Reproduce all seven rows of Table XII at all three points
 
-*Closes when:* every check has a number, a comparison, and a verdict.
+*Closes when:* sfc, OPR, BPR, both FPRs, HPC PR and T41 agree with Table XII
+at all three points to a tolerance stated **before** the run — and the
+tolerance is the same at all three. A model tuned to one point and off at
+the others has been tuned, not validated.
 
-## Phase D3 · The disagreement report · 4 h
+## B4 · Station properties and the annulus · 8 h
+- [ ] T, p, ρ, ṁ, c_x, Mach at every station in `flowpath.stations`
+- [ ] Annulus area by continuity at the axial Mach each row was designed to
+      (HPC report Fig. 12 pitch-line meridional Mach; HPT Fig. 5)
+- [ ] Computed hub/tip against digitised hub/tip — **the meridional plot**
 
-- [ ] `FINDINGS.md`: every place the model, the cycle and the published data
-      disagree, with the cause where you found one and "unresolved" where
-      you did not
-- [ ] Rank by size, not by how easy they are to explain
-
-*Closes when:* it is written. **This is the deliverable.** Every strong
-project in this portfolio produced one — teeth intersecting by 424 mm³, a
-545 MPa peak stress that was a boundary condition. An honest findings file
-beats a clean render, and interviewers know the difference.
-
----
-
-# STAGE E — Publication
-
-## Phase E1 · Repository · 4 h
-
-- [ ] README to the house pattern: what it is, status, how to run, what it
-      found, what is outstanding
-- [ ] `build.py` reproduces every figure and export from a clean clone
-- [ ] Full test suite green; add to the root runner
-- [ ] STEP gitignored, regenerated by script — the existing convention
-
-## Phase E2 · Site and viewer · 3 h
-
-- [ ] glTF to `viewer.autodesk.com`, referenced from `cadModels` in
-      `app/data.js` — static, for inspection
-- [ ] **A rotating cutaway on the site.** Export the glTF with bodies grouped
-      by spool (`lp`, `hp`, `static`), then reuse the per-spool `useFrame`
-      rotation the site's `TurbineStage.js` already does — LP and HP groups
-      at the 1 : 3.6 ratio, stopped under `prefers-reduced-motion`. The
-      existing `ModelViewer` `autoRotate` is a turntable, not this; the
-      spool pattern is in `TurbineStage`
-- [ ] Project entry in `app/data.js` — **meridional plot first, render
-      second.** Resist leading with the pretty one
-- [ ] Dimensioned GA drawing with stations labelled, following PF-06's
-      drawing convention
-- [ ] Update `projects/README.md` status table
-
-## Phase E3 · The post · 3 h
-
-- [ ] LinkedIn: the render stops the scroll, the meridional plot is the post
-- [ ] Lead with the validation, not the modelling:
-      *"I rebuilt NASA's Energy Efficient Engine from its 1980s design
-      report. My own cycle model reproduces its published design-point sfc to
-      within X%, and the annulus is computed from that cycle rather than
-      traced off the drawing — here is where mine and NASA's disagree."*
-- [ ] Credit the source properly — NASA CR-168219, public domain. Saying
-      where the data came from reads as rigour, not as a caveat
+*Closes when:* the computed annulus lies inside the digitising uncertainty
+of NASA's at every station where NASA's is dimensioned (HPT), and the
+disagreement elsewhere is quantified and explained.
 
 ---
 
-## What would make this weak
+# STAGE C — Aerodynamic design · 120 h
 
-Written down now so it is not discovered at hour ninety.
+Four fidelity rungs per component: mean-line, through-flow, sections, CFD.
+Each validated before applied. Each compared with the E³ published result.
 
-- **Skipping Stage A and going straight to modelling.** Then it is a render
-  of an engine nobody recognises, which is strictly worse than a render of a
-  GE90. Stage A *is* the differentiator.
-- **Tuning the cycle to match Table XII.** The comparison is only worth
-  something if the inputs were fixed before the run. Publish the disagreement.
-- **Claiming it is a GE90.** It is the E³ — GE's NASA-funded technology
-  demonstrator, and the ancestor of the engines that followed. Say that; it
-  is a more interesting story and it is true.
-- **Omitting the bearings again.** It is the thing the reference model got
-  wrong and the thing a mechanical designer looks for first.
-- **Letting it eat the job search.** 108 hours with zero applications sent is
-  a worse outcome than no engine and eight applications.
+## C1 · Mean-line with loss models · 32 h
+- [ ] **Compressor loss and deviation** per SP-36: profile loss vs DF,
+      end-wall and tip clearance loss, Carter deviation with the SP-36
+      corrections, incidence range. **Validate on NACA TN 3916** cascades
+      before touching the E³
+- [ ] **Turbine loss** per Ainley–Mathieson R&M 2974 (profile, secondary,
+      tip clearance, trailing edge), with the SP-290 vol. 2 method as the
+      cross-check. Validate on the worked cases in the report
+- [ ] Stage-by-stage HPC: work split, DF per row, de Haller, stall margin
+      estimate, VSV schedule effect. Compare stagewise with HPC report
+      Figs. 14, 17, 18, 27
+- [ ] Fan and quarter-stage: bypass and hub streams separately, island
+      split 22 %, 42 % return
+- [ ] HPT: two stages at 56.5 / 43.5 % work, cooled-turbine efficiency
+      definition matching the report's (thermodynamic vs primary)
+- [ ] LPT: five stages, loading and flow coefficient per stage, stage 4
+      acoustic gap
+- [ ] **Derive the stage counts** from loading limits, then compare with
+      1 / ¼ / 10 / 2 / 5
+
+*Closes when:* HPC η_ad within **1.0 point** of 0.860 (Table XIV); fan
+bypass and hub η within 1.0 point of Table XIII; HPT η within 0.5 point of
+92.4 %; LPT within 0.5 point of 91.7 % (LPT Table I). Tolerances are the
+scatter of the loss correlations, not a fit.
+
+## C2 · Through-flow · 24 h
+- [ ] Radial equilibrium (simple, then with streamline curvature) per
+      SP-36 ch. VIII, at each blade row LE and TE
+- [ ] Reproduce the **radial distributions** in HPC Table XXI — stator
+      inlet and exit: radius, PR, TR, Mach, c_z, α at 12 spanwise stations
+- [ ] Reproduce HPT report Fig. 5 — flow angles, Mach and energy
+      extraction vs span, which is forced-vortex, not free
+- [ ] LPT vector diagrams per LPT report §2.6 — controlled vortex
+
+*Closes when:* the through-flow reproduces Table XXI's stator-10 exit
+swirl and Mach distributions within 2° and 0.02 across the span, and the
+HPT energy-extraction profile shape of Fig. 5.
+
+## C3 · Blade sections · 32 h
+- [ ] **Reconstruct every HPC rotor section** from Table XXII: camber line
+      from camber angle and family (Special / bi-convex / 65-series),
+      thickness from tm/c, %c, te/c; stagger; twelve sections per rotor
+      stacked on the stacking axis with the published pretwist and tilt
+- [ ] HPC stators from Table XXI section data; vane counts
+- [ ] HPT vanes and blades: digitise Fig. 6 hub/pitch/tip shapes; check
+      Zweifel and solidity against Table IV
+- [ ] LPT: digitise LPT report Figs. 9–18 per stage
+- [ ] **Fan blade — not published.** Design it: transonic outer sections
+      by the SP-36 / AGARD LS-167 method for tip relative Mach 1.4, hub
+      sections subsonic, 12 stream surfaces, 32 blades, part-span shroud at
+      50 %. State that it is designed, not transcribed
+- [ ] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
+- [ ] Throat area per row from the sections; check it passes the station
+      mass flow at the design Mach
+
+*Closes when:* every row's section set reproduces the published chord,
+camber, stagger and thickness within transcription precision, and every
+throat passes its flow.
+
+## C4 · CFD, selectively · 32 h
+Not every row. The rows where a loss correlation is least trustworthy, and
+only after the method is validated.
+- [ ] **Validate OpenFOAM on NASA Rotor 37** (TP-1337 geometry, the CFD
+      validation report as the reference): mesh convergence, pressure
+      ratio and efficiency vs mass flow, spanwise profiles. PF-05's GCI
+      discipline applies
+- [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
+      vs the mean-line and Table X/XXII
+- [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5
+- [ ] One LPT stage, for the high-aspect-ratio secondary-flow loss
+- [ ] Feed the CFD losses back into C1 and re-close
+
+*Closes when:* Rotor 37 pressure ratio and efficiency at design flow land
+within the published experimental scatter, and the E³ row results move the
+mean-line prediction *toward* the published efficiency, not away.
+
+---
+
+# STAGE D — Thermal design · 60 h
+
+## D1 · HPT cooling, reproduced · 24 h
+- [ ] Flow network per row from the HPT report §3 and the E³ cooling model
+      report: supply pressure, orifice, internal passages, film rows, tip
+      cap, TE slots — with the published cooling flow fractions
+- [ ] Internal heat transfer from TP-2232 correlations (validated against
+      the data in that report), external from the report's own
+      coefficients (§5.4.4: below CF6-based values, especially pressure side)
+- [ ] Film effectiveness by row; superposition
+- [ ] Metal temperature distribution, stage 1 blade pitch section, at
+      steady-state takeoff — compare with HPT report Fig. 27; vane Fig. 16;
+      stage 2 Fig. 35
+- [ ] TBC effect on the dome and shingles (combustor) and on the HPT
+- [ ] Transient: Fig. 28 — the thermal gradients that drive LCF
+
+*Closes when:* pitch-section metal temperature within **25 K** of the
+published distribution at three chordwise points, with the published
+cooling flow, not a tuned one.
+
+## D2 · Combustor · 12 h
+- [ ] Liner cooling: impingement + effusion per shingle row, from the
+      combustor report; wall temperatures
+- [ ] Exit temperature profile and pattern factor — the HPT vane's input
+- [ ] Loading, residence time, primary-zone equivalence ratio at the three
+      rating points; pilot-only vs both domes
+- [ ] Emissions estimate against Tables XVI–XVII, method from AGARD CP-422
+
+*Closes when:* pressure drop 5.0 % reproduced from the geometry, and the
+exit profile is what D1 used.
+
+## D3 · The secondary-air map · 16 h
+- [ ] Every bleed, cavity, seal and sink as a network: sources (fan, stage
+      5, stage 7, CPD), pressures, flows, temperatures at max climb and TO
+- [ ] Rim seals: purge vs ingestion margin at each disc cavity
+- [ ] Labyrinth seal leakages from clearance and pressure ratio
+      (sealing report); sump pressurisation (§5.7)
+- [ ] **Thrust balance** on each rotor across the mission; balance-piston
+      cavities per HPT report Figs. 95–96; net load into bearings 1 and 3
+- [ ] Rotor bore cooling with fan discharge air (§5.2.2)
+
+*Closes when:* total secondary air lands at Table XI's 16.1 % of W25 and
+every cavity has a pressure that keeps hot gas out.
+
+## D4 · Clearance control · 8 h
+- [ ] Casing and rotor thermal growth vs time through takeoff–climb–cruise
+- [ ] ACC: fan-air impingement effect on HPT/LPT casing; the CPD warm-up
+      circuit
+- [ ] Reproduce HPT report Figs. 44–47: tip clearance vs time with and
+      without ACC; the 1.0 / 0.6 % steady values
+
+*Closes when:* the clearance transient has the published shape and the
+cruise values land within 0.2 % of span.
+
+---
+
+# STAGE E — Mechanical design · 90 h
+
+## E1 · Blades · 24 h
+- [ ] Centrifugal stress per row from the C3 sections — area distribution,
+      taper, stacking; compare with HPC Table X `centrifugal_stress` all
+      ten stages
+- [ ] Gas bending from the C1 loads; tilt to cancel; compare Table X
+      `max_root_stress`
+- [ ] **FEA in CalculiX** on HPC rotor 1, HPT blade 1, LPT blade 1: mesh
+      convergence as CAD-05 did it; peaks on constraints disbelieved
+- [ ] HPT blade creep: Larson–Miller with the D1 metal temperatures;
+      rupture life vs the report's BUCKET-CREEP result (Figs. 75–76, 83–84)
+- [ ] HPT blade LCF from the D1 transient (Fig. 78)
+
+*Closes when:* Table X centrifugal stresses reproduced within **10 %** all
+ten stages, and HPT stage-1 rupture life within a factor of 2 of the
+published — that is the scatter of creep data.
+
+## E2 · Discs · 20 h
+- [ ] Disc profiles from the cross-sections (A3) for every rotor stage
+- [ ] Rim load = blade count × blade CF + attachment; bore stress; burst
+      margin on average tangential stress at 120 % speed (33.27 / CS-E 840)
+- [ ] **FEA** on HPT stage-1 disc; compare with HPT report Figs. 61–64;
+      interstage seal disc Fig. 65
+- [ ] LCF at bore and slot (Fig. 61 gives concentration and life)
+- [ ] The bolted-joint and inertia-weld rotor structure of the HPC
+
+*Closes when:* HPT disc peak effective stress within 10 % of Fig. 64, and
+the bore doubling for a small hole is demonstrated on the model.
+
+## E3 · Vibration · 20 h
+- [ ] Blade modal analysis per HPC stage; **Campbell diagrams vs HPC report
+      Figs. 33–42** — ten published diagrams to match, with the stage-3
+      root-thickening for 4/rev as the test
+- [ ] Vane Campbell vs Figs. 46–56
+- [ ] LPT stage 1 coupled blade–disc (LPT report Fig. 63); tip-shroud and
+      angel-wing effects
+- [ ] Flutter screen: reduced frequency per row; flexural and torsional
+      stability plots vs HPC Figs. 43–44
+- [ ] HCF margin by Goodman on top of the E1 mean stress
+
+*Closes when:* first three modes of every HPC stage within **5 %** of the
+published Campbell lines.
+
+## E4 · Shafts, bearings, rotordynamics · 16 h
+- [ ] LP and HP shaft torsion and bending; the LP shaft through the HP
+      spool with clearance
+- [ ] Bearing loads: radial from mass and unbalance, axial from D3 thrust
+      balance; check against bearing type (ball 1, 3; roller 2, 4, 5)
+- [ ] Critical speeds of each rotor with bearing stiffness; squeeze-film
+      damper effect (CR-168219 §5.11, Figs. 56–57)
+- [ ] Blade-out unbalance load into mounts (§5.9.2; 33.94 / CS-E 810)
+
+*Closes when:* no rotor critical inside the operating band without a
+damper, and thrust-bearing load stays inside capacity in both directions.
+
+## E5 · Attachments and joints · 10 h
+- [ ] HPC dovetails per HPC report §3.2.3: neck tensile, tang shear, crush;
+      weak-link order disc > blade > airfoil
+- [ ] HPT and LPT dovetail / fir-tree; boltless retainers (HPT Fig. 66)
+- [ ] Casing flange bolting per HPC Table XVII; rotor bolt relaxation
+      (HPT Figs. 89–91)
+
+*Closes when:* every attachment has margin on all three stresses and the
+weak-link order holds.
+
+---
+
+# STAGE F — Materials and mass · 20 h
+
+## F1 · Materials with allowables · 12 h
+- [ ] Alloy per component from the reports (HPC Table X; HPT Figs. 51–52;
+      combustor §5.3; fan §5.1.2; LPT Fig. 50)
+- [ ] Properties at temperature from **MIL-HDBK-5J**: Ti-6-4, Ti-8-1-1,
+      Inconel 718, and the nearest listed alloys for the cast and
+      single-crystal parts, with the substitution stated
+- [ ] Creep data source per hot-section alloy; Larson–Miller constants
+- [ ] The Ti-fire limit and the Ti→Ni switch as a design check, not a fact
+
+*Closes when:* every stress in Stage E is compared with an allowable at
+its metal temperature, and the margin is tabulated.
+
+## F2 · Mass · 8 h
+- [ ] Mass per part from geometry and density; per module in Table XXVI's
+      categories
+- [ ] Sumps, drives, seals — the 320 kg — from the E4 bearing and sump
+      geometry, not left out
+- [ ] Compare module by module; explain the worst row
+
+*Closes when:* basic engine mass within **10 %** of 3,473 kg, and no
+module more than 20 % off.
+
+---
+
+# STAGE G — Geometry generation · 40 h
+
+Everything generated from the validated design tables. Nothing traced.
+- [ ] Blade rows from C3 sections — PF-06 extended to arbitrary section
+      stacks; every row, every count
+- [ ] Discs from E2 profiles; shafts from E4; blade attachments
+- [ ] Flowpath surfaces, casings, liner, dome from A3 and D2
+- [ ] Nacelle from CST fitted to Fig. 40 — PF-07
+- [ ] Compound STEP and glTF, bodies grouped by spool (`lp`, `hp`, `static`)
+- [ ] Boolean interference across all generated bodies — zero
+- [ ] `build.py`: one command regenerates every table, figure and export
+
+*Closes when:* `python build.py` on a clean clone reproduces everything,
+and the generated mass matches F2.
+
+---
+
+# STAGE H — Hand CAD and assembly · 50 h · gated
+
+## H1 · Gates · 4 h
+- [ ] Which tool do the target employers name? Read it off live adverts
+- [ ] Does it run and export STEP? Fusion's install was corrupt; unverified
+- [ ] Warm-up: the cylinder body to 113,588.21 mm³
+
+## H2 · Static structure · 16 h
+- [ ] Casings split at the report's module boundaries; bolted flanges at
+      every joint per Table XVII
+- [ ] Fan frame and OGVs (composite, integral); turbine frame Figs. 35–36
+- [ ] Combustor casing, diffuser, liner support pins (30), fishmouth seals
+- [ ] Mount links and brackets Figs. 44–45; pressure bulkhead
+
+## H3 · Sumps and bearings · 12 h
+- [ ] Forward sump per Fig. 37: bearings 1, 2, 3, PTO gear, seals, damper
+- [ ] Aft sump per Fig. 38: bearings 4 (intershaft), 5, air/oil separator
+- [ ] Every bearing placed with its type and its E4 load
+
+## H4 · Assembly, motion, section · 18 h
+- [ ] Real joints: revolute per spool, static grounded
+- [ ] Clearances set to the D4 values; interference **through a full
+      rotation** — zero
+- [ ] Motion at LP : HP ≈ 1 : 3.6, co-rotating. Turns; does not run
+- [ ] Section, exploded by module, renders
+
+*Closes when:* zero clashes through rotation, and every bearing can be
+pointed at with its load stated.
+
+---
+
+# STAGE I — Whole-engine verification · 30 h
+
+## I1 · Cross-discipline consistency · 16 h
+- [ ] The same T41 in B, D and E; the same cooling flows in B, D and D3;
+      the same metal temperatures in D and E and F; the same masses in F
+      and G — as tests, not by inspection
+- [ ] Spool speeds from four routes (fan tip speed, HPC Table X, HPT
+      N/√T, LPT N/√T) agree
+- [ ] Every "closes when" tolerance re-checked after Stage G's geometry
+
+## I2 · Sensitivity · 6 h
+- [ ] Which assumptions move the sfc, the metal temperature and the disc
+      stress most — one-at-a-time, tabulated
+
+## I3 · `FINDINGS.md` · 8 h
+- [ ] Every disagreement with a published number, ranked by size, with a
+      cause or "unresolved"
+- [ ] Every place the E³ *design* (FPS) and the E³ *as tested* (ICLS,
+      CR-168211) differ, and which the model matches
+
+*Closes when:* written. **This is the deliverable.**
+
+---
+
+# STAGE J — Publication · 20 h
+
+- [ ] README to the house pattern; `build.py`; full suite in the root runner
+- [ ] Meridional plot **first**; Campbell match second; render third
+- [ ] Drawing pack: GA with stations; one detail per module
+- [ ] Rotating cutaway on the site via the `TurbineStage` spool pattern;
+      static glTF to the Autodesk viewer
+- [ ] Update `projects/README.md`
+- [ ] The post: validation-led, NASA credited, the gap stated
+
+---
+
+## Consistency rules
+
+The rules that make "accurate" mean something. Any change that breaks one
+is reverted.
+
+1. **One source of numbers.** `data/*.yaml`, every value with a `src:`.
+   Code reads it; nothing hardcodes it.
+2. **Two routes to every number** the reports give two ways, and a test
+   that makes them agree.
+3. **Tolerance before result.** Every "closes when" states its tolerance;
+   the tolerance is the scatter of the method, decided before the run.
+4. **Validate before apply.** No method touches the E³ until it has
+   reproduced a NASA test case.
+5. **Same number everywhere.** A quantity used by two disciplines is
+   asserted equal by a test.
+6. **Assumptions labelled.** `src: assumption` with a `note:`. Fan sections
+   are the known one.
+7. **Regenerated, not edited.** Every figure and export comes out of
+   `build.py`. If it cannot be regenerated it is not a result.
+8. **The gap is the result.** `FINDINGS.md` grows; it is never trimmed to
+   look better.
 
 ## Progress
 
 | Stage | Phase | Done |
 |---|---|---|
-| A | A1 Acquire and read | ⬜ |
-| A | A2 Cycle validation | ⬜ |
-| A | A3 Digitise flowpath | ⬜ |
-| A | A4 Computed annulus | ⬜ |
-| B | B1 Blade rows | ⬜ |
-| B | B2 Nacelle and ducts | ⬜ |
-| B | B3 Compound and export | ⬜ |
-| C | C0 Gates and warm-up | ⬜ |
-| C | C1 Static structure | ⬜ |
-| C | C2 Sumps and bearings | ⬜ |
-| C | C3 Assembly and section | ⬜ |
-| D | D1 Mass | ⬜ |
-| D | D2 Mechanical checks | ⬜ |
-| D | D3 Findings | ⬜ |
-| E | E1 Repository | ⬜ |
-| E | E2 Site and viewer | ⬜ |
-| E | E3 Post | ⬜ |
+| A | A1 sources · A2 transcription · A3 flowpaths · A4 topology | A1 ▣ · A2 ◧ · A3 ⬜ · A4 ◧ |
+| B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ⬜ ⬜ ⬜ ⬜ |
+| C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
+| D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
+| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ⬜ ⬜ ⬜ ⬜ ⬜ |
+| F | F1 materials · F2 mass | ⬜ ⬜ |
+| G | geometry | ⬜ |
+| H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
+| I | I1 consistency · I2 sensitivity · I3 findings | ⬜ ⬜ ⬜ |
+| J | publication | ⬜ |
+
+▣ done · ◧ partly · ⬜ not started

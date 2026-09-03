@@ -1,171 +1,165 @@
 # References
 
-Every source this project builds on, what it gives, and its licence status.
+Every source this project runs on, what it gives, and its licence. 41
+documents, all fetched by `./fetch-sources.sh`, all public domain or openly
+published.
 
-**The rule this project runs on:** a number that appears in the model must be
-traceable to a row in this file. If it cannot be cited, it is an assumption,
-and assumptions get labelled as such in `data/e3-fps-published.yaml`.
+**The rule:** a number in the model must be traceable to a row in this file.
+If it cannot be cited, it is an assumption, and assumptions are labelled as
+such in `data/e3-fps-published.yaml`.
 
----
-
-## Primary — the design report this project rebuilds
-
-### [1] NASA CR-168219 — E³ Flight Propulsion System, Final Analysis and Design
-
-General Electric Company, for NASA Lewis Research Center under contract
-**NAS3-20643**, Aircraft Energy Efficiency (ACEE) Program, Energy Efficient
-Engine (E³) Project. 175 pp.
-
-<https://ntrs.nasa.gov/api/citations/19900019242/downloads/19900019242.pdf>
-
-**Licence: US Government work, public use permitted.** This is the reason
-the project is possible at all.
-
-This single document is a complete engineering data package for a whole
-turbofan. Verified contents, with report page numbers:
-
-| Item | Where | What it gives this project |
-|---|---|---|
-| **Table XII — FPS Cycle Definition** | p. 35 | OPR, BPR, fan and compressor pressure ratios, HPT rotor inlet temperature and sfc, at three rating points. **The cycle validation target** |
-| **Table XI — Component Performance, Max Cruise** | p. 34 | Every component efficiency, every pressure loss, and all four cooling/purge flows as % W₂₅. **The inputs that make the validation fair** |
-| **Table XXVI — FPS Weight Summary** | p. 140 | Mass broken down by module and by rotor/stator. **Module-level mass validation, not just a total** |
-| Fig. 1 — FPS Design | p. 4 | Full engine cross-section — the master flowpath drawing |
-| Fig. 13 — Fan Cross Section | p. 38 | Fan and booster flowpath |
-| Fig. 18 — Compressor Cross Section | p. 47 | 10-stage HPC flowpath |
-| Fig. 22 — Combustor Cross Section | p. 59 | Liner, dome, diffuser |
-| Fig. 24 — HPT Cross Section | p. 66 | 2-stage HPT flowpath |
-| Fig. 32 — LPT Cross Section | p. 83 | 5-stage LPT flowpath |
-| Fig. 35, 36 — Turbine Frame | pp. 93, 94 | Rear structure, both views |
-| Fig. 37, 38 — Forward and Aft Sump Design | pp. 97, 99 | **Bearing locations and support structure** — the thing every student model omits |
-| Fig. 29, 30, 31 — Blade-tip and interstage seal clearances | pp. 77–79 | Real running clearance numbers |
-| Fig. 40 — Nacelle General Arrangement | p. 106 | Cowl, reverser, mount |
-| Fig. 44, 45 — Mount links and brackets | pp. 112, 113 | How the engine hangs off the pylon |
-| §5.7 — Sumps, Drives, Configuration, Lube | pp. 96–100 | Bearing system narrative |
-| §4.3 — Final Cycle Refinement | p. 32 | Fan tip diameter, core corrected flow, thrust |
-
-**Sections read and verified in preparing this project:** Foreword, Tables of
-Contents / Illustrations / Tables, Fig. 1, §4.3, §4.4, Tables XI, XII, XIII,
-XIV, XV, XVIII, XXI, XXIII, XXVI; §5.1 (fan, incl. Figs. 13–17), §5.2
-(compressor, incl. Fig. 18), §5.3 (combustor, incl. Figs. 22–23), §5.4
-(HPT, incl. Figs. 24–27), §5.5 (LPT, incl. Figs. 32–33), §5.7 (sumps and
-bearings, incl. Figs. 37–38), §5.8 (exhaust, incl. Fig. 39), §5.9 opening.
-What each gave is in [DATA-INDEX.md](DATA-INDEX.md).
-
-### [2] Sister E³ component design reports
-
-Same programme, same licence, all on NTRS. Each is the depth behind one
-module of [1]. Open these when a component needs more than [1] gives.
-
-| Report | NTRS ID | Gives — verified contents |
-|---|---|---|
-| E³ High Pressure Compressor, detail design (170 pp.) | `19850002690` | **Table X pp. 65–66: per-stage rotor summary** — blade count, radii, angles, chord, solidity, material, temperature, stress, HP spool rpm. **Table XXI pp. 112–153: stator vector diagrams and geometry. Table XXII pp. 154–158: rotor airfoil section geometry.** Campbell diagrams per stage, clearances, casing bolting |
-| E³ HPT test hardware, detailed design, CR-167955 (195 pp.) | `19850002687` | **Fig. 3 p. 9: dimensioned flowpath. Table III p. 10: stage aero, blade counts 46/48/76/70, tip speeds, clearances. Table IV p. 12: solidity, Zweifel, aspect ratio. Fig. 6 p. 14: airfoil shapes hub/pitch/tip.** §5.2.1: every disc, shaft and retainer with stress and LCF |
-| E³ LPT test hardware, detailed design (188 pp.) | `19850002686` | **Table I p. 5: three-point operating data.** §2.5–2.7 final flowpath and vector diagrams; Figs. 9–18 vane and blade shapes per stage; §4.2 blades, dovetails, discs, seals |
-| E³ Preliminary Design, CR-135444 (402 pp.) | `19780023165` | The trade studies behind the configuration — not yet opened |
-| E³ Core design and performance (538 pp.) | `19900019243` | Core as tested — not yet opened |
-
-### [2b] NASA SP-36 — *Aerodynamic Design of Axial-Flow Compressors*
-
-Johnsen & Bullock (eds.), Lewis Research Center, 1965. NTRS `19650013744`.
-**Public use permitted.** Consolidates the declassified 1956 research
-memoranda into the compressor design method: Lieblein diffusion factor,
-cascade loss and deviation correlations, radial equilibrium, stall. The
-reference every later compressor text is measured against, and the method
-behind the E³ HPC. Fetched by `fetch-sources.sh`.
-
-Fetch pattern: `https://ntrs.nasa.gov/api/citations/<ID>/downloads/<ID>.pdf`
-
-> **These are scanned documents.** Text extraction fails; they must be read
-> as page images. Budget for that — it is why digitising the flowpath is its
-> own phase rather than an afternoon.
+Fetch pattern for NTRS: `https://ntrs.nasa.gov/api/citations/<ID>/downloads/<ID>.pdf`.
+Most are scanned; read as page images. PDF-page offsets per report are in
+[DATA-INDEX.md](DATA-INDEX.md).
 
 ---
 
-## Secondary — the GE90, for the "what did this become" framing
+## 1 · The E³ programme — the engine being rebuilt
 
-The E³ is the technology programme behind GE's subsequent big fans. The GE90
-is the recognisable name; its actual geometry is proprietary, so it is used
-here **only for context and top-level comparison**, never as a geometry source.
+General Electric for NASA Lewis under contract NAS3-20643, Aircraft Energy
+Efficiency Program. **All US Government works, public use permitted.**
 
-### [3] CAA New Zealand, Type Acceptance Report TAR 11/21B/7 — GE90-100 Series
+| File | NTRS | Gives |
+|---|---|---|
+| **`e3-fps-final-design-CR-168219.pdf`** | 19900019242 | **The primary source.** Cycle at 3 ratings (Table XII p.35), component performance and cooling flows (XI p.34), fan (§5.1, XIII), compressor (§5.2, XIV, XV), combustor (§5.3), HPT (§5.4, XVIII), LPT (§5.5, XXI), turbine frame, **sumps and bearings (§5.7, Figs. 37–38)**, exhaust and mixer (§5.8, XXIII), nacelle, controls, dynamics, **weights (XXVI p.140)**, cross-sections of every component |
+| `e3-fps-preliminary-analysis-CR-159584.pdf` | 19810013521 | The FPS as first laid out — what changed and why |
+| `e3-preliminary-design-CR-135444.pdf` | 19780023165 | Trade studies behind the configuration (402 pp.) |
+| `e3-fan-hardware-design-CR-165148.pdf` | 19830008070 | Fan and quarter-stage detailed design: blade, shroud, dovetail, containment |
+| `e3-fan-quarter-stage-performance.pdf` | 19850025828 | Fan rig test results — measured against design |
+| **`e3-hp-compressor-detail-design.pdf`** | 19850002690 | **Table X per-stage rotor summary; Table XXI stator vector diagrams and geometry; Table XXII rotor section geometry**; Campbell diagrams all stages; clearances; casing bolting; dovetails |
+| `e3-combustor-hardware-design.pdf` | 19900019238 | Double-annular combustor design: liner, dome, nozzles, diffuser, cooling, emissions |
+| **`e3-hp-turbine-hardware-CR-167955.pdf`** | 19850002687 | **Dimensioned flowpath (Fig. 3); stage aero and blade counts (III); blading geometry (IV); airfoil shapes (Fig. 6)**; cooling design (§3); ACC; every disc and shaft with stress and LCF (§5.2.1) |
+| `e3-hp-turbine-cooling-model.pdf` | 19810018555 | The HPT cooling design method |
+| `e3-lp-turbine-hardware.pdf` | 19850002686 | Five-stage LPT: flowpath, vector diagrams, blade shapes per stage, discs, seals, ACC |
+| `e3-controls-and-accessories.pdf` | 19850021645 | FADEC, VSV actuation, ACC valves, fuel system |
+| `e3-component-development-vol2-appA.pdf` | 19850002683 | Component development summary across the programme |
+| `e3-core-design-and-performance.pdf` | 19900019243 | The core as tested (538 pp.) |
+| `e3-icls-design-and-performance-CR-168211.pdf` | 19900019245 | **The engine as tested** — measured performance to compare the FPS *design* numbers against |
 
-Rev. 0, 21 October 2010, validating FAA Type Certificate **E00049EN**.
+## 2 · Design methods — public-domain textbooks
 
-<https://www.aviation.govt.nz/assets/aircraft/type-acceptance-reports/Gen_Electric_GE90-100_Series.pdf>
+| File | Source | Gives |
+|---|---|---|
+| **`nasa-sp36-axial-compressor-design.pdf`** | NASA SP-36, Johnsen & Bullock 1965, NTRS 19650013744 | **The compressor design method**: diffusion factor, cascade loss and deviation, radial equilibrium (ch. VIII), stall, blade-element theory. The method behind the E³ HPC |
+| **`nasa-sp290-turbine-design-vol1-2-3.pdf`** | NASA SP-290, Glassman 1972–75, NTRS 19950015924 | **The turbine design method**: velocity diagrams, blade design, loss, radial equilibrium, cooling, mechanical |
+| `naca-tn3916-65-series-cascade-tests.pdf` | NACA TN 3916, Herrig, Emery & Erwin 1957, NTRS 19930084843 | Systematic 65-series cascade data — the validation set for compressor loss and deviation |
+| `naca-tn3806-65-series-rotor-vs-cascade.pdf` | NACA TN 3806, NTRS 19930084578 | Same sections in a rotor vs in cascade — what 3-D does to 2-D data |
+| `arc-rm2974-ainley-mathieson-turbine-loss.pdf` | ARC R&M 2974, Ainley & Mathieson 1951, Cranfield AERADE | The turbine loss method: profile, secondary, tip clearance, trailing edge |
+| `agard-ls167-blading-design-axial-turbomachines.pdf` | AGARD LS-167, 1989, DTIC ADA211103 | Blading design methods incl. transonic and controlled-diffusion sections |
+| `mit16-50-lec29.pdf`, `mit16-50-lec31-…` | MIT OCW 16.50, CC BY-NC-SA | Cycle; compressor–turbine matching |
 
-Verified directly from the document:
+## 3 · Validation test cases — prove the method before applying it
 
-- GE90 baseline architecture: **10-stage HPC** driven by a **2-stage HPT**;
-  a **6-stage LPT** drives a **single-stage fan and 3-stage LPC**.
-- GE90-100 growth changes: increased fan diameter and pressure ratio using
-  **swept blade technology**; **booster gains a 4th stage**; **new 9-stage HPC
-  with a stage-1 blisk**; combustor scaled from the **DAC II** design; new HP
-  and LP turbine blades and vanes with lower solidity and improved cooling;
-  fan-blade-out load reduction features; FADEC 3.
-- Certification basis FAR Part 33 through Amdt 33-20, plus Special Condition
-  **SC-33-ANE-08-NE** for the composite fan blades.
-- Blade-out test agreed at the **inner annulus flowpath line rather than the
-  dovetail** — a detail worth knowing if the blade root ever comes up.
-- Emissions compliance quoted with **28 P02 and 2 P01 fuel nozzles**.
+| File | Source | Gives |
+|---|---|---|
+| `nasa-tp1337-rotor37-design-and-performance.pdf` | NASA TP-1337, Reid & Moore 1978, NTRS 19780025165 | **Rotor 37**: geometry and measured performance of the standard transonic compressor test case — 36 blades, PR 2.106, 454 m/s |
+| `nasa-rotor37-cfd-code-validation.pdf` | NTRS 20100029589 | How Rotor 37 is used to validate a CFD code, and what "agreement" looks like |
+| `nasa-tp2879-rotor67-laser-anemometer.pdf` | NASA TP-2879, Strazisar et al. 1989, NTRS 19900001929 | **Rotor 67**: laser-anemometer flowfield in a transonic fan rotor, tip Mach 1.38 — the fan validation case |
 
-### [4] EASA TCDS IM.E.002 — GE90 series
+## 4 · Thermal — cooling and secondary air
 
-<https://www.easa.europa.eu/en/downloads/7799/en> — **not yet opened.**
-Use it to confirm dimensions and ratings independently of [3].
+| File | Source | Gives |
+|---|---|---|
+| **`nasa-tp2232-internal-cooling-heat-transfer-review.pdf`** | NASA TP-2232, Yeh & Stepka 1984, NTRS 19840013760 | **Internal-passage heat-transfer and pressure-loss correlations** — the cooling-network method, with data |
+| `nasa-tmx52801-turbine-cooling-limits-and-future.pdf` | NASA TM X-52801, Esgar 1970, NTRS 19700018642 | Convection, transpiration and full-coverage film cooling compared |
+| `nasa-tmx2791-internal-air-cooling.pdf` | NASA TM X-2791, NTRS 19730016202 | Internal air cooling heat transfer |
+| `nasa-cooling-methods-first-principles.pdf` | NTRS 20030064309 | Cooling methods from first principles |
+| `nasa-full-coverage-film-cooling-study.pdf` | NTRS 19760011294 | Full-coverage film cooling heat transfer |
+| `nasa-turbomachine-sealing-secondary-flows.pdf` | NTRS 20040086723 | Seals and secondary-flow systems |
+
+## 5 · Mechanical — vibration, life, attachments
+
+| File | Source | Gives |
+|---|---|---|
+| `nasa-bladed-disk-vibration.pdf` | NTRS 19870017475 | Bladed-disc modal behaviour |
+| `nasa-mistuned-bladed-disk-flutter.pdf` | NTRS 19840015855 | Mistuning and flutter |
+| `nasa-hot-section-fatigue-life-prediction.pdf` | NTRS 19880005071 | Creep–fatigue life methods for hot-section parts |
+| `nasa-blade-root-fretting-single-crystal.pdf` | NTRS 20000033269 | Fretting at single-crystal blade roots |
+| `nato-en-avt-207-10-blade-hcf-campbell.pdf` | NATO STO EN-AVT-207-10 | Blade HCF and Campbell diagrams |
+
+## 6 · Materials
+
+| File | Source | Gives |
+|---|---|---|
+| **`mil-hdbk-5j-metallic-materials.pdf`** | MIL-HDBK-5J, DoD 2003, distribution unlimited (Internet Archive mirror) | **Design allowables at temperature**: Ti-6Al-4V, Ti-8Al-1Mo-1V, Inconel 718, steels, aluminium — tensile, fatigue, creep where listed. Superseded by MMPDS (paywalled); 5J is the last public issue |
+
+For cast and single-crystal superalloys not in 5J, the E³ reports give the
+alloy and the design stresses used (HPC Table X; HPT Figs. 51–55); state
+the substitution when a 5J alloy stands in.
+
+## 7 · Combustion
+
+| File | Source | Gives |
+|---|---|---|
+| `agard-cp422-combustion-and-fuels.pdf` | AGARD CP-422, 1988, DTIC ADA202495 | Combustor design methods, emissions, fuel effects |
+
+Lefebvre & Ballal, *Gas Turbine Combustion*, is the textbook; cite it,
+do not paraphrase.
+
+## 8 · Certification
+
+| File | Source | Gives |
+|---|---|---|
+| `easa-cs-e-amendment-8.pdf` | EASA CS-E Amdt 8 | 515 critical parts · 810 blade-out · 840 rotor integrity · 800 bird · 740 endurance |
+| `faa-14cfr-part33-engines.pdf` | 14 CFR Part 33, 2024 ed. | 33.27 overspeed · 33.62 stress · 33.70 life-limited parts · 33.75 safety · 33.76 bird · 33.87 endurance · 33.94 containment |
+
+Open them for wording. Never paraphrase a regulation from memory into a
+document.
+
+## 9 · Context — the GE90
+
+| File | Source | Gives |
+|---|---|---|
+| `ge90-100-type-acceptance-NZ.pdf` | CAA NZ TAR 11/21B/7, validating FAA TC E00049EN | GE90 baseline 1 / 3 / 10 / 2 / 6; -100 series 4-stage booster, 9-stage HPC with blisk, DAC II combustor; SC-33-ANE-08-NE composite fan |
+
+**Context only.** The GE90's geometry is proprietary. Nothing from it enters
+the model.
+
+---
+
+## Textbooks — cite, do not paraphrase into documents
+
+Saravanamuttoo, Rogers, Cohen — *Gas Turbine Theory* · Dixon & Hall —
+*Fluid Mechanics and Thermodynamics of Turbomachinery* · Walsh & Fletcher —
+*Gas Turbine Performance* · Mattingly — *Elements of Propulsion* · Kerrebrock
+— *Aircraft Engines and Gas Turbines* · Cumpsty — *Compressor Aerodynamics*
+· Lefebvre & Ballal — *Gas Turbine Combustion* · Han, Dutta & Ekkad — *Gas
+Turbine Heat Transfer and Cooling Technology* · Reed — *The Superalloys* ·
+Rolls-Royce — *The Jet Engine* · Kacker & Okapuu 1982, Dunham & Came 1970
+(turbine loss updates, ASME).
+
+Legitimate route: Cranfield's library, or buying them.
+
+## Not available, and what stands in
+
+| Wanted | Status | Stand-in |
+|---|---|---|
+| E³ fan blade section coordinates | not published | designed by the SP-36 / AGARD LS-167 method; labelled an assumption |
+| GE coordinate tapes named in HPC Table X | not public | sections reconstructed from Table XXII parameters |
+| SAE ARP755 station numbering | paywalled | the convention as used in the E³ reports and PF-08 |
+| MMPDS | paywalled | MIL-HDBK-5J |
+| Kacker–Okapuu, Dunham–Came | ASME | Ainley–Mathieson R&M 2974 + SP-290 |
 
 ---
 
 ## Verified 3 September — the architecture block is closed
 
-Everything that was on the "to verify" list has now been read in the source.
-What each turned out to be, since two of them were not what was assumed:
-
 | Claim | Settled as | Where |
 |---|---|---|
-| E³ fan blade count | **32**, solid titanium, 50 % span shrouds — *not* wide-chord unshrouded | [1] §5.1.2 p. 45; Fig. 13 p. 38 |
-| E³ booster | **A single quarter-stage** under an untrapped island — *not* a multi-stage LPC. Rows 60 / 56 / 64 | [1] §5.1 p. 37, §5.1.1 p. 43; Fig. 13 |
-| E³ HPC | 10 stages, **23.0** on the operating line at the max-climb match ([2]'s abstract quotes 22.6 as the design value), 0.860 adiabatic, 0.906 polytropic | [1] §5.2 p. 45, Table XIV p. 51 |
-| E³ LPT stage count | **5** | [1] §5.5 p. 82, §5.5.1 p. 85 |
-| E³ combustor | **Double annular**, 60 cups, 30 nozzles | [1] §5.3 pp. 57–62 |
+| E³ fan blade count | **32**, solid Ti, 50 % span shrouds | CR-168219 §5.1.2 p.45; Fig. 13 |
+| E³ booster | **single quarter-stage** under an untrapped island; rows 60 / 56 / 64 | §5.1 p.37, §5.1.1 p.43 |
+| E³ HPC | 10 stages, **23.0** at the match point, 0.860 / 0.906 | §5.2 p.45, Table XIV p.51 |
+| E³ LPT | **5** stages | §5.5 p.82 |
+| E³ combustor | **double annular**, 60 cups, 30 nozzles | §5.3 pp.57–62 |
 
 ## Still to verify before quoting
 
-| Claim | Current status | Where to settle it |
+| Claim | Status | Settle at |
 |---|---|---|
-| GE90-115B fan diameter 128 in / 3.25 m | Sources seen disagree (10.5 ft vs 128 in) | [4], or GE's own published data |
-| GE90-115B dry weight | Not sourced | [4] or manufacturer data |
-| Booster rows 60 / 56 — which is the vane and which the blade | Assigned by upstream/downstream position in Fig. 13; 64 is confirmed in text as the inner OGV | [1] §5.1.1 pp. 41–45, read again with the figure |
-| HPC variable-stator row count | [1] says IGV + stators 1–4 (pp. 45, 52); [2] says IGV + five rows for the product engine (p. 64) | Use [2] for the FPS product; note both |
-| LPT blade counts per stage | Not yet transcribed | LPT report §4.2.1 pp. 82–101, Fig. 52 p. 83 |
+| Booster rows 60 / 56 — vane vs blade | assigned by position in Fig. 13 | fan hardware report CR-165148 |
+| HPC variable-stator row count | CR-168219 says IGV+1–4; HPC report says IGV+1–5 for the product | use the HPC report; note both |
+| LPT blade counts per stage | not yet transcribed | LPT report §4.2.1, Fig. 52 |
+| GE90-115B fan diameter and dry weight | sources disagree / unsourced | context only; not needed for the model |
 
-Full inventory of what is transcribed, located, or must be digitised:
+Full inventory of transcribed / located / to-digitise:
 [DATA-INDEX.md](DATA-INDEX.md).
-
----
-
-## Own prior work this project consumes
-
-Not external, but it is where most of the engineering already lives.
-
-| Project | Path | What this project takes |
-|---|---|---|
-| PF-08 turbofan cycle | `projects/08-cycle-model` | `Stations`, `gas.py`, `components.py` — the solver to validate and then drive geometry from |
-| PF-06 blade row | `projects/06-blade-row` | `velocity_triangles.py`, `annulus.py`, `blade.py`, free-vortex twist, STEP export |
-| PF-07 nacelle | `projects/07-nacelle` | CST cowl and hollow shell, STEP export |
-| CAD-05 bracket | `CAD-Projects/05-Sheet-Metal-Bracket` | The verification pattern: converge it, then disbelieve the peak |
-| CAD-06 turbine blade | `CAD-Projects/06-Turbine-Blade` | The hot-section blade detail, when Stage 1 of that brief is done |
-
-## Domain notes backing the physics
-
-In the private vault, not the public mirror:
-`Job-Search-2026/Job_Search-2026/GT-Design/` — nine subjects, nine worked
-problem sets. Subjects 01 (aero), 02 (integrity), 04 (cooling) and 05
-(secondary air) all carry directly into this project.
-
----
-
-## Citation style for the write-up
-
-State the report, the table or figure, and the page. Not "NASA data" —
-**"NASA CR-168219, Table XII, p. 35."** The specificity *is* the credibility,
-and it takes four extra words.

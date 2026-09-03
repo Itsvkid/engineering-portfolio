@@ -1,22 +1,19 @@
-# 09 — The Energy Efficient Engine, rebuilt from its design report
+# 09 — The Energy Efficient Engine, rebuilt from its design reports
 
 A complete twin-spool turbofan — nacelle, fan, booster, compressor,
-combustor, both turbines, shafts, sumps and casings — modelled and sectioned
-as a cutaway. **Every dimension is traceable to a public-domain NASA design
-report, and the flowpath is computed from a cycle rather than traced off a
-drawing.**
+combustor, both turbines, shafts, sumps, bearings and casings — designed
+discipline by discipline to the fidelity the published data can check, then
+assembled and sectioned as a rotating cutaway. **Every number is traceable
+to a public-domain NASA report; every analysis method is validated on a NASA
+test case before it touches the engine; every result is compared with what
+NASA measured, and the gap is published.**
 
-**Status:** planned. Work plan in [WORK-PLAN.md](WORK-PLAN.md), sources in
-[REFERENCES.md](REFERENCES.md), published data transcribed with citations in
+**Status:** foundation. Sources on disk, the architecture and the
+stage-level data transcribed and held by 37 tests. Work plan in
+[WORK-PLAN.md](WORK-PLAN.md) — ten stages, ~510 hours — sources in
+[REFERENCES.md](REFERENCES.md), what is transcribed in
+[DATA-INDEX.md](DATA-INDEX.md), the data itself in
 [`data/e3-fps-published.yaml`](data/e3-fps-published.yaml).
-
-What is built so far is the data layer: the architecture, the cycle, the
-per-stage compressor blading, the HPT flowpath and blading, the bearing
-arrangement and the module masses, all transcribed from the reports with a
-page reference on every value — and held to themselves by 37 tests
-([`tests/`](tests/)) that make independent routes to the same number agree.
-Plain interpreter, no CAD backend. [DATA-INDEX.md](DATA-INDEX.md) says what
-is transcribed, what is located, and what must be digitised.
 
 ```
 gas path   fan -> booster (1/4-stage) -> HPC (10) -> combustor -> HPT (2) -> LPT (5) -> mixer -> nozzle
@@ -24,11 +21,6 @@ stations    2          21                  25          3           4          45
 LP spool   [--]       [--]                                                   [--]     bearings 1, 2, 5
 HP spool                                  [--]                    [--]                bearings 3, 4
 ```
-
-The shafts cross the gas path: the **LP** spool takes the first compressors
-and the last turbine, the **HP** spool takes the two in the middle. Pair them
-the other way and every work split is wrong while the model still looks
-entirely plausible — which is why it is asserted rather than assumed.
 
 ---
 
@@ -39,113 +31,112 @@ mixed-flow, twin-spool, high-bypass turbofan designed by General Electric
 under NASA contract NAS3-20643, and the technology programme behind the
 big-fan engines GE built afterwards.
 
-It is chosen over a GE90 or a Trent for one reason that decides everything
-about this project:
+It is chosen over a GE90 or a Trent for one reason that decides everything:
 
-> **Its entire design report is public domain, and it contains the numbers.**
+> **Its entire design is public domain, and it contains the numbers.**
 
-NASA CR-168219 gives the cycle at three rating points, every component
-efficiency, every cooling flow, a module-by-module mass breakdown, running
-clearances, and cross-sections of every component including the bearing
-sumps. A modern engine's geometry is proprietary; this one's is published.
+Fourteen NASA contractor reports cover it — cycle at three rating points,
+every component efficiency and cooling flow, per-stage compressor blading
+down to section angles, a dimensioned turbine flowpath, blade counts,
+metal temperatures, disc stresses, Campbell diagrams for every compressor
+stage, running clearances, the bearing arrangement, module masses, and the
+engine's measured performance as tested. A modern engine's geometry is
+proprietary; this one's is published.
 
 That is the difference between a model that *looks* like an engine and a
-model that can be **checked against one**.
+design that can be **checked against one**.
+
+## What "no compromise" means, precisely
+
+| Level | Meaning | This project |
+|---|---|---|
+| L1 Geometric | looks like the component | the reference model; not acceptable here |
+| L2 Parametric | stage-level numbers right, from the source | the floor, everywhere |
+| **L3 Physical** | a **validated** method reproduces the **published** performance to a **stated** tolerance | **the commitment, wherever NASA published a result to check** |
+
+Ten stages: foundation, thermodynamic, aerodynamic, thermal, mechanical,
+materials and mass, geometry, hand CAD, whole-engine verification,
+publication. Each discipline validates its method on a NASA test case
+(Rotor 37, NACA 65-series cascades, Ainley–Mathieson, TP-2232 cooling data)
+before applying it to the E³, then compares with the E³'s own published
+result. Stages A–F need no CAD licence — 370 of the 510 hours.
 
 ## What this project claims, and how each claim is checked
 
-| Claim | Checked against |
-|---|---|
-| The cycle is right | NASA's own published sfc, OPR, BPR and turbine inlet temperature — CR-168219 Table XII |
-| The component assumptions are fair | Published efficiencies and cooling flows, used as inputs and not tuned — Table XI |
-| The annulus is *derived*, not drawn | Computed from the cycle by continuity, overlaid on NASA's published cross-sections |
-| The blades are real blades | Free-vortex twist from velocity triangles, stage counts derived from the work split |
-| The structure is an engine, not a shell | Every shaft's load path traced to a casing through named, placed bearings |
-| The mass is plausible | Module-by-module against NASA's weight summary — Table XXVI |
+| Claim | Checked against | Tolerance |
+|---|---|---|
+| The cycle is right at three ratings | Table XII: sfc, OPR, BPR, FPRs, HPC PR, T41 | stated before the run, same at all three points |
+| The compressor is right | Table XIV η 0.860; Table X angles and stresses; Table XXI vector diagrams; Figs. 33–42 Campbell, all ten stages | 1.0 pt η · 10 % stress · 2° swirl · 5 % frequency |
+| The turbines are right | HPT Table III, Fig. 5; LPT Table I | 0.5 pt η |
+| The cooling is right | HPT report Figs. 27, 33, 35 metal temperatures, with the published flows | 25 K |
+| The structure is an engine | five bearings, two sumps, thrust balance across the mission | load path traced to a casing for every rotor |
+| The mass is right | Table XXVI, module by module | 10 % total, 20 % any module |
+| The methods are trustworthy | Rotor 37 CFD, TN 3916 cascades, TP-2232 correlations | within published experimental scatter |
 
-The last one deserves a note. NASA's own breakdown puts **sumps, drives and
-seals at 320 kg** — more than twice the combustor, casing and diffuser
-together at 137 kg. A model without a bearing system is not missing a
-detail; it is missing a tenth of the engine.
+The last row is the one the others rest on.
 
 ## Why it is not another CAD render
 
-Searching for turbofan models returns hundreds. Almost all of them share the
-same three properties: the blades are untwisted, there are no bearings, and
-the proportions came from a photograph. They are shapes of engines.
+Searching for turbofan models returns hundreds sharing three properties:
+untwisted blades, no bearings, proportions from a photograph. The
+[work plan](WORK-PLAN.md) lists every flaw in the reference model and the
+phase that designs it out.
 
-This one starts from the other end — the thermodynamics — and lets the
-geometry fall out of it. The headline figure is not the cutaway. It is a
-plot of **computed annulus radius against NASA's published annulus radius**,
-on the same axes, with the disagreement quantified and explained.
-
-That plot is a sentence you can say in an interview: *the geometry is
-downstream of the cycle, and here is where mine and NASA's differ, and why.*
+This one starts from the thermodynamics and lets the geometry fall out of
+it. The headline figure is not the cutaway. It is **computed annulus radius
+against NASA's published annulus radius**, then **ten Campbell diagrams
+against NASA's ten**, then the render.
 
 ## What it builds on
 
-Three of this portfolio's existing projects are the inputs, which is why
-this is a fortnight of new work rather than a term of it:
-
 | Project | Contributes | State |
 |---|---|---|
-| [08 — Turbofan cycle model](../08-cycle-model/) | Station-by-station solve; the thing being validated | v1, 82 tests |
-| [06 — Parametric blade row](../06-blade-row/) | Free-vortex twist, blade rings, annulus, STEP export | v1, 96 tests |
-| [07 — Parametric nacelle](../07-nacelle/) | CST cowl and hollow shell | v1, 71 tests |
-| [CAD-05 — Sheet metal bracket](https://github.com/Itsvkid/CAD-Projects) | The verification pattern: converge it, then disbelieve the peak | complete |
-| [CAD-06 — HP turbine blade](https://github.com/Itsvkid/CAD-Projects) | Hot-section blade detail | brief only |
+| [08 — Turbofan cycle model](../08-cycle-model/) | station-by-station solve, to be extended with a mixer and validated | v1, 82 tests |
+| [06 — Parametric blade row](../06-blade-row/) | twist, blade rings, annulus, STEP; extended to arbitrary section stacks | v1, 96 tests |
+| [07 — Parametric nacelle](../07-nacelle/) | CST cowl | v1, 71 tests |
+| [05 — OpenFOAM airfoil](../05-openfoam-airfoil/) | the CFD discipline: GCI, convergence | complete |
+| [01 — Airfoil analysis](../01-airfoil-analysis/) | camber-line + thickness section construction | complete |
+| [CAD-05 — Sheet metal bracket](https://github.com/Itsvkid/CAD-Projects) | FEA discipline: converge, then disbelieve the peak | complete |
+| [CAD-06 — HP turbine blade](https://github.com/Itsvkid/CAD-Projects) | hot-section blade detail | brief |
 
-Three projects that read as three separate CV lines become one engine.
+Seven projects become one engine.
 
-## Shape of the work
+## Consistency rules
 
-Five stages, 108 hours, of which 34 need a CAD licence and **74 do not**.
+1. One source of numbers — `data/*.yaml`, every value with a `src:`.
+2. Two routes to every number the reports give two ways, and a test.
+3. Tolerance stated before the result.
+4. Validate the method before applying it.
+5. A quantity two disciplines share is asserted equal by a test.
+6. Assumptions labelled `src: assumption` — the fan sections are the known one.
+7. Everything regenerated by `build.py`; nothing hand-edited.
+8. `FINDINGS.md` grows; it is never trimmed.
 
-| Stage | Produces | CAD? |
-|---|---|---|
-| A · Foundation | Verified data, a validated cycle, the computed flowpath | no |
-| B · Generated geometry | Every bladed row, nacelle, ducts, exports | no |
-| C · Hand CAD | Casings, flanges, sumps, bearings, assembly, cutaway | **yes** |
-| D · Verification | Mass, stress, clearances, and the findings | partly |
-| E · Publication | Site entry, drawing pack, the write-up | no |
+## Honesty rules
 
-**Stage A stands alone.** If the CAD tool question stays open, Stage A plus
-Stage B is still a complete, publishable piece of work — and it is the half
-that carries the argument.
-
-## Honesty rules for this project
-
-Carried over from the rest of the portfolio, and worth restating because the
-temptation is stronger on a project this visual:
-
-1. **It is the E³, not a GE90.** Named correctly, with the report cited. The
-   real story is better than the borrowed one.
-2. **Inputs fixed before the run.** The cycle comparison is worth nothing if
-   the efficiencies were tuned until it matched.
-3. **Digitised geometry carries an uncertainty.** Radii scaled off a scanned
-   1980s drawing are ±something. State it.
-4. **The disagreement gets published.** `FINDINGS.md` is a deliverable, not
-   an appendix.
-5. **Unverified numbers are labelled.** `data/e3-fps-published.yaml` marks
-   every value that has not yet been read in the source with
-   `verified: false` and where to settle it.
+1. **It is the E³, not a GE90.** Named, cited, NASA credited.
+2. **Inputs fixed before the run.** Efficiencies and cooling flows are
+   NASA's; they are not tuned to match.
+3. **Digitised geometry carries an uncertainty.** Stated per figure.
+4. **The disagreement gets published.**
+5. **Unverified numbers are labelled**, with where to settle them.
+6. **Designed, not transcribed, is said so.** The fan blade sections are
+   not published; they are designed by the SP-36 method and labelled.
 
 ## Running it
 
-Not yet runnable. When Stage A2 lands:
-
 ```bash
-python build.py            # solve, validate against Table XII, plot
-python -m pytest           # including the published-data comparison tests
+./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
+./fetch-sources.sh --check  # what is present
+python -m pytest tests/     # 37 tests, plain interpreter
 ```
 
-Sources are fetched by script and gitignored, following the same convention
-as the reference PDF library and the STEP exports elsewhere in this
-portfolio: the script is committed, the binaries are not.
+`build.py` arrives with Stage B.
 
 ---
 
-*Data source: NASA CR-168219, "Energy Efficient Engine Flight Propulsion
+*Primary source: NASA CR-168219, "Energy Efficient Engine Flight Propulsion
 System Final Analysis and Design Report", General Electric Company for NASA
 Lewis Research Center, contract NAS3-20643. US Government work, public use
-permitted.*
+permitted. Thirteen further E³ reports and twenty-four method, validation,
+materials and regulatory sources are listed in REFERENCES.md.*
