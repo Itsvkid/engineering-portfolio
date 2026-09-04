@@ -151,8 +151,19 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [ ] HPC Figs. 10–20 — stagewise aspect ratio, solidity, Mach, swirl,
       temperature rise, diffusion factor, work input; Fig. 15 CAFD flowpath
 - [ ] HPC Table XVI clearances; Table XVII casing bolting; Figs. 61–62
-- [ ] HPT report §3 cooling — flows per row, film rows, supply pressures;
-      Figs. 27, 33, 35 metal temperatures; Figs. 44–47 clearances
+- [x] **HPT report §3 cooling** pp. 17–67 — the T41 margin budget; the
+      18.87 % flow budget and its four sums; supply system; stage-1 vane
+      (cavity pressures, backflow margins, impingement and film geometry
+      row by row, 14-node pitch map, mixing losses per row); stage-1 blade
+      (two circuits and six exits both closing on 3.30 %, tip cap, flow
+      characteristics, 43-node pitch map in °C and °F, transient); both
+      shrouds; stage-2 vane (flows closing two ways, 58 nodes at two spans);
+      stage-2 blade (23 nodes, FOD and tip-cap-loss analyses); rotor
+      structure and casing thermal fixes; casing 22-node map.
+      `data/hpt-cooling.yaml`, `tests/test_hpt_cooling.py`. Five print
+      inconsistencies and eight °C/°F read disagreements on the record
+- [ ] HPT report Figs. 44–47 — blade-tip and interstage-seal clearances
+      (in §4, not §3)
 - [ ] HPT report §5.2.1 — every disc, shaft and retainer: geometry, stress,
       LCF; Figs. 51–52 materials; Fig. 5 flow angles and energy vs span
 - [ ] LPT report §2.5–2.7 — final flowpath, vector diagrams, blade shapes

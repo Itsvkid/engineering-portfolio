@@ -46,6 +46,7 @@ front-matter offset (given per report below) to get the PDF page.
 | OPR, BPR, fan bypass/hub PR, HPC PR, T41, sfc — 3 rating points | **T** | CR-168219 Table XII p.35 |
 | Component efficiencies and pressure losses | **T** | CR-168219 Table XI p.34 |
 | Cooling flows, chargeable / nonchargeable, 5th and 7th stage | **T** | CR-168219 Table XI p.34; bleed locations §5.2.1 p.52 |
+| **HPT cooling design, as designed** — 18.87 % flow budget by component and source; supply system; per-row film and impingement geometry; cavity pressures and backflow margins; pitch-section metal-temperature maps for stage-1 vane (14 nodes), stage-1 blade (43), stage-2 vane (58 at two spans), stage-2 blade (23), shroud (15), casing (22); transients; FOD and tip-cap-loss analyses; rotor-structure and casing fixes — **`data/hpt-cooling.yaml`**, every C/F pair checked | **T** | HPT report §3 pp.17–67, Tables VI–IX, Figs. 9–40 |
 | Fan corrected flow, PRs at aero DP and cycle match | **T** | CR-168219 §5.1.1 p.41 |
 | Core corrected flow 54.4 kg/s, T25, P25, HPC PR at max climb | **T** | CR-168219 Table XIV p.51 |
 | HPT T41, Δh/T, N/√T, corrected flow | **T** | CR-168219 Table XVIII p.70; HPT report Table I p.4 (3 rating points) |
