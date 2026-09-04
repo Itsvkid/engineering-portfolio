@@ -73,8 +73,7 @@ front-matter offset (given per report below) to get the PDF page.
 | Booster stage-1 vane / booster blade | 60 / 56 | **T** (assignment inferred from figure position) | Fig. 13 p.38 |
 | Inner OGV (core duct) | 64 | **T** | CR-168219 §5.1.1 p.43 |
 | HPC rotors 1–10 | 28 38 50 60 70 80 82 84 86 94 | **T** | HPC report Table X p.65 |
-| HPC IGV and stators 1–9 | — | **L** | HPC report Table XXI pp.112–153 (12 sections per row) |
-| HPC stator 10 | 140 | **T** | HPC report Table XXI p.153 |
+| HPC IGV, stators 1–10 | 32 · 50 68 82 92 110 120 112 104 118 140 | **T** | HPC report Table XXII pp.157–159 |
 | HPT vanes 1 / 2 | 46 / 48 | **T** | HPT report Table III p.10, Table IV p.12 |
 | HPT blades 1 / 2 | 76 / 70 | **T** | same |
 | LPT vanes and blades 1–5 | — | **L** | LPT report §4.2.1 pp.82–101, Fig. 52 p.83 |
@@ -85,8 +84,8 @@ front-matter offset (given per report below) to get the PDF page.
 | Quantity | Status | Source |
 |---|---|---|
 | **HPC rotors 1–10: per-stage summary** — airfoil length, root/tip radius (LE and stacking axis), orientation angle, camber, chord, aspect ratio, radius ratio, tm/c, te/c, solidity, tilt, pretwist, airfoil family, weight, material, metal temperature, root stress | **T** | HPC report Table X pp.65–66 |
-| **HPC rotors 1–10: section-by-section** — ~12 spanwise sections each with chord, camber, stagger, β1*, β2*, tm/c, %c of max thickness, te/c | **L** | HPC report Table XXII pp.154–158 |
-| **HPC stators: vector diagrams and geometry** — radius, P/T ratios, Mach, Cz, α, φ, solidity, diffusion factor, loss, incidence, deviation, then section geometry | **L** | HPC report Table XXI pp.112–153 |
+| **HPC rotors 1–10 and IGV + stators 1–10: section-by-section** — 12 spanwise sections per row with radius, chord, camber, stagger, β1*, β2*, tm/c, %c of max thickness, te/c (IGV: stagger and CL0) — **252 sections, `data/hpc-blade-sections.yaml`**, every row checked camber = β1*−β2* and cm = in × 2.54, ends checked against Table X | **T** | HPC report Table XXII pp.154–159 |
+| **HPC stators: vector diagrams** — radius, P/T ratios, Mach, Cz, α, φ, solidity, diffusion factor, loss, incidence, deviation at 12 spanwise stations (original-design blading) | **L** | HPC report Table XXI pp.112–153 |
 | Fan blade airfoil sections | **—** in tables; described only | CR-168219 §5.1.1 p.43: transonic sections on 12 streamsurfaces, GE Streamsurface program |
 | Inner OGV: sweep 60°, lean 0°→20° hub | **T** | CR-168219 §5.1.1 p.43, Fig. 17 p.44 |
 | HPT blading aero geometry — solidity, Zweifel, TE blockage, aspect ratio, unguided turn, 4 rows | **T** | HPT report Table IV p.12 |

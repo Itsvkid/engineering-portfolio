@@ -134,10 +134,16 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [x] HPC Table X — per-stage rotor summary, all ten stages
 - [x] HPT Tables I–IV; Fig. 3 dimensioned flowpath; Fig. 1 annulus areas
 - [x] LPT Table I; bearing arrangement; combustor counts; mixer
-- [ ] **HPC Table XXII** pp. 154–158 — section geometry for all ten rotors:
-      chord, camber, stagger, β1*, β2*, tm/c, %c, te/c, ~12 sections each
-- [ ] **HPC Table XXI** pp. 112–153 — every stator row: vector diagrams
-      (radius, PR, TR, Mach, c_z, α, φ) and section geometry; vane counts
+- [x] **HPC Table XXII** pp. 154–159 — section geometry for all ten rotors
+      **and the IGV and all ten stators**: 252 sections, each with radius,
+      chord, camber, stagger, β1*, β2*, tm/c, %c, te/c. Every row checked
+      camber = β1*−β2* and cm = in × 2.54; ends checked against Table X;
+      stator 10 checked against Table XXI. `data/hpc-blade-sections.yaml`,
+      `tests/test_hpc_sections.py`
+- [ ] **HPC Table XXI** pp. 112–153 — every stator row's vector diagrams
+      (radius, PR, TR, Mach, c_z, α, φ, DF, loss, incidence, deviation);
+      the section geometry there is the *original* design and is superseded
+      by XXII
 - [ ] HPC Figs. 10–20 — stagewise aspect ratio, solidity, Mach, swirl,
       temperature rise, diffusion factor, work input; Fig. 15 CAFD flowpath
 - [ ] HPC Table XVI clearances; Table XVII casing bolting; Figs. 61–62

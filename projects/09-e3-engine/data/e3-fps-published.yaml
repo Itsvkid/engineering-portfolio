@@ -350,8 +350,20 @@ hpc:
     xnh_max_climb_aero_dp: 12645
     nc_deteriorated_engine: 13948
     note: XNH is the physical HP speed at the max-climb aero design point (FPS cycle case 41); Nc deteriorated is the max-pressure/max-temperature case used for stress
-  stator_10_vane_count: 140
-  stator_10_src: "HPC report Table XXI p.153"
+  stator_vane_counts:
+    src: "HPC report Table XXII pp.157-159; stator 10 also Table XXI p.153"
+    igv: 32
+    s1: 50
+    s2: 68
+    s3: 82
+    s4: 92
+    s5: 110
+    s6: 120
+    s7: 112
+    s8: 104
+    s9: 118
+    s10: 140
+  blade_section_geometry: "data/hpc-blade-sections.yaml — Table XXII, 12 sections per row, all 21 rows"
   # Per-stage rotor blade summary. Metric as printed, with two corrections
   # noted. Radii are at the stacking axis unless suffixed _le.
   rotor_stages:
