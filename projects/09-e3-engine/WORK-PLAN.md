@@ -140,10 +140,14 @@ The blade-level data is what separates L2 from L1. All of it goes into
       camber = β1*−β2* and cm = in × 2.54; ends checked against Table X;
       stator 10 checked against Table XXI. `data/hpc-blade-sections.yaml`,
       `tests/test_hpc_sections.py`
-- [ ] **HPC Table XXI** pp. 112–153 — every stator row's vector diagrams
-      (radius, PR, TR, Mach, c_z, α, φ, DF, loss, incidence, deviation);
-      the section geometry there is the *original* design and is superseded
-      by XXII
+- [x] **HPC Table XXI** pp. 112–132 — every row's through-flow: 12
+      streamlines at inlet and exit, blade-element solidity, DF, loss,
+      efficiency, incidence, deviation. 21 rows, 756 station lines. Checked
+      five ways (R-BAR vs XXII, U/r = ω = 12,303 rpm, PT/TT chaining along
+      the gas path, σ = cN/2πr, DF recomputed). Found: both bleed ports in
+      the data where the prose puts them; rotors 9 and 10 re-bladed 88→86
+      and 98→94 between original and final; stators 8–9 re-chorded.
+      `data/hpc-vector-diagrams.yaml`, `tests/test_hpc_vector_diagrams.py`
 - [ ] HPC Figs. 10–20 — stagewise aspect ratio, solidity, Mach, swirl,
       temperature rise, diffusion factor, work input; Fig. 15 CAFD flowpath
 - [ ] HPC Table XVI clearances; Table XVII casing bolting; Figs. 61–62

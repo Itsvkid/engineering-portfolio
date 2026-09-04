@@ -395,7 +395,7 @@ inconsistent_as_printed:
      note: "0.5 deg apart. Camber 31.35 fits the spanwise trend (31.53 -> 31.35 -> 29.65); one of the betas is mis-set or mis-read by 0.5. Not corrected."}
   - {row: stator, stage: 9, section: 2, check: length, column: sect_ht,
      read: "29.449 cm printed beside 11.592 in; 11.592 x 2.54 = 29.444",
-     note: "0.005 cm apart, beyond print rounding (max 0.002). Either 29.444 or 11.594 is the intended value. 0.02 percent; no consequence for geometry. Not corrected."}
+     note: "0.005 cm apart, beyond print rounding (max 0.002). RESOLVED by Table XXI p.130, which prints this streamline's R-BAR as 29.444 independently: the inch value is right and 29.449 is the misprint. Left as printed here; data/hpc-vector-diagrams.yaml carries the matching note."}
   - {row: stator, stage: 10, section: 2, check: length, column: chord,
      read: "2.4559 cm printed beside 0.971 in; 0.971 x 2.54 = 2.4663, 2.4559 / 2.54 = 0.967",
      note: "0.010 cm apart. Either the inch value is 0.967 (a 7 read as 1) or the cm value is 2.4663. 0.4 percent. Not corrected."}
