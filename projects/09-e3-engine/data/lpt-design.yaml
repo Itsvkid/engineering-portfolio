@@ -195,10 +195,13 @@ stage1_blade_campbell:
     band. First flex at ~1,800 Hz sits far above any low-order excitation.
 
 vane_counts:
-  src: "sec 4.2.1 p.84 — the resonance study's forcing lines: stage-1 vane 72/rev, stage-2 vane 102/rev"
+  src: "Fig.6 p.12 (all five); sec 4.2.1 p.84 confirms 72 and 102 as the resonance forcing lines"
   stage1: 72
   stage2: 102
-  stages_3_5: not yet found
+  stage3: 96
+  stage4: 114
+  stage5: 120
+  all: [72, 102, 96, 114, 120]
 
 flight_cycle:
   src: "Fig.51 p.81"

@@ -552,11 +552,12 @@ lpt:
     total: 630
     note: "Table VII p.80 prints 122 for stage 1; Fig.52's 120 is taken — see data/lpt-design.yaml"
   vane_counts_per_stage:
-    stage1: 72
-    stage2: 102
-    src: "LPT report sec 4.2.1 p.84 — forcing orders 72/rev and 102/rev"
-    stages_3_5: not yet found
+    value: [72, 102, 96, 114, 120]
+    verified: true
+    src: "LPT report Fig.6 p.12; 72 and 102 also sec 4.2.1 p.84 as forcing orders"
+    total: 504
   blade_geometry: "data/lpt-design.yaml — chords, lengths, aspect ratios, takeoff stresses, rupture mission, Campbell"
+  aerodynamics: "data/lpt-aero.yaml — Table II vector diagrams (5 stages x hub/pitch/tip), Table III solidity and aspect ratio (10 rows), peak Mach per row, Block II rig results"
 
 # ─────────────────────────────────────────────────────────────────────────
 # EXHAUST AND MIXER

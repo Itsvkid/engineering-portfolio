@@ -78,7 +78,7 @@ front-matter offset (given per report below) to get the PDF page.
 | HPT vanes 1 / 2 | 46 / 48 | **T** | HPT report Table III p.10, Table IV p.12 |
 | HPT blades 1 / 2 | 76 / 70 | **T** | same |
 | LPT blades 1–5 | 120 122 122 156 110 | **T** | LPT report Fig. 52 p.83; §4.1.2 p.78 |
-| LPT vanes 1–2 (3–5 not yet found) | 72 · 102 | **T** | LPT report §4.2.1 p.84 (forcing orders) |
+| LPT vanes 1–5 | 72 102 96 114 120 | **T** | LPT report Fig. 6 p.12; §4.2.1 p.84 |
 | Combustor swirl cups / fuel nozzles | 60 / 30 | **T** | CR-168219 §5.3.2 p.61 |
 
 ## Blade geometry — angles, chord, airfoil shape
@@ -94,7 +94,8 @@ front-matter offset (given per report below) to get the PDF page.
 | HPT stage parameters — PR, loading, reaction, exit Mach, swirl, radius ratio, tip clearance | **T** | HPT report Table III p.10 |
 | HPT airfoil shapes at hub/pitch/tip, all 4 rows, with surface velocity | **D** | HPT report Fig. 6 p.14 — 0.508 cm grid, digitisable |
 | HPT flow angles, Mach, energy extraction vs. span | **D** | HPT report Fig. 5 p.13 |
-| LPT vane and blade shapes per stage, Block II | **D** | LPT report Figs. 9–18 pp.18–27 |
+| LPT vane and blade shapes per stage, Block II — peak Mach and axial extents transcribed; coordinates in the appendix | **T/D** | LPT report Figs. 9–18 pp.18–27 |
+| **LPT final vector diagrams (Table II: Δh, PR, loading, φ, reaction, angles, Mach at hub/pitch/tip × 5 stages); blading solidity, Zweifel, TE blockage, aspect ratios (Table III, 10 rows); transition-duct Mach and separation; Block I lessons and Block II rig results (92.0 % five-stage, 91.4 % status)** — `data/lpt-aero.yaml` | **T** | LPT report §2.4–2.8, Tables II–III, Figs. 2–19, pp.6–29 |
 | **LPT blades: chords, lengths, aspect ratios, edge diameters; takeoff stresses per stage (CF, LE resultant, gas bending); rupture mission (7 points, 18,000 h); rupture and HCF results; stage-1 Campbell; materials; life basis; design cycle points and speeds; ACC payoff; start-transient temperatures** — `data/lpt-design.yaml` | **T** | LPT report §3.10, §4.1–4.2.1, Tables V–IX, Figs. 47–62, pp.72–95 |
 | LPT vector diagrams | **L** | LPT report §2.6 p.13 |
 

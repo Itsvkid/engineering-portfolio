@@ -171,9 +171,12 @@ The blade-level data is what separates L2 from L1. All of it goes into
       rupture mission; life and HCF results; stage-1 Campbell; materials;
       design speeds (Table VI 3,539 rpm confirms the cycle derivation).
       `data/lpt-design.yaml`, `tests/test_lpt_design.py`
-- [ ] LPT report §2.5–2.7 — final flowpath, vector diagrams, blade shapes
-      per stage; §4.2.2–4.2.3 dovetails and discs; §4.3 stator (vane
-      counts 3–5); Table X LCF
+- [x] **LPT report §2.4–2.8** — Block II flowpath and all ten airfoil
+      counts (Fig. 6), Table II vector diagrams, Table III solidity and
+      aspect ratios, peak Mach per row, rig results. `data/lpt-aero.yaml`,
+      `tests/test_lpt_aero.py`
+- [ ] LPT report §4.2.2–4.2.3 dovetails and discs; §4.3 stator; Table X LCF;
+      appendix airfoil coordinates (A3)
 - [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
       dovetail, containment
 - [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,

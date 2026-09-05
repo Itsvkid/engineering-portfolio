@@ -1,0 +1,225 @@
+# E3 LPT — final (Block II) aerodynamic design, as printed.
+# Source: NASA CR-167956? / "Energy Efficient Engine Low-Pressure Turbine
+# Component Test Hardware Detailed Design Report" (GE, Bridgeman, Cherry,
+# Pedersen), sections 2.4-2.8, Tables II-III, Figs 2-19, report pp.6-29
+# (PDF pages = report page + 13).
+#
+# Every number carries its source. Nothing is corrected; disagreements
+# and illegible digits are recorded by name. Companion to lpt-design.yaml
+# (mechanical) and e3-fps-published.yaml (cycle and counts).
+
+meta:
+  source: e3-lp-turbine-hardware.pdf
+  pages_read: [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+  transcribed: 2026-09-05
+  status: sections 2.4-2.8 complete; appendix airfoil coordinates not transcribed (drawings, Stage A3 digitising)
+
+airfoil_counts:
+  src: "Fig.6 p.12 — 'Number of Airfoils Per Stage', LP turbine flowpath final for Block II"
+  rows:   [V1, R1,  V2,  R2,  V3, R3,  V4,  R4,  V5,  R5]
+  counts: [72, 120, 102, 122, 96, 122, 114, 156, 120, 110]
+  vanes:  [72, 102, 96, 114, 120]
+  rotors: [120, 122, 122, 156, 110]
+  total: 1134
+  block_i_stage1_vane: 56
+  note: >
+    The Block I stage-1 vane had 56 airfoils; Block II raised it to 72 for
+    solidity and throat aspect ratio (sec 2.5 p.10, Fig.5 p.11). Rotor
+    counts agree with Fig.52's blade table in lpt-design.yaml; the 72 and
+    102 agree with the resonance forcing orders of sec 4.2.1.
+
+block_i_lessons:
+  src: "sec 2.4 pp.6-10"
+  rig: 0.67-scale, stages 1 and 2, HLFT design philosophy; tests March-August 1979
+  deficiency: two-stage total-to-total efficiency below pretest prediction
+  causes_found:
+    - secondary-flow loss core over the outer 40 percent of the stage-1 vane span (weakened inlet boundary layer from the diffusing transition duct outer wall, plus high vane tip slope)
+    - the same over the outer 20 percent of the stage-2 vane
+    - unexpectedly poor performance at the rotor hubs (Fig.4 shows stage-1 efficiency ~0.79 at the hub, ~0.94 at 30-50 percent, ~0.81 at the tip)
+  stackup_for_icls: {status_efficiency: 0.904, goal: 0.911, deficiency: 0.007}
+  redesign_items:
+    - stage-1 vane solidity low, especially at the hub
+    - stage-1 vane aspect ratio low, especially near the tip
+    - rotor hub solidity low; excessive pressure-side diffusion near the leading edges
+    - outer wall slope 25 degrees against HLFT's 22 costs performance, especially near low-aspect-ratio vane tips
+    - inner and outer wall overlap geometry degraded relative to HLFT
+  stage1_vane_kinetic_energy_efficiency:
+    src: "Fig.3 p.8 — Block I, read off"
+    span_pct:   [5,    10,   20,   30,   40,   50,   60,   65,   70,   75,   80,   85,   90,   95]
+    efficiency: [0.892, 0.942, 0.980, 0.982, 0.976, 0.974, 0.968, 0.965, 0.948, 0.931, 0.892, 0.921, 0.935, 0.970]
+    note: the 80 percent trough is the loss core
+
+block_ii_flowpath:
+  src: "sec 2.5 pp.10-13; Figs.5-6"
+  ground_rule: overall length and diameter unchanged from Block I
+  finding: configurations that reduce wall slope by raising loading or through-flow velocity show a net LOSS against the Block I flowpath, so the flowpath stayed essentially unchanged
+  changes:
+    - higher aspect ratio, higher solidity stage-1 vane (56 -> 72) with a modified transition duct; chordal aspect ratio raised by reducing axial chord at the outer wall
+    - rotor platforms extended to lap under the stator inner bands; outer-wall flow shielded from the open honeycomb of the tip shrouds (Block I left both open)
+    - rotor hub axial widths kept at Block I values, blade counts raised for hub solidity, and axial widths reduced from pitch to tip to bring solidity there back to Block I levels
+  transition_duct_axisymmetric_analysis:
+    src: "Fig.7 p.14 — read off"
+    outer_wall_mach: {at_hpt_exit: 0.52, peak: 0.55, at_vane_le: 0.40}
+    inner_wall_mach: {at_hpt_exit: 0.41, minimum: 0.36, at_vane_le: 0.40}
+    separation_parameter: {block_ii_peak: 0.37, block_i_peak: 0.36, possible_separation: 0.40, probable_separation: 0.50}
+    streamline_radii_cm: {hpt_exit_outer: 38.0, hpt_exit_inner: 30.8, vane_le_outer: 43.0, vane_le_inner: 33.0, duct_length_cm: 12}
+  calculation_model:
+    src: "Fig.8 p.15 — ICLS LP turbine axisymmetric calculation model, read off"
+    inlet_radius_in: [12.0, 15.3]
+    exit_radius_in: [17.5, 22.0]
+    axial_length_to_exit_in: 24
+    method: full three-dimensional radial-equilibrium, axisymmetric; streamline slope and curvature, radial blade force from sweep and dihedral, blockage and radial loss gradients (sec 2.6 p.13)
+
+vector_diagrams:
+  src: "Table II p.16 — LPT final Block II vector diagram summary; H/P/T = hub, pitch, tip"
+  columns: [hub, pitch, tip]
+  energy_extraction_units: "Btu/lb (established below: the five sum to Table I's dh/T x T49)"
+  stage1:
+    energy_extraction: 31.4
+    pressure_ratio: 1.30
+    loading_dh_over_2u2: 1.71
+    flow_coefficient_vz_over_u: 1.25
+    reaction:                  [0.256, 0.305, 0.390]
+    stator_exit_angle_deg:     [53.7,  61.0,  60.0]
+    stator_exit_mach:          [0.660, 0.633, 0.550]
+    rotor_rel_inlet_angle_deg: [43.0,  47.9,  35.7]
+    rotor_rel_inlet_mach:      [0.485, 0.430, 0.368]
+    rotor_rel_exit_angle_deg:  [57.6,  61.3,  60.0]
+    rotor_rel_exit_mach:       [0.600, 0.601, 0.572]
+    stage_exit_swirl_deg:      [41.2,  47.6,  37.0]
+    stage_exit_axial_mach:     [0.335, 0.261, 0.303]
+  stage2:
+    energy_extraction: 34.0
+    pressure_ratio: 1.35
+    loading_dh_over_2u2: 1.58
+    flow_coefficient_vz_over_u: 1.08
+    reaction:                  [0.280, 0.351, 0.422]
+    stator_exit_angle_deg:     [55.8,  64.1,  62.9]
+    stator_exit_mach:          [0.669, 0.623, 0.553]
+    rotor_rel_inlet_angle_deg: [44.5,  49.3,  37.0]
+    rotor_rel_inlet_mach:      [0.475, 0.407, 0.330]
+    rotor_rel_exit_angle_deg:  [55.8,  61.8,  62.8]
+    rotor_rel_exit_mach:       [0.619, 0.623, 0.585]
+    stage_exit_swirl_deg:      [40.0,  49.1,  36.8]
+    stage_exit_axial_mach:     [0.349, 0.255, 0.283]
+  stage3:
+    energy_extraction: 35.3
+    pressure_ratio: 1.40
+    loading_dh_over_2u2: 1.43
+    flow_coefficient_vz_over_u: 1.06
+    reaction:                  [0.312, 0.372, 0.440]
+    stator_exit_angle_deg:     [56.3,  64.8,  63.7]
+    stator_exit_mach:          [0.711, 0.641, 0.518]
+    rotor_rel_inlet_angle_deg: [44.7,  47.8,  31.1]
+    rotor_rel_inlet_mach:      [0.508, 0.397, 0.290]
+    rotor_rel_exit_angle_deg:  [55.7,  63.8,  62.7]
+    rotor_rel_exit_mach:       [0.670, 0.646, 0.564]
+    stage_exit_swirl_deg:      [39.7,  47.7,  31.0]
+    stage_exit_axial_mach:     [0.400, 0.261, 0.257]
+  stage4:
+    energy_extraction: 30.2
+    pressure_ratio: 1.36
+    loading_dh_over_2u2: 1.13
+    flow_coefficient_vz_over_u: 0.98
+    reaction:                  [0.255, 0.385, 0.481]
+    stator_exit_angle_deg:     [56.2,  62.3,  59.7]
+    stator_exit_mach:          [0.686, 0.593, 0.490]
+    rotor_rel_inlet_angle_deg: [44.3,  40.0,  10.0]
+    rotor_rel_inlet_mach:      [0.474, 0.344, 0.253]
+    rotor_rel_exit_angle_deg:  [55.4,  60.5,  58.2]
+    rotor_rel_exit_mach:       [0.619, 0.600, 0.544]
+    stage_exit_swirl_deg:      [36.5,  37.0,  16.5]
+    stage_exit_axial_mach:     [0.364, 0.280, 0.291]
+  stage5:
+    energy_extraction: 21.2
+    pressure_ratio: 1.26
+    loading_dh_over_2u2: 0.80
+    flow_coefficient_vz_over_u: 1.07
+    reaction:                  [0.205, 0.330, 0.476]
+    stator_exit_angle_deg:     [55.4,  56.0,  46.5]
+    stator_exit_mach:          [0.575, 0.531, 0.452]
+    rotor_rel_inlet_angle_deg: [40.5,  24.2,  -8.0]
+    rotor_rel_inlet_mach:      [0.365, 0.323, 0.305]
+    rotor_rel_exit_angle_deg:  [48.5,  50.0,  48.4]
+    rotor_rel_exit_mach:       [0.464, 0.503, 0.542]
+    stage_exit_swirl_deg:      [20.0,  12.5,  2.0]
+    stage_exit_axial_mach:     [0.302, 0.319, 0.365]
+  totals:
+    energy_extraction_sum: 152.1
+    pressure_ratio_product: 4.21
+  illegible_as_printed:
+    - {stage: 1, quantity: rotor_rel_exit_angle_deg, station: hub, reads: "5?.6", taken: 57.6, alternatives: [55.6, 57.6], basis: "the other four stages' hub values are 55.4-55.8, 1-8 degrees below pitch; 57.6 keeps that pattern and is the likelier glyph"}
+  note: >
+    Table II's print is faint; every value here was read twice. Loading
+    falls stage by stage (1.71 -> 0.80) as the radius rises; the last
+    stage exits within 2 degrees of axial at the tip. Reaction rises hub
+    to tip on every stage. Stage 4's rotor inlet at the tip is 10 degrees
+    and stage 5's is -8 -- nearly axial relative inflow at the tips of the
+    two large-radius rear stages.
+
+blading_geometry:
+  src: "Table III p.17 — turbine blading solidity and aspect ratio tabulations"
+  rows:               [S1,    R1,    S2,    R2,    S3,    R3,    S4,    R4,    S5,    R5]
+  axial_solidity_aw_over_t: [1.55, 1.33, 1.44, 1.26, 1.47, 1.24, 1.46, 1.23, 1.48, 1.30]
+  zweifel_coefficient: [0.606, 1.094, 0.924, 1.069, 0.884, 1.065, 0.966, 1.079, 0.984, 1.023]
+  te_blockage:        [0.043, 0.070, 0.058, 0.070, 0.055, 0.065, 0.054, 0.072, 0.045, 0.041]
+  aspect_ratio_h_over_do: [5.96, 11.04, 10.51, 13.93, 12.13, 15.61, 14.51, 20.82, 13.87, 12.80]
+  aspect_ratio_h_over_aw: [1.92, 4.02, 3.27, 5.02, 3.64, 5.74, 4.77, 8.62, 5.41, 6.36]
+  symbol_note: >
+    The second row is printed as a Greek-looking "t_z"; it is read as the
+    Zweifel loading coefficient (psi_z), which is what a solidity table
+    carries and whose 0.6-1.1 range these values sit in. h/d_o is height
+    over throat; h/AW height over axial width.
+  cross_check: >
+    Rotor h/AW divided by Fig.52's chord-based aspect ratio is c/AW =
+    1/cos(stagger): 1.14, 1.14, 1.15, 1.15, 1.11 for R1-R5, i.e. 26-30
+    degrees of stagger, and the same ratio from AW/t x pitch x count
+    gives the same answer on R1 and R5.
+
+airfoil_sections:
+  src: "Figs.9-18 pp.18-27 — Block II shapes and stream-surface velocity distributions at 10, 50, 90 percent from the inner wall; peak Mach M_p as annotated; axial extents from the plot axes, inches from HPT exit"
+  span_pct: [10, 50, 90]
+  rows:
+    V1: {peak_mach: [0.92, 0.71, 0.67], axial_in: [2.8, 5.2]}
+    R1: {peak_mach: [0.82, 0.74, 0.79], axial_in: [5.4, 6.6]}
+    V2: {peak_mach: [0.86, 0.73, 0.73], axial_in: [7.2, 8.8]}
+    R2: {peak_mach: [0.83, 0.75, 0.78], axial_in: [9.2, 10.6]}
+    V3: {peak_mach: [0.87, 0.75, 0.74], axial_in: [11.0, 12.6]}
+    R3: {peak_mach: [0.89, 0.78, 0.76], axial_in: [13.2, 14.8]}
+    V4: {peak_mach: [0.83, 0.67, 0.63], axial_in: [15.4, 17.0]}
+    R4: {peak_mach: [0.77, 0.72, 0.73], axial_in: [17.6, 18.8]}
+    V5: {peak_mach: [0.68, 0.61, 0.61], axial_in: [19.6, 21.2]}
+    R5: {peak_mach: [0.61, 0.62, 0.67], axial_in: [21.6, 23.2]}
+  design_method: "sec 2.7 p.13: shapes generated by a thickness-on-camber-line procedure from the vector-diagram angles, analysed by a compressible stream-surface method with stream-tube thickness variation, then surface Mach distributions edited and inverted back to shape"
+  coordinates: "appendix of the report -- not transcribed here (Stage A3)"
+  note: peak Mach is highest at the hub on every front row and nowhere exceeds 0.92; the design is subsonic throughout
+
+block_ii_rig_results:
+  src: "sec 2.8 p.28; Figs.19-21"
+  tests: {two_stage_group: "June 1981", five_stage_group: "September 1981"}
+  two_stage:
+    design_loading_dh_over_2u2: 1.70
+    efficiency_at_design_loading: 0.891
+    improvement_over_block_i_at_design_loading: 0.0075
+    at_design_pt_over_ps: 2.0
+    note: Block II also tolerates negative incidence better (larger gain at low loading)
+  five_stage_design_point_efficiency: 0.920
+  status_stackup:
+    columns: [estimate_1980_ddr, rig_test_1981]
+    eta_tt:                   [0.915, 0.920]
+    delta_edge_blockage:      [0.0,   0.001]
+    delta_purge_air:          [0.001, 0.001]
+    delta_reynolds_number:    [-0.007, -0.007]
+    eta_tt_at_m0_8_10_67km_max_climb: [0.909, 0.915]
+  goals_at_max_climb: {icls: 0.911, fps: 0.917}
+  status_at_max_climb: 0.914
+  status_note: "sec 2.8 p.28 states 91.4 percent, exceeding the ICLS goal by 0.3; the stack-up column prints 91.5. Recorded as read."
+  corrections_explained:
+    edge_blockage: all Block II rotor blades arrived with trailing-edge diameters on average 25 percent oversized against design intent
+    purge_air: extra power available from the inner-cavity purge entering the front stages and expanding through the rest; not simulated in the rig
+    reynolds: five-stage rig excursion verified the 0.7 percent altitude penalty
+  fig19_efficiency_vs_loading:
+    src: "Fig.19 p.29 — two-stage LPT, read off"
+    loading:  [1.1,   1.4,   1.65,  2.0,   2.5,   3.2]
+    block_i:  [0.883, 0.883, 0.885, 0.874, 0.845, 0.812]
+    block_ii: [0.907, 0.900, 0.891, 0.880, 0.850, 0.815]
