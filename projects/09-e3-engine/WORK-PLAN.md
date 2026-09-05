@@ -167,10 +167,13 @@ The blade-level data is what separates L2 from L1. All of it goes into
       structure and casing thermal fixes; casing 22-node map.
       `data/hpt-cooling.yaml`, `tests/test_hpt_cooling.py`. Five print
       inconsistencies and eight °C/°F read disagreements on the record
-- [ ] HPT report Figs. 44–47 — blade-tip and interstage-seal clearances
-      (in §4, not §3)
-- [ ] HPT report §5.2.1 — every disc, shaft and retainer: geometry, stress,
-      LCF; Figs. 51–52 materials; Fig. 5 flow angles and energy vs span
+- [x] **HPT report §4 ACC** — Table X payoff, Figs 44–47, Tables XI–XIV;
+      the same out-of-round method as the LPT. `data/hpt-clearance.yaml`
+- [x] **HPT report §5.1–5.2.1 rotor** — lives, materials, methods, rotor
+      temperatures and stresses at three times, every disk, shaft and
+      retainer with its limiting point. `data/hpt-mechanical.yaml`
+- [ ] HPT report §5.2.1.9 onward — stage-1 blade Figs 76–78, stage-2 blade,
+      §5.2.2 stator; Fig. 5 flow angles and energy vs span
 - [x] **LPT blade counts per stage** — 120 122 122 156 110 (Fig. 52), with
       chords, lengths, aspect ratios; Table VIII takeoff stresses; Table IX
       rupture mission; life and HCF results; stage-1 Campbell; materials;

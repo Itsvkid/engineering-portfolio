@@ -1,0 +1,274 @@
+# E3 HPT — active clearance control, as printed.
+# Source: NASA CR-167955, "Energy Efficient Engine High Pressure Turbine
+# Test Hardware Detailed Design Report" (GE), section 4 pp.68-82 (PDF page
+# = report page + 8). US Government work, public use permitted.
+#
+# Companion to hpt-cooling.yaml (section 3). Every value carries its
+# source; nothing is corrected; prints are recorded by name.
+
+meta:
+  source: e3-hp-turbine-hardware-CR-167955.pdf
+  pages_read: [68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85]
+  transcribed: 2026-09-05
+  status: section 4 complete (pp.68-85); mechanical section 5 in hpt-mechanical.yaml
+
+inducer_seal:
+  src: "sec 3 end, p.68"
+  why: leakage affects both the cooling system and turbine aero; no ACC on the seal, so the best passive system was sought
+  stationary_seal_material: Inco 903A (low expansion) -- allowed once 0.1 percent W25 compressor-discharge air cooled its back side below 649 C (1200 F)
+  seal_mass_study: {cruise_clearance_gain_cm: 0.005, cruise_clearance_gain_in: 0.002, takeoff_pinch_loss_cm: 0.010, takeoff_pinch_loss_in: 0.004, verdict: takeoff pinch may be the more limiting condition; to be verified on the core and ICLS by seal-tooth rub checks}
+
+system:
+  src: "sec 4.1-4.2 pp.69-72; Figs.41-43"
+  principle: >
+    On accel the rotor grows first (centrifugal), then keeps growing as
+    the disc heats; the casing grows as its mass approaches gas
+    temperature. The smallest transient clearance is a few seconds after
+    the accel to takeoff power, so an uncooled casing that survives that
+    pinch runs too open for the rest of the mission. The casing is left
+    uncooled through takeoff; cooling is applied through climb and cruise
+    to bring the tip clearance down to the desired running value.
+  air_source: fan duct, via a split scoop on the pylon skirt that separates HP and LP ACC air; 2:1 area-ratio diffuser recovers the Mach 0.5 fan-duct dynamic head
+  maximum_cooling_flow_pct_core_flow: 0.3
+  control: FADEC, time-shared; inputs core speed, fan-discharge temperature, compressor-discharge temperature, fuel flow; casing temperature added as the primary stator-growth measure on the core and ICLS
+  modulating_valves: 2 (HPT and LPT, separate), in the pylon
+  distribution: 270-degree rectangular circumferential duct in the core cowl outside the HPT, then four pipes to the impingement manifold
+  manifold: four 90-degree rectangular-section segments around each of the two stages; impingement on the casing, the ACC rings and the bolt flanges
+  spent_air: isolated by the fire-safety wall (spent-air pressure is below fan-duct static at maximum flow); out through the rear-frame struts to the aft centre body and the vent stinger, at a velocity that recovers most of the thrust
+  casing_heating_for_warm_up:
+    flow_pct_w25: 0.3
+    source: compressor discharge, impinged on the outside of the casing
+    duration_s: 200
+    when: after stabilised idle; valve then shut for the mission unless an accel occurs while open, in which case it stays open 30 s after full power
+    why: to prevent a tip rub on a full-power accel with the casing still cool relative to the rotor
+    status: incorporated on the ICLS to evaluate the ACC with and without it; FPS need to be decided from that
+
+design_clearances:
+  src: "sec 4.2 p.73"
+  takeoff_tip_clearance_both_stages_cm: 0.064
+  takeoff_tip_clearance_both_stages_in: 0.025
+  as_printed: "'0.64 cm (0.025 in.)' -- 0.025 in is 0.064 cm; the same misprint recurs on p.79. Recorded, 0.064 taken."
+  interstage_seal: buildup clearance set so a slight rub occurs at takeoff, ensuring minimum seal clearance at all conditions
+  mission_analysed: start, idle 8.3 min, takeoff 2 min uncooled; ACC on at throttle-back to max climb and held to 10.67 km; stabilise at max cruise; chop to flight idle; reburst to max cruise
+
+payoff:
+  src: "Table X p.73 — based on air-turbine data and 0.041 cm (0.016 in) clearance; maximum climb, 10.67 km"
+  item:                       [stage1, stage2, interstage_seal]
+  d_eta_per_mm:               [1.732, 0.669, 0.472]
+  d_eta_per_mil:              [0.044, 0.017, 0.012]
+  clearance_no_acc_cm:        [0.094, 0.109, 0.102]
+  clearance_no_acc_in:        [0.037, 0.043, 0.040]
+  clearance_reduction_cm:     [0.053, 0.069, 0.033]
+  clearance_reduction_in:     [0.021, 0.027, 0.013]
+  d_eta_pct:                  [0.924, 0.459, 0.15]
+  d_eta_total_pct: 1.533
+  d_sfc_from_eta_pct: -1.24
+  fan_air_pct_w25: 0.15
+  d_sfc_fan_air_pct: 0.02
+  d_sfc_net_pct: -1.22
+  note: the HPT's ACC is worth 1.22 percent sfc against the LPT's 0.33 (LPT report Fig.48) -- three and a half times, for the same kind of hardware
+
+transients:
+  src: "Figs.44-46 pp.74-76 — radial growth, cm; read off the curves; hot-day"
+  mission_timeline_s: {ground_idle_to: 500, accel: 10, takeoff_to: 620, acc_air_on_at: 640, cruise_decel: 20, flight_idle_to: 700, reaccel: 10}
+  stage1_tip:
+    casing_peak_no_acc: 0.47
+    rotor_at_max_climb: 0.38
+    takeoff_pinch: 0.11
+    max_climb_clearance_no_acc: 0.16
+    cruise_running_clearance_with_acc: 0.05
+    cruise_clearance_no_acc: 0.16
+    reburst_pinch_with_acc: 0.09
+  interstage_seal:
+    takeoff_rub: -0.03
+    max_climb_clearance_with_acc: 0.05
+    cruise_running_clearance_with_acc: 0.02
+    reburst_seal_clearance_mil: 20
+  stage2_tip:
+    casing_peak_no_acc: 0.49
+    takeoff_pinch: 0.06
+    cruise_running_clearance_with_acc: 0.05
+    cruise_clearance_no_acc: 0.12
+    reburst_pinch_with_acc: 0.03
+  finding: hot-rotor reburst is not the limiting condition once ACC is on; the ACC reaches the prescribed 0.041 cm at max cruise
+
+acc_capability_vs_thrust:
+  src: "Fig.47 p.78 — blade-tip clearance at 10.668 km cruise vs percent of maximum cruise thrust, for 0/20/50/80/100 percent of maximum ACC flow; read off at 40 percent thrust"
+  thrust_pct: 40
+  acc_flow_pct:            [0,     20,    50,    80,    100]
+  stage1_clearance_cm:     [0.100, 0.068, 0.052, 0.040, 0.022]
+  stage2_clearance_cm:     [0.125, 0.088, 0.062, 0.045, 0.035]
+  desired_cm: 0.041
+  margin_at_full_acc_cm: {stage1: 0.02, stage2: 0.005}
+  margin_at_full_acc_in: {stage1: 0.008, stage2: 0.002}
+  joint_modulation: "with stage 1 held at 0.041 cm at 40 percent thrust, stage 2 sits at 0.051 cm (0.020 in) using 65 percent of maximum ACC flow"
+  limiting_condition: minimum cruise power, about 40 percent of maximum cruise thrust -- that is where the full ACC capability is tested
+
+short_start_pinch:
+  src: "Table XI p.77 — maximum takeoff pinch clearance after short start; cm (in)"
+  basis: cold start, or warm start after a half-hour shutdown in which the stage-1 casing cools 69 C (125 F) below the stage-1 rotor average and the stage-2 casing 111 C (200 F) below the stage-2 disc
+  idle_time_s: [200, 300, 400, 500]
+  stage1_blade:
+    cold_cm: [0.041, 0.053, 0.058, 0.064]
+    cold_in: [0.016, 0.021, 0.023, 0.025]
+    warm_cm: [0.030, 0.041, null, null]
+    warm_in: [0.012, 0.016, null, null]
+  interstage_seal:
+    cold_cm: [-0.038, -0.023, -0.010, 0.0]
+    cold_in: [-0.015, -0.009, -0.004, 0.0]
+    warm_cm: [-0.020, -0.010, null, null]
+    warm_in: [-0.008, -0.004, null, null]
+  stage2_blade:
+    cold_cm: [0.038, 0.048, 0.061, 0.064]
+    cold_in: [0.015, 0.019, 0.024, 0.025]
+    warm_cm: [0.015, 0.041, null, null]
+    warm_in: [0.006, 0.016, null, null]
+  finding: a 2-3 minute start-and-warm-up can cut the takeoff pinch from the desired 0.064 cm to 0.025 cm (0.010 in), enough for a rub under manoeuvre load and vibration; the warm start with a short idle is the most limiting
+
+heated_start_pinch:
+  src: "Table XII p.80 — maximum takeoff pinch clearance with external casing heating during warm-up; cm (in)"
+  warm_up_time_s: [200, "300-", "300+", 400, 500]
+  heating_window_s: ["100-230", "100-330", "100-300", "100-300", "100-300"]
+  footnotes: {"300-": takeoff occurred before the valve-closure signal, heating continued 30 s into the takeoff, "300+": valve closed at 300 s before the takeoff accel}
+  stage1_blade:
+    cold_cm: [0.064, 0.074, 0.066, 0.069, 0.071]
+    cold_in: [0.025, 0.029, 0.026, 0.027, 0.028]
+    warm_cm: [0.053, 0.056, 0.048, null, null]
+    warm_in: [0.021, 0.022, 0.019, null, null]
+  interstage_seal:
+    cold_cm: [-0.025, -0.008, -0.015, -0.005, -0.005]
+    cold_in: [-0.010, -0.003, -0.006, -0.002, -0.002]
+    warm_cm: [-0.015, -0.005, -0.010, null, null]
+    warm_in: [-0.006, -0.002, -0.004, null, null]
+  stage2_blade:
+    cold_cm: [0.069, 0.079, 0.061, 0.066, 0.071]
+    cold_in: [0.027, 0.031, 0.024, 0.026, 0.028]
+    warm_cm: [0.038, 0.048, 0.043, null, null]
+    warm_in: [0.015, 0.019, 0.017, null, null]
+  text_claims:
+    src: "p.79"
+    gain_at_200s_blade_tips_cm: 0.023
+    gain_at_200s_seal_cm: 0.005
+    minimum_pinch_with_heating_cm: {stage1: 0.048, stage2: 0.038}
+    verdict: still short of the desired 0.064 cm at maximum takeoff; buildup clearances may have to grow if 0.064 is truly required
+  as_printed_inconsistency: >
+    p.79 says the 200-s heating adds 0.023 cm to "both" blade tips; it does
+    for the warm start on both stages and the cold start on stage 1, but
+    the stage-2 cold start gains 0.031 (0.069 - 0.038). And p.79 prints
+    "0.64 cm (0.025 in.)" again. Recorded.
+
+mechanical:
+  src: "sec 4.3 p.80; Figs.48-49 pp.81-82"
+  heart: flanges and rings that move the shrouds to adjust clearance and stiffen the case for roundness
+  shroud_segments_per_stage: 24
+  shroud_mounting: directly from the casing, no shroud tilt; no nozzle-segment tilt
+  manifold_segments_per_stage: 4
+  manifold_arc_deg: 90
+  feed_pipes_from_fan_duct: 4
+  feed: adjacent stage-1 and stage-2 segments branch from a common feed pipe
+  jet_distance_control: dimples contacting the flat boltheads forward of each manifold set the hole-to-surface length of the impingement jets
+  other_air_on_the_casing: {seventh_stage_bleed: stage-2 nozzle, fifth_stage_bleed: aft, cdp: forward}
+  design_words: [synchronised ring growth, controlled thermal stress, adequate shrink-down, direct case mounting of shrouds]
+
+casing_rings:
+  src: "sec 4.3 p.83"
+  slipjoint: stage-1 feed pipe, for differential axial growth between the cool pipe and the hot casing
+  control_rings: in the forward and aft HPT casings
+  internal_air_on_the_casings: [compressor discharge, seventh-stage bleed, fifth-stage bleed]
+  balance: flange depth, section and surface convection balanced for synchronised flange movement and an axially uniform tip clearance at each stage; the same balance controls stage-2 nozzle-segment tilt between the stage-1 aft and stage-2 forward rings
+
+out_of_round_stage1:
+  src: "Table XIII p.84 — stage-1 clearance change for maximum closure; micrometres (mils); closure negative; horizontal extremes 3:00 / 9:00, vertical 12:00 / 6:00"
+  clock: [3, 9, 12, 6]
+  takeoff:
+    beam_bending_rss_um:   [-125, -125, -15, -58]
+    beam_bending_rss_mils: [-4.9, -4.9, -0.6, -2.3]
+    vibration_unbalance_um:   [-76, -76, -76, -76]
+    vibration_unbalance_mils: [-3.0, -3.0, -3.0, -3.0]
+    ovalization_um:   [-11, -1, 23, -13]
+    ovalization_mils: [-0.45, -0.05, 0.90, -0.5]
+    sum_um:   [-212, -202, -68, -147]
+    sum_mils: [-8.35, -7.95, -2.7, -5.8]
+  second_segment_climb:
+    beam_bending_rss_um:   [-152, -152, -261, -406]
+    beam_bending_rss_mils: [-6.0, -6.0, -10.3, -16.0]
+    vibration_unbalance_um:   [-76, -76, -76, -76]
+    vibration_unbalance_mils: [-3.0, -3.0, -3.0, -3.0]
+    ovalization_um:   [-8, 3, 16, -12]
+    ovalization_mils: [-0.33, 0.13, 0.65, -0.47]
+    sum_um:   [-236, -225, -321, -494]
+    sum_mils: [-9.33, -8.87, -12.65, -19.47]
+  low_mach_cruise:
+    beam_bending_rss_um:   [-106, -106, -88.9, -269]
+    beam_bending_rss_mils: [-4.16, -4.16, -3.5, -10.6]
+    vibration_unbalance_um:   [-76, -76, -76, -76]
+    vibration_unbalance_mils: [-3.0, -3.0, -3.0, -3.0]
+    ovalization_um:   [-7, -2, 14, -4]
+    ovalization_mils: [-0.31, -0.09, 0.55, -0.15]
+    sum_um:   [-189, -184, -151, -349]
+    sum_mils: [-7.47, -7.25, -5.95, -13.75]
+  method: beam bending from manoeuvre loads (g and gyro) combined root-sum-square; the rest added arithmetically
+  as_printed: "takeoff 3:00 sum prints '212' without its minus sign; every other entry is signed"
+  note: >
+    Same structure as the LPT report's Table XVIII -- beam bending, 3 mils
+    of unbalance vibration, ovalisation, at four clock positions for
+    takeoff, second-segment climb and low-Mach cruise -- and the same
+    worst case: 6 o'clock in climb, -19.47 mils here against -19.78 on
+    the LPT stage 1. One GE method, two turbines.
+
+blade_tip_shroud_clearance:
+  src: "Table XIV p.85 — blade-tip/shroud clearance; mm (in); columns cold, maximum takeoff, maximum-clearance-and-high-Mach-cruise, low-Mach cruise"
+  condition: [cold, max_takeoff, max_clearance_high_mach_cruise, low_mach_cruise]
+  clearance_mm:      [1.24, 0.889, 0.406, 0.406]
+  clearance_in:      [0.049, 0.035, 0.016, 0.016]
+  tolerance_stack_mm: 0.102
+  tolerance_stack_in: 0.004
+  min_clearance_mm:  [1.14, 0.787, 0.305, 0.305]
+  min_clearance_in:  [0.045, 0.031, 0.012, 0.012]
+  vibration_mm: 0.076
+  vibration_in: 0.003
+  out_of_round_12_mm: [0, 0.023, 0.018, 0.015]
+  out_of_round_12_in: [0, 0.0009, 0.0007, 0.0006]
+  out_of_round_6_mm:  [0, -0.013, -0.013, -0.005]
+  out_of_round_6_in:  [0, -0.0005, -0.0005, -0.0002]
+  beam_bending_12_mm: [0, -0.015, -0.262, -0.089]
+  beam_bending_12_in: [0, -0.0006, -0.0103, -0.0035]
+  beam_bending_6_mm:  [0, -0.058, -0.406, -0.269]
+  beam_bending_6_in:  [0, -0.0023, -0.0160, -0.0106]
+  total_closure_12_mm: [null, -0.114, -0.320, -0.149]
+  total_closure_12_in: [null, -0.0045, -0.0126, -0.0059]
+  total_closure_6_mm:  [null, -0.139, -0.495, -0.351]
+  total_closure_6_in:  [null, -0.0055, -0.0195, -0.0138]
+  max_interference_12_mm: [null, 0, 0.015, 0]
+  max_interference_12_in: [null, 0, 0.0006, 0]
+  max_interference_6_mm:  [null, 0, 0.190, 0.046]
+  max_interference_6_in:  [null, 0, 0.0075, 0.0018]
+  shroud_offset_mm: 0.102
+  shroud_offset_in: 0.0040
+  max_rub_mm: 0.089
+  max_rub_in: 0.0035
+  local_clearance_with_rub_mm: 0.406
+  local_clearance_with_rub_in: 0.016
+  bookkeeping: >
+    min clearance = clearance - tolerance stack. Total closure = vibration +
+    out-of-round + beam bending: it recomputes for both cruise columns
+    (-0.320, -0.495, -0.149, -0.351 mm) and the beam-bending and out-of-
+    round entries are Table XIII's 12:00 and 6:00 values (the high-Mach
+    column takes Table XIII's climb bending). Max interference = total
+    closure - min clearance where negative. Max rub = 6 o'clock
+    interference less the 0.102 mm vertical shroud offset.
+  as_printed_inconsistency: >
+    The two takeoff totals do not recompute: -0.076 + 0.023 - 0.015 =
+    -0.068 mm (Table XIII's -68 um) is printed -0.114, and -0.076 - 0.013
+    - 0.058 = -0.147 (Table XIII's -147) is printed -0.139. Both cruise
+    columns recompute exactly. Recorded; Table XIII's values are the ones
+    the method supports.
+  outcome:
+    src: "p.83"
+    probable_net_closure_cm: {"12:00": -0.032, "6:00": -0.050}
+    probable_net_closure_in: {"12:00": -0.0126, "6:00": -0.0195}
+    minimum_average_clearance_cm: 0.041
+    minimum_average_clearance_in: 0.016
+    shroud_centreline_offset_cm: 0.010
+    shroud_centreline_offset_in: 0.004
+    rub_assumption: all wear comes off the blades (shortened blades, carried round the annulus), never as a local shroud depression
