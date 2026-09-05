@@ -101,19 +101,30 @@ flowchart TD
 
 ## Budget
 
-| Stage | What it produces | Hours | CAD? |
-|---|---|---|---|
-| **A** Foundation | every source on disk; every table transcribed; topology asserted | 40 | no |
-| **B** Thermodynamic design | validated cycle at three ratings, with mixer, secondary air and real gas | 40 | no |
-| **C** Aerodynamic design | mean-line, through-flow, sections, CFD — each validated, each compared | 120 | no |
-| **D** Thermal design | HPT cooling reproduced; combustor; secondary-air map; clearance control | 60 | no |
-| **E** Mechanical design | blades, discs, vibration, shafts, bearings, attachments — with FEA | 90 | no |
-| **F** Materials and mass | alloys with allowables at temperature; mass per module | 20 | no |
-| **G** Geometry generation | every part generated from the validated design tables | 40 | no |
-| **H** Hand CAD and assembly | structure, sumps, joints, motion, section | 50 | **yes** |
-| **I** Whole-engine verification | cross-discipline consistency; `FINDINGS.md` | 30 | partly |
-| **J** Publication | site, drawings, the write-up | 20 | no |
-| | | **510** | 50 in a GUI |
+| Stage | What it produces | ATA system | Hours | CAD? |
+|---|---|---|---|---|
+| **A** Foundation | every source on disk; every table transcribed; topology asserted | 72 · all | 40 | no |
+| **B** Thermodynamic design | validated cycle at three ratings, with mixer, secondary air and real gas | 72 · 73 · 75 | 40 | no |
+| **C** Aerodynamic design | mean-line, through-flow, sections, CFD — each validated, each compared | 72 | 120 | no |
+| **D** Thermal design | HPT cooling reproduced; combustor; secondary-air map; clearance control | 72 (secondary air) · 75 (ACC) · 73 (combustor) | 60 | no |
+| **E** Mechanical design | blades, discs, vibration, shafts, bearings, attachments — with FEA | 72 | 90 | no |
+| **F** Materials and mass | alloys with allowables at temperature; mass per module | 72 | 20 | no |
+| **G** Geometry generation | every part generated from the validated design tables | 72 | 40 | no |
+| **H** Hand CAD and assembly | structure, sumps, joints, motion, section | 72 · 79 (sumps) · 71/78 (mixer, nozzle) | 50 | **yes** |
+| **I** Whole-engine verification | cross-discipline consistency; `FINDINGS.md` | 72 · 73 · 75 · 76 · 79 | 30 | partly |
+| **J** Publication | site, drawings, the write-up | — | 20 | no |
+| | | | **510** | 50 in a GUI |
+
+The ATA column names the aircraft-industry system each stage belongs to,
+the way manuals, certification paragraphs and job adverts do: **72** the
+engine itself — the gas generator (HPC, combustor, HPT: the "core") and
+the low-pressure system (fan, booster, LPT) — with its secondary air;
+**73** fuel and **76** engine control (FADEC); **75** air, which is where
+bleed and active clearance control live; **79** oil and the sumps;
+**71/78** nacelle and exhaust; **74** ignition, **80** starting. The E³
+reports cover 72, 73, 75 and 76 in depth and 79 through the core report;
+the aircraft-side systems (26 fire, 30 anti-ice, 77 indicating) are
+outside this project.
 
 At ten hours a week this is a year; at twenty, six months. **Stages A–F need
 no CAD licence** and are 370 of the 510 hours. Each stage is a publishable
@@ -172,8 +183,12 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [x] **HPT report §5.1–5.2.1 rotor** — lives, materials, methods, rotor
       temperatures and stresses at three times, every disk, shaft and
       retainer with its limiting point. `data/hpt-mechanical.yaml`
-- [ ] HPT report §5.2.1.9 onward — stage-1 blade Figs 76–78, stage-2 blade,
-      §5.2.2 stator; Fig. 5 flow angles and energy vs span
+- [x] **HPT report §5.2.1.9–5.2.2** — both blades (transient LCF, Campbell,
+      dampers, dovetails), rotor dynamics, bolts, casings, both nozzles.
+      The stage-1 vane's 3,500-cycle trailing edge at maximum severity is
+      the shortest life in the turbine. `data/hpt-mechanical.yaml`
+- [ ] HPT report §5.2.3 onward — ceramic shrouds, seals, §6; Fig. 5 flow
+      angles and energy vs span
 - [x] **LPT blade counts per stage** — 120 122 122 156 110 (Fig. 52), with
       chords, lengths, aspect ratios; Table VIII takeoff stresses; Table IX
       rupture mission; life and HCF results; stage-1 Campbell; materials;

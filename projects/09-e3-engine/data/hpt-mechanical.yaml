@@ -5,9 +5,9 @@
 
 meta:
   source: e3-hp-turbine-hardware-CR-167955.pdf
-  pages_read: "86-130"
+  pages_read: "86-170"
   transcribed: 2026-09-05
-  status: sec 5.1 complete; sec 5.2.1 rotor structure complete (Figs.57-72); stage-1 blade in progress (Figs.73-75, Tables XIX-XX done; Figs.76-78 and stage 2 to follow)
+  status: sec 5.1, 5.2.1 and 5.2.2 complete (rotor, blades, dynamics, bolts, casings, both nozzles); sec 5.2.3 ceramic shrouds onward to follow
 
 configuration:
   src: "sec 5.1.1 p.86; Fig.50 p.87"
@@ -515,3 +515,383 @@ stage1_blade:
     method: total local strain over the transient accel and decel (start, idle, accel to max takeoff for 2 minutes, decel to idle), BUCKET CREEP III thermal and mechanical strains, material LCF curve at temperature
     minimum_life_location: leading-edge film hole, pitch section
     transient_reading: slight tension on the starter accel; fuel on at about 22 s; the leading edge heats faster than the section and goes into net compression (thermal compression exceeding centrifugal tension); compression eases from 22 to 300 s as the section catches up
+    transient_cycle:
+      src: "Fig.77 p.132 — FPS base stages 1 and 2 blade transient cycle; read off"
+      phases_s: {start_to_idle: 80, ground_idle_to: 300, accel_to_takeoff: 20, takeoff_to: 500, decel: 10}
+      t41_C: {start_peak_at_40_70s: 1000, ground_idle: 780, takeoff: 1350, after_decel: 780}
+      core_speed_axis_note: "the speed axis is labelled 0-2000 'rpm' with idle at ~1300 and takeoff at ~1800; read as rpm/10 (Fig.53 has idle 11,700 and takeoff 13,300)"
+    leading_edge_stress_history:
+      src: "Fig.78 p.133 — pitch section, leading-edge film hole; longitudinal stress, MPa; read off"
+      start_dip_MPa: -170
+      idle_MPa: -20
+      transient_to_takeoff_MPa: -215
+      takeoff_MPa: -150
+      decel_to_idle_peak_MPa: 200
+      total_range_MPa: 414
+      total_range_ksi: 60
+      lcf_cycles_at_limiting_location: 26000
+      basis: Rene 150 strength data at 414 MPa and the leading-edge temperature; leading edge above 1038 C (1900 F) at takeoff; 120 s at takeoff then climb assumed, then a chop to idle that puts the leading edge in tension
+    thrust_reverse:
+      src: "Fig.79 p.135 — flight idle to thrust reverse to ground idle, 4420-4540 s"
+      range_MPa: 118
+      range_ksi: 17.1
+      text_range_MPa: 117
+      text_range_ksi: 17
+      lcf_cycles: ">1e6"
+      miners_rule: "1/LCF = 1/26000 + 1/1e6"
+      lcf_combined_printed: 25381
+      note: "1/(1/26000 + 1/1e6) is 25,341; the figure prints 25,381. Recorded."
+    campbell:
+      src: "Fig.80 p.136 — FPS base stage-1 blade Campbell diagram; read off"
+      speeds_rpm: {ground_idle: 9300, flight_idle: 10100, max_cruise: 12300, max_climb: 12700, max_takeoff: 13100}
+      modes_kHz:
+        first_flex:    {at_0: 2.9, at_14000: 2.5}
+        first_axial:   {at_0: 5.0, at_14000: 4.5}
+        first_torsion: {at_0: 9.1, at_14000: 8.4}
+        two_stripe:    {at_0: 16.0, at_14000: 13.9}
+      forcing_per_rev:
+        vane_diff: 2
+        five_per_rev: 5
+        stage1_vane_burners: 16
+        stage1_nozzle_segments: 23
+        stage2_nozzle_segments: 24
+        burners: 30
+        stage1_vanes: 46
+        stage2_vanes: 48
+        lpt_stage1_vanes: 72
+      finding: the stage-1 nozzle is the strongest excitation; every primary mode has speed margin near its resonance; resonances are passed through, not run at
+      note: 46/23 and 48/24 -- two vanes per nozzle segment on both stages; 30 burners are the 30 fuel nozzles; 72 is the LPT stage-1 vane count of the LPT report's Fig.6
+    platform_damper:
+      material: Inco 625 sheet strip under the platform, bearing on the adjacent platform
+      equivalent_g_load_N: 85.8
+      equivalent_g_load_lbf: 19.3
+      damping_load_N: 84.5
+      damping_load_lbf: 19
+      first_flex_vibratory_stress_with_damper_MPa: 21
+      first_flex_vibratory_stress_with_damper_ksi: 3
+    rupture_vs_span:
+      src: "Fig.76 p.131 — five-section rupture life including creep on tilt, hot-day takeoff hours; read off"
+      span_pct:   [0, 12.5, 25, 50, 70]
+      hours:      [450, 390, 345, 310, 830]
+      required_hours: 300
+      note: the pitch (50 percent) section is the minimum at ~310 h against the 300-h line
+  dovetail:
+    src: "sec 5.2.1.9 pp.134-138; Fig.81 p.137"
+    form: axial, two-tang; upper tang with a generous fillet for Kt and a deeper tang for the higher load; lower tang with compound fillet radii
+    condition: {rating: hot-day takeoff, rpm: 13948, material: Rene 150, properties: 3 sigma}
+    load_per_blade_kN: 77.395
+    load_per_blade_lbf: 17400
+    axial_chord_cm: 3.45
+    axial_chord_in: 1.36
+    tangs:
+      - {tang: upper, combined_stress_with_kt_MPa: 862, ksi: 125.0, neck_width_cm: 0.952, neck_width_in: 0.375}
+      - {tang: lower, combined_stress_with_kt_MPa: 746, ksi: 108.2, neck_width_cm: 0.820, neck_width_in: 0.323}
+    lcf_cycles: ">18,000"
+    method: MULTI HOOK -- centrifugal load and net moments Mx, Mg at the dovetail mesh as boundary conditions; equivalent loads at the four corners of each tang and the centre; stresses at 15-degree intervals round the mesh radius
+    calibration: MULTI HOOK reads higher than FINITE and field lives run higher than calculated; CF6-50 stage-1 Rene 150 blades ran 1000 C cycles without dovetail cracks at higher calculated stress than the E3's stage 1; E3 stage 2 is similar to the CF6-50 three-tang design
+    open_items: [axial compressive stress in the dovetail judged offset by MULTI HOOK's conservatism, cooling-hole effect on the tangential load path and Kt, a 3-D dovetail model in progress with the cooling slots treated 2-D]
+
+stage2_blade:
+  src: "sec 5.2.1.10 pp.138-144; Figs.82-87; Table XXI"
+  material: cast DS Rene 150, PVD coated
+  blades: 70
+  cooling_features:
+    src: "Fig.82 p.139"
+    list: [serpentine convection cooling, no film cooling or trailing-edge holes, tip and pressure-side coolant ejection for the cooling exit and for torque, turbulence promoters on ribs and airfoil walls]
+  rupture_life:
+    src: "Table XXI p.140; Fig.84 p.142"
+    mission_mix:
+      condition:      [takeoff, max_climb, max_cruise, balance]
+      pct_life_used:  [33.5, 48.2, 18.3, 0.1]
+      hours_at_point: [300, 3300, 7200, 7200]
+      total_hours: 18000
+      equivalent_hours_at_max_takeoff: 340
+      available_blade_life_at_max_takeoff_hours: 341
+      note: 341 against 340 -- the stage-2 blade is designed to its rupture life to the hour
+    pitch_section_map:
+      src: "Fig.84 — FPS base, hot-day takeoff 13,414 rpm; rupture hours with metal temperature"
+      points:
+        - {where: leading edge, hours: 1265, C: 971, F: 1780}
+        - {where: suction side forward, hours: 5500, C: 867, F: 1592}
+        - {where: suction side, hours: 638, C: 936, F: 1717}
+        - {where: suction side aft, hours: 816, C: 951, F: 1743}
+        - {where: pressure side forward, hours: 425, C: 932, F: 1710}
+        - {where: pressure side, hours: 465, C: 928, F: 1702}
+        - {where: rib aft, hours: 411, C: 927, F: 1701}
+        - {where: pressure side aft, hours: 386, C: 927, F: 1700}
+        - {where: trailing-edge region upper, hours: 375, C: 931, F: 1708}
+        - {where: trailing edge tip, hours: 1052, C: 1013, F: 1855}
+        - {where: trailing-edge region (boxed), hours: 341, C: 926, F: 1699}
+      note: the hottest point (the trailing edge at 1013 C) is not the limiting one; the boxed 341-h point at 926 C is -- the thin trailing-edge wall carries the load
+  lcf:
+    limiting_location: trailing edge
+    cycles: ">30,000"
+    method: total local surface strain over lightoff, idle, takeoff and back to idle, with stress and temperature combined
+  campbell:
+    src: "Fig.85 p.143 — read off"
+    modes_kHz:
+      first_flex:    {at_0: 1.4, at_14000: 1.3}
+      first_axial:   {at_0: 2.5, at_14000: 1.7}
+      first_torsion: {at_0: 4.4, at_14000: 3.5}
+      two_stripe:    {at_0: 14.9, at_14000: 13.1}
+    forcing_per_rev: {five_per_rev: 5, stage1_nozzle_segments: 23, stage2_nozzle_segments: 24, stage1_vanes: 46, stage2_vanes: 48, lpt_stage1_vanes: 72}
+    finding: first torsion is close to 24/rev (stage-2 nozzle segments) at flight idle; excitation judged low at that speed and pressure; bench frequencies to refine the diagram
+  damper:
+    src: "p.144; Fig.86 p.145"
+    count: 70
+    material: Rene 80
+    form: two free-floating radial lugs, each side of the top in contact with the adjacent blade, damping by the centrifugal load; weights crimped in place; the forward angel wing's vertical face acts as the windage cover and closes the shank gaps
+  dovetail:
+    src: "p.144; Fig.87 p.146"
+    form: axial, three-tang; radii and tang depths balanced between the upper and middle tangs; the lower tang carries the highest stress
+    condition: {rating: hot-day takeoff, rpm: 13948, material: Rene 150, properties: 3 sigma, loads: growth-engine takeoff}
+    load_per_blade_kN: 135.75
+    load_per_blade_lbf: 30520
+    axial_chord_cm: 4.83
+    axial_chord_in: 1.9
+    tangs:
+      - {tang: upper, combined_stress_with_kt_MPa: 803, ksi: 116.4, neck_width_cm: 0.988, neck_width_in: 0.389}
+      - {tang: middle, combined_stress_with_kt_MPa: 807, ksi: 117.1, neck_width_cm: 0.866, neck_width_in: 0.341}
+      - {tang: lower, combined_stress_with_kt_MPa: 919, ksi: 133.3, neck_width_cm: 0.696, neck_width_in: 0.274}
+    lcf_cycles: ">18,000"
+  speeds_note: "Fig.84 runs the rupture at 13,414 rpm (FPS base hot-day takeoff); both dovetail figures at 13,948 (growth). 13,948 / 13,414 = 1.040."
+
+rotor_dynamics:
+  src: "sec 5.2.1.11 pp.144-148; Table XXII p.147; Fig.88 p.148"
+  method: CLASS/MASS free-vibration frequencies and mode shapes for N circumferential nodal diameters in the fundamental axial mode at zero speed, then corrected with speed into forward- and backward-travelling waves; the backward wave falls with speed and its zero is the critical speed, excitable by any static load with N nodes
+  safety_margin_definition: (critical engine speed - maximum engine speed) / maximum engine speed
+  max_engine_speed_rps: 233
+  max_engine_speed_note: growth; 233 rps is 13,980 rpm against the 13,948 of the dovetail figures
+  table_xxii:
+    component:          [forward_shaft, inner_tube, outer_liner, aft_seal_disk]
+    critical_nodes_N:   [4, 3, 7, 5]
+    critical_speed_rps: [820, 610, 1030, 610]
+    safety_margin:      [2.52, 1.62, 3.42, 1.61]
+    as_printed: "inner tube and aft seal disk share the 610-rps critical yet print 1.62 and 1.61; (610 - 233)/233 is 1.618. Recorded."
+  aft_seal_disk:
+    src: "Fig.88"
+    N: 5
+    zero_speed_frequency_cps: 2500
+    backward_wave_zero_rps: 610
+    forward_wave_at_440_rps_cps: 3350
+    idle_rps: 170
+    concern: web flexibility between the bolt circle and the seal teeth lets the disk move axially and pump the adjoining air cavities -- an aerodynamic instability path; a damper was added against axial excitation
+
+rotor_bolts:
+  src: "sec 5.2.1.12 pp.147-150; Figs.89-91"
+  criteria: [no flange separation under any combined load and temperature, torque through flange friction only with no slip]
+  loads: CLASS-MASS rotor analysis at hot-day takeoff; torque from the maximum engine-required torque of the FPS cycle
+  life_objective_hours: 9000
+  relaxation: creep relaxation of bolt and nut over the mission mix included, so the relaxed load still carries every load
+  tool: BOFLAN -- assembly torque converted to a cold clamping load
+  flanges:
+    src: "Fig.89 p.149 — studs with anti-torque collars, Inco 718"
+    flange:      [inducer_disk, interstage, aft_seal_disk, inner_tube]
+    count:       [34, 52, 40, 36]
+    diameter_cm: [1.27, 0.953, 0.953, 0.635]
+    diameter_in: [0.5, 0.375, 0.375, 0.25]
+    as_printed: "Fig.89 prints '0.318 cm (3/8 in.)' for the interstage and aft-seal-disk studs; 3/8 in is 0.953 cm (0.318 cm is 1/8 in) and Fig.91 prints 0.953 for the same 52 bolts. 0.953 taken."
+  inducer_disk_bolt:
+    src: "Fig.90 p.151 — read off"
+    governed_by: torque transfer
+    bolts: {count: 34, diameter_cm: 1.27, material: Inco 718, t_max_C: 593, t_max_F: 1100}
+    initial_clamp_kN: 98
+    initial_clamp_lbf: 22000
+    after_9000h_kN: 82.5
+    minimum_cold_clamp_kN: 78
+    margin_after_9000h_pct: 8
+  interstage_disk_bolt:
+    src: "Fig.91 p.152 — FPS growth engine; read off"
+    governed_by: flange separation
+    bolts: {count: 52, diameter_cm: 0.953, material: Inco 718, t_max_C: 593, t_max_F: 1100}
+    initial_clamp_kN: 45.5
+    initial_clamp_lbf: 10200
+    after_9000h_kN: 35.3
+    minimum_cold_clamp_kN: 29.7
+    minimum_cold_clamp_lbf: 6700
+  aft_shaft_bolt: {governed_by: flange separation, relaxation: minimal, verdict: more than adequate for 9,000 h}
+  note: >
+    The LPT report's Table XIII is the same BOLFAN bookkeeping (required
+    torque and separation loads, available cold clamp, residual after
+    9,000 h). The HPT's inducer joint uses 34 half-inch studs where the
+    LPT's biggest joint uses 76 three-eighths.
+
+stator:
+  src: "sec 5.2.2 pp.150-154; Fig.92 p.153"
+  primary_structure: forward and aft outer nozzle supports (the forward and aft HPT cases) -- the engine's structural link through the HPT, carrying the cycle pressures, thrust and mechanical loads
+  parts: [outer casing, impingement manifolds and fan-air ducts, stage-1 ceramic shrouds, stage-2 solid shrouds, stage-2 nozzle, inner nozzle support structure, nozzle inner seal, discourager seal, interstage seal, inducer and CDP seal]
+  stage2_nozzle_mount: directly on internal casing flanges
+  stage1_nozzle_outer_axial_support: conical, carrying the nozzle's outer axial load to the casing inner flange
+  stage1_shroud_forward_support_ring: saw-cut (slotted from the inner edge) for thermal stress and shroud growth; faced fore and aft by trapped 360-degree seal plates free to grow radially; hollow rivets between the plates meter the compressor-discharge air that cools the stage-1 shrouds
+  casing_stress: predominantly thermal; extremes at the takeoff transient and with the ACC on at max climb and max cruise (Fig.93)
+  casings:
+    src: "sec 5.2.2.1 p.154"
+    fps_material: Direct Age Inco 718 (DA718)
+    why: LCF up to 10 times standard Inco 718, varying with temperature and stress; enough for more than 50,000 cycles at every potentially limiting location against the 36,000 goal
+    status: new material under process and component evaluation
+    stage1_nozzle_outer_axial_support: standard Inco 718, adequate LCF
+    shroud_support: Rene 41 -- 111 C (200 F) more margin than Inco 718 to the knee of its strength curve
+  stage1_nozzle_support:
+    src: "sec 5.2.2.2 p.154; Fig.94"
+    material: forged Rene 41, welded and machined; FPS base with Rene 41 forged end flanges and Rene 41 sheet elsewhere for cost
+    loads: airfoil gas loads and the inner seal; the nozzle segments bolt to the aft flange; discourager and inner seal mounts hang from it
+    ogv_joint: {bolts: 64, diameter_cm: 0.953, diameter_in: 0.375, to: compressor OGV flange}
+    analysis: differential pressure across the wall, vane gas loads, outer axial-support loads; LCF at 40 s into hot-day takeoff meets 36,000 cycles
+  casing_lcf_map:
+    src: "Fig.93 p.155 — casing LCF life, stress and temperature at hot-day maximum takeoff; every location > 1e5 cycles"
+    points:
+      - {where: forward flange outer, hoop_MPa: 455, hoop_ksi: 66, radial_MPa: 462, radial_ksi: 67, C: 366, F: 691, kt: 2}
+      - {where: forward ring, hoop_MPa: 338, hoop_ksi: 49, radial_MPa: 372, radial_ksi: 54, C: 366, F: 691, kt: 2}
+      - {where: mid flange outer, hoop_MPa: 393, hoop_ksi: 57, radial_MPa: 400, radial_ksi: 58, C: 323, F: 613, kt: 2}
+      - {where: mid flange, hoop_MPa: 386, hoop_ksi: 56, radial_MPa: 393, radial_ksi: 57, C: 327, F: 620, kt: 2}
+      - {where: aft flange, hoop_MPa: 228, hoop_ksi: 33, radial_MPa: 241, radial_ksi: 35, C: 323, F: 613, kt: 2}
+      - {where: aft cone, hoop_MPa: 131, hoop_ksi: 19, radial_MPa: 138, radial_ksi: 20, C: 370, F: 699, kt: 3}
+      - {where: stage-2 nozzle hook, hoop_MPa: 152, hoop_ksi: 22, radial_MPa: 152, radial_ksi: 22, C: 376, F: 709, kt: 3}
+      - {where: stage-2 shroud support, hoop_MPa: -234, hoop_ksi: -34, radial_MPa: 234, radial_ksi: 34, C: 547, F: 1017, kt: 2}
+      - {where: stage-1 shroud support inner, hoop_MPa: -255, hoop_ksi: -37, radial_MPa: 283, radial_ksi: 41, bending_MPa: -124, bending_ksi: -18, C: 626, F: 1159}
+      - {where: stage-1 nozzle axial support, hoop_MPa: -221, hoop_ksi: -32, radial_MPa: 228, radial_ksi: 33, C: 603, F: 1117, kt: 2}
+      - {where: stage-1 shroud support ring, hoop_MPa: -234, hoop_ksi: -34, radial_MPa: 421, radial_ksi: 61, bending_MPa: -379, bending_ksi: -55, C: 613, F: 1136}
+    note: the hot inner parts (550-630 C) run in hoop compression, the cool flanges (320-370 C) in tension -- the thermal stress the text calls predominant; location names are the reader's
+  stage1_nozzle_support_stresses:
+    src: "Fig.94 p.156 — FPS growth engine inner nozzle support; 40 s into takeoff, +50 C (122 F) hot day; Rene 41; LCF > 36,000"
+    aft_flange: {MPa: 1034, ksi: 150, C: 577, F: 1070}
+    delta_p_kPa: [1372, 758, 758]
+    delta_p_psi: [199, 110, 110]
+    weld_upper: {MPa: 310, ksi: 45, C: 538, F: 1000}
+    discourager_seal: {MPa: 296, ksi: 43, C: 482, F: 900}
+    weld_lower: {MPa: 296, ksi: 43, C: 666, F: 1230}
+    forward_flange_to_ogv: {MPa: 359, ksi: 52, C: 538, F: 1000}
+  inducer_and_piston_balance_seal:
+    src: "sec 5.2.2.2 p.157; Fig.95 p.158; Fig.96 p.159"
+    functions: [contains the inducer/expander that feeds blade 1 and blade 2 cooling air, cuts CDP leakage with the forward-seal arrangement and the balance-piston seal-disk bypass, carries CDP leakage through bypass tubes to purge the nozzle-1/blade-1 inner cavity, shields the bolts from CDP leakage so a smaller bolt does after relaxation]
+    tangential_holes: {count: 62, diameter_cm: 0.254, diameter_in: 0.1, angle_deg: 30}
+    seal_material: Inco 903A, for clearance against the rotating balance-piston seal disk
+    bypass_tubes: {count: 64, material: Inco 718, diameter_cm: 0.953, diameter_in: 0.375, brazed_to: support}
+    ogv_bolts: {count: 64, material: Waspaloy, diameter_cm: 0.953, diameter_in: 0.375}
+    expander_vanes: 80
+    weld_joint: Rene 41
+    stresses:
+      src: "Fig.96 — 40 s hot-day takeoff; MPa (ksi), C (F), LCF; objective 36,000 met on Rene 41 and Inco 903A data"
+      points:
+        - {MPa: 103, ksi: 15, C: 513, F: 955, lcf: ">5e4"}
+        - {MPa: 110, ksi: 16, C: 625, F: 1157, lcf: ">5e5", material: Inco 903}
+        - {MPa: 248, ksi: 36, C: 625, F: 1157, lcf: ">5e5", material: Rene 41}
+        - {MPa: 310, ksi: 45, C: 624, F: 1156, lcf: ">5e4"}
+        - {MPa: 28, ksi: 4, C: 627, F: 1160, lcf: ">5e4"}
+        - {MPa: 296, ksi: 43, C: 592, F: 1097, lcf: ">5e4"}
+        - {MPa: 255, ksi: 37, C: 584, F: 1084, lcf: ">5e4"}
+        - {MPa: 48, ksi: 7, C: 593, F: 1100, lcf: ">5e4"}
+        - {MPa: 28, ksi: 4, C: 627, F: 1160, lcf: ">5e4"}
+        - {MPa: 490, ksi: 71, C: 613, F: 1136, lcf: ">5e4"}
+        - {MPa: 841, ksi: 122, C: 441, F: 826, lcf: ">5e4", where: OGV bolt flange}
+  stage1_nozzle:
+    src: "sec 5.2.2.3 pp.157-162; Figs.97-101"
+    vanes: 46
+    vane_material: MA754
+    vanes_per_segment: 2
+    segments: 23
+    band_material: MAR-M-509, cast, compartmentalised impingement and film cavities, integral gussets
+    joint: brazed airfoil to band
+    cooling: forward and aft impingement inserts separated by a slanted rib (which also enlarges the insert inlet area); forward insert in from the inner flowpath and brazed at that end, aft insert in from the outer and brazed there; leading-edge showerhead; inner and outer band impingement plates; flowpath flat seals between segments
+    bolts_to_inner_support: {count: 46, per_segment: 2}
+    positioning: one pin per segment at a band-flange end, radial and circumferential
+    seals: [E seal, chordal seal, segmented air-cavity discourager seal; bolts recessed in the seal for windage]
+    flange:
+      src: "Fig.99 p.163 — FPS base stage-1 inner nozzle flange, 15 s into accel, MAR-M-509 band"
+      loads: gas-load moments plus the inner/outer axial-support mismatch in transients
+      max_at_s_after_takeoff: 15
+      allowable_text_MPa: 269
+      allowable_text_ksi: 39
+      allowable_figure_MPa: 262
+      allowable_figure_ksi: 38
+      allowable_basis: -3 sigma 0.2 percent yield, MAR-M-509
+      moment_N_m: 24.97
+      moment_in_lb: 221
+      flange_stress_with_gussets_MPa: 193
+      flange_stress_with_gussets_ksi: 28
+      as_printed: "the text gives the allowable as 269 MPa (39 ksi), the figure 262 (38). Both recorded."
+    aft_cavity_wall_ballooning:
+      src: "Fig.100 p.164 — suction-side panel creep bulge vs time"
+      issue: high pressure differential on the aft-cavity suction-side wall bulges it and changes the aerodynamic contour
+      analysis: MASS, orthotropic MA754 moduli, wall as panel sectors; rib placed to minimise panel stress; 3 sigma properties
+      delta_p_kPa: 1269
+      delta_p_psi: 184
+      wall_temperature_at_max_bulge_C: 954
+      wall_temperature_at_max_bulge_F: 1750
+      panel_cm: {top: 2.85, height: 4.29, bottom: 1.90}
+      panel_in: {top: 1.06, height: 1.69, bottom: 0.75}
+      bulge_mm: 0.05
+      bulge_in: 0.002
+      after_hours_at_max_takeoff: 600
+      bulge_at_3000h_mm: 0.08
+      as_printed: "the panel top prints 2.85 cm (1.06 in); 1.06 in is 2.69 cm and 2.85 cm is 1.12 in. The other two dimensions convert."
+    airfoil_lcf:
+      src: "Fig.101"
+      limiting_span_pct: 65
+      strain_range: max takeoff transient through a 2-minute takeoff and a chop to idle; thermal stresses plus the moment from the inner/outer nozzle-support axial thermal mismatch
+      conditions: maximum peak gas temperature profile, full deterioration, hot-day takeoff
+      max_peak_gas_temperature_C: 1740
+      max_peak_gas_temperature_F: 3163
+      basis: average profile from the cycle plus the combustor pattern factor
+      design_adder_C: 78
+      design_adder_F: 140
+      adder_for: engine-to-engine variation, deterioration, control tolerance
+      lcf_map:
+        src: "Fig.101 p.165 — stage-1 nozzle airfoil LCF at 65 percent span, maximum takeoff, idle to max takeoff to idle; MA754; C (F), MPa (ksi), cycles to crack initiation"
+        points:
+          - {where: leading edge, C: 1027, F: 1881, MPa: 386, ksi: 56, cycles: 5000}
+          - {where: suction side forward, C: 866, F: 1590, MPa: 510, ksi: 74, cycles: 6000}
+          - {where: suction side aft, C: 878, F: 1612, MPa: 414, ksi: 60, cycles: 20000, ge: true}
+          - {where: suction side mid, C: 945, F: 1733, MPa: 310, ksi: 45, cycles: 20000, ge: true}
+          - {where: rib, C: 904, F: 1660, MPa: 386, ksi: 56, cycles: 20000, ge: true}
+          - {where: suction side near TE, C: 914, F: 1677, MPa: 379, ksi: 55, cycles: 37000}
+          - {where: pressure side forward, C: 945, F: 1733, MPa: 365, ksi: 53, cycles: 20000, ge: true}
+          - {where: pressure side, C: 888, F: 1631, MPa: 462, ksi: 67, cycles: 8000}
+          - {where: pressure side aft, C: 842, F: 1548, MPa: 441, ksi: 64, cycles: 20000, ge: true}
+          - {where: trailing edge, C: 991, F: 1815, MPa: 427, ksi: 62, cycles: 3500}
+        finding: >
+          At maximum-severity conditions the stage-1 vane's trailing edge
+          initiates a crack in 3,500 cycles and the leading edge in 5,000,
+          against Table XV's 9,000-cycle service life for flowpath parts.
+          The report does not remark on it; the conditions are the
+          maximum-severity profile with full deterioration on a hot day,
+          not the mission mix, and Table XV allows repair. It is the
+          shortest calculated life in the turbine. Recorded as a finding.
+  stage2_nozzle:
+    src: "sec 5.2.2.4 p.162 onward; Fig.102"
+    vanes: 48
+    vane_material: Rene 150
+    vanes_per_segment: 2
+    segments: 24
+    band_material: Rene 80
+    joint: brazed pairs
+    why_rene_150: LCF and rupture over Rene 80 or Rene 125, which bought lower cooling flow at the 18,000-cycle life
+    features:
+      src: "Fig.102 p.166; text pp.162-167"
+      mount: bolted to a single outer-casing flange, simply supported at a forward hook, and bolted together at an integral manifold under the inner band -- one structure that carries the cooling manifolds and the interstage seal
+      cooling_air: compressor seventh stage, low-pressure-drop manifold, spoolies into the airfoil; also purges the interstage seal cavity between the stage-1 aft retainer and the stage-2 damper
+      fastener_per_segment: {count: 1, diameter_cm: 0.635, diameter_in: 0.25, material: Waspaloy}
+      seals: {forward: 6, inner_discourager: 6, interstage_flat: 6, flowpath: hourglass}
+      windage: no holes or slots
+      do_change_capability_pct: 4
+      gussets: forward for airfoil load redistribution, aft
+      cold_position: set so the nozzle sits on the design flowpath at maximum climb when hot
+      airfoil: one cavity with a single impingement insert; spanwise and chordwise ribs hold the impingement distance; thicker suction-side wall with extended ribs against ballooning; turbulence promoters and trailing-edge slots
+    lcf:
+      src: "Fig.104 p.169 — Rene 150, max takeoff accel to decel; C (F), cycles"
+      limiting: {location: trailing edge, span_pct: 65, cycles: 20000, C: 1056, F: 1932}
+      goal_cycles: 18000
+      span_95: [[1006, 1843, 56000], [953, 1748, 39000], [927, 1700, 100000], [922, 1692, 100000], [928, 1703, 100000], [959, 1759, 100000], [948, 1738, 100000]]
+      span_65: [[1056, 1932, 20000], [989, 1812, 100000], [978, 1792, 100000], [997, 1827, 100000], [1037, 1898, 100000], [987, 1808, 100000], [899, 1651, 100000]]
+      note: "'>1e5' carried as 100000; the 65 percent section runs 30-70 C hotter than the 95 percent and is the limiting one"
+    flange_stresses:
+      src: "Fig.105 p.170 — gas loads at takeoff; below Rene 80 0.2 percent yield"
+      outer_hook_MPa: 202
+      outer_hook_ksi: 29.3
+      bolt_flange_MPa: 175
+      bolt_flange_ksi: 25.4
+
+  ceramic_shrouds:
+    src: "sec 5.2.3.1 p.167 onward"
+    why_life_limiting: the wall opposite the stage-1 tips sees combustor gas leaving nozzle 1 near Mach 1, with tip-leakage flow patterns -- high convection and heat load, and a large cooling-air demand on a metal shroud
+    status: to follow

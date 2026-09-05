@@ -319,3 +319,251 @@ def test_blade_vibratory_allowable_converts_and_lives_match_flowpath_table(mech)
     lo = mech["stage1_blade"]["life_objective"]
     assert lo["mission_mix_hours"] == mech["design_lives"]["flowpath_components_and_blade_retainers"][2]
     assert lo["lcf_cycles"] == mech["design_lives"]["flowpath_components_and_blade_retainers"][3]
+
+
+# ── stage-1 blade: transient, Campbell, dovetail ────────────────────────
+
+def test_blade_lcf_ranges_convert_and_miner_is_recorded(mech):
+    b = mech["stage1_blade"]["lcf"]
+    le = b["leading_edge_stress_history"]
+    assert mpa_ksi_ok(le["total_range_MPa"], le["total_range_ksi"], 1.0)
+    assert abs((le["decel_to_idle_peak_MPa"] - le["transient_to_takeoff_MPa"]) - le["total_range_MPa"]) < 25
+    assert le["lcf_cycles_at_limiting_location"] > mech["stage1_blade"]["life_objective"]["lcf_cycles"]
+    tr = b["thrust_reverse"]
+    assert mpa_ksi_ok(tr["range_MPa"], tr["range_ksi"], 1.0)
+    combined = 1 / (1 / le["lcf_cycles_at_limiting_location"] + 1 / 1e6)
+    assert abs(combined - 25341) < 2
+    assert 30 < tr["lcf_combined_printed"] - combined < 50  # the recorded print
+
+
+def test_campbell_forcing_orders_are_the_engine_counts(mech, lpt):
+    f = mech["stage1_blade"]["lcf"]["campbell"]["forcing_per_rev"]
+    assert f["stage1_vanes"] == 46 and f["stage2_vanes"] == 48
+    assert f["stage1_vanes"] == 2 * f["stage1_nozzle_segments"]
+    assert f["stage2_vanes"] == 2 * f["stage2_nozzle_segments"]
+    assert f["lpt_stage1_vanes"] == lpt["vane_counts"]["stage1"]
+    assert f["burners"] == 30
+    c = mech["stage1_blade"]["lcf"]["campbell"]
+    sp = c["speeds_rpm"]
+    assert sp["ground_idle"] < sp["flight_idle"] < sp["max_cruise"] < sp["max_climb"] < sp["max_takeoff"]
+    for name, md in c["modes_kHz"].items():
+        assert md["at_14000"] < md["at_0"], name
+    f1t = c["modes_kHz"]["first_torsion"]
+    cross = next(n for n in range(2000, 14000, 50) if 46 * n / 60 >= (f1t["at_0"] + (f1t["at_14000"] - f1t["at_0"]) * n / 14000) * 1000)
+    assert sp["flight_idle"] < cross < sp["max_cruise"], cross
+
+
+def test_stage2_first_torsion_meets_24_per_rev_near_flight_idle(mech):
+    c2 = mech["stage2_blade"]["campbell"]
+    sp = mech["stage1_blade"]["lcf"]["campbell"]["speeds_rpm"]
+    f1t = c2["modes_kHz"]["first_torsion"]
+    cross = next(n for n in range(2000, 14000, 50) if 24 * n / 60 >= (f1t["at_0"] + (f1t["at_14000"] - f1t["at_0"]) * n / 14000) * 1000)
+    assert abs(cross - sp["flight_idle"]) < 700, cross
+    assert c2["forcing_per_rev"]["stage2_nozzle_segments"] == 24
+    # stage 2's blade is longer and softer: every mode below stage 1's
+    c1 = mech["stage1_blade"]["lcf"]["campbell"]["modes_kHz"]
+    for mode in c2["modes_kHz"]:
+        assert c2["modes_kHz"][mode]["at_0"] < c1[mode]["at_0"], mode
+
+
+def test_platform_damper_numbers_convert(mech):
+    d = mech["stage1_blade"]["lcf"]["platform_damper"]
+    assert abs(d["equivalent_g_load_N"] - d["equivalent_g_load_lbf"] * 4.44822) < 0.15
+    assert abs(d["damping_load_N"] - d["damping_load_lbf"] * 4.44822) < 0.15
+    assert mpa_ksi_ok(d["first_flex_vibratory_stress_with_damper_MPa"], d["first_flex_vibratory_stress_with_damper_ksi"], 1.0)
+    assert d["first_flex_vibratory_stress_with_damper_MPa"] < mech["stage1_blade"]["tilt_and_vibration"]["allowable_vibratory_stress_MPa"] / 5
+    assert mech["stage2_blade"]["damper"]["count"] == mech["stage2_blade"]["blades"] == 70
+
+
+def test_rupture_vs_span_has_its_minimum_at_pitch_above_the_line(mech):
+    r = mech["stage1_blade"]["lcf"]["rupture_vs_span"]
+    i = r["hours"].index(min(r["hours"]))
+    assert r["span_pct"][i] == 50 and r["hours"][i] > r["required_hours"]
+
+
+def dovetail_checks(d, n_tangs):
+    import math
+    assert abs(d["load_per_blade_kN"] - d["load_per_blade_lbf"] * 0.00444822) < 0.01
+    assert abs(d["axial_chord_cm"] - d["axial_chord_in"] * 2.54) < 0.006
+    assert len(d["tangs"]) == n_tangs
+    for tg in d["tangs"]:
+        assert mpa_ksi_ok(tg["combined_stress_with_kt_MPa"], tg["ksi"], 1.0)
+        assert abs(tg["neck_width_cm"] - tg["neck_width_in"] * 2.54) < 0.002
+    widths = [tg["neck_width_cm"] for tg in d["tangs"]]
+    assert widths == sorted(widths, reverse=True)  # necks narrow downward
+    omega = d["condition"]["rpm"] * 2 * math.pi / 60
+    return d["load_per_blade_kN"] * 1000 / omega ** 2
+
+
+def test_both_dovetails_convert_and_imply_real_blade_masses(mech):
+    m1 = dovetail_checks(mech["stage1_blade"]["dovetail"], 2) / 0.32   # F/(omega^2 r_cg), r_cg ~ 0.32 m
+    m2 = dovetail_checks(mech["stage2_blade"]["dovetail"], 3) / 0.36
+    assert 0.06 < m1 < 0.25 and 0.10 < m2 < 0.35, (m1, m2)
+    assert m2 > m1
+    d1, d2 = mech["stage1_blade"]["dovetail"], mech["stage2_blade"]["dovetail"]
+    assert d1["tangs"][0]["combined_stress_with_kt_MPa"] == max(t["combined_stress_with_kt_MPa"] for t in d1["tangs"])  # upper tang on stage 1
+    assert d2["tangs"][-1]["combined_stress_with_kt_MPa"] == max(t["combined_stress_with_kt_MPa"] for t in d2["tangs"])  # lower tang on stage 2, as the text says
+    assert d1["condition"]["rpm"] == d2["condition"]["rpm"] == 13948
+
+
+def test_stage2_blade_mission_mix_and_rupture_map(mech):
+    mm = mech["stage2_blade"]["rupture_life"]["mission_mix"]
+    assert sum(mm["hours_at_point"]) == mm["total_hours"]
+    assert abs(sum(mm["pct_life_used"]) - 100) < 0.2
+    assert mm["hours_at_point"] == mech["stage1_blade"]["rupture_life"]["mission_mix"]["hours_at_point"]
+    assert mm["available_blade_life_at_max_takeoff_hours"] - mm["equivalent_hours_at_max_takeoff"] == 1
+    pm = mech["stage2_blade"]["rupture_life"]["pitch_section_map"]["points"]
+    for p in pm:
+        assert abs(f_to_c(p["F"]) - p["C"]) < 0.75, p
+    limiting = min(pm, key=lambda p: p["hours"])
+    assert limiting["hours"] == mm["available_blade_life_at_max_takeoff_hours"]
+    assert max(p["C"] for p in pm) > limiting["C"] + 80  # the hottest point is not the limiting one
+    assert 1.03 < 13948 / 13414 < 1.05
+
+
+# ── dynamics, bolts, stator start ───────────────────────────────────────
+
+def test_dynamic_safety_margins_recompute_from_the_definition(mech):
+    d = mech["rotor_dynamics"]
+    n_max = d["max_engine_speed_rps"]
+    for crit, sm in zip(d["table_xxii"]["critical_speed_rps"], d["table_xxii"]["safety_margin"]):
+        assert abs((crit - n_max) / n_max - sm) < 0.012, (crit, sm)
+    assert min(d["table_xxii"]["safety_margin"]) > 1.5
+    assert abs(n_max * 60 - 13948) / 13948 < 0.005
+    a = d["aft_seal_disk"]
+    assert a["backward_wave_zero_rps"] == d["table_xxii"]["critical_speed_rps"][3]
+    assert a["N"] == d["table_xxii"]["critical_nodes_N"][3]
+    assert a["idle_rps"] * 60 > 9000 and a["idle_rps"] < n_max
+
+
+def test_bolt_flanges_convert_and_the_clamp_margins_hold(mech):
+    b = mech["rotor_bolts"]
+    for cm, inch in zip(b["flanges"]["diameter_cm"], b["flanges"]["diameter_in"]):
+        assert abs(cm - inch * 2.54) < 0.003
+    ind = b["inducer_disk_bolt"]
+    assert abs(ind["initial_clamp_kN"] - ind["initial_clamp_lbf"] * 0.00444822) < 0.5
+    assert ind["initial_clamp_kN"] > ind["after_9000h_kN"] > ind["minimum_cold_clamp_kN"]
+    assert abs((ind["after_9000h_kN"] / ind["minimum_cold_clamp_kN"] - 1) * 100 - ind["margin_after_9000h_pct"]) < 3
+    assert ind["bolts"]["count"] == b["flanges"]["count"][0] and ind["bolts"]["diameter_cm"] == b["flanges"]["diameter_cm"][0]
+    it = b["interstage_disk_bolt"]
+    assert abs(it["initial_clamp_kN"] - it["initial_clamp_lbf"] * 0.00444822) < 0.5
+    assert abs(it["minimum_cold_clamp_kN"] - it["minimum_cold_clamp_lbf"] * 0.00444822) < 0.3
+    assert it["initial_clamp_kN"] > it["after_9000h_kN"] > it["minimum_cold_clamp_kN"]
+    assert it["bolts"]["count"] == b["flanges"]["count"][1] and it["bolts"]["diameter_cm"] == b["flanges"]["diameter_cm"][1]
+    assert abs(f_to_c(ind["bolts"]["t_max_F"]) - ind["bolts"]["t_max_C"]) < 0.75
+    assert b["life_objective_hours"] == mech["design_lives"]["flowpath_components_and_blade_retainers"][0]
+
+
+def test_stator_materials_and_ogv_joint(mech):
+    st = mech["stator"]
+    assert st["casings"]["fps_material"].startswith("Direct Age Inco 718")
+    assert abs(st["stage1_nozzle_support"]["ogv_joint"]["diameter_cm"] - st["stage1_nozzle_support"]["ogv_joint"]["diameter_in"] * 2.54) < 0.003
+    assert st["stage1_nozzle_support"]["ogv_joint"]["bolts"] == 64
+    assert "Rene 41" in st["casings"]["shroud_support"]
+
+
+# ── casing, nozzle support, inducer seal, stage-1 nozzle ────────────────
+
+def test_casing_map_converts_and_hot_parts_are_in_hoop_compression(mech):
+    pts = mech["stator"]["casing_lcf_map"]["points"]
+    for p in pts:
+        assert mpa_ksi_ok(p["hoop_MPa"], p["hoop_ksi"], 1.0), p
+        assert mpa_ksi_ok(p["radial_MPa"], p["radial_ksi"], 1.0), p
+        if "bending_MPa" in p:
+            assert mpa_ksi_ok(p["bending_MPa"], p["bending_ksi"], 1.0), p
+        assert abs(f_to_c(p["F"]) - p["C"]) < 0.75, p
+    for p in pts:
+        if p["C"] > 500:
+            assert p["hoop_MPa"] < 0, p
+        else:
+            assert p["hoop_MPa"] > 0, p
+    assert max(p["C"] for p in pts) == 626 and min(p["C"] for p in pts) == 323
+
+
+def test_nozzle_support_and_inducer_seal_figures_convert(mech):
+    ns = mech["stator"]["stage1_nozzle_support_stresses"]
+    for key in ("aft_flange", "weld_upper", "discourager_seal", "weld_lower", "forward_flange_to_ogv"):
+        p = ns[key]
+        assert mpa_ksi_ok(p["MPa"], p["ksi"], 1.0) and abs(f_to_c(p["F"]) - p["C"]) < 0.75, key
+    for kpa, psi in zip(ns["delta_p_kPa"], ns["delta_p_psi"]):
+        assert abs(kpa - psi * 6.89476) < 1.0
+    assert ns["aft_flange"]["MPa"] == 1034  # the same 150 ksi the LPT and disk bores keep landing on
+    ind = mech["stator"]["inducer_and_piston_balance_seal"]
+    for p in ind["stresses"]["points"]:
+        assert mpa_ksi_ok(p["MPa"], p["ksi"], 1.0) and abs(f_to_c(p["F"]) - p["C"]) < 0.75, p
+    assert max(p["MPa"] for p in ind["stresses"]["points"]) == 841
+    assert ind["bypass_tubes"]["count"] == ind["ogv_bolts"]["count"] == 64
+    assert ind["ogv_bolts"]["count"] == mech["stator"]["stage1_nozzle_support"]["ogv_joint"]["bolts"]
+    assert abs(ind["tangential_holes"]["diameter_cm"] - ind["tangential_holes"]["diameter_in"] * 2.54) < 0.002
+    assert abs(ind["bypass_tubes"]["diameter_cm"] - ind["bypass_tubes"]["diameter_in"] * 2.54) < 0.002
+
+
+def test_nozzle_counts_tie_to_the_campbell_orders(mech):
+    n1, n2 = mech["stator"]["stage1_nozzle"], mech["stator"]["stage2_nozzle"]
+    f = mech["stage1_blade"]["lcf"]["campbell"]["forcing_per_rev"]
+    assert n1["vanes"] == n1["vanes_per_segment"] * n1["segments"] == f["stage1_vanes"]
+    assert n1["segments"] == f["stage1_nozzle_segments"]
+    assert n2["vanes"] == n2["vanes_per_segment"] * n2["segments"] == f["stage2_vanes"]
+    assert n2["segments"] == f["stage2_nozzle_segments"]
+    assert n1["bolts_to_inner_support"]["count"] == n1["segments"] * n1["bolts_to_inner_support"]["per_segment"]
+    assert n1["vane_material"] == mech["materials"]["static_parts"]["stage1_nozzle"]["airfoils"]
+    assert n2["vane_material"] in mech["materials"]["static_parts"]["stage2_nozzle"]["airfoils"]
+
+
+def test_stage1_nozzle_flange_and_gas_temperature_convert(mech):
+    n1 = mech["stator"]["stage1_nozzle"]
+    assert mpa_ksi_ok(n1["flange"]["allowable_text_MPa"], n1["flange"]["allowable_text_ksi"], 1.0)
+    assert abs(n1["aft_cavity_wall_ballooning"]["bulge_mm"] - n1["aft_cavity_wall_ballooning"]["bulge_in"] * 25.4) < 0.002
+    a = n1["airfoil_lcf"]
+    assert abs(f_to_c(a["max_peak_gas_temperature_F"]) - a["max_peak_gas_temperature_C"]) < 0.75
+    assert abs(a["design_adder_F"] / 1.8 - a["design_adder_C"]) < 0.5
+    assert a["max_peak_gas_temperature_C"] > 1600
+
+
+# ── nozzles: Figs.99-105 ────────────────────────────────────────────────
+
+def test_stage1_nozzle_flange_and_bulge_figures_convert(mech):
+    fl = mech["stator"]["stage1_nozzle"]["flange"]
+    assert mpa_ksi_ok(fl["allowable_text_MPa"], fl["allowable_text_ksi"], 1.0)
+    assert mpa_ksi_ok(fl["allowable_figure_MPa"], fl["allowable_figure_ksi"], 1.0)
+    assert mpa_ksi_ok(fl["flange_stress_with_gussets_MPa"], fl["flange_stress_with_gussets_ksi"], 1.0)
+    assert abs(fl["moment_N_m"] - fl["moment_in_lb"] * 0.112985) < 0.02
+    assert fl["flange_stress_with_gussets_MPa"] < fl["allowable_figure_MPa"] < fl["allowable_text_MPa"]
+    b = mech["stator"]["stage1_nozzle"]["aft_cavity_wall_ballooning"]
+    assert abs(b["delta_p_kPa"] - b["delta_p_psi"] * 6.89476) < 1.0
+    assert abs(f_to_c(b["wall_temperature_at_max_bulge_F"]) - b["wall_temperature_at_max_bulge_C"]) < 0.75
+    for k in ("height", "bottom"):
+        assert abs(b["panel_cm"][k] - b["panel_in"][k] * 2.54) < 0.01, k
+    assert abs(b["panel_cm"]["top"] - b["panel_in"]["top"] * 2.54) > 0.1  # the recorded print
+    assert b["bulge_mm"] < b["bulge_at_3000h_mm"]
+
+
+def test_stage1_vane_lcf_map_converts_and_records_the_short_lives(mech):
+    pts = mech["stator"]["stage1_nozzle"]["airfoil_lcf"]["lcf_map"]["points"]
+    for p in pts:
+        assert mpa_ksi_ok(p["MPa"], p["ksi"], 1.0) and abs(f_to_c(p["F"]) - p["C"]) < 0.75, p
+    firm = [p for p in pts if not p.get("ge")]
+    worst = min(firm, key=lambda p: p["cycles"])
+    assert worst["where"] == "trailing edge" and worst["cycles"] == 3500
+    service = mech["design_lives"]["flowpath_components_and_blade_retainers"][1]
+    assert worst["cycles"] < service  # the finding
+    hottest = max(pts, key=lambda p: p["C"])
+    assert hottest["where"] == "leading edge" and hottest["cycles"] == 5000
+    assert "finding" in mech["stator"]["stage1_nozzle"]["airfoil_lcf"]["lcf_map"]
+
+
+def test_stage2_nozzle_lcf_meets_its_goal_at_the_trailing_edge(mech):
+    n2 = mech["stator"]["stage2_nozzle"]
+    lcf = n2["lcf"]
+    for c, f, _ in lcf["span_95"] + lcf["span_65"]:
+        assert abs(f_to_c(f) - c) < 0.75, (c, f)
+    lim = lcf["limiting"]
+    assert lim["cycles"] > lcf["goal_cycles"] == mech["stage1_blade"]["life_objective"]["lcf_cycles"]
+    assert lim["cycles"] == min(x[2] for x in lcf["span_65"])
+    assert min(x[2] for x in lcf["span_95"]) > lim["cycles"]
+    assert lim["C"] == max(x[0] for x in lcf["span_65"])
+    fs = n2["flange_stresses"]
+    assert mpa_ksi_ok(fs["outer_hook_MPa"], fs["outer_hook_ksi"], 1.0) and mpa_ksi_ok(fs["bolt_flange_MPa"], fs["bolt_flange_ksi"], 1.0)
+    f = n2["features"]
+    assert abs(f["fastener_per_segment"]["diameter_cm"] - f["fastener_per_segment"]["diameter_in"] * 2.54) < 0.003
+    assert f["seals"]["forward"] == f["seals"]["inner_discourager"] == f["seals"]["interstage_flat"] == 6
