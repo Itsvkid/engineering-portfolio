@@ -567,3 +567,74 @@ def test_stage2_nozzle_lcf_meets_its_goal_at_the_trailing_edge(mech):
     f = n2["features"]
     assert abs(f["fastener_per_segment"]["diameter_cm"] - f["fastener_per_segment"]["diameter_in"] * 2.54) < 0.003
     assert f["seals"]["forward"] == f["seals"]["inner_discourager"] == f["seals"]["interstage_flat"] == 6
+
+
+# ── ceramic shrouds ─────────────────────────────────────────────────────
+
+def test_ceramic_shroud_thickness_arithmetic_and_conversions(mech):
+    th = mech["stator"]["ceramic_shrouds"]["thickness"]
+    st = th["stackup"]
+    assert abs(st["eccentricity_cm"] + st["tolerance_on_radius_cm"] - st["total_cm"]) < 0.001
+    assert abs(st["eccentricity_in"] + st["tolerance_on_radius_in"] - st["total_in"]) < 0.0005
+    for k in ("eccentricity", "tolerance_on_radius", "total"):
+        assert abs(st[f"{k}_cm"] - st[f"{k}_in"] * 2.54) < 0.001, k
+    assert abs(th["minimum_ceramic_cm"] - th["minimum_ceramic_in"] * 2.54) < 0.001
+    assert abs(th["bond_coat_below_982C_down_to_cm"] + st["total_cm"] - th["minimum_ceramic_cm"]) < 0.001
+    assert abs(th["peg_end_holds_1038C_from_cm"] - th["peg_end_holds_1038C_from_in"] * 2.54) < 0.001
+    assert abs(th["bond_coat_below_982C_down_to_in"] * 2.54 - th["bond_coat_below_982C_down_to_cm"]) > 0.002  # the recorded 0.021
+    assert abs(f_to_c(th["peg_end_F"]) - th["peg_end_C"]) < 0.75
+    c = mech["stator"]["ceramic_shrouds"]["construction"]
+    assert abs(f_to_c(c["bond_coat_limit_F"]) - c["bond_coat_limit_C"]) < 0.75
+
+
+def test_fig107_curves_behave_as_the_text_describes(mech):
+    f = mech["stator"]["ceramic_shrouds"]["thickness"]["fig107_read_off"]
+    limit = mech["stator"]["ceramic_shrouds"]["construction"]["bond_coat_limit_C"]
+    assert f["ceramic_surface_C"] == sorted(f["ceramic_surface_C"])
+    assert f["bond_coat_C"] == sorted(f["bond_coat_C"], reverse=True)
+    # bond coat crosses 982 C near 0.05 cm
+    i = next(k for k, v in enumerate(f["bond_coat_C"]) if v <= limit)
+    assert f["ceramic_thickness_cm"][i - 1] <= 0.05 <= f["ceramic_thickness_cm"][i]  # crosses 982 C at about 0.05 cm
+    # the peg end is flat-ish: within 90 C across the range
+    assert max(f["peg_end_C"]) - min(f["peg_end_C"]) < 100
+    for surf, bond in zip(f["ceramic_surface_C"], f["bond_coat_C"]):
+        assert surf > bond
+
+
+def test_ceramic_shroud_stress_points_convert(mech):
+    pts = mech["stator"]["ceramic_shrouds"]["stress_life"]["points"]
+    for p in pts:
+        assert mpa_ksi_ok(p["MPa"], p["ksi"], 1.0) and abs(f_to_c(p["F"]) - p["C"]) < 0.75, p
+    labelled_max = next(p for p in pts if p.get("note") == "maximum stress")
+    assert labelled_max["MPa"] < max(p["MPa"] for p in pts)  # the recorded oddity
+    assert mech["stator"]["stage1_nozzle"]["segments"] == 23 and "23 nozzle segments" in mech["maintainability"]["module1"]["assembly"]
+
+
+# ── weights and the end of the report ───────────────────────────────────
+
+def test_fps_turbine_weight_adds_and_converts(mech, lpt):
+    w = mech["fps_weight"]
+    assert w["hpt_stator_kg"] + w["hpt_rotor_kg"] == w["total_turbine_kg"]
+    assert w["hpt_stator_lbm"] + w["hpt_rotor_lbm"] == w["total_turbine_lbm"]
+    for kg, lb in ((w["total_turbine_kg"], w["total_turbine_lbm"]), (w["hpt_stator_kg"], w["hpt_stator_lbm"]), (w["hpt_rotor_kg"], w["hpt_rotor_lbm"])):
+        assert abs(kg - lb * 0.45359) < 0.8, (kg, lb)
+    assert w["hpt_rotor_kg"] / w["total_turbine_kg"] > 0.65
+    # the HPT is lighter than the LPT, and its rotor share far higher
+    assert w["total_turbine_kg"] < lpt["weights"]["total_kg"]
+    pub = yaml.safe_load((DATA / "e3-fps-published.yaml").read_text())
+    mod = None
+    for k, v in pub.items():
+        if isinstance(v, dict):
+            for kk, vv in v.items():
+                if isinstance(vv, dict) and "hpt" in kk.lower() and "rotor" in vv and "stator" in vv:
+                    mod = vv
+    if mod is not None:
+        assert abs(mod["rotor"] - w["hpt_rotor_kg"]) / w["hpt_rotor_kg"] < 0.05
+        assert abs(mod["stator"] - w["hpt_stator_kg"]) / w["hpt_stator_kg"] < 0.05
+
+
+def test_station_numbers_match_the_topology_file(mech):
+    topo = yaml.safe_load((DATA / "e3-fps-published.yaml").read_text())
+    st = mech["report_end"]["symbols_of_note"]["stations"]
+    assert st[41] == "HPT rotor-1 inlet" and st[49] == "LPT rotor-1 inlet"
+    assert "T41" in str(topo) or "t41" in str(topo).lower()

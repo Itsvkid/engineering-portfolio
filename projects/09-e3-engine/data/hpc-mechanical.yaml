@@ -1,0 +1,144 @@
+# E3 High Pressure Compressor — mechanical design and rig findings, as
+# printed. HPC Detail Design Report (NTRS 19850002690) section 3, pp.94-103
+# (PDF page = report page + 9). Every value carries its source; prints are
+# recorded, not corrected. Companion to hpc-stagewise.yaml (aero design
+# intent) and the Table X block in e3-fps-published.yaml.
+
+meta:
+  report: E3 HPC Detail Design Report, NTRS 19850002690
+  pages_printed: "92-103"
+  transcribed: 2026-09-05
+  status: Tables XV-XIX, Figs 55-62 transcribed; the rotor Campbell diagrams (Figs 33-54) and Table XIV remain figure-status (A3)
+
+stator_aeromechanics:
+  src: "Table XV p.96 — E3 10A compressor test aeromechanical summary, stator vanes"
+  row:                                 [IGV, S1, S2, S3, S4, S5, S6, S7, S8, S9, OGV]
+  max_steady_state_response_pct_limit: [3, 7, 11, 4, 24, 30, 30, 30, 40, 56, null]
+  ogv_note: 1F and 1T not excited
+  speed_rpm: 11600
+  peak_stall_response_pct_limit: "<40 on every row"
+  note: response rises rearward -- the low-aspect-ratio rear vanes with the highest loading (Fig 18) sit closest to their limits; stator 9 at 56 percent is the one to watch
+
+clearance_elements:
+  src: "Table XVI p.96 — elements of E3 compressor clearances"
+  axisymmetric_closures: [flight condition, transient response]
+  beam_bending: {terms: [thrust, inlet loads, g loads, gyro], combination: "gyro BB = inlet loads + thrust + sqrt(gyro^2 + g^2)"}
+  casing_distortion: ovalization from mount reaction loads
+  system_vibration: {basis: steady state, hp_unbalance_g_cm: 381, hp_unbalance_g_in: 150, lp_unbalance_g_cm: 1270, lp_unbalance_g_in: 500, unit_note: "gram-centimetre and gram-inch of residual unbalance (a product, so 150 g.in = 381 g.cm)"}
+  tolerances: manufacturing and assembly, root-sum-square
+  rub_allowance_cm: 0.013
+  rub_allowance_in: 0.005
+  stall_allowance_cm: 0.025
+  stall_allowance_in: 0.010
+  stall_allowance_applies_to: stage 1 only
+  note: the same family of terms as the turbines' out-of-round tables (LPT Table XVIII, HPT Table XIII); here the gyro and g terms are root-sum-squared before adding to thrust and inlet loads
+
+casing_temperatures_10A:
+  src: "Fig.59 p.97 — E3 10A casing temperature distribution, analysis over test, K; read from the figure"
+  stations_outer_analysis_K: [262, 300, 331, 366, 378, 400, 441, 452, 458, 479, 467, 530]
+  stations_outer_test_K:     [267, 298, 331, 360, 376, 398, 435, 447, 461, 489, 477, 542]
+  stations_inner_analysis_K: [260, 302, 339, 386, 423, 463, 491, 532, 573, 605]
+  stations_inner_test_K:     [261, 297, 336, 375, 411, 447, 479, 512, 552, 583]
+  t25_analysis_C: -67
+  t25_test_C: -73
+  t3_analysis_K: 605
+  t3_test_K: 583
+  p25_analysis_N_cm2: 2.615
+  p25_test_N_cm2: 2.181
+  p3_analysis_N_cm2: 61.159
+  p3_test_N_cm2: 58.056
+  as_printed: "T25 is labelled '(K)' beside -67/-73; those are degrees Celsius (206 and 200 K). Recorded."
+  note: analysis within 1-3 percent of test at every station on the outer casing and within 4 percent on the inner; the rig ran a cold inlet (about 200 K) so the whole map is 80-90 K below engine values
+
+rig_bleeds_10A:
+  src: "Fig.60 p.98 — compressor 10A rig bleeds, percent of inlet flow"
+  customer_bleed_stage5_pct: "0-9"
+  start_bleed_stage7_pct: "0-30"
+  supplementary_customer_bleed_pct: "0-9"
+  hpt_nozzle2_cooling_pct: 2.35
+  cavity_behind_hptr2_pct: 1.47
+  hptr_cooling_pct: 5.6
+  interstage_leakages_pct: [0.72, 0.75]
+  core_bleed: not included in the rig
+  note: the 2.35 percent for the stage-2 nozzle is the 2.3 the design vector diagrams carried at stage 7 (hpc-stagewise.yaml); the 5.6 percent HPT rotor cooling is the compressor-exit view of what the HPT report's Table VII splits into blade, disk and seal flows
+
+clearances:
+  src: "Fig.61 p.100 (FPS) and Fig.62 p.101 (10A rig); mm; read off"
+  stage: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  fps_buildup_mm:              [0.96, 0.74, 0.59, 0.61, 0.54, 0.22, 0.22, 0.30, 0.41, 0.24]
+  fps_cruise_mm:               [0.52, 0.34, 0.31, 0.51, 0.52, 0.41, 0.36, 0.27, 0.26, 0.26]
+  e3_efficiency_objective_mm:  [0.77, 0.64, 0.56, 0.48, 0.45, 0.39, 0.39, 0.40, 0.41, 0.48]
+  rig_goal_fps_cruise_mm:      [0.52, 0.32, 0.30, 0.50, 0.53, 0.43, 0.38, 0.28, 0.26, 0.26]
+  rig_post_test_analysis_mm:   [0.52, 0.50, 0.45, 0.62, 0.65, 0.08, 0.25, 0.16, 0.16, 0.21]
+  rig_touch_probe_mm: {stage3: 0.37, stage4: 0.50, stage10: 0.04}
+  rig_condition: {corrected_speed_pct: 100, t25_K: 220, t25_F: -63}
+  text: >
+    FPS cruise clearances beat the efficiency objective on every stage
+    but 4-6 (Fig 61), where they sit at or just above it. The rig's post-test analytical clearances (Fig 62)
+    are compared with the FPS cruise goal; the stage 3, 4 and 10 touch-
+    probe readings differ from the analysis, attributed to test scatter.
+    Recessed flowpath over the rotor tips (from the low-speed research
+    vehicle) is incorporated in the E3 cases.
+  finding: >
+    On the rig, stage 6's post-test clearance is 0.08 mm against a 0.43
+    goal and stages 8-9 are 0.16 against 0.26-0.28 -- the fixed-geometry
+    rear stages ran much tighter than the goal, and stages 4-5 much
+    looser (0.62-0.65 against 0.50-0.53). The stage-10 touch probe read
+    0.04 mm. Recorded as read.
+
+casing_bolting:
+  src: "Table XVII p.102 — compressor casing bolting"
+  criterion: no axial flange separation at 2 x maximum ICLS operating pressure
+  front_casing: {bolts: 60, diameter_cm: 0.953, diameter_in: 0.375}
+  aft_casing: {bolts: 32, diameter_cm: 0.953, diameter_in: 0.375}
+  manifold_casing: {bolts: 28, diameter_cm: 0.953, diameter_in: 0.375}
+  as_printed: "the manifold count prints as '2S' or '28'; 28 taken"
+  note: the HPT/LPT flange on the other end of the core uses 132 bolts (LPT report); the compressor's three flanges use 120 of the same 3/8-inch size
+
+vsv_bushings:
+  src: "Table XVIII p.102 — E3 VSV bushing material selection; maximum operating temperatures, K"
+  stage:            [IGV, 1, 2, 3, 4, 5, 6]
+  fps_hdto_K:       [367, 431, 489, 546, 601, 657, 701]
+  fps_cruise_K:     [301, 361, 415, 470, 525, 578, 625]
+  growth_hdto_K:    [393, 461, 523, 585, 643, 707, 749]
+  growth_cruise_K:  [321, 391, 432, 487, 563, 618, 665]
+  selection:
+    ZX:         [IGV, 1, 2, 3]
+    Fabroid_XV: [IGV, 1, 2, 3, 4]
+    PBH_20:     [4, 5, 6]
+  materials:
+    ZX: free-standing TFE-glass/polyimide composite, 1.02 mm thick, a glass layer between two fabric-composite layers in 703 resin
+    Fabroid_XV: 0.38 mm TFE-glass fabric/polyimide composite lined into a 0.64 mm 17-4 PH metal jacket
+    PBH_20: mechanical carbon bushing, carbon compressively prestressed into a 0.51 mm 17-4 PH sleeve
+  note: only the IGV and stators 1-4 are variable (hpc-stagewise.yaml); stages 5-6 are listed for the PBH-20 range although fixed
+  endurance_tests:
+    src: "Table XIX p.103 — bushing and spacer endurance; pressure N/cm2 and temperature K as FPS HDTO/cruise, growth in parentheses; wear in mm"
+    test_cycles: {hdto: 200000, cruise: 2300000, basis: FPS mission-mix life}
+    rows:
+      - {material: "ZX (703)", geometry: stage 1, load: stage 1, pressure_N_cm2: [20.82, 7.46], temperature_K: [431, 361], growth_K: [461, 391], wear_bushing_mm: 0.152, wear_spacer_mm: 0.076}
+      - {material: "ZX (NR150)", geometry: stage 4, load: stage 3, pressure_N_cm2: [51.71, 27.09], temperature_K: [601, 525], growth_K: [643, 563], wear_bushing_mm: 0.838, wear_spacer_mm: 0.254, failed_at_cycles: 2146000}
+      - {material: Fabroid, geometry: stage 1, load: stage 1, pressure_N_cm2: [20.82, 7.46], temperature_K: [431, 361], growth_K: [461, 391], wear_bushing_mm: 0.251, wear_spacer_mm: 0.127}
+      - {material: Fabroid, geometry: stage 4, load: stage 3, pressure_N_cm2: [51.71, 27.09], temperature_K: [601, 525], growth_K: [643, 563], wear_bushing_mm: null, wear_spacer_mm: null, status: not yet tested}
+      - {material: "PBH-20", geometry: stage 4, load: stage 4, pressure_N_cm2: [51.92, 37.23], temperature_K: [657, 578], growth_K: [643, 563], wear_bushing_mm: 0.330, wear_spacer_mm: 0.203}
+    finding: the ZX with NR150 resin, run only as a data point, is the one failure (at 0.2 + 1.946 million cycles); its bushing wear is 5.5 times the ZX-703's
+    as_printed: "the PBH-20 row's FPS temperatures 657/578 are Table XVIII's stage-5 values while its geometry and load say stage 4 and its growth temperatures are stage 4's. Recorded."
+
+diffuser_and_actuation:
+  src: "p.99"
+  diffuser: thermal and stress analyses (Figs 63-64) for the worst transient of the growth engine; meets the life requirements
+  vsv_actuation: torsion-bar system like the ICLS's (Fig 65; Table XX for the ICLS features)
+
+vane_campbell_10A:
+  src: "Figs.55-56 pp.92-93 — stage 9 and 10 vane Campbell diagrams, 10A rig; read off"
+  speed_100pct_nc_rpm: 10800
+  forcing_per_rev: {R8: 84, R9: 88, R10: 98}
+  stage9_vane:
+    first_torsion_kHz: {at_0: 23.2, at_14000: 21.8}
+    first_flex_kHz: {at_0: 18.3, at_14000: 16.6}
+    crossings: first flex meets 84/rev, 88/rev and 98/rev between 10,500 and 11,800 rpm -- around 100 percent corrected speed; the test points sit on the crossings
+  stage10_vane:
+    first_torsion_kHz: {at_0: 32.0, at_14000: 29.0}
+    first_flex_kHz: {at_0: 28.5, at_14000: 25.0}
+    crossings: none below 14,000 rpm -- the OGV's 1F and 1T are not excited (Table XV)
+  stability: {src: "Figs.57-58 pp.94-95", finding: flexural and torsional reduced-velocity parameter vs incidence for stages 1-10 sit well inside the instability boundaries}
+  note: the per-rev orders 84, 88, 98 are the ORIGINAL rotor 8-10 blade counts (rotors 9 and 10 were re-bladed to 86 and 94 -- hpc-vector-diagrams.yaml); the 10A rig ran the original counts

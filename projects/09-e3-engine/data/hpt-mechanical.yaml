@@ -5,9 +5,9 @@
 
 meta:
   source: e3-hp-turbine-hardware-CR-167955.pdf
-  pages_read: "86-170"
+  pages_read: "86-186"
   transcribed: 2026-09-05
-  status: sec 5.1, 5.2.1 and 5.2.2 complete (rotor, blades, dynamics, bolts, casings, both nozzles); sec 5.2.3 ceramic shrouds onward to follow
+  status: "section 5 complete -- the report ends at sec 5.4 (p.179), references and symbols. CR-167955 is fully transcribed across hpt-cooling.yaml (sec 3), hpt-clearance.yaml (sec 4) and this file (sec 5); secs 1-2 (aero, Tables I-IV, Fig 3) are in e3-fps-published.yaml"
 
 configuration:
   src: "sec 5.1.1 p.86; Fig.50 p.87"
@@ -892,6 +892,80 @@ stator:
       bolt_flange_ksi: 25.4
 
   ceramic_shrouds:
-    src: "sec 5.2.3.1 p.167 onward"
-    why_life_limiting: the wall opposite the stage-1 tips sees combustor gas leaving nozzle 1 near Mach 1, with tip-leakage flow patterns -- high convection and heat load, and a large cooling-air demand on a metal shroud
-    status: to follow
+    src: "sec 5.2.3 pp.167-176; Figs.106-109"
+    why_life_limiting: the wall opposite the stage-1 tips sees combustor gas leaving nozzle 1 near Mach 1, with tip-leakage flow patterns -- high convection and heat load over a large area; vibration, blade-passing pressure fluctuation, thermal cycling; and it must survive blade rubs, which constrains the small film holes a metal shroud's cooling depends on
+    metal_shroud_experience: high-density cast or wrought, or lower-density sintered/hot-pressed; the low-density forms abrade (less tip wear, better clearance) and have lower modulus (less thermal stress); all need high-temperature oxidation-resistant alloys and rising cooling air as T41 rises
+    ceramic_case: stable-oxide ceramics have practically unlimited oxidation resistance, low conductivity (less cooling air to keep the backing cool), and low expansion that above 1204 C (2200 F) matches the metal support's; plasma-sprayed zirconia has all three
+    construction:
+      src: "Fig.106 p.172"
+      surface: plasma-sprayed zirconia with 6-8 percent Y2O3
+      backing: cast Rene 77, oxidation-resistant, carries the attachment to the support structure
+      anchoring: peg array ("super pegs") through the ceramic, mechanical interlock supplementing the bond
+      coats: [NiCrAlY bond coat, blend coat as transition, top coat]
+      bond_coat_limit_C: 982
+      bond_coat_limit_F: 1800
+      bond_coat_limit_why: prevents bond-coat oxidation (with its volume change) and diffusion into the base metal
+      commercial_experience: {1980: "625 C cycles, 166:46 endurance hours", 1979: "65:22 performance-testing hours"}
+    thickness:
+      src: "sec 5.2.3.2 p.173; Fig.107 p.174; Fig.108 p.175"
+      bond_coat_below_982C_down_to_cm: 0.051
+      bond_coat_below_982C_down_to_in: 0.021
+      peg_end_holds_1038C_from_cm: 0.051
+      peg_end_holds_1038C_from_in: 0.020
+      peg_end_C: 1038
+      peg_end_F: 1900
+      peg_peak_hours_per_9000h_overhaul: 85
+      stackup: {eccentricity_cm: 0.028, eccentricity_in: 0.011, tolerance_on_radius_cm: 0.023, tolerance_on_radius_in: 0.009, total_cm: 0.051, total_in: 0.020}
+      minimum_ceramic_cm: 0.102
+      minimum_ceramic_in: 0.040
+      minimum_basis: 0.051 cm for bond-coat thermal protection plus 0.051 cm for the stackup, plus an allowance for blade rub
+      as_printed: "the bond-coat thickness prints '0.051 cm (0.021 in.)' and the peg-end line '0.051 cm (0.020 in.)'; 0.051 cm is 0.020 in."
+      fig107_read_off:
+        ceramic_thickness_cm: [0, 0.05, 0.10, 0.15, 0.20]
+        ceramic_surface_C:    [1210, 1330, 1365, 1380, 1390]
+        peg_end_C:            [1130, 1050, 1045, 1060, 1085]
+        bond_coat_C:          [1110, 985, 925, 885, 855]
+        note: the peg end stays near 1040-1085 C whatever the thickness -- the metal peg conducts -- while the bond coat drops 250 C over 0.2 cm; the ceramic surface rises 180 C as the layer insulates it
+    stress_life:
+      src: "Fig.109 p.176 — thermal stresses from the through-thickness temperature and the curvature-holding mount; > 1e5 cycles"
+      points:
+        - {where: backing rail, MPa: 179, ksi: 26, C: 743, F: 1370, note: maximum stress}
+        - {where: backing edge, MPa: 221, ksi: 32, C: 849, F: 1560}
+        - {where: backing under ceramic, MPa: 200, ksi: 29, C: 871, F: 1600}
+      as_printed: "the label 'Max. Stress: 179 MPa' sits beside two larger values (221, 200) on the same figure. Recorded."
+
+maintainability:
+  src: "sec 5.3 pp.173-178; Figs.110-111"
+  modules: [stage-1 nozzle / combustor / diffuser, stage-2 nozzle and shroud support, turbine rotor]
+  module1:
+    src: "Fig.110 p.177"
+    assembly: the 23 nozzle segments arranged in the inner nozzle support, mated to the combustor-and-diffuser subassembly at the inner-flange bolts between diffuser and inner nozzle support; all honeycomb seals then ground relative to the combustor casing forward flange for static-seal concentricity to the engine centreline
+  module2:
+    src: "Fig.111 p.178"
+    assembly: shrouds and seals ground with respect to the nozzle-and-shroud-support casing at this level; stage-1 shrouds ground to minimise radial stackup; inner seals ground for concentricity
+    inspections: axial and radial at this level, used to set the static-to-rotating clearances
+  module3:
+    src: "Fig.112 p.180"
+    assembly: stage-1 and stage-2 blades tip-ground while assembled in their disks; rotor balanced in two planes; the HP shaft and forward outer liner balanced and installed with the compressor module
+  engine_level: module 1 into the compressor casing; the rotor in, fastened at the HP-shaft aft-flange bolt interface; to fit the stage-2 nozzle-and-shroud module the stage-2 aft retainer, blades and dampers come off (match-marked) and go back in their original balance positions after the module is fastened to the combustor aft flange
+  summary: two fastening joints remove the whole turbine except the stage-1 nozzle; the inner nozzle support flange frees that
+
+fps_weight:
+  src: "sec 5.4 p.179; Table XXIII — FPS base engine"
+  total_turbine_kg: 414
+  total_turbine_lbm: 913
+  hpt_stator_kg: 132
+  hpt_stator_lbm: 290
+  hpt_rotor_kg: 282
+  hpt_rotor_lbm: 623
+  note: rotor 68 percent of the turbine; the LPT report's Table XXI splits its 504.8 kg almost evenly (254.4 rotor, 250.4 stator)
+
+report_end:
+  src: "pp.181-186"
+  references: [CR-135053, CR-135136, CR-134696, CR-134702, CR-135235, "CR-13544 (E3 preliminary design and integration study; the report prints the number short)"]
+  symbols_of_note:
+    BFM: "backflow margin, (P_s,coolant - P_t,gas)/P_t,gas x 100 percent"
+    AR: aspect ratio = blade height / axial width
+    eta: shaft power over the ideal power of W41 expanding from P4 to P42
+    stations: {25: core compressor inlet, 3: compressor exit, 40: combustor exit, 41: HPT rotor-1 inlet, 49: LPT rotor-1 inlet}
+  end_date_stamp: "Jan 9, 1985 (handwritten)"

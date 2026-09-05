@@ -164,9 +164,13 @@ The blade-level data is what separates L2 from L1. All of it goes into
       the data where the prose puts them; rotors 9 and 10 re-bladed 88→86
       and 98→94 between original and final; stators 8–9 re-chorded.
       `data/hpc-vector-diagrams.yaml`, `tests/test_hpc_vector_diagrams.py`
-- [ ] HPC Figs. 10–20 — stagewise aspect ratio, solidity, Mach, swirl,
-      temperature rise, diffusion factor, work input; Fig. 15 CAFD flowpath
-- [ ] HPC Table XVI clearances; Table XVII casing bolting; Figs. 61–62
+- [x] **HPC Figs. 10–20** — every stagewise curve read off and held
+      against Table XXI's pitch streamline (solidity, DF, loss, meridional
+      Mach, swirl, ΔT, inlet-Mach extremes) and Table X (aspect ratio = the
+      tip value). `data/hpc-stagewise.yaml`. Fig. 15 CAFD flowpath is A3.
+- [x] **HPC Tables XV–XIX, Figs 55–62** — clearance elements, casing
+      temperatures vs test, rig bleeds, clearances, bolting, VSV bushings.
+      `data/hpc-mechanical.yaml`
 - [x] **HPT report §3 cooling** pp. 17–67 — the T41 margin budget; the
       18.87 % flow budget and its four sums; supply system; stage-1 vane
       (cavity pressures, backflow margins, impingement and film geometry
@@ -187,8 +191,10 @@ The blade-level data is what separates L2 from L1. All of it goes into
       dampers, dovetails), rotor dynamics, bolts, casings, both nozzles.
       The stage-1 vane's 3,500-cycle trailing edge at maximum severity is
       the shortest life in the turbine. `data/hpt-mechanical.yaml`
-- [ ] HPT report §5.2.3 onward — ceramic shrouds, seals, §6; Fig. 5 flow
-      angles and energy vs span
+- [x] **HPT report §5.2.3–5.4** — ceramic shrouds, maintainability, FPS
+      weight. **CR-167955 fully transcribed** (§1–2 in the published file,
+      §3 cooling, §4 clearance, §5 mechanical). Fig. 5 flow angles and energy
+      vs span remain a D-status figure for A3.
 - [x] **LPT blade counts per stage** — 120 122 122 156 110 (Fig. 52), with
       chords, lengths, aspect ratios; Table VIII takeoff stresses; Table IX
       rupture mission; life and HCF results; stage-1 Campbell; materials;
