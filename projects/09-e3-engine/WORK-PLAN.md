@@ -73,6 +73,11 @@ flowchart LR
 
 ## The discipline loop
 
+Every solver follows the seven steps of [METHOD.md](METHOD.md): tolerance
+and validation case first, then parameters → domain → matrix → solve →
+plot, then grid independence and the record. A plot without its published
+points is not a result.
+
 The stages are not a line. Aero sets the geometry, thermal sets the metal
 temperature, mechanical sets the wall thickness, materials set the
 allowable, mass feeds back into the cycle through the aircraft — and a
@@ -175,8 +180,11 @@ The blade-level data is what separates L2 from L1. All of it goes into
       counts (Fig. 6), Table II vector diagrams, Table III solidity and
       aspect ratios, peak Mach per row, rig results. `data/lpt-aero.yaml`,
       `tests/test_lpt_aero.py`
-- [ ] LPT report §4.2.2–4.2.3 dovetails and discs; §4.3 stator; Table X LCF;
-      appendix airfoil coordinates (A3)
+- [x] **LPT rotor structure and stage-1 nozzle** — Tables X–XVI, Figs 63–77:
+      shrouds, dovetails, retainers, disks (every one on its 72,000-cycle
+      limit at one location), bolts, stage-1 nozzle. `data/lpt-design.yaml`
+- [ ] LPT report §4.3.2 onward — stators 2–5, casing; appendix airfoil
+      coordinates (A3)
 - [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
       dovetail, containment
 - [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,
@@ -273,6 +281,8 @@ Four fidelity rungs per component: mean-line, through-flow, sections, CFD.
 Each validated before applied. Each compared with the E³ published result.
 
 ## C1 · Mean-line with loss models · 32 h
+
+Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] **Compressor loss and deviation** per SP-36: profile loss vs DF,
       end-wall and tip clearance loss, Carter deviation with the SP-36
       corrections, incidence range. **Validate on NACA TN 3916** cascades
@@ -298,6 +308,8 @@ bypass and hub η within 1.0 point of Table XIII; HPT η within 0.5 point of
 scatter of the loss correlations, not a fit.
 
 ## C2 · Through-flow · 24 h
+
+Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] Radial equilibrium (simple, then with streamline curvature) per
       SP-36 ch. VIII, at each blade row LE and TE
 - [ ] Reproduce the **radial distributions** in HPC Table XXI — stator
@@ -425,6 +437,8 @@ ten stages, and HPT stage-1 rupture life within a factor of 2 of the
 published — that is the scatter of creep data.
 
 ## E2 · Discs · 20 h
+
+Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] Disc profiles from the cross-sections (A3) for every rotor stage
 - [ ] Rim load = blade count × blade CF + attachment; bore stress; burst
       margin on average tangential stress at 120 % speed (33.27 / CS-E 840)
@@ -437,6 +451,8 @@ published — that is the scatter of creep data.
 the bore doubling for a small hole is demonstrated on the model.
 
 ## E3 · Vibration · 20 h
+
+Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] Blade modal analysis per HPC stage; **Campbell diagrams vs HPC report
       Figs. 33–42** — ten published diagrams to match, with the stage-3
       root-thickening for 4/rev as the test

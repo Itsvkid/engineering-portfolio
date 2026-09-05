@@ -291,3 +291,240 @@ def test_flight_cycle_is_two_hours(lpt):
     f = lpt["flight_cycle"]
     minutes = sum(v / 60 if k.endswith("_s") else v for k, v in f["segments_minutes"].items())
     assert abs(minutes - f["total_minutes"]) < 2.5, minutes
+
+
+# ── rotor structure: shrouds, dovetails, disks, bolts (pp.96-119) ───────
+
+def pairs_convert(a, b, factor, tol):
+    for x, y in zip(a, b):
+        if x is None or y is None:
+            continue
+        assert abs(x - y * factor) < tol, (x, y)
+
+
+def test_blade_lcf_table_converts_and_cools_rearward(lpt):
+    x = lpt["blade_lcf"]
+    pairs_convert(x["sigma_max_MPa"], x["sigma_max_ksi"], 6.89476, 0.05)
+    for c, f in zip(x["temperature_C"], x["temperature_F"]):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    assert x["temperature_C"] == sorted(x["temperature_C"], reverse=True)
+    assert x["sigma_max_MPa"] == sorted(x["sigma_max_MPa"])
+    assert x["required_cycles"] == lpt["rotor_blades"]["life"]["lcf"]["required_cycles"]
+
+
+def test_flutter_margins_all_at_least_one_and_stage4_is_the_marginal_one(lpt):
+    f = lpt["flutter"]
+    assert min(f["torsion"]) >= 1.0 and min(f["flex"]) >= 1.0
+    assert f["torsion"].index(min(f["torsion"])) == 3
+    for t_, fl in zip(f["torsion"], f["flex"]):
+        assert fl > t_
+
+
+def test_tip_shroud_table_converts_except_the_recorded_dropped_zero(lpt):
+    ts = lpt["tip_shrouds"]
+    for i, (cm2, in2) in enumerate(zip(ts["interlock_surface_cm2"], ts["interlock_surface_in2"])):
+        if i == 1:
+            assert abs(cm2 / 6.4516 - in2 / 10) < 0.001  # 0.319 printed for 0.0319
+        else:
+            assert abs(cm2 / 6.4516 - in2) < 0.001
+    pairs_convert(ts["overhang_l_cm"], ts["overhang_l_in"], 2.54, 0.013)
+    pairs_convert(ts["contact_stress_MPa"], ts["contact_stress_ksi"], 6.89476, 0.5)
+    assert ts["theta_deg"] == sorted(ts["theta_deg"])  # interlock angle grows with radius
+
+
+def test_frequency_margin_definition_reproduces_every_printed_margin(lpt):
+    """% margin = (f - f_exc)/f with f_exc = 102 x 3707 / 60 Hz -- the
+    stage-2 vane passing at hot-day takeoff. Six margins, one definition."""
+    rpm = lpt["design_cycle_points"]["case_72_max_stress"]["at_2_6pct_overspeed_rpm"][0]
+    f_exc = lpt["vane_counts"]["stage2"] * rpm / 60
+    sh = lpt["tip_shrouds"]["stage1_analysis"]
+    for f, m in zip(sh["frequency_Hz"], sh["margin_over_102_s2_pct"]):
+        assert abs((f - f_exc) / f * 100 - m) < 1.2, (f, m)
+    aw = lpt["angel_wings_stage1"]
+    for f, m in zip(aw["frequency_Hz"], aw["margin_over_102_s2_pct"]):
+        assert abs((f - f_exc) / f * 100 - m) < 1.2, (f, m)
+
+
+def test_shroud_and_angel_wing_stresses_sit_under_their_creep_limits(lpt):
+    sh = lpt["tip_shrouds"]["stage1_analysis"]
+    assert max(sh["stress_MPa"]) < sh["creep_limit_MPa"]
+    assert abs(sh["creep_limit_MPa"] - sh["creep_limit_ksi"] * 6.89476) < 0.1
+    pairs_convert(sh["stress_MPa"], sh["stress_ksi"], 6.89476, 0.1)
+    aw = lpt["angel_wings_stage1"]
+    assert max(aw["stress_MPa"]) < aw["creep_limit_MPa"]
+    assert aw["frequency_Hz"][1] < aw["frequency_Hz"][0]  # the long aft wing is the soft one
+
+
+def test_coupled_blade_disk_two_diameter_clears_2_per_rev(lpt):
+    c = lpt["coupled_blade_disk_stage1"]
+    f2 = c["nodal_diameter_frequency_Hz"]["two"]
+    for rpm in (c["max_speed_base_rpm"], c["max_speed_growth_rpm"]):
+        f_mode = f2["at_0_rpm"] + (f2["at_4600_rpm"] - f2["at_0_rpm"]) * rpm / 4600
+        assert f_mode > 2 * 2 * rpm / 60  # at least 100 % margin over 2/rev
+    nd = c["nodal_diameter_frequency_Hz"]
+    assert nd["two"]["at_0_rpm"] < nd["four"]["at_0_rpm"] < nd["six"]["at_0_rpm"]
+
+
+def test_stage1_dovetail_stress_map_converts_and_the_blade_box_is_table_xii(lpt):
+    d = lpt["dovetails"]["stage1_stress_distribution"]
+    for row in ("blade_A", "blade_B", "disk_C", "disk_D"):
+        pairs_convert(d[f"{row}_MPa"], d[f"{row}_ksi"], 6.89476, 0.5)
+    ls = lpt["dovetails"]["life_summary"]
+    assert max(d["blade_B_MPa"]) == ls["blade_sigma_max_MPa"][0] == 215.8
+    assert d["kt"]["blade_B"] == ls["blade_kt"][0]
+    # the recorded disagreement: no disk value in the figure is Table XII's 208.2
+    assert ls["disk_sigma_max_MPa"][0] not in d["disk_C_MPa"] + d["disk_D_MPa"]
+    assert d["kt"]["disk_D"] == ls["disk_kt"][0]
+
+
+def test_dovetail_life_summary_converts_and_stage4_is_the_lightly_loaded_one(lpt):
+    ls = lpt["dovetails"]["life_summary"]
+    pairs_convert(ls["blade_sigma_max_MPa"], ls["blade_sigma_max_ksi"], 6.89476, 0.1)
+    pairs_convert(ls["disk_sigma_max_MPa"], ls["disk_sigma_max_ksi"], 6.89476, 0.1)
+    for c, f in zip(ls["temperature_C"], ls["temperature_F"]):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    assert min(ls["blade_sigma_max_MPa"]) == ls["blade_sigma_max_MPa"][3]  # 156 small blades
+    assert ls["disk_lcf_required_cycles"] == 2 * ls["blade_lcf_required_cycles"] == lpt["disks"]["lcf_requirement_cycles"]
+    assert ls["disk_lcf_required_cycles"] == lpt["life_basis"]["stress_cycles_rotor"]
+
+
+def test_retainers_convert_and_stage3_sits_on_the_allowable(lpt):
+    r = lpt["blade_retainers"]["stages_1_3"]
+    pairs_convert(r["t1_cm"], r["t1_in"], 2.54, 0.002)
+    pairs_convert(r["t2_cm"], r["t2_in"], 2.54, 0.002)
+    pairs_convert(r["design_force_N"], r["design_force_lbf"], 4.44822, 0.6)
+    pairs_convert(r["sigma_max_MPa"], r["sigma_max_ksi"], 6.89476, 0.1)
+    assert max(r["sigma_max_MPa"]) == r["design_allowable_MPa"]
+    assert r["sigma_max_MPa"] == sorted(r["sigma_max_MPa"])
+    s45 = lpt["blade_retainers"]["stages_4_5"]
+    pairs_convert(s45["thickness_cm"], s45["thickness_in"], 2.54, 0.002)
+
+
+def test_disk_lcf_table_converts_and_every_disk_is_on_its_limit_once(lpt):
+    x = lpt["disk_lcf_summary"]
+    for blk in (x["bore"], x["dovetail_slot_bottom_kt_1_7"]):
+        key = "hoop_stress_half_peak" if "hoop_stress_half_peak_MPa" in blk else "stress_half_peak"
+        pairs_convert(blk[f"{key}_MPa"], blk[f"{key}_ksi"], 6.89476, 3.5)  # ksi printed to the integer
+        for c, f in zip(blk["temperature_C"], blk["temperature_F"]):
+            assert abs((f - 32) / 1.8 - c) < 0.6
+    req = lpt["disks"]["lcf_requirement_cycles"]
+    for i in range(5):
+        on_limit = [x["bore"]["allowable_cycles"][i] == req, x["dovetail_slot_bottom_kt_1_7"]["allowable_cycles"][i] == req]
+        assert on_limit.count(True) == 1, (i, on_limit)
+        assert min(x["bore"]["allowable_cycles"][i], x["dovetail_slot_bottom_kt_1_7"]["allowable_cycles"][i]) >= req
+    # stages 4-5 run the hotter bores and move the limit to the slot
+    assert min(x["bore"]["temperature_C"][3:]) > max(x["bore"]["temperature_C"][:3]) + 130
+
+
+def test_stage1_disk_figure_agrees_with_table_xv(lpt):
+    d = lpt["disks"]["stage1_disk"]
+    x = lpt["disk_lcf_summary"]
+    assert abs(d["hoop_stress_MPa"]["bore"] - 2 * x["bore"]["hoop_stress_half_peak_MPa"][0]) < 5
+    assert abs(d["temperature_C_rim_to_bore"][0] - x["dovetail_slot_bottom_kt_1_7"]["temperature_C"][0]) < 1
+    assert abs(d["temperature_C_rim_to_bore"][-1] - x["bore"]["temperature_C"][0]) < 3
+    assert d["hoop_stress_MPa"]["bore"] <= d["lcf_limit_MPa"]["bore"]
+    assert d["hoop_stress_MPa"]["rim"] < d["lcf_limit_MPa"]["rim_kt_1_7"]
+    assert d["radial_stress_MPa"]["bore"] == 0  # free bore
+    for c, f in zip(d["temperature_C_rim_to_bore"], d["temperature_F_rim_to_bore"]):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    assert abs(d["lcf_limit_MPa"]["rim_kt_1_7"] - d["lcf_limit_ksi"]["rim_kt_1_7"] * 6.89476) < 1
+
+
+def test_stage1_disk_bore_stress_is_a_rotating_ring_plus_rim_load_not_less(lpt, ):
+    """A free rotating ring of mean radius r at omega carries rho omega^2 r^2;
+    the bore of a disk with blades and a hot rim carries more than that
+    and less than ~4x. Plausibility, not agreement."""
+    d = lpt["disks"]["stage1_disk"]
+    rpm = lpt["coupled_blade_disk_stage1"]["max_speed_growth_rpm"]
+    omega = rpm * 2 * math.pi / 60
+    r = sum(d["radius_range_cm"]) / 200
+    ring = 8200 * omega ** 2 * r ** 2 / 1e6
+    # a bladed disk with a rim 60 C hotter than its bore runs several times
+    # the free-ring figure at the bore; the E3 stage 1 runs about 6x
+    assert 3 < d["hoop_stress_MPa"]["bore"] / ring < 9, ring
+
+
+def test_rotor_bolts_convert_and_residual_clamp_covers_every_requirement(lpt):
+    b = lpt["disks"]["rotor_bolts"]
+    for key in ("required_torque_and_radial_shear_mu_0_15", "required_torque_mu_0_10", "required_separation", "available_cold_assembly"):
+        pairs_convert(b[f"{key}_N"], b[f"{key}_lbf"], 4.44822, 3)
+    for i, (n, lbf) in enumerate(zip(b["residual_after_9000h_N"], b["residual_after_9000h_lbf"])):
+        if i == 2:
+            assert 200 < n - lbf * 4.44822 < 250  # the recorded 33,139 vs 7,400
+        else:
+            assert abs(n - lbf * 4.44822) < 3
+    for i in range(4):
+        need = max(b["required_torque_and_radial_shear_mu_0_15_N"][i], b["required_torque_mu_0_10_N"][i], b["required_separation_N"][i])
+        assert b["residual_after_9000h_N"][i] > need, i
+        assert b["available_cold_assembly_N"][i] > b["residual_after_9000h_N"][i]
+    # limiting mode per Table XIV: torque on 1-4, separation on 4-5
+    sel = lpt["disks"]["bolt_selection"]
+    for i, mode in enumerate(sel["limiting_mode"][1:]):
+        sep, tq = b["required_separation_N"][i], b["required_torque_mu_0_10_N"][i]
+        assert (mode == "flange separation") == (sep > tq), (i, mode)
+
+
+def test_bolt_sizes_convert_and_the_biggest_joint_gets_the_most_bolts(lpt):
+    sel = lpt["disks"]["bolt_selection"]
+    pairs_convert(sel["size_cm"], sel["size_in"], 2.54, 0.002)
+    assert sel["quantity"][3] == max(sel["quantity"]) and sel["size_cm"][3] == max(sel["size_cm"])
+    b = lpt["disks"]["rotor_bolts"]
+    assert b["available_cold_assembly_N"][2] == max(b["available_cold_assembly_N"])
+
+
+def test_spacer_arm_temperatures_convert_except_the_recorded_pair(lpt):
+    sa = lpt["disks"]["spacer_arm_stresses"]
+    bad = [(c, f) for c, f in sa["metal_temperatures_C_F_front_to_rear"] if abs((f - 32) / 1.8 - c) > 1.0]
+    assert bad == [(446, 853)], bad
+    assert sa["peak_effective_MPa"] < sa["lcf_limit_MPa"]
+
+
+# ── stator stage-1 nozzle ───────────────────────────────────────────────
+
+def test_stage1_nozzle_counts_tie_together(lpt, published):
+    n = lpt["stator"]["stage1_nozzle_assembly"]["nozzle"]
+    assert n["segments"] * n["vanes_per_segment"] == n["vanes"] == lpt["vane_counts"]["stage1"]
+    assert n["bolts_to_support"]["count"] == n["segments"] * n["bolts_to_support"]["per_segment"]
+    sup = lpt["stator"]["stage1_nozzle_assembly"]["outer_support"]["stresses_at_takeoff"]
+    assert sup["bolt_holes"]["count"] == n["bolts_to_support"]["count"]
+    assert sup["air_holes"]["count"] == n["vanes"]
+    assert lpt["stator"]["stage1_nozzle_assembly"]["outer_duct"]["segments"] == n["segments"]
+    assert n["material"].startswith(lpt["materials"]["stator"]["vane_1"][1])
+
+
+def test_stage1_nozzle_table_xvi_converts_and_the_two_misprints_are_recorded(lpt):
+    a = lpt["stator"]["stage1_nozzle_assembly"]["nozzle"]["airfoil_at_takeoff"]
+    for c, f in ((a["t_gas_max_C"], a["t_gas_max_F"]), (a["t_metal_C"], a["t_metal_F"]), (a["t_cooling_fifth_stage_purge_C"], a["t_cooling_fifth_stage_purge_F"])):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    # the '8 C (47 F)' cooling effect: the F is right, the C is the gas-metal difference
+    assert abs((a["t_gas_max_C"] - a["t_metal_C"]) * 1.8 - a["cooling_effect_F"]) < 1
+    assert a["cooling_effect_C"] != a["t_gas_max_C"] - a["t_metal_C"]
+    assert abs(a["purge_max_cooling_capability_C"] * 1.8 - a["purge_max_cooling_capability_F"]) > 20
+    assert len(a["as_printed_inconsistencies"]) == 2
+    for n, lbf in ((a["axial_gas_load_per_vane_N"], a["axial_gas_load_per_vane_lbf"]), (a["tangential_gas_load_per_vane_N"], a["tangential_gas_load_per_vane_lbf"]), (a["dp_load_per_vane_N"], a["dp_load_per_vane_lbf"])):
+        assert abs(n - lbf * 4.44822) < 0.6
+    assert abs(a["bending_stress_tip_le_MPa"] - a["bending_stress_tip_le_ksi"] * 6.89476) < 0.1
+    assert a["rupture_life_ratio"] > 1 and a["creep_0_5pct_life_ratio"] > 1 and a["lcf_life_ratio"] >= 1
+    assert a["t_metal_C"] < a["t_gas_max_C"]
+
+
+def test_stage1_nozzle_hook_forces_are_line_loads_and_stresses_convert(lpt):
+    h = lpt["stator"]["stage1_nozzle_assembly"]["nozzle"]["hooks_at_takeoff"]
+    for v, lbin in zip(h["forces_printed_as_MPa"], h["forces_lb_per_in"]):
+        assert abs(v * 10 - lbin * 0.175127) < 0.05  # kN/cm, not MPa
+    pairs_convert(h["stress_MPa"], h["stress_ksi"], 6.89476, 0.1)
+    assert h["kt"][3] == 1.0 and max(h["kt"]) == 1.51
+    bad = [(c, f) for c, f in h["temperatures_C_F"] if abs((f - 32) / 1.8 - c) > 1.0]
+    assert bad == [(634, 1142)], bad
+
+
+def test_outer_support_stress_bookkeeping(lpt):
+    s = lpt["stator"]["stage1_nozzle_assembly"]["outer_support"]["stresses_at_takeoff"]
+    assert abs(s["concentrated_peak_MPa"] - s["concentrated_peak_ksi"] * 6.89476) < 0.5
+    assert abs(s["alternating_MPa"] - s["alternating_ksi"] * 6.89476) < 0.5
+    assert abs(s["mean_MPa"] - s["mean_ksi"] * 6.89476) < 0.5
+    assert abs(s["concentrated_peak_MPa"] + s["alternating_MPa"] - s["mean_MPa"]) < 4  # peak = mean - alt
+    for mpa, ksi in s["field_MPa_ksi"]:
+        assert abs(mpa - ksi * 6.89476) < 1.6
+    assert abs(s["air_holes"]["diameter_cm"] - s["air_holes"]["diameter_in"] * 2.54) < 0.005
+    assert abs(s["bolt_holes"]["diameter_cm"] - s["bolt_holes"]["diameter_in"] * 2.54) < 0.005

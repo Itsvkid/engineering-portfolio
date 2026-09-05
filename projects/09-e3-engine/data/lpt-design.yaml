@@ -13,9 +13,9 @@
 
 meta:
   report: NASA CR (E3 LPT hardware detailed design), NTRS 19850002686
-  pages_read: [72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+  pages_read: [72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119]
   transcribed: 2026-09-04
-  status: blades complete (counts, geometry, stress, mission, life, Campbell); Table X LCF, sec 4.2.2-4.2.3 dovetails and discs, sec 4.3 stator to follow
+  status: rotor complete (blades, shrouds, dovetails, retainers, disks, bolts, disk LCF); stator stage-1 nozzle complete; sec 4.3.2 onward (stators 2-5, casing) to follow
 
 design_cycle_points:
   src: "Table VI p.80"
@@ -194,6 +194,314 @@ stage1_blade_campbell:
     lines rise linearly; that is why the crossings sit at the top of the
     band. First flex at ~1,800 Hz sits far above any low-order excitation.
 
+blade_lcf:
+  src: "Table X p.96 — blade airfoil LCF life; required 36,000 cycles"
+  stage:            [1,     2,      3,      4,      5]
+  sigma_max_MPa:    [75.85, 101.36, 107.56, 129.63, 148.24]
+  sigma_max_ksi:    [11.0,  14.7,   15.6,   18.8,   21.5]
+  at_span_pct:      [30,    50,     30,     40,     20]
+  temperature_C:    [882,   838,    746,    693,    624]
+  temperature_F:    [1620,  1540,   1375,   1280,   1155]
+  lcf_life_cycles: ">100,000 every stage"
+  required_cycles: 36000
+
+flutter:
+  src: "Table XI p.96 — LPT flutter analysis"
+  index: "relative flow velocity / (half blade chord x blade natural frequency)"
+  safety_factor: "max allowable index / calculated index; requirement >= 1"
+  stage:          [1,   2,   3,   4,   5]
+  torsion:        [2.3, 1.8, 1.6, 1.0, 1.3]
+  flex:           [4.9, 4.0, 3.4, 1.8, 2.2]
+  note: stage 4 -- the 156-blade acoustic stage with the smallest chord and highest aspect ratio -- sits exactly on the torsional limit
+
+coupled_blade_disk_stage1:
+  src: "Fig.63 p.98 — stage 1 coupled blade/disk Campbell diagram, read off; sec 4.2.1 p.97"
+  modes_investigated: [2, 4, 6]
+  nodal_diameter_frequency_Hz:
+    two:  {at_0_rpm: 268, at_4600_rpm: 318}
+    four: {at_0_rpm: 355, at_4600_rpm: 405}
+    six:  {at_0_rpm: 468, at_4600_rpm: 508}
+  excitations: ["2/rev", "4/rev", "6/rev", "N_core + N_fan", "N_core - N_fan"]
+  max_speed_base_rpm: 3720
+  max_speed_growth_rpm: 4160
+  verdict: the 2-diameter mode on stage 1 -- the potentially limiting one -- has more than the desired margin over 2/rev across the range
+
+tip_shrouds:
+  src: "sec 4.2.1 p.97; Figs.64-66 pp.99-101"
+  purpose: rotational fixity for vibration resistance, and tip seals
+  seal_teeth: saw teeth, to cut into the stationary honeycomb rather than crush it
+  hard_coat: {stages_1_2: CM64, stages_3_5: "Triballoy T800", applied_by: flame spraying, on: interlock surfaces}
+  thickness_configuration: {stages_1_3: tapered, stages_4_5: constant}
+  block_iib_change: shrouds on stages 1-3 lengthened axially upstream for outer-flowpath overlap, then thickened to recover life and vane-passing frequency margin
+  # Fig.65 table
+  stage:                    [1,     2,      3,     4,     5]
+  interlock_surface_cm2:    [0.142, 0.206,  0.193, 0.116, 0.193]
+  interlock_surface_in2:    [0.022, 0.319,  0.030, 0.018, 0.030]
+  pretwist_phi_deg:         [0.8,   1.25,   1.25,  5.2,   3.0]
+  interlock_angle_beta_deg: [25,    25,     30,    30,    30]
+  theta_deg:                [14.70, 15.5,   16.5,  17.5,  20.7]
+  overhang_l_cm:            [0.767, 1.01,   0.988, null,  null]
+  overhang_l_in:            [0.302, 0.40,   0.389, null,  null]
+  contact_stress_MPa:       [13.8,  9.3,    11.4,  14.3,  8.3]
+  contact_stress_ksi:       [2.0,   1.3,    1.7,   2.1,   1.2]
+  as_printed_inconsistency: "stage-2 interlock surface prints 0.319 in2 against 0.206 cm2 = 0.0319 in2; a dropped zero. Recorded."
+  stage1_analysis:
+    src: "Fig.66 p.101"
+    thickness_cm: [0.27, 0.292]
+    thickness_in: [0.106, 0.115]
+    creep_limit_MPa: 87.6
+    creep_limit_ksi: 12.7
+    creep_basis: plastic creep over the 18,000-hour Table IX mission
+    section:          ["1-1", "2-2", "3-3", "4-4"]
+    stress_MPa:       [82.7,  78.6,  51.0,  75.8]
+    stress_ksi:       [12.0,  11.4,  7.4,   11.0]
+    frequency_Hz:     [10490, 14620, 15800, 15310]
+    margin_over_102_s2_pct: [40, 57, 60, 59]
+    margin_definition: "(f_actual - f_excitation) / f_actual, with f_excitation = 102 x 3707 rpm / 60 = 6,302 Hz -- established below, reproduces all four margins and both angel-wing margins to 1 percent"
+
+angel_wings_stage1:
+  src: "sec 4.2.1 pp.97,102; Fig.67 p.103 — platform angel wings analysed as cantilever beams"
+  why_analysed: E3's angel wings are much longer than current GE practice, for performance, so their frequencies are lower
+  creep_limit_MPa: 162
+  creep_limit_ksi: 23.5
+  wing:            [forward, aft]
+  stress_MPa:      [40.7, 67.6]
+  stress_ksi:      [5.9,  9.8]
+  frequency_Hz:    [12725, 8170]
+  margin_over_102_s2_pct: [50, 23]
+
+blade_retention:
+  src: "sec 4.2.1 p.102; Figs.68-69"
+  stages_1_3: integrally cast retainers on the dovetail ends against aft movement; rotor seals against forward
+  stages_4_5: formed tab retainers both ways, thickened by CF6 load-test correlation; disk slot depths increased to suit
+  design_load: a maximum design force larger than the expected steady-state force at the retainer end
+
+dovetails:
+  src: "sec 4.2.2 p.102"
+  commonality: one dovetail size for stages 1, 2 and 3 (tooling saving); stage 5 the same form with a deeper slot bottom for its larger retainer
+  stage4: smaller, because 156 blades must fit the same disk-rim circumference
+  stage1_stress_distribution:
+    src: "Fig.70 p.106 — hot-day takeoff, 4160 rpm (growth); MPa (ksi); positions 1-6 around the dovetail, A/B blade, C/D disk"
+    position: [1, 2, 3, 4, 5, 6]
+    blade_A_MPa: [118.6, 191.8, 165.5, 91.7, 178.6, 104.8]
+    blade_A_ksi: [17.2, 27.8, 24.0, 13.3, 25.9, 15.2]
+    blade_B_MPa: [136.5, 215.8, 186.2, 106.2, 201.3, 121.4]
+    blade_B_ksi: [19.8, 31.3, 27.0, 15.4, 29.2, 17.6]
+    disk_C_MPa:  [66.9, 191.7, 171.0, 46.9, 181.3, 57.2]
+    disk_C_ksi:  [9.7, 27.8, 24.8, 6.8, 26.3, 8.3]
+    disk_D_MPa:  [144.8, 143.4, 180.0, 116.5, 194.4, 130.3]
+    disk_D_ksi:  [21.0, 20.8, 26.1, 16.9, 28.2, 18.9]
+    kt: {blade_A: 1.62, blade_B: 1.59, disk_C: 1.60, disk_D: 1.60}
+    boxed_as_maximum: {blade: "B2 215.8", disk: "D2 143.4"}
+    as_printed_inconsistency: >
+      The boxed blade value B2 = 215.8 MPa is the blade maximum and is
+      Table XII's stage-1 blade sigma_max exactly. The boxed disk value
+      D2 = 143.4 is NOT the disk maximum of the figure (D5 = 194.4, C2 =
+      191.7), and Table XII's stage-1 disk sigma_max of 208.2 appears
+      nowhere in the figure. Recorded as printed; the disk box may mark
+      the life-limiting location rather than the largest number.
+  life_summary:
+    src: "Table XII p.107 — dovetail life summary"
+    stage:              [1,     2,     3,     4,     5]
+    temperature_C:      [596,   607,   593,   593,   560]
+    temperature_F:      [1104,  1125,  1100,  1100,  1040]
+    blade_sigma_max_MPa: [215.8, 248.2, 297.2, 190.3, 289.6]
+    blade_sigma_max_ksi: [31.3,  36.0,  43.1,  27.6,  42.0]
+    blade_kt:           [1.59,  1.60,  1.60,  1.65,  1.60]
+    blade_lcf_required_cycles: 36000
+    disk_sigma_max_MPa: [208.2, 228.2, 262.0, 201.3, 242.7]
+    disk_sigma_max_ksi: [30.2,  33.1,  38.0,  29.2,  35.2]
+    disk_kt:            [1.60,  1.62,  1.62,  1.63,  1.63]
+    disk_lcf_required_cycles: 72000
+    calculated_life: ">= 100,000 cycles, every blade and disk dovetail"
+    note: "blade dovetails need 36,000 cycles, disks 72,000 -- the 2-per-mission rotor count of sec 4.1.2 on 36,000 missions. This settles which of the report's mission counts the structure was designed to."
+
+blade_retainers:
+  src: "Fig.68 p.104 (stages 1-3); Fig.69 p.105 (stages 4-5)"
+  stages_1_3:
+    stage:          [1,     2,     3]
+    t1_cm:          [0.109, 0.127, 0.173]
+    t1_in:          [0.043, 0.050, 0.068]
+    t2_cm:          [0.267, 0.292, 0.343]
+    t2_in:          [0.105, 0.115, 0.135]
+    design_force_N:   [894, 1103, 1561]
+    design_force_lbf: [201, 248, 351]
+    sigma_max_MPa:  [620.5, 627.5, 634.3]
+    sigma_max_ksi:  [90, 91, 92]
+    design_allowable_MPa: 634.3
+    design_allowable_ksi: 92
+    allowable_basis: "0.2 percent yield strength at 649 C (1200 F)"
+    note: stage 3 sits exactly on the allowable
+  stages_4_5:
+    configuration: sheet metal
+    material: Inco 718
+    basis: CF6-50 and CF6-80 load tests
+    thickness_cm: [0.229, 0.254]
+    thickness_in: [0.090, 0.100]
+
+disks:
+  src: "sec 4.2.3 pp.102-108; Figs.71-72; Tables XIII-XIV"
+  sizing: each disk in proportion to the centrifugal load of its blade row
+  spacer_arms: forged integrally with the disks, tapered thinner away from the web attachment; the bolt holes live here, in the low-stressed arms -- none in the load-carrying webs
+  bolting_life: available clamp load exceeds requirement even after 9,000 hours of relaxation
+  critical_point: transient analysis per disk for the worst combined speed and temperature gradient; stage 1's is 60 seconds into takeoff
+  lcf_requirement_cycles: 72000
+  overspeed: all disks meet the 120 percent redline requirement; burst margin to spare
+  spacer_arm_stresses:
+    src: "Fig.71 p.109 — 60 s into takeoff acceleration; read off"
+    lcf_limit_MPa: 540
+    lcf_limit_basis: "72,000 cycles with Kt = 1.5 for bending"
+    peak_effective_MPa: 420
+    metal_temperatures_C_F_front_to_rear: [[465, 870], [370, 698], [408, 766], [405, 761], [400, 753], [466, 871], [369, 697], [409, 768], [483, 901], [402, 756], [446, 853], [480, 897], [489, 912], [536, 997], [528, 982], [535, 995]]
+    as_printed_inconsistency: "the pair 446 C (853 F) does not convert (853 F is 456 C; 446 C is 835 F); the other fifteen pairs do. Recorded."
+  stage1_disk:
+    src: "Fig.72 p.111 — stress distribution at growth conditions, 60 s into takeoff; read off"
+    radius_range_cm: [24.0, 30.5]
+    radius_range_in: [9.45, 12.0]
+    thickness_cm: {bore: 2.4, web: 1.0, rim: 2.0}
+    hoop_stress_MPa: {rim: 430, bore: 700}
+    effective_stress_MPa: {rim: 400, bore: 700}
+    radial_stress_MPa: {rim: 40, peak: 250, peak_radius_cm: 27.5, bore: 0}
+    lcf_limit_MPa: {rim_kt_1_7: 455, bore: 700}
+    lcf_limit_ksi: {rim_kt_1_7: 66, bore: 101.5}
+    temperature_C_rim_to_bore: [375, 368, 362, 349, 331, 313, 310, 313]
+    temperature_F_rim_to_bore: [708, 694, 684, 660, 628, 596, 590, 596]
+    note: the bore sits on its 72,000-cycle limit; the rim is 25 MPa under its Kt = 1.7 limit. A disk sized to the number, both ends.
+  rotor_bolts:
+    src: "Table XIII p.110 — LPT rotor bolt analysis; N (lbf)"
+    joint: ["1-2", "2-3", "3-4", "4-5"]
+    required_torque_and_radial_shear_mu_0_15_N: [11525, 13736, 29625, 10253]
+    required_torque_and_radial_shear_mu_0_15_lbf: [2591, 3088, 6660, 2305]
+    required_torque_mu_0_10_N:   [13745, 20017, 27525, 8398]
+    required_torque_mu_0_10_lbf: [3090, 4500, 6188, 1888]
+    required_separation_N:   [7184, 8229, 15680, 12588]
+    required_separation_lbf: [1615, 1850, 3525, 2830]
+    available_cold_assembly_N:   [34430, 34430, 53379, 34429]
+    available_cold_assembly_lbf: [7740, 7740, 12000, 7740]
+    residual_after_9000h_N:   [21796, 21796, 33139, 21796]
+    residual_after_9000h_lbf: [4900, 4900, 7400, 4900]
+    as_printed_inconsistency: "joint 3-4 residual prints 33,139 N (7,400 lbf); 7,400 lbf is 32,917 N and 33,139 N is 7,450 lbf. The other nineteen pairs convert. Recorded."
+  bolt_selection:
+    src: "Table XIV p.110 — selected bolts for rotor flanges"
+    flange:        ["stage1_fwd", "1-2", "2-3", "3-4", "4-5"]
+    size_cm:       [0.635, 0.794, 0.794, 0.953, 0.794]
+    size_in:       [0.25, 0.3125, 0.3125, 0.375, 0.3125]
+    thread:        ["1/4-28", "5/16-24", "5/16-24", "3/8-24", "5/16-24"]
+    quantity:      [40, 40, 52, 76, 40]
+    bolt_material: Inco 718
+    nut_material: Waspaloy
+    limiting_mode: ["maximum bolt spacing", torque, torque, torque, "flange separation"]
+
+disk_lcf_summary:
+  src: "Table XV p.112 — LPT rotor disk minimum calculated LCF life"
+  stage:                        [1,    2,    3,    4,    5]
+  limiting_time_after_takeoff_s: [60,   60,   20,   60,   20]
+  bore:
+    hoop_stress_half_peak_MPa:  [351,  351,  351,  303,  317]
+    hoop_stress_half_peak_ksi:  [51,   51,   51,   44,   46]
+    temperature_C:              [315,  302,  304,  482,  454]
+    temperature_F:              [600,  575,  580,  900,  850]
+    allowable_cycles:           [72000, 72000, 72000, 100000, 100000]
+    allowable_note: "stages 4-5 print >10^5; carried as 100000"
+  dovetail_slot_bottom_kt_1_7:
+    stress_half_peak_MPa:       [193,  186,  179,  234,  234]
+    stress_half_peak_ksi:       [28,   27,   26,   34,   34]
+    temperature_C:              [375,  377,  371,  477,  461]
+    temperature_F:              [708,  710,  700,  890,  862]
+    allowable_cycles:           [100000, 100000, 100000, 72000, 72000]
+  note: >
+    Every disk is on its 72,000-cycle limit at exactly one location: the
+    bore on stages 1-3, the dovetail slot bottom on stages 4-5 (whose
+    bores run 140-180 C hotter). Stage 1's half-peak bore hoop of 351 MPa
+    is Fig.72's 700 at the bore; its slot-bottom 375 C is Fig.72's rim.
+
+stator:
+  src: "sec 4.3 pp.108-119"
+  stage1_nozzle_assembly:
+    src: "sec 4.3.1 pp.108-118; Figs.73-77"
+    parts: [inner and outer transition ducts, stage-1 nozzle, nozzle support, forward inner seal support, aft inner seal support, spoolies, windage shields, heat shield, splash shield]
+    fifth_stage_air: routed down through the nozzle airfoils to purge the HPT stage-2 disk aft cavity and pressurise the LPT stages 1-3 rotor cavity
+    outer_duct:
+      segments: 18
+      material: Rene 80, cast and machined
+      features: [forward hook scalloped to cut conduction into the support, hook and aft flange saw-cut for thermal stress, forward hook Triballoy 800 coated]
+      icls_difference: provisions for 14 T42 and P42 probes around the HPT aft casing
+    outer_support:
+      construction: 360-degree ring machined from an Inco 718 forging; plenum for fifth-stage cooling air
+      arm: cylindrical arm with interference fit to the HPT casing, so the bolted flange grows radially on accel and keeps a positive seal
+      decel_finding: the arm leaves the casing during part of the decel (support cools faster) and fifth-stage air leaks; a thermal shield was added
+      wear: all surfaces mating with the HPT casing thermal-sprayed Triballoy 800
+      icls_difference: 14 bosses for the probes
+      stresses_at_takeoff:
+        src: "Fig.75 p.116 — GE CLASS/MASS; effective stresses, MPa (ksi), read from the figure"
+        air_holes: {count: 72, diameter_cm: 1.22, diameter_in: 0.48}
+        bolt_holes: {count: 36, diameter_cm: 0.71, diameter_in: 0.28}
+        concentrated_peak_MPa: -179.3
+        concentrated_peak_ksi: -26
+        alternating_MPa: 155.8
+        alternating_ksi: 22.6
+        mean_MPa: -25.5
+        mean_ksi: -3.7
+        lcf_cycles: ">72,000"
+        field_MPa_ksi: [[55.1, 8], [82.7, 12], [96.5, 14], [103.4, 15], [52.4, 7.6], [82, 12], [206, 30], [151, 22], [268, 39], [110.3, 16], [179.3, 26], [213.7, 31], [6.9, 1], [179.3, 26]]
+    nozzle:
+      vanes: 72
+      design: high aspect ratio, constant projected axial chord, radial trailing edges
+      segments: 18
+      vanes_per_segment: 4
+      material: Rene 125, cast
+      bolts_to_support: {count: 36, diameter_cm: 0.635, diameter_in: 0.25, per_segment: 2}
+      load_paths: {front_hook: bolted to the outer-duct/nozzle support, aft_hook_radial: HPT casing, axial_gas_and_inner_seal: LPT casing forward flange, tangential: lugs brazed to the aft hook into the HPT casing (Fig.76)}
+      airfoil_at_takeoff:
+        src: "Table XVI p.118 — takeoff, FPS baseline"
+        t_gas_max_C: 957
+        t_gas_max_F: 1755
+        t_gas_max_at_span_pct: 95
+        t_metal_C: 931
+        t_metal_F: 1708
+        cooling_effect_C: 8
+        cooling_effect_F: 47
+        t_cooling_fifth_stage_purge_C: 404
+        t_cooling_fifth_stage_purge_F: 760
+        purge_flow_pct: 1.2
+        purge_max_cooling_capability_C: 22
+        purge_max_cooling_capability_F: 72
+        axial_gas_load_per_vane_N: 291
+        axial_gas_load_per_vane_lbf: 65.4
+        tangential_gas_load_per_vane_N: 348
+        tangential_gas_load_per_vane_lbf: 78.2
+        dp_load_per_vane_N: 263.5
+        dp_load_per_vane_lbf: 59.25
+        bending_stress_tip_le_MPa: 118.6
+        bending_stress_tip_le_ksi: 17.2
+        rupture_life_ratio: 3.4
+        creep_0_5pct_life_ratio: 4.3
+        lcf_life_ratio: 1
+        kt_leading_edge_to_airfoil_radius: 2.02
+        as_printed_inconsistencies:
+          - "'8 C (47 F) cooling': 957 - 931 = 26 C = 47 F. The 8 is a misprint of 26."
+          - "'22 C (72 F)' purge cooling capability: 22 C is 40 F, 72 F is 40 C. One of the two is wrong; recorded as printed."
+      hooks_at_takeoff:
+        src: "Fig.77 p.119"
+        forces_printed_as_MPa: [2.48, 2.32, 1.41]
+        forces_lb_per_in: [141.87, 132.43, 80.58]
+        forces_unit_note: "141.87 lb/in is 24.8 N/mm; the values labelled MPa are line loads in kN/cm. Recorded as printed."
+        point:        ["A-A", "B-B", "C", "D"]
+        stress_MPa:   [120.6, 172.4, -46.9, 34.5]
+        stress_ksi:   [17.5, 25.0, -6.8, 5.0]
+        kt:           [1.51, 1.51, 1.34, 1.0]
+        creep_rupture_life_ratio: ">10"
+        lcf_life_ratio: ">2"
+        temperatures_C_F: [[566, 1051], [588, 1090], [579, 1074], [634, 1142]]
+        as_printed_inconsistency: "634 C (1142 F): 1142 F is 617 C, 634 C is 1173 F. The other three pairs convert."
+    inner_seal_support: three parts -- aft inner seal support, forward inner seal support, mixer transition duct (Fig.78)
+  stages_2_5_and_casing: not yet transcribed (sec 4.3.2 onward)
+
+rotor_seals:
+  src: "sec 4.2.4 p.108"
+  primary: prevent leakage past the vanes
+  stages_1_3_also: retain blades against forward movement; direct cooling flow to the blade/disk dovetails
+
 vane_counts:
   src: "Fig.6 p.12 (all five); sec 4.2.1 p.84 confirms 72 and 102 as the resonance forcing lines"
   stage1: 72
@@ -263,6 +571,9 @@ life_basis:
     would be 9,000 missions. Three mission counts in one report. Each
     section's own arithmetic holds; the cross-section one does not.
     Recorded, flagged; the blade LCF requirement is taken as 36,000 cycles.
+    Table XII (dovetails) and sec 4.2.3 (disks) both require 72,000 cycles
+    of the disks and 36,000 of the blades -- sec 4.1.2's 36,000 missions
+    is the count the structure was designed to.
   defect_size_cm: [0.025, 0.076]
   defect_size_in: [0.01, 0.03]
   design_levels: blades to FPS conditions; rotor spool and support structure to growth conditions

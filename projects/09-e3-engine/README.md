@@ -12,7 +12,8 @@ NASA measured, and the gap is published.**
 stage-level data transcribed and held by 37 tests. Work plan in
 [WORK-PLAN.md](WORK-PLAN.md) — ten stages, ~510 hours — sources in
 [REFERENCES.md](REFERENCES.md), what is transcribed in
-[DATA-INDEX.md](DATA-INDEX.md), the data itself in
+[DATA-INDEX.md](DATA-INDEX.md), how every solver is built in
+[METHOD.md](METHOD.md), the data itself in
 [`data/e3-fps-published.yaml`](data/e3-fps-published.yaml).
 
 ```
