@@ -77,7 +77,8 @@ front-matter offset (given per report below) to get the PDF page.
 | HPC IGV, stators 1–10 | 32 · 50 68 82 92 110 120 112 104 118 140 | **T** | HPC report Table XXII pp.157–159 |
 | HPT vanes 1 / 2 | 46 / 48 | **T** | HPT report Table III p.10, Table IV p.12 |
 | HPT blades 1 / 2 | 76 / 70 | **T** | same |
-| LPT vanes and blades 1–5 | — | **L** | LPT report §4.2.1 pp.82–101, Fig. 52 p.83 |
+| LPT blades 1–5 | 120 122 122 156 110 | **T** | LPT report Fig. 52 p.83; §4.1.2 p.78 |
+| LPT vanes 1–2 (3–5 not yet found) | 72 · 102 | **T** | LPT report §4.2.1 p.84 (forcing orders) |
 | Combustor swirl cups / fuel nozzles | 60 / 30 | **T** | CR-168219 §5.3.2 p.61 |
 
 ## Blade geometry — angles, chord, airfoil shape
@@ -94,6 +95,7 @@ front-matter offset (given per report below) to get the PDF page.
 | HPT airfoil shapes at hub/pitch/tip, all 4 rows, with surface velocity | **D** | HPT report Fig. 6 p.14 — 0.508 cm grid, digitisable |
 | HPT flow angles, Mach, energy extraction vs. span | **D** | HPT report Fig. 5 p.13 |
 | LPT vane and blade shapes per stage, Block II | **D** | LPT report Figs. 9–18 pp.18–27 |
+| **LPT blades: chords, lengths, aspect ratios, edge diameters; takeoff stresses per stage (CF, LE resultant, gas bending); rupture mission (7 points, 18,000 h); rupture and HCF results; stage-1 Campbell; materials; life basis; design cycle points and speeds; ACC payoff; start-transient temperatures** — `data/lpt-design.yaml` | **T** | LPT report §3.10, §4.1–4.2.1, Tables V–IX, Figs. 47–62, pp.72–95 |
 | LPT vector diagrams | **L** | LPT report §2.6 p.13 |
 
 ## Flowpath radii and axial stations

@@ -546,8 +546,17 @@ lpt:
     slto_plus_27F: {T49_K: 1128.7, dh_over_T: 306.2, N_over_sqrtT: 10.61, corrected_flow: 3.967, loading: 1.555, efficiency: 0.921}
   active_clearance_control: fan bleed from pylon scoops to an impingement manifold
   blade_counts_per_stage:
-    status: not_transcribed
-    settle_at: "LPT report sec 4.2.1 pp.82-101; Fig.52 p.83"
+    value: [120, 122, 122, 156, 110]
+    verified: true
+    src: "LPT report Fig.52 p.83; stage 4 also sec 4.1.2 p.78 (acoustic); stage 5 also Table VII p.80"
+    total: 630
+    note: "Table VII p.80 prints 122 for stage 1; Fig.52's 120 is taken — see data/lpt-design.yaml"
+  vane_counts_per_stage:
+    stage1: 72
+    stage2: 102
+    src: "LPT report sec 4.2.1 p.84 — forcing orders 72/rev and 102/rev"
+    stages_3_5: not yet found
+  blade_geometry: "data/lpt-design.yaml — chords, lengths, aspect ratios, takeoff stresses, rupture mission, Campbell"
 
 # ─────────────────────────────────────────────────────────────────────────
 # EXHAUST AND MIXER

@@ -1,0 +1,334 @@
+# E3 Low Pressure Turbine — design data beyond the cycle match point.
+#
+# SOURCE: "Energy Efficient Engine Low Pressure Turbine Test Hardware
+# Detailed Design Report", General Electric for NASA Lewis, NAS3-20643,
+# NTRS 19850002686. Section 3.9-3.10 and section 4, pp.72-87 (PDF pages
+# 85-100; this report's front-matter offset is +13). US Government work,
+# public use permitted.
+#
+# The cycle match point (Table I) is already in e3-fps-published.yaml.
+# This file carries what the mechanical design was built to: materials,
+# life basis, blade counts, speeds, the clearance-control payoff, and the
+# start-transient temperatures.
+
+meta:
+  report: NASA CR (E3 LPT hardware detailed design), NTRS 19850002686
+  pages_read: [72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+  transcribed: 2026-09-04
+  status: blades complete (counts, geometry, stress, mission, life, Campbell); Table X LCF, sec 4.2.2-4.2.3 dovetails and discs, sec 4.3 stator to follow
+
+design_cycle_points:
+  src: "Table VI p.80"
+  columns: [fps, growth]
+  case_41_flowpath_and_clearance:
+    altitude_m: 10668
+    mach: 0.80
+    delta_t_amb_C: 10
+    rating: max_climb
+    fan_physical_speed_rpm: [3539, 3939]
+  case_72_max_stress:
+    altitude_m: 5791
+    mach: 0.30
+    delta_t_amb_C: 35
+    rating: takeoff
+    rotor_physical_speed_rpm: [3611, 4079]
+    at_2_6pct_overspeed_rpm: [3707, 4160]
+  case_27_max_stress:
+    altitude_m: 0
+    mach: 0.30
+    delta_t_amb_C: 35
+    rating: takeoff
+    rotor_physical_speed_rpm: [3289, 3679]
+    at_2_6pct_overspeed_rpm: [3376, 3777]
+  as_printed_inconsistency: >
+    The growth case-72 overspeed prints 4160 against 4079 x 1.026 = 4185;
+    the other three overspeed figures are exactly 2.6 percent. Recorded.
+  note: >
+    Case 41's 3,539 rpm is the number the cycle data implied: Table I's
+    N/sqrt(T49) = 11.26 at T49 = 1083.2 K gives 3,540. Table VII's tip
+    speeds, below, both recompute to case 72's 3,611 rpm.
+
+aero_design_parameters:
+  src: "Table VII p.80 — FPS design point"
+  columns: [stage1_rotor, stage5_rotor]
+  tip_diameter_cm:   [89.1, 118.3]
+  tip_diameter_in:   [35.1, 46.56]
+  tip_speed_m_s:     [168.6, 223.7]
+  tip_speed_ft_s:    [553, 734]
+  airflow_kg_s:      [67.8, 67.8]
+  airflow_lb_s:      [149.5, 149.5]
+  inlet_radius_ratio: [0.76, 0.64]
+  aspect_ratio:      [3.54, 5.72]
+  pressure_ratio:    [1.30, 1.26]
+  number_of_blades:  [122, 110]
+  as_printed_inconsistencies:
+    - "stage-5 tip speed prints '23.7 m/sec (734 ft/sec)'; 734 ft/s is 223.7 m/s, and 223.7 m/s at the 118.3 cm tip is 3,611 rpm -- case 72 -- exactly as the stage-1 pair 168.6 m/s at 89.1 cm also gives 3,614. The 23.7 dropped a digit."
+    - "stage-5 airflow prints '67.0 kg/sec (149.5 lb/sec)'; stage 1 prints 67.8 kg/s for the same 149.5 lb/s, and 149.5 lb/s is 67.8 kg/s. Recorded as 67.8."
+    - "stage-1 blade count prints 122 here; Fig.52 prints 120 for stage 1 and 122 for stage 2. Fig.52 is the blade-design table and is taken as authoritative; Table VII's 122 is most likely stage 2's count in stage 1's column."
+
+design_goals:
+  src: "sec 4.1.3 p.82"
+  performance: {loading_parameter: 1.29, physical_speed_rpm: 3457, efficiency: 0.917, at: "Mach 0.8, 10.7 km cruise match point"}
+  life_hours_and_cycles: {cold_nonflowpath_parts: 18000, hot_flowpath_parts: 9000}
+  rotor_structure_speed_capability: 122 percent of maximum-rated growth physical speed
+  reliability: [no bolt holes in live disks, proven blade design, rotor structure unaffected by blade-out vibration]
+  note: "3,457 rpm at cruise against Table I's max-cruise N/sqrt(T49) = 11.08 x sqrt(1054.6) K -> 3,436 rpm: 0.6 percent"
+  as_printed_inconsistency: >
+    The goal quotes 91.7 percent and loading 1.29 "at the Mach 0.8, 10.7 km
+    cruise match point"; Table I's max-cruise column prints 91.6 percent
+    and 1.308, its max-climb column 91.7 and 1.283. The goal reads as the
+    max-climb figures at a cruise-labelled point. Recorded, not corrected.
+
+rotor_blades:
+  src: "sec 4.2.1 pp.82-84; Fig.52 p.83"
+  construction: solid, uncooled, cast Rene 77; two-tang dovetails; integral cast tip shrouds with two-tooth seals; stages 1-3 decambered
+  design_order: quantity, chord, shape and size set by aero first, then quantity or shape modified for stress or frequency
+  # Fig.52 per stage
+  stage:              [1,     2,     3,     4,     5]
+  blade_count:        [120,   122,   122,   156,   110]
+  root_chord_cm:      [3.05,  3.05,  3.30,  3.07,  3.66]
+  root_chord_in:      [1.20,  1.20,  1.30,  1.21,  1.44]
+  tip_chord_cm:       [3.10,  3.18,  3.51,  2.90,  4.22]
+  tip_chord_in:       [1.22,  1.25,  1.38,  1.14,  1.66]
+  blade_length_cm:    [10.90, 13.74, 16.66, 20.22, 22.58]
+  blade_length_in:    [4.29,  5.41,  6.56,  7.96,  8.89]
+  aspect_ratio:       [3.54,  4.39,  4.99,  7.47,  5.72]
+  aspect_ratio_note: >
+    Aspect ratio is length over chord at the pitch. Stages 1, 2 and 5
+    recompute from the mean of root and tip chord to within 1 percent;
+    stage 4 does not, because its "flask" airfoil has a smaller chord at
+    midspan than at either end (20.22 / 7.47 = 2.71 cm at pitch against
+    3.07 root and 2.90 tip) -- which is what the report says and why the
+    stage-4 aspect ratio is the largest.
+  total_blades: 630
+  edge_diameters:
+    src: "sec 4.2.1 p.84; Fig.53 p.85"
+    range_cm: [0.048, 0.079]
+    range_in: [0.019, 0.031]
+    stage1_leading_edge_cm: {tip: 0.058, pitch: 0.056, root: 0.079}
+    stage1_trailing_edge_cm: {tip: 0.076, pitch: 0.076, root: 0.076}
+    stage1_chord_in: {tip: 1.243, pitch: 1.235, root: 1.214}
+  shank: maximum thickness and area through the shank exceed the airfoil's, for strength at the dovetail
+  stage4_platform: angled 5 degrees from axial to fit the highly staggered airfoil (Fig.54)
+  stage1_stacking: tilted tangentially to balance leading-edge and maximum-convex stresses; axial and tangential offsets at the root to cut dovetail peaks
+  life:
+    src: "sec 4.2.1 p.84"
+    rupture: mission-mix over seven operating points (Table IX); all blades adequate (Figs.56-60)
+    lcf: {required_cycles: 36000, basis: "18,000 missions x 2 cycles (takeoff, thrust reverse)", achieved_cycles: ">100,000", condition: max hot-day takeoff}
+    hcf: minimum allowable vibratory stress from GE engine experience; all blades adequate
+  vibration:
+    src: "sec 4.2.1 p.84; Figs.61-62"
+    modes: [first flex, first torsion, first axial, two-stripe]
+    stage1_crossings_near_operating_range: {mode: second torsion, forcing: [72, 102], forcing_source: [stage-1 vane passing, stage-2 vane passing]}
+    verdict: no problem expected — no history of second-torsional problems on previous designs
+  stage1_stress_and_temperature:
+    src: "Fig.55 p.87 — hot-day takeoff, 3707 rpm; read off the curves"
+    root_stress_MPa: {centrifugal: 55, leading_edge: 68, maximum_convex: 62, trailing_edge: 0}
+    bulk_temperature_C: {root: 855, pct_60: 905, tip: 880}
+
+airfoil_stress_takeoff:
+  src: "Table VIII p.88 — takeoff condition; MPa (ksi)"
+  stage:                              [1,     2,     3,     4,     5]
+  centrifugal_pitch_MPa:              [41.3,  57.9,  62.7,  84.8,  93.1]
+  centrifugal_pitch_ksi:              [6.0,   8.4,   9.1,   12.3,  13.5]
+  centrifugal_root_MPa:               [53.1,  66.7,  87.5,  88.2,  136.5]
+  centrifugal_root_ksi:               [7.7,   9.7,   12.7,  12.8,  19.8]
+  leading_edge_resultant_pitch_MPa:   [73.8,  101.3, 104.1, 124.1, 106.9]
+  leading_edge_resultant_pitch_ksi:   [10.7,  14.7,  15.1,  18.0,  15.5]
+  leading_edge_resultant_root_MPa:    [62.7,  59.3,  96.5,  88.9,  134.4]
+  leading_edge_resultant_root_ksi:    [9.1,   8.6,   14.0,  12.9,  19.5]
+  uncorrected_gas_bending_root_MPa:   [133.1, 150.3, 157.9, 207.5, 248.2]
+  uncorrected_gas_bending_root_ksi:   [19.3,  21.8,  22.9,  30.1,  36.0]
+  note: >
+    "Uncorrected" gas bending is before the stacking tilt that cancels it
+    against centrifugal bending -- which is why it exceeds the resultant.
+    Stage 1 root centrifugal 53.1 MPa against Fig.55's ~55 at 3707 rpm.
+
+rupture_mission:
+  src: "Table IX p.88 — LPT mission analysis for airfoil rupture creep life"
+  columns: [power_setting, hours, altitude_m, mach, delta_t_amb_C, rpm, t49_C, t49_F, p49_kPa, p49_psi]
+  points:
+    - [max_takeoff,   159.5,     0, 0.30,  18, 3707, 920, 1688, 586, 85]
+    - [max_takeoff,   159.5,     0, 0.30,   3, 3707, 873, 1604, 586, 85]
+    - [max_climb,    1685.0,  3048, 0.453, 10, 3453, 871, 1601, 462, 67]
+    - [max_climb,    1685.0, 10668, 0.80,  10, 3633, 870, 1599, 262, 38]
+    - [max_cruise,   5515.0, 10668, 0.80,  10, 3526, 843, 1549, 248, 36]
+    - [max_cruise,   1838.0, 15240, 0.80,  10, 3477, 844, 1552, 120, 17.4]
+    - [approach_idle, 6958.0,    0, 0.00,  10, 2800, 677, 1250, 207, 30]
+  total_hours: 18000
+  note: >
+    The max-climb 10.67 km point here runs 3,633 rpm where Table VI's
+    case 41 (same altitude, Mach, ISA+10) is 3,539 -- a third LP-speed
+    figure for nominally the same point. Table VI is the design-point
+    definition; this table is the life mission mix. Recorded as read.
+
+blade_life_results:
+  src: "Figs.56-60 pp.89-93; sec 4.2.1 p.84"
+  rupture_required_hours: 18000
+  rupture_capability_hours:
+    stage1: {minimum: 22000, at_span_pct: 70, note: "read off Fig.56 -- the only stage with a margin under 2x"}
+    stage2: {minimum: 150000, at_span_pct: 60}
+    stages_3_5: ">100,000"
+  hcf:
+    minimum_allowable_vibratory_MPa: 70
+    minimum_allowable_vibratory_ksi: 10
+    capability_MPa_range: [185, 300]
+    conditions: [max cruise, hot-day takeoff]
+    note: "hot-day takeoff is the lower curve on stages 1 and 2; capability everywhere at least 2.6x the allowable"
+
+stage1_blade_campbell:
+  src: "Fig.62 p.95 — pinned-tip resonant frequency analysis; read off the curves"
+  idle_speed_rpm: 1200
+  steady_state_band_rpm: [3150, 3700]
+  natural_frequencies_Hz:
+    first_flex:     {at_0_rpm: 2050, at_4000_rpm: 1800}
+    first_torsion:  {at_0_rpm: 3400, at_4000_rpm: 3000}
+    first_axial:    {at_0_rpm: 3650, at_4000_rpm: 3300}
+    second_torsion: {at_0_rpm: 5700, at_4000_rpm: 4900}
+    two_stripe:     {at_3700_rpm: 9326}
+  forcing_functions_per_rev: {core_plus_fan: "low order", stage1_vane: 72, stage2_vane: 102}
+  crossings_in_or_near_band: "second torsion with 72/rev at ~3,900 rpm and with 102/rev at ~3,000 rpm; no first-mode crossings in the band"
+  note: >
+    Natural frequencies FALL with speed on this shrouded, pinned-tip blade
+    (the tip-shroud interlock stiffness the model assumes), while forcing
+    lines rise linearly; that is why the crossings sit at the top of the
+    band. First flex at ~1,800 Hz sits far above any low-order excitation.
+
+vane_counts:
+  src: "sec 4.2.1 p.84 — the resonance study's forcing lines: stage-1 vane 72/rev, stage-2 vane 102/rev"
+  stage1: 72
+  stage2: 102
+  stages_3_5: not yet found
+
+flight_cycle:
+  src: "Fig.51 p.81"
+  total_minutes: 120
+  segments_minutes: {cutoff: 0.5, ground_idle: 5, taxi: 4, ground_idle_2: 1, takeoff: 2, max_climb: 22, max_cruise: 48, flight_idle: 16.5, loiter: 7.7, approach: 5, reverse_peak_s: 5, decel_s: 15, taxi_2: 5, ground_idle_3: 1, cutoff_2: 1.67}
+  note: same 2-hour commuter mission as the HPT report's Fig.12, with the segment times printed slightly differently
+
+configuration:
+  src: "sec 4.1.1 p.76; Fig.49 p.77"
+  stages: 5
+  loading: moderate
+  coupling: close-coupled to the HPT
+  airfoils: uncooled
+  casing: continuous, no split flange; wall insulation; local impingement cooling for clearance control
+  stage1_nozzle: conventionally cast four-vane segments, hooked tang at the outer flowpath
+  stages2to5_nozzles: cast multivane segments, hook tangs to the outer-case supports
+  outer_seals: honeycomb brazed to sheet-metal backing strips hooked into the outer casing
+  inner_seals: integral honeycomb on the vanes; stage-1 vane carries a bolted full-ring inner seal in three sections
+  rotor: disks with integral spacer arms, bolted joints between stages, no disk bolt holes
+  blades: cast, tip-shrouded (integral interlocking shrouds), multitang dovetails, airfoil platform overlaps
+  support_cone: from the HPT/LPT sump to the LPT spool between the stage-3 and stage-4 disks
+  inner_stage_seals: two-tooth, repairable, attached at the bolted flanges
+
+materials:
+  src: "Table V p.76; Fig.50 p.79"
+  columns: [icls, fps]
+  stator:
+    vane_1:   [Rene 77, Rene 125]
+    vanes_2_5: [Rene 77, Rene 77]
+    casing:   [Inco 718, Inco 718]
+    manifold: [321 stainless, 321 stainless]
+    seals:    [Hastelloy X, Hastelloy X]
+    bolts:    [Inco 718, Inco 718]
+    nuts:     [Waspaloy, Waspaloy]
+  rotor:
+    blades_1_5: [Rene 77, Rene 77]
+    disks_1_5:  [Inco 718, Inco 718]
+    blade_retainers: [Inco 718, Inco 718]
+    bolts: [Inco 718, Inco 718]
+    nuts:  [Waspaloy, Waspaloy]
+  note: >
+    The only ICLS-to-FPS change is the stage-1 vane, Rene 77 to Rene 125 --
+    the row that sees the HPT exit hot streak. Everything rotating is
+    Rene 77 blades on Inco 718 disks.
+
+life_basis:
+  src: "sec 4.1.2 p.78"
+  design_limit_stresses: minus-3-sigma material properties
+  hcf: Goodman diagram for the maximum allowable vibratory stress at infinite life
+  aircraft_missions: 36000
+  stress_cycles_per_mission_rotor: 2
+  stress_cycles_rotor: 72000
+  stress_cycles_other: 36000
+  residual_life_with_defect_cycles: 6000
+  as_printed_inconsistency: >
+    Sec 4.1.2 bases life on 36,000 aircraft missions (72,000 rotor stress
+    cycles); sec 4.2.1's blade LCF uses 18,000 missions (36,000 cycles);
+    and the 18,000-hour design life over the 2-hour mission of Fig.51
+    would be 9,000 missions. Three mission counts in one report. Each
+    section's own arithmetic holds; the cross-section one does not.
+    Recorded, flagged; the blade LCF requirement is taken as 36,000 cycles.
+  defect_size_cm: [0.025, 0.076]
+  defect_size_in: [0.01, 0.03]
+  design_levels: blades to FPS conditions; rotor spool and support structure to growth conditions
+
+acoustic_constraint_stage4:
+  src: "sec 4.1.2 p.78; CR-168219 sec 5.5.1 p.85"
+  blade_count: 156
+  vane_to_blade_axial_gap_chords: 1.4
+  why: cutoff tuning to reduce turbine noise propagation; stage 4 chosen over stage 5 because it is more highly loaded
+
+active_clearance_control:
+  src: "Fig.47 p.72; Fig.48 p.73"
+  casing_cooling_objective:
+    cycle_points_rpm:
+      ground_idle: 904
+      max_takeoff: 3800
+      max_climb_6_1km: 3752
+      max_climb_10_7km: 3867
+      max_cruise_10_7km: 3775
+      cruise_60pct_10_7km: 3343
+    cooling_flow_pct_w25: {minimum: 0.1, maximum: 0.3}
+    note: >
+      Casing-temperature objective band against average gas temperature
+      at each point, with the minimum and maximum fan-air cooling lines.
+      The rpm are the "cycle rpm" of the figure. Table VI puts the FPS
+      max-climb physical speed at 3,539 rpm, which Table I's N/sqrt(T49)
+      also gives; the 3,867 here is 9 percent higher and is not
+      reconciled -- it is the ACC study's own cycle, possibly corrected
+      speed or an earlier issue. Recorded, flagged, not used.
+  payoff_at_max_cruise_10_67km:
+    stage:                 [1,     2,     3,     4,     5]
+    d_eta_per_10_mils:     [0.033, 0.043, 0.038, 0.030, 0.016]
+    closure_mils:          [0.032, 0.030, 0.032, 0.030, 0.028]
+    d_eta_per_stage:       [0.105, 0.130, 0.121, 0.090, 0.045]
+    d_eta_total_pct: 0.5
+    d_sfc_clearance_pct: -0.35
+    d_sfc_fan_air_cost_pct: 0.02
+    d_sfc_total_pct: -0.33
+    note: >
+      Stage 2's closure printed faintly ("0.0?0"); 0.030 keeps
+      0.043 x 3.0 = 0.129 ~ the printed 0.130 per-stage figure, which is
+      how the other four rows also close (d_eta/10 mils x closure/10).
+      Efficiency gains in points.
+
+start_analysis:
+  src: "sec 3.10 pp.74-75"
+  compressor_start_bleed: seventh stage, dumped overboard; up to 30 percent of compressor inlet flow in the early analysis
+  early_analysis_hpt_inlet_C: 1149
+  after_1980_81_tests:
+    hpt_inlet_C: 949
+    hpt_inlet_reduction_C: 200
+    lpt_inlet_C: 627
+    lpt_inlet_reduction_C: 289
+    why: [ten-point compressor efficiency gain at start, five-point HPT efficiency gain, stall margin with reduced seventh-stage bleed, HPT flow-function decrease]
+  pattern_factors_at_start_pilot_only:
+    hpt_vane_inlet: {peak: 1.26, circumferential_average: 0.63}
+    lpt_inlet:      {peak: 0.27, circumferential_average: 0.21}
+    attenuation_source: CF6-50 double-annular combustor programme
+  lpt_stage1_vane:
+    t49_design_margin_C: 49
+    hot_streak_C: 801
+    hot_streak_F: 1474
+    steady_gradient_te_to_bulk_max_C: 77
+    transient_gradient_max_C: 203
+    note: "printed '779 C (138 F)' for the steady gradient — 138 F is 77 C; the 779 is a misprint of 77"
+  lpt_stage1_blade:
+    inlet_with_average_pf_C: 777
+    inlet_with_average_pf_F: 1431
+    transient_gradient_max_C: 172
+    transient_gradient_max_F: 310
+    time_of_max_gradient_s: 40
+  verdict: full-life goals expected; start-transient gradients in the LPT are less severe than the HPT stage-1 vane's hot-day takeoff gradients

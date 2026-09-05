@@ -166,8 +166,14 @@ The blade-level data is what separates L2 from L1. All of it goes into
       (in §4, not §3)
 - [ ] HPT report §5.2.1 — every disc, shaft and retainer: geometry, stress,
       LCF; Figs. 51–52 materials; Fig. 5 flow angles and energy vs span
+- [x] **LPT blade counts per stage** — 120 122 122 156 110 (Fig. 52), with
+      chords, lengths, aspect ratios; Table VIII takeoff stresses; Table IX
+      rupture mission; life and HCF results; stage-1 Campbell; materials;
+      design speeds (Table VI 3,539 rpm confirms the cycle derivation).
+      `data/lpt-design.yaml`, `tests/test_lpt_design.py`
 - [ ] LPT report §2.5–2.7 — final flowpath, vector diagrams, blade shapes
-      per stage; §4.2 blades, dovetails, discs; **blade counts per stage**
+      per stage; §4.2.2–4.2.3 dovetails and discs; §4.3 stator (vane
+      counts 3–5); Table X LCF
 - [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
       dovetail, containment
 - [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,
