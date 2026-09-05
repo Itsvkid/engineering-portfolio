@@ -13,9 +13,9 @@
 
 meta:
   report: NASA CR (E3 LPT hardware detailed design), NTRS 19850002686
-  pages_read: "72-135"
+  pages_read: "72-147 (appendix format only)"
   transcribed: 2026-09-04
-  status: sections 3.10 and 4.1-4.4.3 complete (rotor, stator, casing, ACC manifold); sec 4.4.4 onward (clearances) and sec 5 to follow
+  status: report body complete (sec 3.10, sec 4 entire, sec 4.5 weights); appendix coordinates deferred to Stage A3
 
 design_cycle_points:
   src: "Table VI p.80"
@@ -636,6 +636,145 @@ active_clearance_control_design:
     material: 321 stainless steel, welded and brazed tube and sheet
     mounts: {forward: hard-mounted bolted joint, middle: bolted joint spring-mounted for axial slip, aft: two pins captured in the LPT aft flange}
     tube_brackets_deg: 45
+    tube_geometry:
+      src: "Fig.90 p.136"
+      manifold_sheet_cm: 0.089
+      manifold_sheet_in: 0.035
+      tube_od_cm: 1.27
+      tube_od_in: 0.500
+      tube_wall_cm: 0.051
+      tube_wall_in: 0.020
+    flange_access: forward mount brackets sit aft of the HPT/LPT flange and the flange bolts insert from the aft side, so the flange separates without removing the manifold; the small bolt-head envelope lets the front tube sit over the front shroud hook at full impingement distance
+
+clearance_predictions:
+  src: "sec 4.4.4 pp.137-141; Figs.91-92; Tables XVIII-XX"
+  sources_of_excess_clearance:
+    symmetric: [transient heating and cooling, rotor centrifugal field]
+    asymmetric: [nonconcentricity, out-of-round, manoeuvre loads]
+  approach: [round-engine radial changes of rotor and shroud separately over the full mission, out-of-round deviations added, ACC closure capability, abradable wear ratio of blade and shroud]
+  stage1_relative_diameters:
+    src: "Fig.92 p.139 — radius increase over cold rotor, cm; read off"
+    mission: {gidle_to_takeoff: 0, mxcl_chop_to_fidle_6_1km_s: 1860, reburst_s: 920, mxcr_s: 2000, cr_s: 2100}
+    takeoff_mode: {rotor_at_1s: 0.20, rotor_at_300s: 0.53, casing_at_1s: 0.30, casing_at_300s: 0.53, casing_leads_until_s: 100}
+    reburst_mode: {casing_minimum: 0.25, rotor_minimum: 0.17}
+    cruise_mode: {casing: 0.42, rotor: 0.44, casing_with_cooling_air_on: 0.30}
+    note: the casing grows first (thin, hot gas on it), the rotor catches up on the centrifugal field and disc heating; ACC pulls the cruise casing back 0.12 cm
+  out_of_round_stage1:
+    src: "Table XVIII p.140 — FPS LPT stage-1 clearance change for maximum closure; mm (mils); clock positions 3, 6, 9, 12; closure negative"
+    clock: [3, 9, 12, 6]
+    takeoff_rotation:
+      beam_bending_mm: [-0.244, -0.244, -0.114, -0.066]
+      beam_bending_mils: [-9.62, -9.62, -4.74, -2.59]
+      vibration_mm: [-0.076, -0.076, -0.076, -0.076]
+      vibration_mils: [-3.00, -3.00, -3.00, -3.00]
+      ovalization_mm: [-0.028, -0.037, 0.027, 0.041]
+      ovalization_mils: [-1.12, -1.47, 1.05, 1.60]
+      sum_mm: [-0.348, -0.357, -0.193, 0.031]
+      sum_mils: [-13.74, -14.09, -6.69, -3.99]
+    second_segment_climb:
+      beam_bending_mm: [-0.330, -0.330, -0.390, -0.460]
+      beam_bending_mils: [-12.99, -12.99, -15.36, -18.12]
+      vibration_mm: [-0.076, -0.076, -0.076, -0.076]
+      vibration_mils: [-3.00, -3.00, -3.00, -3.00]
+      ovalization_mm: [-0.024, -0.036, 0.029, 0.034]
+      ovalization_mils: [-0.96, -1.41, 1.14, 1.34]
+      sum_mm: [-0.430, -0.442, -0.437, -0.502]
+      sum_mils: [-16.95, -17.40, -17.22, -19.78]
+    low_mach_cruise:
+      beam_bending_mm: [-0.104, -0.104, -0.139, -0.182]
+      beam_bending_mils: [-4.09, -4.09, -5.49, -7.15]
+      vibration_mm: [-0.076, -0.076, -0.076, -0.076]
+      vibration_mils: [-3.00, -3.00, -3.00, -3.00]
+      ovalization_mm: [-0.018, -0.025, 0.021, 0.024]
+      ovalization_mils: [-0.71, -1.00, 0.81, 0.94]
+      sum_mm: [-0.198, -0.205, -0.194, -0.234]
+      sum_mils: [-7.80, -8.09, -7.68, -9.21]
+    rotor_rms_stackup:
+      no_assembly_tip_grind_mm: 0.0003
+      no_assembly_tip_grind_mils: 0.010
+      with_assembly_tip_grind_mm: 0.00005
+      with_assembly_tip_grind_mils: 0.002
+    as_printed_inconsistencies:
+      - "takeoff-rotation sum at 6 o'clock prints '0.031' mm beside (-3.99) mils; -3.99 mils is -0.101 mm, which is also what the three terms above it sum to."
+      - "takeoff-rotation at 12 o'clock: beam bending prints -0.114 mm beside (-4.74) mils, which is -0.120 mm; and the sum prints -0.193 mm beside (-6.69) mils, which is -0.170 mm and is what the mils terms give. Neither mm figure matches its mils."
+    note: every mils sum recomputes from its mils terms; the mm column fails twice at takeoff rotation. The mils are the working column.
+  stage1_combined_clearance:
+    src: "Table XIX p.141 — typical LPT stage-1 combined clearance calculation; cm (in)"
+    condition:                    [cold_assembly, takeoff, max_climb, cruise]
+    tip_clearance_round_engine_cm: [0.058, 0.0, 0.066, 0.091]
+    tip_clearance_round_engine_in: [0.023, 0.0, 0.026, 0.036]
+    out_of_round_imposed_cm:       [null, 0.036, 0.051, 0.023]
+    out_of_round_imposed_in:       [null, 0.014, 0.020, 0.009]
+    single_point_rub_cm:           [null, -0.036, 0.015, 0.069]
+    single_point_rub_in:           [null, -0.014, 0.006, 0.027]
+    resultant_gap_cm:              [0.094, 0.036, 0.102, 0.127]
+    resultant_gap_in:              [0.037, 0.014, 0.040, 0.050]
+    acc_closure_needed_for_0_038cm_cm: [null, null, 0.064, 0.089]
+    acc_closure_needed_for_0_038cm_in: [null, null, 0.025, 0.035]
+    acc_closure_capability_cm:     [null, null, 0.163, 0.163]
+    acc_closure_capability_in:     [null, null, 0.064, 0.064]
+    takeoff_rub_depth_cm: 0.036
+    goal_gap_cm: 0.038
+    goal_gap_in: 0.015
+    reading: >
+      The round-engine clearance is zero at takeoff by choice (shroud
+      diameters set so rotor and shroud touch at the minimum-closure
+      point). "Single point rub" is round-engine clearance minus imposed
+      out-of-round -- the local gap at the tightest clock position;
+      negative at takeoff, so 0.036 cm rubs out. That rub opens every
+      later gap: resultant = round-engine + 0.036. ACC closure needed =
+      resultant - 0.038. Cold-assembly round-engine value is faint
+      ("0.050" or "0.058"); 0.023 in is 0.058 cm and the resultant
+      0.094 - 0.036 = 0.058, so 0.058 is taken.
+  summary:
+    src: "Table XX p.142 — summary of LPT clearance calculations"
+    stage:                       [1, 3, 5]
+    critical_point: takeoff
+    acc_closure_needed_cm:       [0.064, 0.069, 0.114]
+    acc_closure_needed_in:       [0.025, 0.027, 0.045]
+    acc_closure_capability_cm:   [0.163, 0.163, 0.142]
+    acc_closure_capability_in:   [0.064, 0.064, 0.056]
+    operating_clearance_new_cm:  [0.010, 0.010, 0.010]
+    operating_clearance_new_in:  [0.004, 0.004, 0.004]
+    operating_clearance_after_max_service_cm: [0.061, 0.038, 0.094]
+    operating_clearance_after_max_service_in: [0.024, 0.015, 0.037]
+    rotor_tolerance_cm: 0.004
+    goal_cm: 0.038
+    verdict: goal met on all stages new; over goal after maximum service out-of-round
+    note: stage 5 needs the most closure and has the least capability -- the largest, thinnest-cased stage
+
+weights:
+  src: "Table XXI p.142; sec 4.5 p.141 — FPS design; kg (lb)"
+  rotor:
+    blades_per_stage_kg: [21.3, 24.9, 31.7, 29.0, 28.1]
+    blades_per_stage_lb: [47, 55, 70, 64, 62]
+    disks_per_stage_kg:  [14.1, 17.7, 22.2, 23.6, 20.0]
+    disks_per_stage_lb:  [31, 39, 49, 52, 44]
+    seals_retainers_fasteners_kg: 21.8
+    seals_retainers_fasteners_lb: 48
+    total_kg: 254.4
+    total_lb: 561
+  stator:
+    vanes_per_stage_kg: [26.8, 22.7, 27.6, 31.3, 33.1]
+    vanes_per_stage_lb: [59, 50, 61, 69, 73]
+    casing_and_acc_manifold_kg: 59.0
+    casing_and_acc_manifold_lb: 130
+    seals_ring_fasteners_kg: 49.9
+    seals_ring_fasteners_lb: 110
+    total_kg: 250.4
+    total_lb: 552
+  total_kg: 504.8
+  total_lb: 1113
+  note: airfoils are more than half the total (sec 4.5); rotor and stator nearly equal. CR-168219 Table XXVI gives the LPT rotor 260 and stator 257 kg -- 2-3 percent above these.
+  cross_check: "stage-1 blade set 21.3 kg / 120 = 0.178 kg; the containment energy of Fig.88 implied 0.17 kg. Stage 5: 28.1 / 110 = 0.255 against 0.22 implied."
+
+appendix_airfoil_coordinates:
+  src: "Appendix pp.143-173 — LPT airfoil coordinates"
+  format: "per row and section: suction surface and pressure surface, each ~45 points of (Z, R, R-theta) in inches; Z from the HPT exit plane, R the radius, R-theta the tangential coordinate"
+  sections_pct_from_hub: [10, 50, 90]
+  rows: [S1, R1, S2, R2, S3, R3, S4, R4, S5, R5]
+  extents_check: "S1 at 10 percent runs Z = 2.69-4.78 in, R1 at 10 percent Z = 5.47-6.63 in -- the axial extents of Figs 9-10"
+  status: "not transcribed -- Stage A3 (digitise every flowpath); ~30 tables, ~2,700 triples; the one place the E3's actual turbine airfoil shapes exist in print"
 
 rotor_seals:
   src: "sec 4.2.4 p.108"

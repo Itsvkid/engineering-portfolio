@@ -651,3 +651,114 @@ def test_acc_manifold_tube_counts_add_up(lpt):
     assert m["forward_part_tubes"] + m["aft_part_tubes"] == 10
     assert m["sectors"] * m["sector_arc_deg"] == 360
     assert lpt["stator"]["casing"]["manifold_flanges"].startswith("four")
+
+
+# ── clearances and weights (pp.136-142) ─────────────────────────────────
+
+def test_out_of_round_terms_sum_in_mils_and_the_one_mm_misprint_is_recorded(lpt):
+    oor = lpt["clearance_predictions"]["out_of_round_stage1"]
+    for cond in ("takeoff_rotation", "second_segment_climb", "low_mach_cruise"):
+        c = oor[cond]
+        for i in range(4):
+            mils = c["beam_bending_mils"][i] + c["vibration_mils"][i] + c["ovalization_mils"][i]
+            assert abs(mils - c["sum_mils"][i]) < 0.02, (cond, i, mils)
+            mm = c["beam_bending_mm"][i] + c["vibration_mm"][i] + c["ovalization_mm"][i]
+            if cond == "takeoff_rotation" and i == 3:
+                assert abs(mm - (-0.101)) < 0.002 and c["sum_mm"][i] == 0.031  # recorded print, 6 o'clock
+            elif cond == "takeoff_rotation" and i == 2:
+                assert c["sum_mm"][i] == -0.193 and c["beam_bending_mm"][i] == -0.114  # recorded prints, 12 o'clock
+                assert abs(c["sum_mils"][i] * 0.0254 - (-0.170)) < 0.001
+            else:
+                assert abs(mm - c["sum_mm"][i]) < 0.002, (cond, i, mm)
+            for key in ("beam_bending", "vibration", "ovalization"):
+                if cond == "takeoff_rotation" and i == 2 and key == "beam_bending":
+                    continue
+                assert abs(c[f"{key}_mm"][i] - c[f"{key}_mils"][i] * 0.0254) < 0.0015, (cond, key, i)
+    assert len(oor["as_printed_inconsistencies"]) == 2
+    assert min(oor["second_segment_climb"]["sum_mils"]) < min(oor["takeoff_rotation"]["sum_mils"]) < min(oor["low_mach_cruise"]["sum_mils"])
+    worst = oor["second_segment_climb"]["sum_mils"].index(min(oor["second_segment_climb"]["sum_mils"]))
+    assert oor["clock"][worst] == 6
+
+
+def test_combined_clearance_bookkeeping_holds(lpt):
+    t = lpt["clearance_predictions"]["stage1_combined_clearance"]
+    for key in ("tip_clearance_round_engine", "out_of_round_imposed", "single_point_rub", "resultant_gap", "acc_closure_needed_for_0_038cm", "acc_closure_capability"):
+        pairs_convert(t[f"{key}_cm"], t[f"{key}_in"], 2.54, 0.006)
+    for i in range(4):
+        rnd, oor, rub, res = t["tip_clearance_round_engine_cm"][i], t["out_of_round_imposed_cm"][i], t["single_point_rub_cm"][i], t["resultant_gap_cm"][i]
+        assert abs(rnd + t["takeoff_rub_depth_cm"] - res) < 0.002, (i, rnd, res)
+        if oor is not None:
+            assert abs(rnd - oor - rub) < 0.002, (i, rnd, oor, rub)
+        need = t["acc_closure_needed_for_0_038cm_cm"][i]
+        if need is not None:
+            assert abs(res - t["goal_gap_cm"] - need) < 0.002, (i, res, need)
+            assert need < t["acc_closure_capability_cm"][i]
+    assert t["single_point_rub_cm"][1] == -t["takeoff_rub_depth_cm"]
+
+
+def test_clearance_summary_meets_the_goal_new_and_stage5_is_the_hard_one(lpt):
+    s = lpt["clearance_predictions"]["summary"]
+    t = lpt["clearance_predictions"]["stage1_combined_clearance"]
+    for key in ("acc_closure_needed", "acc_closure_capability", "operating_clearance_new", "operating_clearance_after_max_service"):
+        pairs_convert(s[f"{key}_cm"], s[f"{key}_in"], 2.54, 0.006)
+    assert s["acc_closure_needed_cm"][0] == t["acc_closure_needed_for_0_038cm_cm"][2]
+    assert s["acc_closure_capability_cm"][0] == t["acc_closure_capability_cm"][2]
+    for need, cap, new in zip(s["acc_closure_needed_cm"], s["acc_closure_capability_cm"], s["operating_clearance_new_cm"]):
+        assert need < cap and new < s["goal_cm"]
+    assert s["acc_closure_needed_cm"][2] == max(s["acc_closure_needed_cm"])
+    assert s["acc_closure_capability_cm"][2] == min(s["acc_closure_capability_cm"])
+    assert max(s["operating_clearance_after_max_service_cm"]) > s["goal_cm"]
+
+
+def test_weights_add_up_in_both_units_and_match_the_engine_table_to_3_percent(lpt, published):
+    w = lpt["weights"]
+    r, st = w["rotor"], w["stator"]
+    assert abs(sum(r["blades_per_stage_kg"]) + sum(r["disks_per_stage_kg"]) + r["seals_retainers_fasteners_kg"] - r["total_kg"]) < 0.15
+    assert sum(r["blades_per_stage_lb"]) + sum(r["disks_per_stage_lb"]) + r["seals_retainers_fasteners_lb"] == r["total_lb"]
+    assert abs(sum(st["vanes_per_stage_kg"]) + st["casing_and_acc_manifold_kg"] + st["seals_ring_fasteners_kg"] - st["total_kg"]) < 0.15
+    assert sum(st["vanes_per_stage_lb"]) + st["casing_and_acc_manifold_lb"] + st["seals_ring_fasteners_lb"] == st["total_lb"]
+    assert abs(r["total_kg"] + st["total_kg"] - w["total_kg"]) < 0.05 and r["total_lb"] + st["total_lb"] == w["total_lb"]
+    assert abs(w["total_kg"] - w["total_lb"] * 0.45359) < 0.5
+    for kg, lb in zip(r["blades_per_stage_kg"] + r["disks_per_stage_kg"] + st["vanes_per_stage_kg"], r["blades_per_stage_lb"] + r["disks_per_stage_lb"] + st["vanes_per_stage_lb"]):
+        assert abs(kg - lb * 0.45359) < 0.3
+    mod = None
+    for k, v in published.items():
+        if isinstance(v, dict) and "lpt_module" in v:
+            mod = v["lpt_module"]
+    assert mod is not None
+    assert abs(mod["rotor"] - r["total_kg"]) / r["total_kg"] < 0.03
+    assert abs(mod["stator"] - st["total_kg"]) / st["total_kg"] < 0.03
+    assert sum(r["blades_per_stage_kg"]) + sum(st["vanes_per_stage_kg"]) > 0.5 * w["total_kg"]
+
+
+def test_blade_mass_from_the_weight_table_matches_the_containment_energy(lpt):
+    """Third route to the blade mass: Table XXI set weight / blade count
+    against 2E/V^2 from Fig.88. Within 25 percent on both ends of the
+    turbine -- the shroud and dovetail share is the uncertainty."""
+    w = lpt["weights"]["rotor"]
+    rb = lpt["rotor_blades"]
+    c = lpt["stator"]["casing"]["containment"]
+    ap = lpt["aero_design_parameters"]
+    rpm = lpt["coupled_blade_disk_stage1"]["max_speed_growth_rpm"] * 1.05
+    omega = rpm * 2 * math.pi / 60
+    for col, st in ((0, 0), (1, 4)):
+        per_blade = w["blades_per_stage_kg"][st] / rb["blade_count"][st]
+        r_t = ap["tip_diameter_cm"][col] / 200
+        r_h = r_t * ap["inlet_radius_ratio"][col]
+        v = omega * (r_h + 0.45 * (r_t - r_h))
+        implied = 2 * c["impact_energy_N_m"][st] / v ** 2
+        assert abs(implied - per_blade) / per_blade < 0.25, (st, implied, per_blade)
+
+
+def test_manifold_tube_dimensions_convert(lpt):
+    g = lpt["active_clearance_control_design"]["manifold"]["tube_geometry"]
+    for cm, inch in ((g["manifold_sheet_cm"], g["manifold_sheet_in"]), (g["tube_od_cm"], g["tube_od_in"]), (g["tube_wall_cm"], g["tube_wall_in"])):
+        assert abs(cm - inch * 2.54) < 0.002
+
+
+def test_appendix_extents_match_the_section_figures(lpt):
+    aero = yaml.safe_load((DATA / "lpt-aero.yaml").read_text())
+    rows = aero["airfoil_sections"]["rows"]
+    assert rows["V1"]["axial_in"][0] - 0.15 < 2.69 and 4.78 < rows["V1"]["axial_in"][1]
+    assert rows["R1"]["axial_in"][0] - 0.1 < 5.47 and 6.63 < rows["R1"]["axial_in"][1] + 0.05
+    assert lpt["appendix_airfoil_coordinates"]["status"].startswith("not transcribed")

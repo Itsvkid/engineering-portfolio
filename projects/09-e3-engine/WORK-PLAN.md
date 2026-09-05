@@ -186,8 +186,11 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [x] **LPT stator, casing, ACC manifold** — §4.3–4.4.3, Figs 78–89,
       Table XVII. Vane segments multiply to the counts; load per segment is
       six vanes of Fig 81; containment energies imply real blade masses.
-- [ ] LPT report §4.4.4 onward — clearances, §5 test hardware; appendix
-      airfoil coordinates (A3)
+- [x] **LPT clearances and weights** — §4.4.4–4.5, Tables XVIII–XXI, Fig 92.
+      Out-of-round sums recompute in mils; the combined-clearance bookkeeping
+      (round + 0.036 rub, needed = resultant − 0.038) holds; weights add in
+      both units and match CR-168219 to 3 %; blade mass by three routes.
+      **The LPT report body is fully transcribed.**
 - [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
       dovetail, containment
 - [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,
@@ -201,6 +204,12 @@ and `tests/test_published_data.py` holds every new table to at least one
 independent cross-check.
 
 ## A3 · Digitise every flowpath · 8 h
+
+- [ ] **LPT airfoil coordinates** — the appendix (pp.143–173) tabulates every
+      row at 10/50/90 % span as (Z, R, Rθ) in inches, suction and pressure
+      surfaces, ~45 points each: ~2,700 triples. The only printed source of
+      the E³'s actual turbine airfoil shapes. OCR then check: monotonic Z on
+      each surface, LE/TE closure, extents against Figs 9–18. Budget 6 h.
 - [ ] Fan and booster — CR-168219 Fig. 13, scaled to 2.11 m; fan hardware
       report may give dimensions directly
 - [ ] HPC — HPC report Fig. 15 CAFD flowpath against Table X radii
