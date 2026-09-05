@@ -183,8 +183,11 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [x] **LPT rotor structure and stage-1 nozzle** — Tables X–XVI, Figs 63–77:
       shrouds, dovetails, retainers, disks (every one on its 72,000-cycle
       limit at one location), bolts, stage-1 nozzle. `data/lpt-design.yaml`
-- [ ] LPT report §4.3.2 onward — stators 2–5, casing; appendix airfoil
-      coordinates (A3)
+- [x] **LPT stator, casing, ACC manifold** — §4.3–4.4.3, Figs 78–89,
+      Table XVII. Vane segments multiply to the counts; load per segment is
+      six vanes of Fig 81; containment energies imply real blade masses.
+- [ ] LPT report §4.4.4 onward — clearances, §5 test hardware; appendix
+      airfoil coordinates (A3)
 - [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
       dovetail, containment
 - [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,

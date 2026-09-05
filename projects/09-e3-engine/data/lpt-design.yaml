@@ -13,9 +13,9 @@
 
 meta:
   report: NASA CR (E3 LPT hardware detailed design), NTRS 19850002686
-  pages_read: [72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119]
+  pages_read: "72-135"
   transcribed: 2026-09-04
-  status: rotor complete (blades, shrouds, dovetails, retainers, disks, bolts, disk LCF); stator stage-1 nozzle complete; sec 4.3.2 onward (stators 2-5, casing) to follow
+  status: sections 3.10 and 4.1-4.4.3 complete (rotor, stator, casing, ACC manifold); sec 4.4.4 onward (clearances) and sec 5 to follow
 
 design_cycle_points:
   src: "Table VI p.80"
@@ -494,8 +494,148 @@ stator:
         lcf_life_ratio: ">2"
         temperatures_C_F: [[566, 1051], [588, 1090], [579, 1074], [634, 1142]]
         as_printed_inconsistency: "634 C (1142 F): 1142 F is 617 C, 634 C is 1173 F. The other three pairs convert."
-    inner_seal_support: three parts -- aft inner seal support, forward inner seal support, mixer transition duct (Fig.78)
-  stages_2_5_and_casing: not yet transcribed (sec 4.3.2 onward)
+    inner_seal_supports:
+      src: "sec 4.3.1 pp.118-123; Figs.78-79"
+      parts: [aft inner seal support, forward inner seal support, mixer transition duct]
+      inner_duct: {segments: 18, material: Rene 80, support: forward by the forward inner seal support and aft by slots in the stage-1 nozzle inner band; pinned tangentially; Triballoy 800 on the forward faces, fps_icls: identical}
+      forward_support: 360-degree ring machined from an Inco 718 forging; carries the honeycomb seal above the HPT stage-2 blade retainer
+      aft_support: Inco 718 ring forging with TIG-welded Inco 718 sheet; a flash-welded Inco 718 ring backs the honeycomb
+      aft_support_functions: [honeycomb over the HPT rotating seals, ducts fifth-stage air forward to purge the HPT stage-2 disk cavity, directs air back to purge the LPT stages 1-3 rotor cavity, honeycomb over the LPT stage-1 rotating seal, HPT/LPT pressure-balance seal, clamps the inner ducts with the forward support]
+      hardware: {spoolies: 72, clamp_bolts: {count: 36, diameter_cm: 0.635, diameter_in: 0.250, material: Inco 718}, purge_air_holes_angle_deg: 60, purge_hole_note: angled circumferentially to cut drag on the HPT wheel}
+      icls_nozzle_differences: [cast Rene 77 instead of Rene 125 for cost, integrally cast T42 probe pad dropped from the outer band, no Codep coating]
+      stresses:
+        src: "Fig.79 p.122 — effective stresses; the header says 30 s into hot-day takeoff, the caption 1040 s. Recorded as printed."
+        at_A: {sigma_nom_MPa: 386, sigma_nom_ksi: 56, kt: 1.83, sigma_max_MPa: 703.3, sigma_max_ksi: 102}
+        elastic_limit_72000_cycles: {MPa: 710.2, ksi: 103, temperature_C: 538, temperature_F: 1000}
+        field_MPa_ksi: [[82.7, 12], [34.5, 5], [62.1, 9], [137.9, 20], [144.8, 21], [200.0, 29], [103.4, 15], [158.6, 23], [75.8, 11], [27.6, 4], [48.3, 7], [117.2, 17], [234.4, 34], [220.6, 32], [75.8, 11], [220.6, 32], [131.0, 19], [48.2, 7], [96.5, 14], [206.9, 30]]
+        note: the honeycomb-seal groove at A sits 7 MPa under its 72,000-cycle elastic limit
+  stages_2_5_nozzles:
+    src: "sec 4.3.2 p.123; Figs.80-83 pp.124-127; Table XVII p.123"
+    material: Rene 77, cast, uncoated
+    vanes_per_segment: 6
+    airfoils: {stages_2_3: hollow for weight, stages_4_5: solid, icls: stages 2-3 solid for tooling cost}
+    segments:
+      src: "Fig.80 p.124 — LPT stator vane FPS configuration"
+      stage:             [1,   2,   3,   4,   5]
+      vanes:             [72,  102, 96,  114, 120]
+      vanes_per_segment: [4,   6,   6,   6,   6]
+      segments:          [18,  17,  16,  19,  20]
+      material:          [Rene 125, Rene 77, Rene 77, Rene 77, Rene 77]
+      airfoil:           [hollow, hollow, hollow, solid, solid]
+    load_path: tangential gas load through a slot in each segment's aft rail into a lug brazed into the adjacent shroud, which sits in a slot in the LPT casing (Fig.83)
+    airfoil_at_takeoff:
+      src: "Fig.81 p.125 — FPS baseline; limiting point tip leading edge, no Kt"
+      stage:                     [2,     3,     4,     5]
+      max_gas_temp_95pct_span_C: [890,   821,   749,   682]
+      max_gas_temp_95pct_span_F: [1635,  1510,  1380,  1260]
+      axial_gas_load_per_vane_N:   [197.8, 215.0, 139.8, 88.4]
+      axial_gas_load_per_vane_lbf: [44.48, 48.13, 31.43, 19.87]
+      tangential_gas_load_per_vane_N:   [361.3, 380.5, 288.1, 210.5]
+      tangential_gas_load_per_vane_lbf: [81.22, 85.53, 64.77, 47.33]
+      dp_load_per_vane_N:   [35.9, 35.1, 14.5, 6.0]
+      dp_load_per_vane_lbf: [8.08, 7.90, 3.27, 1.36]
+      stress_le_MPa_as_printed: [9.78, 10.83, 15.5, 16.3]
+      stress_le_ksi:            [14.18, 15.72, 22.5, 23.70]
+      kt:                       [2.02, 2.0, 2.06, 1.98]
+      creep_0_2pct_margin:      [1, 10, 10, 10]
+      rupture_margin:           [1.47, 10, 10, 10]
+      lcf_margin:               [2, 2, 2, 2]
+      margins_note: "stages 3-5 print >10, >10, >2; carried as 10 and 2"
+      as_printed_inconsistency: >
+        The MPa stress column prints one-tenth of the ksi column's value on
+        every stage (14.18 ksi is 97.8 MPa, printed 9.78; 15.72 -> 108.4,
+        printed 10.83; 22.5 -> 155.1, printed 15.5; 23.70 -> 163.4, printed
+        16.3). Fig.82's point F prints the same stage-2 stress as 97.8 MPa
+        (14.18 ksi), so the ksi column is the one to use. Recorded.
+      note: stage 2 is the marginal nozzle -- creep margin 1.0, rupture 1.47, the hottest gas
+    stage2_hooks_at_takeoff:
+      src: "Fig.82 p.126 — stages 3-5 similar"
+      point:         ["A-A", "B-B", "C", "D", "E", "F"]
+      sigma_nom_MPa: [85.5, 131, 24.1, 31.7, 62.1, 97.8]
+      sigma_nom_ksi: [12.4, 19.0, 3.5, 4.6, 9.0, 14.18]
+      kt:            [1.288, 1.288, 1.0, 2, 2, 2.02]
+      kt_note: "D and E print '<= 2'; carried as 2"
+      sigma_max_MPa: [110.3, 168.9, 24.1, 63.4, 124.1, 197.5]
+      sigma_max_ksi: [16.0, 24.5, 3.5, 9.2, 18.0, 28.64]
+      temperature_C: [802, 802, 891, 891, 835, 891]
+      temperature_F: [1475, 1475, 1635, 1635, 1535, 1635]
+      lcf_cycles: ">= 10^5 everywhere"
+      creep_0_2pct_margin: [10, 10, 10, 4.7, 3.78, 1.0]
+      rupture_margin:      [10, 10, 10, 10, 10, 1.47]
+      note: point F is the airfoil tip leading edge -- Fig.81's stage-2 column
+    tangential_load_stops:
+      src: "Table XVII p.123 — hot-day takeoff, FPS baseline"
+      stage:                          [2,     3,     4,     5]
+      tangential_gas_load_per_segment_N:   [2173, 2288, 1733, 1266]
+      tangential_gas_load_per_segment_lbf: [488.5, 514.4, 389.6, 284.7]
+      slug_shear_stress_MPa:          [63.4, 64.8, 37.2, 33.3]
+      slug_shear_stress_ksi:          [9.2, 9.4, 5.4, 4.4]
+      nozzle_hook_bearing_MPa:        [382.6, 443.3, 182.7, 153.3]
+      nozzle_hook_bearing_ksi:        [55.5, 64.3, 26.5, 22.2]
+      casing_hook_bearing_MPa:        [80.0, 78.6, 55.8, 43.4]
+      casing_hook_bearing_ksi:        [11.6, 11.4, 8.1, 6.3]
+      limits_MPa: {slug_shear: 372.3, nozzle_hook_bearing: 517.1, casing_hook_bearing: 289.6}
+      limits_ksi: {slug_shear: 54, nozzle_hook_bearing: 75, casing_hook_bearing: 42}
+      as_printed_inconsistency: "stage-5 slug shear prints 33.3 MPa (4.4 ksi); 4.4 ksi is 30.3 MPa and 33.3 MPa is 4.8 ksi. The other eleven pairs convert."
+      cross_check: "load per segment / 6 vanes = Fig.81's tangential load per vane on all four stages to 0.3 percent"
+    sealing: {src: "Fig.84 p.129", types: [hourglass seals curved into hourglass shape, flat spline seals, interlocks with no separate seal], gaps: circumferential gaps between segments set to minimise leakage but prevent arch-bind}
+  casing:
+    src: "sec 4.3.3-4.3.4 p.128; Figs.85-88 pp.130-133"
+    construction: 360-degree case from two Inco 718 cylindrical forgings joined by one circumferential electron-beam weld near the axial centre; no horizontal flanges
+    borescope_pads: one per stage, EB welded
+    manifold_flanges: four local bolt flanges machined integrally into the outer skin
+    insulation: prevents excessive heat loss and lowers the casing's cooling requirement
+    bolts: {lpt_to_hpt_casing_flange: 132, aft_frame_to_aft_casing_flange: 120}
+    nozzle_assembly: front hook engaged with the segment tilted forward, moved forward and tilted back onto the aft hook; the shroud set then locks the segments
+    analysis: GE CLASS/MASS, combined thermal and mechanical transient loads; worst case; deflections used for the ACC predictions
+    hpt_lpt_flange_bolts: {diameter_cm: 0.79, diameter_in: 0.3125, sized_for: axial containment of the LPT rotor on an LPT shaft failure -- the bolts absorb the free rotor's energy}
+    attachment_stresses:
+      src: "Fig.86 p.131 — Inconel 718, 72,000 cycles at A = 1; 120 s into hot-day takeoff; MPa (ksi); print faint, single read, not tested beyond conversion"
+      status: faint_single_read
+      stage:            [1, 2, 3, 4, 5]
+      inner_A_MPa:      [234, 214, 207, 234, 193]
+      inner_A_ksi:      [34, 31, 30, 34, 28]
+      allowable_inner_649C: {MPa: 786, ksi: 114}
+      allowable_outer_538C: {MPa: 703, ksi: 102}
+      note: Kt applied to the hoop stress at the tangential load-stop slots
+    end_flanges:
+      src: "Fig.87 p.132 — effective stress, most severe condition (120 s into hot-day takeoff, minimum cooling; forward C at 30 s); no Kt"
+      location:     [forward_A, forward_B, forward_C, aft_A, aft_B, aft_C, aft_D]
+      stress_MPa:   [241, 228, 262, 103, 110, 75.8, 207]
+      stress_ksi:   [35, 33, 38, 15, 16, 11, 30]
+      kt:           [1.4, 2.32, 1.0, 1.0, 3.02, 1, 1.4]
+      lcf_predicted_cycles: ">= 10^5"
+      requirement_cycles: 36000
+      note: the casing is designed to 36,000 mission cycles where the disks take 72,000 -- one cycle per mission for the case, two for the rotor
+    containment:
+      src: "Fig.88 p.133 — single-blade impact energy at FPS growth speed + 5 percent overspeed, read off; capability line"
+      stage:                    [1,    2,    3,    4,    5]
+      impact_energy_N_m:        [2710, 3800, 5150, 3600, 5600]
+      impact_energy_ft_lbf:     [2000, 2800, 3800, 2650, 4150]
+      required_wall_cm:         [0.051, 0.085, 0.145, 0.078, 0.160]
+      minimum_actual_combined_thickness_cm: 0.203
+      minimum_actual_combined_thickness_in: 0.080
+      capability_N_m: 6775
+      capability_ft_lbf: 5000
+      note: casing plus shroud; every stage under the line
+
+active_clearance_control_design:
+  src: "sec 4.4 pp.128-135; Figs.89-90"
+  intent: run small shroud and seal clearances by directing cooling air at the shroud and seal attachment points at the right times, with a casing that survives the thermal cycling
+  casing_life: the only component significantly stressed by ACC cycling; capable of more than the required 36,000 mission cycles
+  manifold:
+    air: fan air, impinged on the LPT case at the outer diameter of the 10 nozzle and shroud support hooks
+    sectors: 4
+    sector_arc_deg: 90
+    layout: backbone/rib -- an axial distribution manifold with 10 circumferential tubes each side
+    forward_part_tubes: 7
+    forward_part_covers: stages 1-4
+    aft_part_tubes: 3
+    aft_part_covers: stage 5
+    stage5_orifice_plate: installed at engine assembly so stage-5 impingement can be adjusted or eliminated to measure its effect
+    material: 321 stainless steel, welded and brazed tube and sheet
+    mounts: {forward: hard-mounted bolted joint, middle: bolted joint spring-mounted for axial slip, aft: two pins captured in the LPT aft flange}
+    tube_brackets_deg: 45
 
 rotor_seals:
   src: "sec 4.2.4 p.108"

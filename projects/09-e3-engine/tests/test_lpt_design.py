@@ -528,3 +528,126 @@ def test_outer_support_stress_bookkeeping(lpt):
         assert abs(mpa - ksi * 6.89476) < 1.6
     assert abs(s["air_holes"]["diameter_cm"] - s["air_holes"]["diameter_in"] * 2.54) < 0.005
     assert abs(s["bolt_holes"]["diameter_cm"] - s["bolt_holes"]["diameter_in"] * 2.54) < 0.005
+
+
+# ── stators 2-5, casing, ACC manifold (pp.120-135) ──────────────────────
+
+def test_vane_segments_multiply_to_the_vane_counts(lpt, published):
+    seg = lpt["stator"]["stages_2_5_nozzles"]["segments"]
+    for n, vps, ns in zip(seg["vanes"], seg["vanes_per_segment"], seg["segments"]):
+        assert vps * ns == n
+    assert seg["vanes"] == lpt["vane_counts"]["all"] == published["lpt"]["vane_counts_per_stage"]["value"]
+    assert seg["material"][0] != seg["material"][1] and len(set(seg["material"][1:])) == 1
+    assert sum(seg["segments"]) == 90
+
+
+def test_tangential_load_per_segment_is_six_vanes_of_fig81(lpt):
+    st = lpt["stator"]["stages_2_5_nozzles"]
+    ls, af = st["tangential_load_stops"], st["airfoil_at_takeoff"]
+    for per_seg, per_vane in zip(ls["tangential_gas_load_per_segment_N"], af["tangential_gas_load_per_vane_N"]):
+        assert abs(per_seg / st["vanes_per_segment"] - per_vane) / per_vane < 0.004, (per_seg, per_vane)
+
+
+def test_stages_2_5_airfoil_table_converts_and_the_mpa_column_is_a_tenth(lpt):
+    af = lpt["stator"]["stages_2_5_nozzles"]["airfoil_at_takeoff"]
+    for c, f in zip(af["max_gas_temp_95pct_span_C"], af["max_gas_temp_95pct_span_F"]):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    for key in ("axial_gas_load_per_vane", "tangential_gas_load_per_vane", "dp_load_per_vane"):
+        for n, lbf in zip(af[f"{key}_N"], af[f"{key}_lbf"]):
+            assert abs(n - lbf * 4.44822) < 1.0, (key, n, lbf)
+    for mpa10, ksi in zip(af["stress_le_MPa_as_printed"], af["stress_le_ksi"]):
+        assert abs(mpa10 * 10 - ksi * 6.89476) < 0.6  # the recorded factor of ten
+    assert af["max_gas_temp_95pct_span_C"] == sorted(af["max_gas_temp_95pct_span_C"], reverse=True)
+    assert af["creep_0_2pct_margin"][0] == min(af["creep_0_2pct_margin"]) == 1
+    assert af["rupture_margin"][0] == min(af["rupture_margin"])
+
+
+def test_stage2_hook_maxima_are_nominal_times_kt(lpt):
+    h = lpt["stator"]["stages_2_5_nozzles"]["stage2_hooks_at_takeoff"]
+    for nom, kt, mx in zip(h["sigma_nom_MPa"], h["kt"], h["sigma_max_MPa"]):
+        assert abs(nom * kt - mx) / mx < 0.006, (nom, kt, mx)
+    pairs_convert(h["sigma_nom_MPa"], h["sigma_nom_ksi"], 6.89476, 0.6)
+    pairs_convert(h["sigma_max_MPa"], h["sigma_max_ksi"], 6.89476, 0.6)
+    for c, f in zip(h["temperature_C"], h["temperature_F"]):
+        assert abs((f - 32) / 1.8 - c) < 0.6
+    # point F is the Fig.81 stage-2 leading edge: same stress, same Kt
+    af = lpt["stator"]["stages_2_5_nozzles"]["airfoil_at_takeoff"]
+    assert h["sigma_nom_ksi"][5] == af["stress_le_ksi"][0] and h["kt"][5] == af["kt"][0]
+    assert h["temperature_C"][5] == af["max_gas_temp_95pct_span_C"][0] + 1
+
+
+def test_load_stop_stresses_convert_and_sit_under_their_limits(lpt):
+    ls = lpt["stator"]["stages_2_5_nozzles"]["tangential_load_stops"]
+    pairs_convert(ls["tangential_gas_load_per_segment_N"], ls["tangential_gas_load_per_segment_lbf"], 4.44822, 1.0)
+    for i, (mpa, ksi) in enumerate(zip(ls["slug_shear_stress_MPa"], ls["slug_shear_stress_ksi"])):
+        if i == 3:
+            assert 2.5 < mpa - ksi * 6.89476 < 3.5  # the recorded pair
+        else:
+            assert abs(mpa - ksi * 6.89476) < 0.6
+    pairs_convert(ls["nozzle_hook_bearing_MPa"], ls["nozzle_hook_bearing_ksi"], 6.89476, 0.6)
+    pairs_convert(ls["casing_hook_bearing_MPa"], ls["casing_hook_bearing_ksi"], 6.89476, 0.6)
+    assert max(ls["slug_shear_stress_MPa"]) < ls["limits_MPa"]["slug_shear"]
+    assert max(ls["nozzle_hook_bearing_MPa"]) < ls["limits_MPa"]["nozzle_hook_bearing"]
+    assert max(ls["casing_hook_bearing_MPa"]) < ls["limits_MPa"]["casing_hook_bearing"]
+    # the load falls rearward with the gas temperature and pressure
+    assert ls["tangential_gas_load_per_segment_N"][1:] == sorted(ls["tangential_gas_load_per_segment_N"][1:], reverse=True)
+
+
+def test_inner_seal_support_groove_is_nominal_times_kt_and_just_under_its_limit(lpt):
+    st = lpt["stator"]["stage1_nozzle_assembly"]["inner_seal_supports"]["stresses"]
+    a = st["at_A"]
+    assert abs(a["sigma_nom_MPa"] * a["kt"] - a["sigma_max_MPa"]) / a["sigma_max_MPa"] < 0.01
+    lim = st["elastic_limit_72000_cycles"]
+    assert a["sigma_max_MPa"] < lim["MPa"] and lim["MPa"] - a["sigma_max_MPa"] < 10
+    assert abs(lim["MPa"] - lim["ksi"] * 6.89476) < 0.5
+    for mpa, ksi in st["field_MPa_ksi"]:
+        assert abs(mpa - ksi * 6.89476) < 1.6
+    hw = lpt["stator"]["stage1_nozzle_assembly"]["inner_seal_supports"]["hardware"]
+    assert hw["spoolies"] == lpt["vane_counts"]["stage1"]
+    assert hw["clamp_bolts"]["count"] == lpt["stator"]["stage1_nozzle_assembly"]["nozzle"]["bolts_to_support"]["count"]
+
+
+def test_casing_end_flanges_convert_and_the_case_takes_one_cycle_per_mission(lpt):
+    ef = lpt["stator"]["casing"]["end_flanges"]
+    pairs_convert(ef["stress_MPa"], ef["stress_ksi"], 6.89476, 0.6)
+    assert max(ef["stress_MPa"]) < lpt["stator"]["casing"]["attachment_stresses"]["allowable_outer_538C"]["MPa"]
+    assert ef["requirement_cycles"] * 2 == lpt["disks"]["lcf_requirement_cycles"]
+    assert ef["requirement_cycles"] == lpt["life_basis"]["aircraft_missions"]
+    assert lpt["active_clearance_control_design"]["casing_life"].startswith("the only component")
+
+
+def test_hpt_lpt_flange_bolt_matches_the_rotor_bolt_family(lpt):
+    b = lpt["stator"]["casing"]["hpt_lpt_flange_bolts"]
+    assert abs(b["diameter_cm"] - b["diameter_in"] * 2.54) < 0.006
+    assert b["diameter_in"] in lpt["disks"]["bolt_selection"]["size_in"]
+
+
+def test_containment_energies_convert_and_imply_a_plausible_blade_mass(lpt):
+    """E = 1/2 m V^2 at the blade centroid (about 0.45 x tip radius above the
+    hub) at growth speed + 5 %. The implied mass must be a real LPT blade
+    with shroud and dovetail -- 0.1 to 0.6 kg -- and grow rearward."""
+    c = lpt["stator"]["casing"]["containment"]
+    pairs_convert(c["impact_energy_N_m"], c["impact_energy_ft_lbf"], 1.35582, 60)
+    assert abs(c["capability_N_m"] - c["capability_ft_lbf"] * 1.35582) < 5
+    assert abs(c["minimum_actual_combined_thickness_cm"] - c["minimum_actual_combined_thickness_in"] * 2.54) < 0.002
+    assert max(c["impact_energy_N_m"]) < c["capability_N_m"]
+    assert max(c["required_wall_cm"]) < c["minimum_actual_combined_thickness_cm"]
+    rpm = lpt["coupled_blade_disk_stage1"]["max_speed_growth_rpm"] * 1.05
+    omega = rpm * 2 * math.pi / 60
+    ap = lpt["aero_design_parameters"]
+    masses = {}
+    for col, st in ((0, 0), (1, 4)):
+        r_t = ap["tip_diameter_cm"][col] / 200
+        r_h = r_t * ap["inlet_radius_ratio"][col]
+        r_cg = r_h + 0.45 * (r_t - r_h)
+        v = omega * r_cg
+        masses[st] = 2 * c["impact_energy_N_m"][st] / v ** 2
+        assert 0.1 < masses[st] < 0.6, (st, masses[st])
+    assert masses[4] > masses[0]
+
+
+def test_acc_manifold_tube_counts_add_up(lpt):
+    m = lpt["active_clearance_control_design"]["manifold"]
+    assert m["forward_part_tubes"] + m["aft_part_tubes"] == 10
+    assert m["sectors"] * m["sector_arc_deg"] == 360
+    assert lpt["stator"]["casing"]["manifold_flanges"].startswith("four")
