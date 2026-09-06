@@ -1,6 +1,6 @@
 # Where the work stands — resume here
 
-Last updated 2026-09-06. Written so a new session can pick up cold.
+Last updated 2026-09-07. Written so a new session can pick up cold.
 The two files that carry the real state are [WORK-PLAN.md](WORK-PLAN.md)
 (what is ticked and what its status note says) and each solver's
 `STEP0.md` (the band stated before every run, and the findings after it).
@@ -76,13 +76,20 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     cooling and its pressure drop from geometry — the last needs the
     liner hole areas, which Stage A did not transcribe.
 4. **Stage E (mechanical) — started.** `solvers/mechanical/`, its own
-    `STEP0.md`, findings 73–76. **Unit E1 met E1's closure**: all ten HPC
+    `STEP0.md`, findings 73–81. **Unit E1 met E1's closure**: all ten HPC
     blade root stresses within 6.5 % of Table X from geometry alone, and
     the blade material crossover fell out of the data at the inertia weld.
+    **Unit E2 met half of E2's closure**: the bore doubling for a small
+    hole is exact (2.0000 in the limit), and the rim load is 5,882 kN —
+    600 tonnes on one disc. The other half, Fig. 64's peak effective
+    stress, is **gated on digitising the disc cross-sections**, which
+    Stage A never did; that is recorded as finding 81, not skipped. E2
+    also rejected the assumption behind the stage: **not one of nineteen
+    published rotor stresses scales as N²** — the rotor is thermal at its
+    limiting times, bores peaking at 875 s and gas-washed parts at 40 s.
     Next: gas bending and the root stress, HPT blade creep by
-    Larson–Miller against the published rupture life, then E2 (discs),
-    E3 (vibration and Campbell diagrams), E4 (rotordynamics),
-    E5 (attachments).
+    Larson–Miller against the published rupture life, then E3 (vibration
+    and Campbell diagrams), E4 (rotordynamics), E5 (attachments).
 5. Then F (materials and mass), G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 
@@ -105,6 +112,9 @@ compressor's radial redistribution (C1 unit 4b finding 17).
 
 ## Open items carried
 
+- **Disc cross-sections un-digitised.** This now blocks E2's Fig. 64
+  peak-stress comparison and its 120 % burst margin, and will block F2's
+  disc masses. Highest-value item in the A3 backlog.
 - Mixer level to Stage H (needs Fig 39/40's mixing-plane area).
 - Takeoff sfc day effect to Stage C (needs component maps).
 - Dunham–Came 1970 and Kacker–Okapuu 1982 papers not on disk; both are

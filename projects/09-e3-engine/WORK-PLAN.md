@@ -824,16 +824,30 @@ published — that is the scatter of creep data.
 ## E2 · Discs · 20 h
 
 Built to [METHOD.md](METHOD.md); step 0 named in the table there.
-- [ ] Disc profiles from the cross-sections (A3) for every rotor stage
-- [ ] Rim load = blade count × blade CF + attachment; bore stress; burst
-      margin on average tangential stress at 120 % speed (33.27 / CS-E 840)
+- [ ] Disc profiles from the cross-sections (A3) for every rotor stage —
+      **this is what gates the rest of E2** (finding 81)
+- [x] Rim load and bore stress — **unit E2**, `solvers/mechanical/disc.py`.
+      **The bore doubling for a small hole is demonstrated exactly**
+      (2.0000 in the limit, 2.0043 at a/b = 0.10) — E2's stated closure
+      half, met (finding 77). Rim load 76 × 77.395 kN = **5,882 kN, 600
+      tonnes** on one disc (finding 80). The published bores, 779–910 MPa,
+      lie inside the constant-thickness bracket 691 < σ < 1388 MPa
+- [ ] Burst margin on average tangential stress at 120 % speed
+      (33.27 / CS-E 840) — **gated on the profile**
 - [ ] **FEA** on HPT stage-1 disc; compare with HPT report Figs. 61–64;
-      interstage seal disc Fig. 65
+      interstage seal disc Fig. 65 — **gated on the profile**
 - [ ] LCF at bore and slot (Fig. 61 gives concentration and life)
 - [ ] The bolted-joint and inertia-weld rotor structure of the HPC
 
 *Closes when:* HPT disc peak effective stress within 10 % of Fig. 64, and
 the bore doubling for a small hole is demonstrated on the model.
+**Half closed 2026-09-07**: the bore doubling is exact; the Fig. 64 half is
+gated on transcribing the disc cross-sections, and that is recorded as a
+finding rather than skipped. Unit E2 also rejected the assumption behind
+the whole stage: **not one of nineteen published rotor stresses scales as
+N²** — the E³ HPT rotor is a thermal structure at its limiting times, with
+bores peaking at 875 s and gas-washed parts at 40 s (finding 78), and
+three printed numbers cannot separate the two loads (finding 79).
 
 ## E3 · Vibration · 20 h
 
@@ -1015,7 +1029,7 @@ is reverted.
 | B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ⬜ ⬜ ⬜ ⬜ |
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
-| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ⬜ ⬜ ⬜ ⬜ ⬜ |
+| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ⬜ ⬜ ⬜ |
 | F | F1 materials · F2 mass | ⬜ ⬜ |
 | G | geometry | ⬜ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
