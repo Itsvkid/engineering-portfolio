@@ -243,14 +243,22 @@ independent cross-check.
       appendix page images (the OCR layer was a second route, 30–70 % clean),
       2,879 triples, held by the section checker and by tests against Fig 52
       chords, Table VII radii and gas-path order. `data/lpt-airfoils/`
-- [ ] Fan and booster — CR-168219 Fig. 13, scaled to 2.11 m; fan hardware
+- [x] Fan and booster — radii from the fan report's Table IV and Fig 15 box
+      (`engine-flowpath.yaml`); CR-168219 Fig. 13 carries only blade counts; fan hardware
       report may give dimensions directly
-- [ ] HPC — HPC report Fig. 15 CAFD flowpath against Table X radii
-- [ ] Combustor — Fig. 22, and the combustor report
-- [ ] HPT — already dimensioned (HPT Fig. 3); confirm against CR-168219 Fig. 24
-- [ ] LPT — LPT report Fig. 6 (final Block II) and CR-168219 Fig. 32
+- [x] HPC — `hpc-flowpath.csv` from Table XXI streamlines 1 and 12 (rotor-1
+      tip 35.07 vs Table X 35.08); Fig. 15 is the picture of the same numbers
+- [ ] Combustor — Fig. 22 and the combustor report's Figs 1/79 are
+      undimensioned; liner radii known from the shingle arcs (37.4 / 29.2 cm)
+- [x] HPT — dimensioned (HPT Fig. 3) in the published file; its stage-2 exit
+      is the LPT's z = 0, and the LPT sections land 6.85 cm downstream against
+      the 7.62 cm transition duct with a 21° mean outer wall (max 25°)
+- [x] LPT — `lpt-flowpath.csv` from the 30 airfoil sections; Table VII tips
+      within 2 %, Fig 52 lengths between the LE and TE heights
 - [ ] Transition duct, mixer, nozzle — Figs. 39, 40
-- [ ] Whole engine — Fig. 1 as the master; every component must land on it
+- [ ] Whole engine — CR-168219 Fig. 1 is a 4-inch unlabelled cutaway; the two
+      stitching offsets (fan axis → HPC IGV, HPC OGV → HPT vane 1) are recorded
+      as open in `engine-flowpath.yaml` for Stage H to set from bearing spans
 - [ ] State a digitising uncertainty per figure from pixel size and line weight
 
 *Closes when:* one `flowpath.stations` list runs fan face to nozzle with hub

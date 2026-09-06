@@ -1,0 +1,93 @@
+# E3 flowpath, component by component, from the transcribed tables.
+# Each component sits in its own report's axial datum; the offsets between
+# datums are stated where a source gives them and marked open where none
+# does. Radii in centimetres. This file is the A3 map; the per-row numbers
+# are in the CSVs it points to.
+
+meta:
+  built: 2026-09-06
+  rule: a radius here comes from a table or a dimensioned drawing, never from a scaled cutaway; Fig 1 of CR-168219 (the whole engine) is a 4-inch unlabelled reproduction and is not digitised
+
+fan_and_booster:
+  src: "fan-design.yaml (CR-165148 Table IV, Fig 2 labels, Fig 15 box)"
+  datum: "fan rotor stacking axis (Fig 15: Z_SA = 3.2253 in on the report's axis)"
+  fan_rotor:
+    r_tip_cm: 105.4
+    r_hub_cm: 36.05
+    r_hub_basis: tip x inlet radius ratio 0.342
+    stacking_axis_radii_in: {od: 40.9061, id: 16.4399, height: 24.4662}
+    blades: 32
+  booster_rotor:
+    r_tip_cm: 66.9
+    r_hub_cm: 52.3
+    r_hub_basis: tip x inlet radius ratio 0.782
+    blades: 56
+  island: {split_pct_of_flow: 22.3, le_moves_out_cm_for_growth: 1.0}
+  rows_axial: {fan: 32, island_stator: 60, booster_rotor: 56, inner_ogv: 64, bypass_ogv: 34, ogv_spacing_rotor_tip_chords: 1.8}
+  per_row_coordinates: "Appendix A streamline rows of CR-165148 -- not transcribed (A3 backlog)"
+  open: the axial distance from the fan stacking axis to the HPC IGV is not in any transcribed table
+
+hpc:
+  src: "hpc-flowpath.csv (Table XXI streamlines 1 and 12), Table X radii in e3-fps-published.yaml"
+  datum: "the HPC report's z, zero at the rotor-1 leading-edge hub"
+  file: data/hpc-flowpath.csv
+  extent_cm: {igv_le_tip: -7.658, ogv_te: "see file"}
+  cross_checks: [rotor-1 LE tip radius 35.07 vs Table X 35.08, blade height falls monotonically IGV to OGV, r_bar of every streamline equals Table XXII]
+  open: the axial distance from the OGV trailing edge to the HPT stage-1 vane inlet (diffuser plus combustor) is not in a transcribed table; the combustor report gives the dome and liner geometry but not the overall length in one number
+
+combustor:
+  src: "combustor-design.yaml"
+  known: [30 fuel nozzles and support pins, shingle arc widths (outer 20 x 11.76 cm = 235 cm circumference, inner 15 x 12.24 cm = 184 cm: radii 37.4 and 29.2 cm), diffuser inlet Mach 0.30 and passage 0.16, 5.9 percent bleed]
+  open: liner axial coordinates and dome height -- in Figs 1, 22 and 79 as undimensioned drawings; A3 backlog if ever needed at better than 1 cm
+
+hpt:
+  src: "e3-fps-published.yaml hpt.flowpath (HPT report Fig 3, dimensioned)"
+  datum: stage-1 vane inlet (x = 0)
+  stations_cm:
+    stage1_vane_inlet: {x: 0, r_hub: 31.5, r_tip: 37.2}
+    stage1_vane_exit: {x: 3.5, r_hub: 32.58, r_tip: 36.58}
+    stage1_blade_exit: {x: 8.5, r_hub: 32.33, r_tip: 36.60}
+    stage2_vane_exit: {x: 15.5, r_hub: 31.22, r_tip: 38.05}
+    stage2_blade_exit: {x: 20, r_hub: 31.12, r_tip: 38.10}
+  note: the stage-2 blade exit is the LPT's z = 0
+
+transition_duct:
+  src: "e3-fps-published.yaml lpt (CR-168219 sec 5.5); lpt-flowpath.csv S1 LE; lpt-aero.yaml Fig 7"
+  axial_length_cm: 7.62
+  from_sections_cm: 6.85
+  outer_wall_slope_max_deg: 25
+  outer_wall_mean_slope_from_sections_deg: 21
+  radii_cm: {hpt_exit: {hub: 31.12, tip: 38.10}, lpt_vane1_le: {hub: 32.3, tip: 40.8}}
+  note: >
+    Fig 7 of the LPT report was read off at 33.0 / 43.0 cm for the vane
+    leading edge; the sections give 32.3 / 40.8. The read-off of that
+    small plot was coarse; the sections are the number.
+
+lpt:
+  src: "lpt-flowpath.csv (from the 30 airfoil sections)"
+  datum: HPT exit plane (Fig 3 stage-2 blade exit)
+  file: data/lpt-flowpath.csv
+  extent_cm: {s1_le: 6.85, r5_te: 58.65}
+  cross_checks: [R1 LE tip 44.85 vs Table VII 44.55, R5 LE tip 60.08 vs 59.15, radius ratios 0.76 / 0.61 vs Table VII 0.76 / 0.64, Fig 52 lengths sit between the LE and TE heights of every rotor, hub rising to R3 TE then flat through stage 4 then inward at stage 5, 24.0 in overall vs the 24 in calculation model]
+  extrapolation_note: >
+    Hub and tip come from a straight line through the 10 and 90 percent
+    sections. That reproduces Table VII on stage 1 and reads the stage-5
+    hub 2.8 percent low (0.61 against 0.64) -- the sections are spaced on
+    the airfoil height, whose platform sits a little above the hub wall
+    on the tall rear blades. The 10 and 90 percent radii themselves are
+    exact; only the walls are inferred. The same overshoot shows on rotor 4,
+    whose printed length (20.22 cm) is 3.4 percent under the extrapolated
+    leading-edge height.
+  hub_cm: {s1_le: 32.32, r4_te: 37.54, r5_te: 36.79}
+  tip_cm: {s1_le: 40.78, r5_te: 60.13}
+
+mixer_and_nozzle:
+  src: "CR-168219 Figs 39-40 (undimensioned), e3-fps-published.yaml exhaust"
+  known: [18-lobe mixer, C-D nozzle with published coefficient 0.996]
+  open: lobe geometry and nozzle throat radius are drawings only
+
+whole_engine_stitching:
+  status: open
+  known_offsets: [HPT exit plane to LPT sections (the LPT datum), HPT Fig 3 within itself]
+  unknown_offsets: [fan stacking axis to HPC IGV, HPC OGV exit to HPT vane-1 inlet]
+  plan: Stage H sets the two unknown offsets from the bearing spans and frame positions of CR-168219 with a stated uncertainty, and records them here with their source
