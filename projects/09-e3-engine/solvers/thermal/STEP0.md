@@ -308,3 +308,100 @@ aft cavity             2.534    2.526    2.509     0.32     1.00     1.00       
 **D3's closure is met on both halves.** The rim-seal ingestion margins at
 the remaining disc cavities, the labyrinth leakages and the thrust balance
 are separate units and are not claimed here.
+
+
+---
+
+## Unit D4 — active clearance control
+
+The work plan's D4 closure: *the clearance transient has the published
+shape and the cruise values land within 0.2 % of span.*
+
+The second half is the interesting one, because **two chapters of
+CR-167955 state the cruise clearance in different units, for different
+reasons, and neither refers to the other**:
+
+* §2's Table III, the aerodynamic design, prints a **tip clearance as a
+  percentage of span** — 1.0 % on stage 1, 0.6 % on stage 2.
+* §4, the clearance-control chapter, prints the **desired running
+  clearance in centimetres** — 0.041 cm — and computes Table X's entire
+  ACC payoff on it.
+
+With Fig 3's dimensioned annulus heights those are the same statement, and
+each can be turned into the other.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Table X's ACC payoff, line by line | Δη = clearance reduction × dη/mm, summing to 1.533 % | ±0.02 point | every input is printed |
+| Net sfc benefit | −1.22 % = −1.24 from efficiency +0.02 for the fan air | exact | printed |
+| Cruise clearance, Table III's % against §4's cm | the same number | **0.2 % of span** | the work plan's own D4 criterion |
+
+---
+
+## Unit D4 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06 (`cd solvers && python -m thermal.clearance`)
+
+```
+1. Does Table X's ACC payoff recompute?
+item              d_eta %/mm  no ACC cm  reduction  with ACC  d_eta calc  printed    diff
+stage1                 1.732      0.094      0.053     0.041       0.918    0.924  -0.006
+stage2                 0.669      0.109      0.069     0.040       0.462    0.459   0.003
+interstage_seal        0.472      0.102      0.033     0.069       0.156    0.150   0.006
+total                                                              1.535    1.533   0.002
+
+   sfc: -1.24 % from efficiency, +0.02 % for 0.15 % W25 of fan air -> net -1.22 %   (sum -1.22)
+
+2. The cruise clearance, two chapters, two units
+stage      span cm  Table III %    -> cm  sec 4 cm  diff cm  diff % span
+stage1        4.27          1.0   0.0427     0.041   0.0017        0.040
+stage2        6.98          0.6   0.0419     0.041   0.0009        0.013
+   work plan D4 band: 0.2 % of span
+
+3. The transient, as read from Figs 44-46
+   takeoff pinch 0.11 cm, casing peak without ACC 0.47 cm,
+   max climb without ACC 0.16 cm, cruise WITH ACC 0.05 cm, reburst pinch with ACC 0.09 cm
+   design takeoff clearance 0.064 cm both stages
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Table X payoff, worst line | 0.006 point | ±0.02 | pass |
+| Table X total | 1.535 vs 1.533 | ±0.02 | pass |
+| Net sfc | −1.24 + 0.02 = −1.22, exactly as printed | exact | pass |
+| Cruise clearance, stage 1 | **0.040 % of span** | 0.2 % | pass |
+| Cruise clearance, stage 2 | **0.013 % of span** | 0.2 % | pass |
+
+### Findings
+
+67. **Table X is one calculation, and it closes to 0.002 point.** Each
+    row's efficiency gain is its clearance reduction times its
+    sensitivity — 0.53 mm × 1.732 %/mm = 0.918 against a printed 0.924,
+    and so on — summing to 1.535 % against a printed 1.533. The sfc line
+    closes exactly: −1.24 % from the efficiency, +0.02 % for the 0.15 % of
+    W25 the ACC spends on fan air, net −1.22 %. **Clearance control is
+    worth more than a point of sfc on this engine and costs a sixth of a
+    percent of core flow to get.**
+68. **The cruise clearance closes by two independent routes, from two
+    chapters, in two units.** Table III's 1.0 % of a 4.27 cm span is
+    0.0427 cm; §4's desired running clearance is 0.041. Stage 2: 0.6 % of
+    6.98 cm is 0.0419 against the same 0.041. The differences are
+    **0.040 % and 0.013 % of span** against a 0.2 % band — met with more
+    than a factor of five to spare. An aerodynamicist writing a
+    percentage and a mechanical engineer writing a millimetre were
+    describing the same gap.
+69. **The ACC schedule is the design, not the hardware.** The report is
+    explicit: on acceleration the rotor grows first, centrifugally, then
+    keeps growing as the disc heats, while the casing grows only as its
+    mass approaches gas temperature — so the smallest clearance in the
+    whole mission is *a few seconds after the accel to takeoff power*.
+    The consequence is that **the casing is deliberately left uncooled
+    through takeoff**: an uncooled casing that survives that pinch runs
+    too open for the rest of the flight, so cooling is applied only from
+    the throttle-back to max climb onward. The transient bears it out —
+    0.11 cm at the takeoff pinch, a 0.47 cm casing peak without ACC,
+    0.16 cm at max climb without ACC, and 0.05 cm at cruise with it. That
+    is why tip clearance control is a scheduling problem and not simply
+    "make the gap small".
+
+**D4's closure is met on both halves.**

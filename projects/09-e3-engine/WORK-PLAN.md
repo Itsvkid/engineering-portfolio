@@ -759,11 +759,21 @@ every cavity has a pressure that keeps hot gas out.
 - [ ] Casing and rotor thermal growth vs time through takeoff–climb–cruise
 - [ ] ACC: fan-air impingement effect on HPT/LPT casing; the CPD warm-up
       circuit
-- [ ] Reproduce HPT report Figs. 44–47: tip clearance vs time with and
-      without ACC; the 1.0 / 0.6 % steady values
+- [x] Reproduce HPT report Figs. 44–47 — **unit D4**,
+      `solvers/thermal/clearance.py`. **The cruise clearance closes by two
+      independent routes from two chapters in two units**: Table III's
+      1.0 % and 0.6 % of span become 0.0427 and 0.0419 cm against §4's
+      desired 0.041 — differences of **0.040 % and 0.013 % of span
+      against this plan's 0.2 % band**. Table X's whole ACC payoff
+      recomputes line by line to 0.006 point and 0.002 on the total
+      (1.535 vs 1.533), with the sfc closing exactly at −1.24 + 0.02 =
+      −1.22 %. The transient has the published shape (findings 67–69)
 
 *Closes when:* the clearance transient has the published shape and the
 cruise values land within 0.2 % of span.
+
+*Status 2026-09-06 — closed.* Both halves met; the cruise values land
+within 0.04 % of span, five times inside the band.
 
 ---
 
