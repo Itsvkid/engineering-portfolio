@@ -545,6 +545,39 @@ hpt:
       - {location: stage2_vane_exit,   r_tip_cm: 38.05, r_hub_cm: 31.22, x_cm: 15.5}
       - {location: stage2_blade_exit,  r_tip_cm: 38.10, r_hub_cm: 31.12, x_cm: 20}
     note: axial positions of the dimensioned radii are read off the drawing's cm scale, +-0.3 cm; the radii themselves are printed
+  efficiency_estimate:
+    src: "HPT report Table V p.13 (sec 2.3.2) — the design-point efficiency prediction, item by item"
+    base_aerodynamic_tight_clearance_pct: 92.65
+    basis: uncooled two-stage air-turbine test data, corrected for aerodynamic and cooling-flow effects
+    corrections_pct:
+      stage_loading: 0.27
+      aspect_ratio: -1.04
+      tip_clearance: -1.50
+      improved_overlap: 0.30
+      edge_blockage: 0.37
+      improved_aerodynamics: 0.20
+      cooling_effects: 0.30
+    net_efficiency_pct: 91.55
+    closes: "the seven corrections sum to -1.10; 92.65 - 1.10 = 91.55 exactly"
+    as_printed: "the OCR of the scan renders '+0.30' for improved overlap as '4.30' and the cooling line as 'to. 30'; both are fixed by the column summing exactly to the printed 91.55"
+    note: >
+      This is a loss audit and the sharpest available target for a
+      mean-line loss model: it prices the aspect-ratio and tip-clearance
+      debits separately, -1.04 and -1.50 points, against a tight-clearance
+      uncooled baseline. Cooling is a small CREDIT (+0.30) because the
+      nonchargeable flow rejoins upstream of the vane-1 throat and works.
+  efficiency_chronology:
+    src: "HPT report sec 2.3.2 p.13; CR-168219 Table XI; icls-tested.yaml"
+    icls_goal_pct: 91.9
+    prediction_pct: 91.55
+    prediction_deficiency_vs_icls_goal_pct: 0.35
+    fps_goal_pct: 92.4
+    warm_air_turbine_rig_pct: 92.5
+    rig_over_fps_goal_pct: 0.1
+    fps_table_xi_pct: 92.7
+    icls_as_tested_pct: 92.5
+    rig_test: {date: 1980-09, inlet_K: 836, speed_rpm: 8300, power_MW: 2.83, power_bhp: 3800, hardware: full-scale fully cooled warm-air-turbine rig, slave hardware with hollow blading drilled to simulate every cooling flow}
+    note: the rig measured 92.5 percent against a 92.4 percent FPS goal; the mean-line prediction of Table V (91.55) is a percent below the rig
   annulus_area_design_m2:
     src: "HPT report Fig.1 p.7, design-point markers, read off graph"
     stage1_exhaust: 0.0895

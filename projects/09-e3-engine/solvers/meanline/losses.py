@@ -10,8 +10,9 @@ import pathlib
 
 import yaml
 
-DATA = pathlib.Path(__file__).resolve().parents[2] / "data" / "methods" / "ainley-mathieson-rm2974.yaml"
-AM = yaml.safe_load(DATA.read_text())
+METHODS = pathlib.Path(__file__).resolve().parents[2] / "data" / "methods"
+AM = yaml.safe_load((METHODS / "ainley-mathieson-rm2974.yaml").read_text())
+SP290 = yaml.safe_load((METHODS / "sp290-boundary-layer-losses.yaml").read_text())
 
 
 def _interp(x, xs, ys):
@@ -262,3 +263,36 @@ def worked_example_choking_flow():
         m = 0.5 * (lo + hi)
         lo, hi = (m, hi) if worked_example_stage(m) is not None else (lo, m)
     return 0.5 * (lo + hi)
+
+
+# ---------------------------------------------------------------------------
+# SP-290 chapter 7: the end-wall loss as an area ratio, and the Reynolds rule
+# ---------------------------------------------------------------------------
+
+def end_wall_multiplier(s_h, stagger_deg):
+    """equation (7-47): the factor by which the end walls raise a blade's
+    own momentum loss, 1 + (s/h) cos(stagger)"""
+    return 1.0 + s_h * math.cos(math.radians(stagger_deg))
+
+
+def reynolds_corrected_efficiency(eta, re_mean):
+    """R&M 2974 sec 8 equation (20): (1 - eta) proportional to Re^-1/5,
+    the data taken at Re 2e5"""
+    r = SP290["reynolds_number"]
+    return 1.0 - (1.0 - eta) * (re_mean / r["rm2974_reference_reynolds"]) ** -r["exponent"]
+
+
+def sp290_row_total_loss(beta1, alpha1, alpha2_loss, s_c, t_c, te_s, s_h, stagger_deg, k_h, shrouded=False):
+    """profile loss and incidence from R&M 2974, the end-wall loss from
+    SP-290's area ratio, the clearance term from R&M 2974's B (k/h) on the
+    same lift group. A hybrid, labelled as one."""
+    yp0 = yp_zero_incidence(beta1, alpha2_loss, s_c, t_c)
+    i_s = stalling_incidence(beta1, alpha2_loss, s_c)
+    i = alpha1 - beta1
+    yp = yp_at_incidence(yp0, i, i_s)
+    ys = yp * (end_wall_multiplier(s_h, stagger_deg) - 1.0)
+    r = max(-1.5, min(1.0, i / i_s)) if i_s else 0.0
+    cl_sc, geo = lift_terms(beta1 + r * i_s, alpha2_loss)
+    B = AM["fig8_secondary_lambda"]["B"]["shroud_seal" if shrouded else "radial_tip_clearance"]
+    yk = B * k_h * cl_sc ** 2 * geo
+    return dict(yp=yp, ys=ys, yk=yk, ysk=ys + yk, yt=(yp + ys + yk) * te_factor(te_s), i_s=i_s, i=i)

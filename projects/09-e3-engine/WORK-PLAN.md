@@ -394,10 +394,27 @@ Each validated before applied. Each compared with the E³ published result.
 ## C1 · Mean-line with loss models · 32 h
 
 Built to [METHOD.md](METHOD.md); step 0 named in the table there.
-- [ ] **Compressor loss and deviation** per SP-36: profile loss vs DF,
-      end-wall and tip clearance loss, Carter deviation with the SP-36
-      corrections, incidence range. **Validate on NACA TN 3916** cascades
-      before touching the E³
+- [x] **Compressor deviation** per SP-36 eq (270) and Fig 160 (Carter) —
+      `solvers/meanline/compressor.py`, **unit 4**. Validated not on TN
+      3916 but on something better: the **240 deviation angles Table XXI
+      prints**, one per streamline per row, at the E³'s own cambers and
+      solidities. Mean bias −0.39°, rms 2.58°. The rule has almost no
+      bias and a clear structural error: rear rotors under-predicted by
+      1.4–2.9° rising with stage, front stators over-predicted by
+      1.5–2.3°, front rotors within ±0.9° (finding 11)
+- [x] **Compressor loss** — **unit 4b closes the HPC by two routes.**
+      Route 1: real-gas adiabatic efficiency from the printed pressure and
+      temperature ratios reproduces Table XXI's own cumulative-efficiency
+      column at every streamline to better than 0.01, and area-weights to
+      **0.8455 against the 0.847 design intent**. Route 2: the printed
+      element loss coefficients alone, compounded through 21 rows with
+      rothalpy across every rotor, rebuild the printed pressure ratio to
+      **+0.03 % in the mean** (rms 0.72 %) and the printed temperature
+      ratio independently. SP-36 Fig 148 was not needed and is not
+      digitised: for this engine the printed element losses are the better
+      source, and they are now shown self-consistent. Efficiency runs
+      0.778 at the hub, 0.869 at mid-span, 0.811 at the tip — the end
+      walls pay in work, not in pressure (findings 14–17)
 - [x] **Turbine loss** per Ainley–Mathieson R&M 2974 (profile, secondary,
       tip clearance, trailing edge) — `solvers/meanline/losses.py` from
       `data/methods/ainley-mathieson-rm2974.yaml` (Figs 4–9 digitised,
@@ -410,19 +427,51 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       paper is on disk) against 0.917: a 1951 correlation with no height
       term and 1951 profile losses, the reasons named in STEP0 unit 2.
       Strict xfails pin both
-- [ ] Turbine loss cross-check per SP-290 vol. 2 (Stewart's momentum-
-      thickness method, chapters 7–8), and the two later corrections
-      (Dunham–Came 1970, Kacker–Okapuu 1982) once their papers are on
-      disk — **unit 2b**, what closes the LPT to ±2 points
+- [x] Turbine loss cross-check per SP-290 vol. 2 — **unit 2b closes the
+      LPT**. Chapter 7's end-wall method (eq 7-45 to 7-47) computes the
+      end-wall loss from area, 1 + (s/h)·cos(stagger), instead of
+      correlating it; with the profile loss still R&M 2974's and the
+      Reynolds rule of its §8 applied, the five-stage efficiency is
+      **0.911 against 0.917** (status 0.915, rig 0.920), inside both the
+      ±2 points the method claims and its own ±15 % loss band. Expansion
+      ratio 4.68 against the cycle's 4.55. Kacker–Okapuu 1982 is not
+      needed for this result and is left to fetch before the HPT, whose
+      shorter rows put more of the loss in the profile term
 - [ ] Stage-by-stage HPC: work split, DF per row, de Haller, stall margin
       estimate, VSV schedule effect. Compare stagewise with HPC report
       Figs. 14, 17, 18, 27
-- [ ] Fan and quarter-stage: bypass and hub streams separately, island
-      split 22 %, 42 % return
-- [ ] HPT: two stages at 56.5 / 43.5 % work, cooled-turbine efficiency
-      definition matching the report's (thermodynamic vs primary)
-- [ ] LPT: five stages, loading and flow coefficient per stage, stage 4
-      acoustic gap — **kinematics done** (`solvers/meanline/lpt.py`,
+- [x] Fan and quarter-stage — **unit 6**. The fan's specific flow
+      (208.9 kg/s·m²) and corrected tip speed (411.5 m/s) give an axial
+      Mach of 0.630 and a **tip relative Mach of 1.405 against the printed
+      1.41** — two numbers that never mention Mach reproducing a third
+      read off a blade-section plot. The inner sections reach their bands
+      only just and lean opposite ways (shroud −0.064, hub +0.063), which
+      is the fan's radial equilibrium and not scatter (finding 22). Both
+      tip speeds imply the printed 3727.7 corrected rpm to half an rpm;
+      the island split closes to 0.00 and −0.02 kg/s at 22.3 % under and
+      42.7 % returned, giving a bypass ratio of 6.813 against 6.8; every
+      CAFD row efficiency recomputes to 0.002 but the inner OGV. The
+      booster carries ψ = 0.25 against the fan's 0.67 — a quarter-stage
+      in loading as well as in name
+- [x] HPT: two stages at 56.5 / 43.5 % work — `solvers/meanline/hpt.py`,
+      **unit 3**. η_tt 0.921 against Table V's 0.9155, the warm-air rig's
+      0.925 and Table XI's 0.927, all inside the method's ±2 points;
+      loading, stage-exit Mach, vane and blade exit Mach and stage-1
+      reaction and turning all in band. **HPT report Table V newly
+      transcribed** — an efficiency audit whose seven corrections sum to
+      its printed net exactly — and its one line with a stated baseline,
+      the −1.50-point tip-clearance debit, is priced by the model at
+      −0.95: R&M 2974's B·(k/h) is light for an unshrouded HP rotor
+      (finding 9). The stage-1 exit-swirl sign, printed only as a
+      magnitude, is settled *against* rotation by the reaction column
+      (finding 7). Cooled-turbine efficiency: Table V prices cooling as a
+      **+0.30 credit**, the nonchargeable flow rejoining upstream of the
+      vane-1 throat and working
+- [x] LPT: five stages, loading and flow coefficient per stage — **units
+      1, 2 and 2b**. Loading on four of five stages within 0.04 of Table
+      II; efficiency 0.911 against 0.917. The stage-4 acoustic gap is
+      geometry, recorded in `lpt-design.yaml` and checked in
+      `tests/test_lpt_design.py` — **kinematics done** (`solvers/meanline/lpt.py`,
       unit 1 of `solvers/meanline/STEP0.md`): from the cycle state, Δh and
       α₂ per stage and the sections' pitch radii, 28 of 50 Table II pitch
       quantities inside their bands, loading on four of five stages; the

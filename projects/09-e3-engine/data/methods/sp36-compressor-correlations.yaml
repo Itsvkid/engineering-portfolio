@@ -1,0 +1,37 @@
+# NASA SP-36, "Aerodynamic Design of Axial-Flow Compressors" (1965),
+# chapter VI, "Experimental Flow in Two-Dimensional Cascades". US
+# Government work. The deviation-angle rule and the loss and diffusion
+# definitions used by the HPC mean-line. Charts read at 300 dpi from
+# sources/nasa-sp36-axial-compressor-design.pdf.
+
+meta:
+  source: nasa-sp36-axial-compressor-design.pdf
+  pages_read: "204-233 of the printed text (PDF pages 222-251)"
+  transcribed: 2026-09-06
+  read_off_uncertainty: {m_c: 0.01}
+
+carter_deviation_rule:
+  src: "SP-36 eq (270) p.210 and Fig.160 p.211 (Carter, ref. 88)"
+  form: "delta_deg = m_c * camber_deg * sqrt(s/c), with m_c a function of the blade-chord (stagger) angle"
+  condition: "nominal incidence; SP-36 offers it as the form to compare against and to extrapolate with"
+  fig160:
+    src: "Fig.160 p.211 — variation of the factor m_c with blade-chord angle, read off"
+    blade_chord_angle_deg: [0, 10, 20, 30, 40, 50, 60]
+    circular_arc:  [0.216, 0.228, 0.247, 0.269, 0.296, 0.329, 0.369]
+    parabolic_arc: [0.116, 0.137, 0.166, 0.199, 0.237, 0.276, 0.315]
+    note: >
+      The E3 HPC's subsonic rows use a "modified circular arc" meanline
+      (hpc-stagewise.yaml) and the transonic rows 1-4 a multiple-circular-
+      arc; the circular-arc curve is the one to use, with the parabolic
+      curve as the lower bound of what a shifted-camber meanline gives.
+
+diffusion_factor:
+  src: "SP-36 eq (54), (266); Fig.147 p.204 (Lieblein, ref. 9)"
+  form: "D = 1 - V2/V1 + (V_theta1 - V_theta2) / (2 sigma V1), velocities relative to the row"
+  limit_as_printed: "boundary-layer separation is indicated for D greater than about 0.62 (p.211)"
+  design_limits: {mean: 0.6, tip: 0.45}
+
+loss_parameter:
+  src: "SP-36 p.204, eq (264) and Fig.149"
+  form: "omega_bar * cos(beta2) / (2 sigma) correlates with D more fundamentally than the loss coefficient alone"
+  wake_momentum_thickness: "Fig.148 p.204 plots theta*/c against D; it rises sharply above D about 0.6. Not digitised -- the E3's own Table XXI prints a loss for every streamline of every row, which is a better source for this engine than a generic cascade correlation"

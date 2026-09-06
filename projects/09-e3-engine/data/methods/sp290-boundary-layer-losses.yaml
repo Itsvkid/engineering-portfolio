@@ -1,0 +1,52 @@
+# NASA SP-290, "Turbine Design and Application", chapter 7, "Boundary-Layer
+# Losses" (H. W. Prust, Jr.). US Government work. The end-wall route used
+# here as the second, independent estimate of the loss that Ainley-Mathieson
+# puts in its Fig 8 correlation: instead of a correlation, the end-wall loss
+# is the blade's own momentum loss spread over the end-wall area.
+#
+# Also carried: the Reynolds-number rule of ARC R&M 2974 sec 8, which the
+# same chapter derives from a momentum loss varying as Re^-m.
+
+meta:
+  source: nasa-sp290-turbine-design-vol1-2-3.pdf
+  pages_read: "193-223 of the printed text (PDF pages 196-226)"
+  transcribed: 2026-09-06
+  author: H. W. Prust, Jr.
+  scope: two-dimensional blade-section boundary layers, with a stated method for going to three dimensions
+
+end_wall_area_method:
+  src: "sec 'Three-dimensional losses', equations (7-45) to (7-49) pp.207-208; the method is that of the chapter's reference 5"
+  assumptions_as_printed:
+    - the average momentum loss for the blade surface is the dimensionless momentum thickness at the blade mean section
+    - the momentum loss per unit area on the inner and outer end walls is the same as the average per unit area on the blade surface
+    - the blade is approximated by an equivalent two-dimensional blade of constant cross-section, spacing and stagger equal to the mean section's
+  blade_area: "A_b = 2 c h (equation 7-45), the two surfaces of one blade"
+  end_wall_area: "A_w = 2 s c cos(stagger) (equation 7-46), the inner and outer end walls of one passage"
+  three_dimensional: "theta*_3D = theta* (A_b + A_w) / A_b = theta* (1 + s cos(stagger) / h) (equation 7-47)"
+  multiplier: "1 + (s/h) cos(stagger) — the factor by which the end walls raise the blade's own loss"
+  note: >
+    This is an area ratio, not a correlation: it carries the aspect ratio
+    explicitly, which R&M 2974's Fig 8 does not. It says nothing about tip
+    clearance, so a clearance term must come from elsewhere.
+
+reynolds_number:
+  src: "SP-290 equations (7-91), (7-92) p.219; ARC R&M 2974 sec 8 p.10"
+  sp290_form: "momentum loss per unit blade surface varies as Re_c^-m, with m = 1/5 in the analysis"
+  rm2974_rule: "(1 - eta) proportional to Re^(-1/5)"
+  rm2974_reference_reynolds: 2.0e+5
+  rm2974_data_range: [1.0e+5, 3.0e+5]
+  rm2974_reynolds_definition: "blade chord, outlet gas velocity relative to the row, outlet gas density and outlet gas viscosity"
+  rm2974_mean_for_a_turbine: "the arithmetic mean of the first nozzle row and the final rotor row"
+  rm2974_valid_down_to: 5.0e+4
+  exponent: 0.2
+
+rm2974_stated_accuracy:
+  src: "R&M 2974 sec 9 p.10"
+  efficiency_vs_test_pct: 2.0
+  flow_vs_test_pct: 3.0
+  total_loss_coefficient_rule_pct: 15.0
+  outlet_angle_rule_pct: {at_60_deg: 1.0, at_50_deg: 1.5}
+  note: >
+    The +-15 percent on the loss coefficients is the number to carry into
+    any efficiency band built from this method: on the E3 LPT it is worth
+    about 1.4 points of five-stage efficiency.

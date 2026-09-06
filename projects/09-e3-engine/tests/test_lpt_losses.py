@@ -10,10 +10,11 @@ import pytest
 import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "solvers"))
-from meanline.lpt_losses import run  # noqa: E402
+from meanline.lpt_losses import routes_with_band, run  # noqa: E402
 from meanline.sections import section_geometry  # noqa: E402
 
 RES, G, STAGES, SUMM = run()
+RB = routes_with_band()
 ROWS = {r.name: r for st in STAGES for r in st.rows}
 PUBLISHED = 0.917
 
@@ -28,10 +29,49 @@ def test_lpt_efficiency_dunham_came():
     assert abs(SUMM["eta_tt_dc"] - PUBLISHED) < 0.02
 
 
+def test_lpt_efficiency_sp290_route_closes():
+    """unit 2b: profile loss from R&M 2974, end-wall loss from SP-290's
+    area ratio (eq 7-47), Reynolds correction from R&M 2974 sec 8 --
+    inside the +-2 points the method claims for itself"""
+    assert abs(RB["sp290"]["eta_re"] - PUBLISHED) < 0.02
+    assert abs(RB["sp290"]["eta"] - PUBLISHED) < 0.02
+
+
+def test_reynolds_correction_helps_not_hurts():
+    """the mean of first vane and last rotor is above the charts' 2e5"""
+    assert 2.2e5 < RB["re_mean"] < 2.8e5
+    for k in ("rm2974", "dunham_came", "sp290"):
+        assert 0.003 < RB[k]["eta_re"] - RB[k]["eta"] < 0.008
+
+
+def test_the_three_routes_are_ordered_and_bracket_the_answer():
+    assert RB["rm2974"]["eta"] < RB["dunham_came"]["eta"] < RB["sp290"]["eta"]
+    assert RB["rm2974"]["eta"] < PUBLISHED
+    assert abs(RB["sp290"]["eta"] - PUBLISHED) < abs(RB["dunham_came"]["eta"] - PUBLISHED) < abs(RB["rm2974"]["eta"] - PUBLISHED)
+
+
+def test_stated_loss_band_is_the_reports_own():
+    """R&M 2974 sec 9 prints +-15 percent on its loss rules; on this
+    turbine that is 1.2-1.9 points of five-stage efficiency"""
+    for k in ("rm2974", "dunham_came", "sp290"):
+        assert 1.0 < RB[k]["band_points"] < 2.2
+
+
+def test_end_wall_multiplier_tracks_aspect_ratio():
+    """SP-290 eq 7-47 on the tall rear rows is a tenth of what Fig 8 implies"""
+    from meanline.losses import end_wall_multiplier
+    r4, s1 = ROWS["R4"], ROWS["S1"]
+    m_r4 = end_wall_multiplier(r4.s_c * r4.c_h, r4.stagger_deg)
+    m_s1 = end_wall_multiplier(s1.s_c * s1.c_h, s1.stagger_deg)
+    assert 1.05 < m_r4 < 1.15 and 1.2 < m_s1 < 1.35
+    assert (r4.ysk / r4.yp) > 3 * (m_r4 - 1)
+
+
 def test_lpt_efficiency_pinned():
     assert 0.825 < SUMM["eta_tt"] < 0.85
     assert 0.855 < SUMM["eta_tt_dc"] < 0.88
-    assert SUMM["eta_tt_dc"] > SUMM["eta_tt"]
+    assert 0.895 < SUMM["eta_tt_sp"] < 0.92
+    assert SUMM["eta_tt_sp"] > SUMM["eta_tt_dc"] > SUMM["eta_tt"]
 
 
 def test_rear_stages_lose_less():
@@ -76,7 +116,8 @@ def test_loss_coefficients_are_in_range():
 def test_pressure_chain_bracketed_by_the_cycle():
     """losses beyond the cycle's 0.925 push the required expansion above
     the cycle's 4.55; Table II's chain (pre-rematch) sits below it"""
-    assert SUMM["pr_table_ii"] < SUMM["pr_cycle"] < SUMM["pr_dc"] < SUMM["pr"]
+    assert SUMM["pr_table_ii"] < SUMM["pr_cycle"] < SUMM["pr_sp"] < SUMM["pr_dc"] < SUMM["pr"]
+    assert abs(SUMM["pr_sp"] / SUMM["pr_cycle"] - 1) < 0.05
 
 
 def test_figure_exists():
