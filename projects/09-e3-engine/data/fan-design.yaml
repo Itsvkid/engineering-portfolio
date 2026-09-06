@@ -1,0 +1,512 @@
+# E3 fan and quarter-stage booster — design point, as printed.
+# Source: NASA CR-165148, "Energy Efficient Engine Fan Test Hardware
+# Detailed Design Report" (GE; Sullivan, Luebering, Gravitt; October
+# 1980). PDF page = report page + 10. US Government work.
+#
+# Every value carries its source; nothing is corrected; prints and
+# cross-report disagreements are recorded by name.
+
+meta:
+  source: e3-fan-hardware-design-CR-165148.pdf
+  pages_read: "1-14, 46-49, 118-127"
+  transcribed: 2026-09-05
+  status: secs I-III complete with Table VI; sec IV stator geometry (Table VII, Figs 74-76) and Campbell notes; frame analysis, containment and Table VIII to follow; appendix streamline rows are A3
+
+summary:
+  src: "Introduction and Summary pp.1-3; abstract"
+  configuration: single-stage fan with a quarter-stage booster on an island; chosen over a single higher-tip-speed rotor for core-stream efficiency, an easier growth path, better bypass efficiency at the lower fan speed, and foreign-object separation by the island
+  design_point: maximum climb, Mach 0.80, 10,668 m (35,000 ft)
+  inlet_radius_ratio: 0.342
+  specific_flow_kg_s_m2: 208.9
+  specific_flow_lbm_s_ft2: 42.8
+  fan_blades: 32
+  fan_aspect_ratio: 2.597
+  part_span_shroud_height_pct: 55
+  part_span_shroud_cross_report: "CR-168219 sec 5.1.2 p.45 says '50 percent span shrouds'; this report says 55 percent of blade height on the stacking axis (p.3, Fig.2). Recorded, both kept; the fan report is the detail design."
+  corrected_tip_speed_m_s: 411.5
+  corrected_tip_speed_ft_s: 1350
+  fan_tip_diameter_m: 2.108
+  fan_tip_diameter_in: 83
+  spinner_half_angle_deg: 32
+  island_split_pct_of_total_flow: 22.3
+  booster_flow_returning_to_bypass_pct: 42
+  bypass_ratio: 6.8
+  core_stream_pressure_ratio: 1.67
+  bypass_pressure_ratio: 1.65
+  core_duct_loss_pct: 1.8
+  core_corrected_flow_kg_s: 54.4
+  core_corrected_flow_lbm_s: 120
+  ogv_spacing_rotor_tip_chords: 1.8
+  ogv_camber_families: 5
+  life: {missions: 36000, stress_cycles_per_mission: 2}
+  structure: aluminium non-structural spinner, titanium high-bore ring disk, one-piece titanium quarter-stage spool, steel fan shaft; modular removal of shaft, rotor, or fan module from the HPC forward face
+  containment_icls: slave design -- modified CF6 steel outer casing with bolted-in wooden flowpath panels; steel slave vane-frame
+  materials_basis: average minus three standard deviations, with section-size effects
+  no_coupled_mode_resonance: in the operating range between rotor and fan case
+
+requirements:
+  src: "Table I p.4 (FPS) and Table II p.6 (growth)"
+  columns: [max_climb, max_cruise, takeoff]
+  fps:
+    corrected_tip_speed_m_s:    [411.5, 399.6, 365.2]
+    corrected_tip_speed_ft_s:   [1350, 1311, 1198]
+    corrected_airflow_kg_s:     [643.6, 634.1, 577.9]
+    corrected_airflow_lbm_s:    [1419, 1398, 1274]
+    specific_flow_kg_s_m2:      [209.0, 206.0, 187.0]
+    specific_flow_lbm_s_ft2:    [42.8, 42.1, 38.4]
+    bypass_pressure_ratio:      [1.65, 1.61, 1.50]
+    bypass_efficiency_pct:      [87.9, 88.7, 90.0]
+    core_pressure_ratio:        [1.67, 1.63, 1.51]
+    core_efficiency_pct:        [88.5, 89.2, 89.7]
+    bypass_ratio:               [6.8, 6.9, 7.3]
+  growth:
+    corrected_tip_speed_m_s:    [457.2, 446.8, 420.9]
+    corrected_tip_speed_ft_s:   [1500, 1466, 1381]
+    corrected_airflow_kg_s:     [659.1, 647.7, 612.8]
+    corrected_airflow_lbm_s:    [1453, 1428, 1351]
+    specific_flow_kg_s_m2:      [214.0, 210.0, 198.0]
+    specific_flow_lbm_s_ft2:    [43.8, 43.0, 40.6]
+    bypass_pressure_ratio:      [1.75, 1.71, 1.60]
+    bypass_efficiency_pct:      [86.4, 87.2, 88.6]
+    core_pressure_ratio:        [2.05, 2.01, 1.90]
+    core_efficiency_pct:        [87.6, 88.3, 88.9]
+    bypass_ratio:               [5.5, 5.6, 6.0]
+  growth_notes: {engine_growth_pct: 20, booster_speed_increase_pct: 11, island_le_moves_out_cm: 1.0, island_le_moves_out_in: 0.4, hub_radii_oversized_for_growth: true, bypass_vane_frame_and_ogv_common: true}
+
+flowpath:
+  src: "Fig.2 p.5 — selected fan configuration flowpath, labels"
+  r_tip_cm: 105.4
+  r_tip_in: 41.5
+  corrected_flow_kg_s: 641.7
+  corrected_flow_lbm_s: 1419.2
+  bypass_flow_kg_s: 500
+  bypass_flow_lbm_s: 1102.3
+  booster_return_flow_kg_s: 61.3
+  booster_return_flow_lbm_s: 135.2
+  core_flow_kg_s: 82.4
+  core_flow_lbm_s: 181.7
+  bypass: {pressure_ratio: 1.65, efficiency: 0.879}
+  core: {pressure_ratio: 1.67, efficiency: 0.885}
+  fan_hub_region: {pressure_ratio: 1.46, efficiency: 0.910}
+  bypass_ratio_total: 6.8
+  bypass_ratio_local: 0.74
+  blade_counts_in_figure: {fan: 32, island_stator: 60, booster_rotor: 56, inner_ogv: 64, bypass_ogv: 34, bypass_ogv_note: "the figure marks 34 on the bypass vane-frame; the appendix OGV row also prints NB 34"}
+  as_printed: "the corrected flow label prints '641.7 kg/sec (1419.2 lbm/sec)'; Table I and IV give 643.6-643.7 kg/s for the same 1419 lbm/s (1419.2 lbm/s is 643.7 kg/s). Recorded."
+  pressure_profile:
+    src: "Fig.3 p.8 — design-point total-pressure ratio vs percent total fan flow; read off"
+    rotor_exit_bypass: {od: 1.71, peak_at_30pct: 1.73, at_60pct: 1.62, at_island_78pct: 1.52}
+    stage_exit_bypass: {od: 1.68, at_island: 1.50}
+    booster_exit_flat: 1.683
+    text: the booster rotor turns the fan hub's tip-strong profile into the radially constant 1.683 at the core-duct entry; growth (Fig.4) runs the booster 11 percent faster to a hub-strong 2.05 into the core with a low tip value against the island trailing-edge discontinuity
+
+cycle_points:
+  src: "Table III p.46 — fan design cycle performance parameters; FPS / growth"
+  case_41_flowpath_and_clearance: {altitude_m: 10668, mach: 0.80, delta_t_C: 10, rating: max_climb, fan_physical_speed_rpm: [3539, 3939]}
+  case_72_max_stress: {altitude_m: 5791, mach: 0.30, delta_t_C: 15, rating: takeoff, fan_physical_speed_rpm: [3611, 4079], at_1_2pct_overspeed_rpm: [3653, 4126]}
+  cross_report: >
+    The LPT report's Table VI has the same two cases with the same
+    speeds, but applies a 2.6 percent overspeed (3707 / 4160) where this
+    report applies 1.2 percent (3653 / 4126); and this report prints case
+    72 at +15 C where the LPT report prints +35 C. Recorded, both kept.
+
+aero_parameters:
+  src: "Table IV p.47 — fan design aerodynamic parameters"
+  columns: [fan_stage1, booster_stage]
+  tip_diameter_cm:     [210.8, 133.8]
+  tip_diameter_in:     [83.0, 52.66]
+  tip_speed_m_s:       [411.5, 261.1]
+  tip_speed_ft_s:      [1350.0, 856.5]
+  airflow_kg_s:        [643.7, 143.7]
+  airflow_lb_s:        [1419.16, 316.90]
+  radius_ratio_inlet:  [0.342, 0.782]
+  aspect_ratio:        [2.597, 2.12]
+  pressure_ratio:      [1.650, 1.129]
+  temperature_ratio:   [1.1757, 1.0475]
+  number_of_blades:    [32, 56]
+
+materials:
+  src: "Table V p.49 — fan rotor list of materials; sec III.B p.48"
+  fan_blades: Titanium 6Al-4V
+  fan_disk: Titanium 6Al-4V
+  spinner: 7075 aluminium
+  spinner_cover: 7075 aluminium
+  anticlank_spring: Titanium 6Al-4V
+  blade_retention_key: Inco 718
+  booster_spool: Titanium 6Al-4V
+  booster_blade: Titanium 6Al-4V
+  fan_shaft_bolts: {size_in: 0.625, material: Inco 718}
+  forward_fan_shaft: {demonstrator: 4340 steel, fps_intended: MARAGE 250, why: MARAGE 250 unavailable in time}
+  design_goals:
+    vibratory_margin_over_2_per_rev_pct: 15
+    others: [rotor stiffness for coupled disk/blade frequency margins, attachments stronger than airfoils in the lower modes, bird-strike capability, low dovetail stress, dovetail posts to survive blade loss, anticlank against dovetail wear, torque capacity of the disk/shaft joint, reduced overhang, modular disassembly]
+    shroud_note: the part-span shroud sits lower (55 percent) and the blade is thickened at midspan for flexural margin over 2/rev; the weight is bought back by blade efficiency and bird-strike resistance
+
+vector_diagram_rows:
+  src: "Appendix A pp.118-127 — CAFD blade-row printouts, metric; the per-row summary block of each page (streamline rows to follow)"
+  corrected_speed_rpm: 3727.7
+  rows:
+    R1_fan:        {src: "pp.118-119 (metric) / 125-126 (English)", inlet_corr_flow_lbm_s: 1419.16, pressure_ratio: 1.6342, temperature_ratio: 1.1646, adiabatic_efficiency: 0.917, blades: 32}
+    S1_island:     {src: "p.120", inlet_corr_flow_kg_s: 143.74, pressure_ratio: 1.4585, temperature_ratio: 1.1256, adiabatic_efficiency: 0.909, blades: 60, aspect_ratio: 1.96}
+    R2_booster:    {src: "p.121", inlet_corr_flow_kg_s: 143.74, pressure_ratio: 1.6838, temperature_ratio: 1.1776, adiabatic_efficiency: 0.904, blades: 56, aspect_ratio: 2.13}
+    S2IN_inner_ogv: {src: "p.122", inlet_corr_flow_kg_s: 82.39, pressure_ratio: 1.6676, temperature_ratio: 1.1791, adiabatic_efficiency: 0.888, blades: 64, aspect_ratio: 0.83}
+    S2OUT_island_exit: {src: "p.123", inlet_corr_flow_kg_s: 61.35, pressure_ratio: 1.6393, temperature_ratio: 1.1755, adiabatic_efficiency: 0.865, blades: 34, aspect_ratio: 0.18, aspect_ratio_note: "prints '0.18'; faint, possibly 8.18 -- not used"}
+    OGV_bypass:    {src: "p.124", inlet_corr_flow_kg_s: 499.98, pressure_ratio: 1.6517, temperature_ratio: 1.1757, adiabatic_efficiency: 0.879, blades: 34, aspect_ratio: 1.13}
+  reading: >
+    The printout's pressure and temperature ratios are cumulative from
+    the fan inlet ("ACC PT RATIO"), so S2IN's 1.6676 is the core-stream
+    pressure ratio (Table I: 1.67) and the bypass OGV's 1.6517 the bypass
+    ratio (1.65). Flows: 143.74 kg/s goes under the island (22.3 percent
+    of 643.7); 61.35 of it returns to the bypass at S2OUT (42.7 percent,
+    "approximately 42"); 82.39 enters the core; 499.98 passes over the
+    island (643.7 - 143.74). Every split closes to 0.1 kg/s.
+
+fan_rotor_airfoil:
+  src: "sec II.A pp.9-22; Figs.10-16"
+  sections: transonic outboard, subsonic near the hub; 12 axisymmetric streamsurfaces; GE Streamsurface Blade Section program; supersonic inlet on every streamline above the island, 1.02 at 78 percent flow down to 0.70 at the hub
+  incidence_deg: {design_point_all_span: 5, suction_surface_tip: 0.5, suction_surface_hub: "2-3"}
+  free_flow_streamline: the suction surface upstream of the first captured Mach wave is offset from the free-flow streamline for leading-edge thickness, bow-wave loss and boundary-layer growth
+  hub_section: {m_le: 0.70, m_te: 0.75, tool: CASC, surface_mach: nearly constant suction-surface Mach after a small initial diffusion (Fig.14)}
+  tip_section: {src: "Fig.10", m_le: 1.41, m_te: 0.87, throat_margin_pct: 7.5, a_throat_over_a_mouth: 0.976, a_throat_over_a_exit: 0.959, suction_surface_mach_range: [1.3, 1.5]}
+  shroud_section: {src: "Fig.11", psi: 0.58, m_le: 1.15, m_te: 0.68}
+  throat_margin_pct: {typical: 5, od: 7.5, id: 8.8, basis: effective throat-to-capture area ratio above critical after one normal shock at the leading-edge Mach}
+  mouth_to_throat_contraction_pct: "2-2.5"
+  contraction_rule: must not exceed the critical contraction ratio after one normal shock at the mouth Mach, so the leading-edge shock stays oblique at maximum climb ("starting margin")
+  max_thickness_location_pct_chord: {tip: 59, above_island: 55, hub: 42, shroud_region: 58}
+  thickness_distribution: quarter-sine from the leading edge to the maximum, reversed to the trailing edge; slightly thicker leading edges just below the island
+  shroud:
+    height_pct: 55
+    stacking_axis_point_pct_axial_chord: 65
+    le_pct_axial_chord: 48
+    te_pct_axial_chord: 82
+    thickness_cm: 0.89
+    thickness_in: 0.35
+    shape: nearly elliptical thickness distribution
+  fig15:
+    src: "Fig.15 p.21 — fan rotor chord and solidity vs radius; read off, plus the printed box"
+    r_sa_od_in: 40.9061
+    r_sa_id_in: 16.4399
+    z_sa_in: 3.2253
+    blade_height_in: 24.4662
+    aspect_ratio: 2.597
+    blades: 32
+    chord_hub_cm: 18.4
+    chord_tip_cm: 28.3
+    solidity_hub: 2.3
+    solidity_tip: 1.4
+    radius_cm: [35, 40, 50, 60, 70, 80, 90, 100, 105]
+    chord_cm:  [18.4, 18.9, 20.1, 21.8, 23.3, 24.9, 26.3, 27.6, 28.3]
+  fig16_tm_over_c:
+    src: "Fig.16 p.22 — read off"
+    radius_cm: [35, 40, 45, 50, 55, 60, 70, 76, 80, 90, 100, 105]
+    tm_c:      [0.127, 0.11, 0.085, 0.066, 0.06, 0.053, 0.046, 0.043, 0.039, 0.033, 0.028, 0.026]
+    shroud_radius_cm: 76
+  appendix_b: manufacturing-plane section geometry tabulated (p.134) -- A3
+
+stator1_airfoil:
+  src: "sec II.B pp.20-23; Figs.17-20"
+  method: as the rotor -- vector diagrams at LE, TE and intrablade stations; thickness and meanline per streamline; each cascade analysed with CASC, exit angles related to CAFD's by an empirical factor
+  vanes: 60
+  od: {inlet_mach: 0.73, thickness: 65-series, tm_c: 0.062}
+  id: {inlet_mach: 0.85, thickness: first quarter-sine to maximum thickness at 38 percent chord then 65-series, tm_c: 0.049}
+  intermediate: linear blend OD to ID
+  meanline: slightly modified circular arc on every streamline
+  chord_cm: 8.10
+  chord_in: 3.19
+  chord_constant: true
+  exit_swirl_deg: {tip: 12, hub: 8, why: loading balance between this row and the inner OGV}
+  incidence_deg: {all_but_hub: "just under 1", hub: 3, hub_why: higher swirl expected off the rotor hub from secondary flow}
+  throat: at the cascade mouth; margin 6-8 percent above critical
+  stacking: 50 percent chord; plane-section cuts for manufacturing (Appendix C)
+  surface_mach: {tip_peak: 1.03, hub_peak: 1.15, exit: 0.6}
+
+booster_rotor_airfoil:
+  src: "sec II.C pp.23-28; Figs.21-24"
+  blades: 56
+  aspect_ratio_text: 2.09
+  aspect_ratio_table_iv: 2.12
+  as_printed: "the text gives 2.09, Table IV 2.12. Both recorded."
+  thickness: quarter-sine to maximum then 65-series
+  meanline: modified circular arc
+  tm_c: {tip: 0.049, hub: 0.081}
+  chord_cm: {tip: 6.35, hub: 7.11}
+  chord_in: {tip: 2.50, hub: 2.80}
+  chord_variation: linear
+  throat_margin_pct: "5-6"
+  tip: {turning: slight, solidity: low, suction_peak_mach: 1.05, exit_mach: 0.73}
+  hub: {pressure_ratio_required: 1.68, solidity: 1.2, camber_deg: 32, suction_peak_mach: 1.08, diffusion: delayed to the last 40 percent of chord}
+  deviation: CASC exit angles with an empirical adjustment including the secondary flow from the non-uniform loading and incoming free-stream vorticity
+  stacking: plane-section centres of gravity on the radial stacking axis (Appendix D)
+
+inner_ogv_airfoil:
+  src: "sec II.D pp.28-30; Figs.25-29"
+  vanes: 64
+  purpose: remove the booster swirl and turn the flow into the core duct
+  blade_axis: curved in space, swept aft 60 degrees from radial, leaned circumferentially from 0 at the OD to 20 degrees at the ID with the pressure side facing the axis
+  sweep_why: compatible with the core-duct entry flowpath
+  lean_why: the 20-degree lean's downward radial force raises hub static pressure and lowers the hub inlet Mach and diffusion; lean drops sharply to zero at the OD to avoid an acute angle between suction surface and outer flowpath
+  chord_cm: {od: 5.44, id: 9.25}
+  chord_in: {od: 2.14, id: 3.64}
+  tm_c: {od: 0.066, inner_50pct_span: 0.053}
+  thickness: quarter-sine/65-series
+  cascade_mach: perpendicular components of the full Mach number in planes normal to the swept and leaned stacking axis
+  peak_suction_mach_location_pct_chord: 30
+  end_effect_camber_adjustment_deg: {tip: {value: 7.8, at_pct_chord: 50}, hub: {value: -4.7, at_pct_chord: 40}, method: Reference 4, attenuated}
+  sections: on planes perpendicular to the swept and leaned axis (Appendix E)
+
+bypass_ogv_vane_frame:
+  src: "sec II.E pp.30 onward; Figs.30-38"
+  vanes: 34
+  complication: a 40.6 cm (16 in) thick pylon at top dead centre just behind the vane trailing edges, and a thick bottom (180 degree) strut for the radial drive shaft and accessory pipes
+  method: circumferential-average solution with vane and pylon blockage and the island TE static-pressure match; a 2-D stream-surface analysis at pitch for the circumferential pressure and angle variation (Figs.31-32); a coarse 3-D finite-element analysis on five streamline sections for the radial trend of exit angle
+  finding: significant circumferential variation at the OGV inlet and exit planes, essentially none at the fan rotor exit plane
+  pylon_thickness_cm: 40.6
+  pylon_thickness_in: 16
+  pylon_location_deg: 0
+  bottom_strut_location_deg: 180
+  required_exit_angle_shift_deg: {beside_pylon: [7, -7], at_90_and_270: [3, -3], at_180: 0}
+  camber_groups: 5
+  inlet_spacing: held constant between vanes
+  bottom_vanes: nominal type with chords cut back beside the thick strut and fairing (Fig.35)
+  tip_incidence_deg: 3
+  tip_incidence_why: higher swirl in the casing boundary layer
+  island_sections: the island upper (I) and lower (H-I) surfaces show opposite Mach trends, from matching static pressure at the island trailing edge between two streams of different total pressure
+  fig31_pitch_pressures: {rotor_exit_total_kPa: 172, stator_exit_static_kPa: 137, rotor_exit_static_kPa: 127, stator_inlet_static_kPa: 118, note: "N/m2 x 1e5 read as 1.72, 1.37, 1.27, 1.18; the bottom strut puts a 0.05-bar dip in the inlet static at 180 degrees"}
+  fig32_inlet_angle_deg: {mean: 36, range: [33.5, 38.5], spike_at_180: true}
+  geometry: five vane groups tabulated in Appendix F (p.138)
+
+fan_rotor_mechanical:
+  src: "sec III pp.36-59; Figs.39-49"
+  configuration: 32 blades shrouded at 55 percent span; 56-blade booster; drop-down dovetail slot for individual blade replacement; anticlank spring preloads the blade outward in the slot; axial retention integrated with it
+  blade_geometry:
+    src: "Fig.41 p.50 — read off; percent blade height from the hub"
+    height_pct:   [0, 20, 40, 55, 60, 80, 100]
+    tm_c_pct:     [10.0, 6.6, 4.9, 4.2, 4.0, 3.2, 2.6]
+    tle_c_pct:    [2.0, 1.4, 1.0, 0.85, 0.8, 0.6, 0.5]
+    chord_in:     [7.3, 8.1, 8.9, 9.5, 9.7, 10.5, 11.3]
+    camber_deg:   [68, 42, 24, 17, 15, 11, 8]
+    stagger_deg:  [12, 22, 35, 42, 45, 54, 62]
+    note: the shroud step in the thickness curve is at about 55-60 percent height; the chord curve is the same line as Fig.15's, 18.4 to 28.3 cm
+  steady_stress:
+    src: "Fig.42 p.52 (TAMP-MASS effective stress contours) and Fig.44 p.54 (Twisted Blade root stress); N = 3653 rpm"
+    max_effective_kN_cm2: 34.5
+    max_effective_ksi: 50
+    max_location: convex face, trailing-edge root corner
+    concave_peak_kN_cm2: 29.0
+    concave_peak_ksi: 42
+    root_resultant_convex_kN_cm2: {at_10pct_chord: 15, at_50pct: 12, at_92pct: 35, at_100pct: 20}
+    root_resultant_concave_kN_cm2: {at_10pct_chord: 5, at_67pct: 24, at_92pct: 2, at_100pct: -13}
+    method: TAMP-MASS finite element, checked against Twisted Blade beam results; root stresses from Twisted Blade with scaled CF6 end effects
+    verdict: adequate HCF capability, well under the LCF allowable; to be verified by test
+  untwist:
+    src: "Fig.43 p.53 — read off"
+    radius_cm: [41, 50, 60, 70, 80, 90, 100, 104]
+    untwist_deg: [0, 0.2, 0.45, 0.65, 0.82, 1.05, 1.4, 1.6]
+    use: blade pre-twisted by TAMP-MASS's untwist to give the design incidence at speed
+  campbell:
+    src: "Fig.45 p.55 — fan blade system and fixed-blade frequencies; read off"
+    max_speed_rpm: 3653
+    modes_Hz:
+      first_flex:    {at_0: 80, at_3653_lowest_in_phase: 140, at_3653_fixed: 150, nodal_diameters_shown: [2]}
+      second_flex:   {at_0: 205, at_3653_range: [235, 300], nodal_diameters_shown: [2, 3, 4]}
+      first_torsion: {at_0: 320, at_3653_range: [370, 400], nodal_diameters_shown: [2, 4]}
+    first_flex_margin_over_2_per_rev_pct: 14.6
+    goal_margin_pct: 15
+    first_flex_crossings: 3/rev and above at speeds low enough to be out of the operating range
+    torsional_stall_flutter: protected at all speeds
+    platform_corner_frequency: well above stator passing, by correlation from a similar blade
+    note: "14.6 percent against a 15 percent goal -- 'meets the design goal' as printed"
+  shroud:
+    src: "Fig.46 p.56; text p.51"
+    span_pct: 55
+    chord_position_pct: 65
+    length_cm: 6.35
+    length_in: 2.5
+    shroud_angle_deg: 49.5
+    contact_face_angle_deg: 9.6
+    fillet_stress_kN_cm2: 46.9
+    fillet_stress_ksi: 68
+    contact_stress_N_cm2: 1324
+    contact_stress_psi: 1920
+    hard_facing: tungsten carbide
+    tip_deflection_cm: {left_wing: 0.180, right_wing: 0.150}
+    tip_deflection_in: {left_wing: 0.071, right_wing: 0.059}
+    flexural_displacement_vector_deg: {first_flex: 48.6, second_flex: 50.0}
+    predroop: set from the calculated tip deflections so mating shrouds meet face to face at speed
+    check: the flexural displacement vectors (48.6, 50.0 degrees) lie off the 49.5-degree contact face -- so flexing does not slide the faces
+  dovetail:
+    src: "Fig.47 p.57; Fig.48 p.58; text p.51"
+    orientation_angle_deg: 10
+    stacking_offsets: set to balance the dovetail corner stresses
+    shank: very short at the front because of the steep flowpath; disk relief clears the platform; slot deep enough to drop the blade under the shroud interlock for removal
+  dovetail_and_post:
+    src: "Fig.48 p.58 — fan blade dovetail and disk post stresses, kN/cm2 (ksi)"
+    blade:
+      axial_length_cm: 16.3
+      axial_length_in: 6.4
+      shank_thickness_cm: 1.94
+      shank_thickness_in: 0.764
+      orientation_deg: 10
+      flank_angle_deg: 55
+      flank_width_cm: 0.803
+      flank_width_in: 0.316
+      offsets_cm: {axial: 0.295, tangential: 0.119}
+      offsets_in: {axial: 0.116, tangential: 0.047}
+      crush_stress_kN_cm2: 30.4
+      crush_stress_ksi: 44.1
+      lcf_limit_kN_cm2: 50.3
+      lcf_limit_ksi: 73
+      lcf_cycles: 72000
+      corner_stresses_kN_cm2: {fwd_upper: 38.5, fwd_lower: 27.8, mid_upper: 29.0, mid_lower: 36.8, aft_upper: 39.3, aft_lower: 35.9}
+      corner_stresses_ksi:    {fwd_upper: 55.8, fwd_lower: 40.3, mid_upper: 42.1, mid_lower: 53.4, aft_upper: 57.0, aft_lower: 52.0}
+    post:
+      axial_length_cm: 16.3
+      minimum_width_cm: 2.890
+      minimum_width_in: 1.137
+      orientation_deg: 10
+      flank_angle_deg: 55
+      flank_width_cm: 0.803
+      crush_stress_kN_cm2: 30.4
+      lcf_limit_kN_cm2: 46.9
+      lcf_limit_ksi: 68
+      lcf_cycles: 72000
+      corner_stresses_kN_cm2: {fwd_upper: 31.0, fwd_lower: 27.1, mid_upper: 24.1, mid_lower: 28.1, aft_upper: 31.9, aft_lower: 23.0}
+      corner_stresses_ksi:    {fwd_upper: 44.9, fwd_lower: 39.3, mid_upper: 35.0, mid_lower: 40.8, aft_upper: 46.2, aft_lower: 33.3}
+    goodman:
+      src: "Fig.49 p.59 — blade, dovetail and post limits at the blade's maximum vibratory level, 1F/2F/1T; the different curves reflect forging-size property reduction"
+      finding: at every mode the scaled attachment loads sit below their limits while the airfoil sits on its own -- attachments stronger than airfoils, as the goals demanded
+  bird_strike:
+    src: "Fig.50 p.61"
+    bird_kg: 0.68
+    bird_lb: 1.5
+    rpm: 3600
+    measure: calculated edge-damage (shear) parameter relative to the advanced CF6-50 blade = 1.0
+    e3_ratio_vs_span: {40pct: 0.9, 70pct: 0.75, 90pct: 0.97}
+    cf6_50_test_strikes: withstood at ratios 0.79-1.08 without fragmentation
+    aft_shroud_at_65pct_chord: one of the measures for bird-strike resistance on both the CF6 and the E3
+  retention:
+    src: "Fig.51 p.62; text p.60"
+    parts: [anticlank spring under the blade, retainer pins, key, bolt through spring into key, balance washer if required]
+    sequence: blade in and held outward on the dovetail faces; spring under; pins into slots; spring depressed, key in; bolt secures all
+    strength_basis: bird-strike-induced interaction with the casing, from past experience
+    balance: forward-plane weights under the retention bolts; aft plane in the booster dovetail slot
+
+booster_blade_mechanical:
+  src: "sec III.D pp.60-69; Figs.52-57"
+  geometry:
+    src: "Fig.52 p.63 — read off; percent height from hub"
+    height_pct: [0, 20, 50, 80, 100]
+    tm_c_pct:   [8.2, 7.6, 6.5, 5.6, 5.2]
+    te_c_pct:   [2.5, 2.3, 2.0, 1.7, 1.6]
+    chord_in:   [2.8, 2.74, 2.65, 2.56, 2.5]
+    camber_deg: [33, 22, 13, 9, 8]
+    stagger_deg: [23, 26, 31, 37, 42]
+    tip_thickened_why: to keep the stripe mode away from starter passing frequency
+  airfoil_stress:
+    src: "Fig.53 p.64 — N = 3635 rpm; kN/cm2 (ksi); read off at the root"
+    rpm: 3635
+    root_kN_cm2: {centrifugal: 3.6, max_convex: 4.3, max_concave: 8.1, leading_edge: 9.9, trailing_edge: 9.0}
+    verdict: very low
+  root_stress:
+    src: "Fig.54 p.65 — Twisted Blade with CF6-50 stage-2 end effects; N = 3635 rpm"
+    concave_peak_kN_cm2: 18.5
+    concave_peak_at_pct_chord: 33
+    convex_min_kN_cm2: -6.3
+    text_max: less than 30 ksi (20.7 kN/cm2) on the convex side
+    as_printed: "Figs.53-54 are at 3635 rpm where every other figure uses 3653. Recorded."
+  campbell:
+    src: "Fig.55 p.66 — read off"
+    max_speed_rpm: 3653
+    modes_Hz: {first_flex: {at_0: 250, at_3653: 330}, first_torsion: 1000, second_flex: {at_0: 1050, at_3653: 1100}, second_torsion: 2300, panel: 2500, third_flex: 2900, third_torsion: 4000, two_stripe: 4550}
+    forcing: {stator_passing_per_rev: 60, low_orders: [4, 5, 6]}
+    finding: adequate margin between first flex and 2/rev, and between 60/rev (stator passing, 3653 Hz at speed) and the two-stripe mode
+  dovetail:
+    src: "Fig.56 p.67"
+    length_cm: 2.31
+    length_in: 0.910
+    shank_thickness_cm: 2.03
+    shank_thickness_in: 0.800
+    orientation_deg: 90
+    flank_angle_deg: 45
+    flank_width_cm: 0.635
+    flank_width_in: 0.250
+    offsets_cm: {axial: 0.208, tangential: 0.218}
+    offsets_in: {axial: 0.082, tangential: 0.086}
+    crush_stress_kN_cm2: 16.9
+    crush_stress_ksi: 24.5
+    corner_stresses_kN_cm2: [13.7, 13.7, 13.8, 13.8]
+    corner_stresses_ksi: [19.9, 19.9, 20.0, 20.0]
+    goodman: {src: "Fig.57 p.68", finding: attachment stronger than airfoil in 1F, 2F, 1T; blade stall-protected in torsion}
+
+rotor_structure:
+  src: "sec III.E p.69; Figs.58-61"
+  method: CLASS/MASS thin shells for the rotor with AFINE for the thick-shell stage-1 and -2 disks; blade radial loads and moments at the rims, bearing restraints on the shafting; deflections set the blade lengths for cold dimensioning
+  fan_disk:
+    src: "Fig.59 p.71 — AFINE; N = 3653 rpm; kN/cm2 (ksi), deflections cm (in)"
+    max_stress_kN_cm2: 39.3
+    max_stress_ksi: 57
+    max_stress_pct_of_lcf_limit: 58
+    lcf_cycles: 72000
+    burst_strength_pct_of_design_speed: 147
+    stresses_kN_cm2_ksi: [[37.9, 55], [26.2, 38], [37.2, 54], [39.3, 57], [31.0, 45], [31.0, 45], [24.1, 35], [31.7, 46], [33.1, 48], [31.7, 46], [37.9, 55], [10.3, 15], [7.6, 11]]
+    deflections_cm_in: [[0.071, 0.028], [0.068, 0.027], [0.074, 0.029], [0.066, 0.026], [0.061, 0.024], [0.058, 0.023], [0.048, 0.019], [0.045, 0.018], [0.010, 0.004]]
+    design: sized for growth so lightly stressed at FPS; shaft curve contoured to spread disk deflection over several inches of shaft; non-symmetric section with the centre of gravity aft of the stacking axis so the blade, shroud, gas and shaft-restraint moments cancel and the disk does not roll; the eccentric contour also lets the No.1 bearing sit closer to the fan centreline
+  booster_spool:
+    src: "Fig.60 p.72 — N = 3653 rpm"
+    stresses_kN_cm2_ksi: [[24.8, 36], [17.9, 26], [22.1, 32], [23.4, 34], [20.7, 30], [17.2, 25], [15.8, 23], [19.3, 28], [17.9, 26], [11.5, 17], [14.5, 21], [16.5, 24], [24.8, 36], [26.2, 38], [13.1, 19], [13.8, 20], [12.4, 18], [21.4, 31]]
+    deflections_cm_in: [[0.093, 0.0368], [0.088, 0.0347], [0.092, 0.0362], [0.092, 0.0364], [0.086, 0.0338], [0.092, 0.0362]]
+    design: bore projection placed to counter the rim moment from blade and spacer; bore length sized to keep the disk's vibratory frequencies out of the fan operating range
+    as_printed: "'11.5 (17)': 17 ksi is 11.7 kN/cm2. The other seventeen pairs convert."
+  disk_shaft_joint:
+    src: "Fig.61 p.73; text p.69"
+    bolts: 30
+    bolt_size_in: 0.625
+    bolt_material: Inconel 718
+    shaft_material: Ti 6-4
+    preload_kN_per_bolt: 101.9
+    preload_lb_per_bolt: 22914
+    friction_coefficient: 0.15
+    principle: torque through flange friction, never bolt shear; tight-fitting bolts stop joint shift and bolt bending; more, smaller bolts for a lighter flange
+    loads_reacted: [fan, No.1 bearing net resultant, LP turbine]
+
+fps_weight:
+  src: "Table VI p.74 — FPS fan weight status; kg (lb)"
+  items_kg: {fan_blades: 232.7, fan_disk: 137.4, booster_blades: 15.9, booster_disk: 42.2, spinner: 8.6, disk_seal: 2.7, retention_and_anticlank: 7.7, forward_fan_shaft: 34.5, hardware: 14.5}
+  items_lb: {fan_blades: 513, fan_disk: 303, booster_blades: 35, booster_disk: 93, spinner: 19, disk_seal: 6, retention_and_anticlank: 17, forward_fan_shaft: 76, hardware: 32}
+  total_kg: 496.2
+  total_lb: 1094
+  note: 7.27 kg per fan blade and 0.28 kg per booster blade; the fan blades alone are 47 percent of the rotor
+
+fan_stator:
+  src: "sec IV.C pp.84-100; Fig.74 p.90; Table VII p.92; Figs.75-82"
+  assembly: stage-1 vanes individual, loaded axially into a 360-degree inner shroud and a 360-degree outer fairing that also forms the island upper flowpath; core OGVs individual, through loading slots into their 360-degree inner shroud, bolted to the core frame, with a 360-degree outer fairing forming the splitter upper flowpath
+  materials_icls:
+    src: "Fig.74"
+    outer_panels: {count: 4, arc_deg: 90, material: 6061-T6}
+    case_360: 2024-T6
+    fairing_360_outer: 6061-T6
+    stage1_vanes: 403 SS
+    stage1_shroud_360: 17-4 PH
+    stage1_fairing_360: 17-4 PH
+    core_ogv_vanes: 7075-T73 aluminium
+    core_ogv_shroud_360: 6061-T6
+    seals: porous Teflon
+  geometry:
+    src: "Table VII p.92 — fan stator geometry summary"
+    rows:
+      - {stator: stage_1, vanes: 60, material_icls: 403 SS, material_fps: Ti 6-4, length_cm: 15.67, length_in: 6.17, chord_root_cm: 8.13, chord_root_in: 3.20, chord_tip_cm: 8.10, chord_tip_in: 3.19, tm_c_root_as_printed: 0.485, tm_c_root_taken: 0.0485, tm_c_tip: 0.062, stagger_root_deg: 20.27, stagger_tip_deg: 21.51, camber_root_deg: 37.29, camber_tip_deg: 35.79, aspect_ratio: 1.935}
+      - {stator: inner_ogv, vanes: 64, material_icls: 7075 Al, material_fps: 7075 Al, length_cm: 11.61, length_in: 4.58, chord_root_cm: 9.25, chord_root_in: 3.64, chord_tip_cm: 5.44, chord_tip_in: 2.14, tm_c_root: 0.053, tm_c_tip: 0.062, stagger_root_deg: 18.40, stagger_tip_deg: 21.53, camber_root_deg: 55.38, camber_tip_deg: 62.38, aspect_ratio: 1.39}
+      - {stator: bypass, vanes: 34, material_icls: 17-4 PH, material_fps: composite, length_cm: 43.18, length_in: 17.0, chord_root_cm: 31.27, chord_root_in: 12.31, chord_tip_cm: 27.74, chord_tip_in: 10.92, tm_c_root: 0.056, tm_c_tip: 0.073, stagger_root_deg: 14.67, stagger_tip_deg: 14.71, camber_root_deg: 29.20, camber_tip_deg: 46.54, aspect_ratio: 2.89}
+    as_printed:
+      - "stage-1 root tm/c prints '0.485'; Fig.75 gives 0.048 at the root and the tip prints 0.062, so a dropped zero: 0.0485 taken"
+      - "the inner-OGV and bypass aspect ratios (1.39, 2.89) are not length over mean chord (1.58, 1.46); stage 1's is (1.93). Definition not stated; recorded as printed"
+      - "Appendix A prints AR 1.96 for S1 (Table VII 1.935), 0.83 for the inner OGV and 1.13 for the bypass OGV -- a third set of aspect ratios for the same rows"
+  fig75_stage1_tm_c: {root: 0.048, at_50pct: 0.057, tip: 0.062, shape: rising smoothly hub to tip}
+  fig76_core_ogv_tm_c: {root: 0.053, constant_to_pct: 55, tip: 0.063}
+  bypass_vane_note: the FSFT/ICLS bypass vane is solid steel (slave); the FPS design is a hollow composite -- so no bypass tm/c distribution is shown
+  analysis: SAP-4 finite-element models of all three vanes (Figs.77-79) for steady and vibratory analysis; Campbell diagrams Figs.80-82
+  campbell_findings:
+    src: "p.91"
+    bypass_vane: two-stripe meets 32/rev (fan blade passing) near top speed on the solid slave vane; the FPS hollow composite vane will have a higher two-stripe frequency and can be tuned away; judged no problem for FSFT/ICLS given the distance downstream and the solid section
+    stage1_vane: adequate margin at maximum speed through two-stripe against fan-blade sources including twice blade passing (64/rev)
+    core_ogv: no resonance at maximum speed through two-stripe; 1F and 1T lie close together, so separating them with margin over 32 and 64 per rev would need a geometry change costing aero; the main excitation is the booster's 56/rev, which resonates only at low speed; the fan's 32 and 64 per rev sit marginally close to 1T and 2T -- bench test before any modification
+    growth: vanes designed to the FPS speed; the growth speed is shown for reference only

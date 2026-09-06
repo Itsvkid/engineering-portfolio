@@ -215,12 +215,17 @@ The blade-level data is what separates L2 from L1. All of it goes into
       (round + 0.036 rub, needed = resultant − 0.038) holds; weights add in
       both units and match CR-168219 to 3 %; blade mass by three routes.
       **The LPT report body is fully transcribed.**
-- [ ] Fan hardware report CR-165148 — blade sections if published, shroud,
-      dovetail, containment
-- [ ] Combustor report 19900019238 — liner geometry, dome, hole patterns,
-      cooling flow split, exit profile, emissions
-- [ ] E³ HP turbine cooling model 19810018555 — the cooling design method
-- [ ] ICLS CR-168211 — measured engine performance: the *tested* numbers
+- [x] **Fan hardware report CR-165148** — requirements, flowpath, Tables
+      I–VI, Appendix A row summaries, airfoil design, fan and booster blade
+      mechanical design, rotor structure. `data/fan-design.yaml`. Sec IV
+      stator/frame (Tables VII–VIII) and the appendix streamline rows remain.
+- [x] **Combustor report CR-168301** — design sections 1–5 in full, the
+      development-test section by its summary tables. Fig 8's 24 airflow
+      labels sum to 100.0 % Wc; the Mod VI test and the FPS prediction carried.
+      `data/combustor-design.yaml`
+- [x] HP turbine cooling model CR-165374 — reviewed: it is **Pratt &
+      Whitney's** E³ blade-passage flow-visualisation report, not GE's.
+      Kept as a design-practice reference; nothing to transcribe for this engine.
       against which the FPS *design* numbers can be compared
 
 *Closes when:* every table in `DATA-INDEX.md` marked **L** is marked **T**,

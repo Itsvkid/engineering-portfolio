@@ -1,0 +1,675 @@
+# E3 combustor — design, as printed.
+# Source: NASA CR-168301, "Energy Efficient Engine Combustor Test Hardware
+# Detailed Design Report" (GE; Burrus, Chahrour, Foltz, Sabla, Seto,
+# Taylor; March 1984), 474 pages. PDF page = report page + 15. US
+# Government work.
+#
+# Every value carries its source; nothing is corrected; prints are
+# recorded by name. Sections 3-5 are the design; section 6 (pp.136-414)
+# is the development testing, of which only the summary tables are
+# transcribed here.
+
+meta:
+  source: e3-combustor-hardware-design.pdf
+  pages_read: "1-129, 388-393, 410-415"
+  transcribed: 2026-09-05
+  status: "design sections 1-5 complete; the development-test section 6 is carried by its summary tables (LVII-LXII) and the Mod VI exit-temperature result; the 250 pages of test detail are D-status"
+
+concept:
+  src: "secs 1.0-3.2 pp.1-9; Fig.1 p.7"
+  type: double-annular dome, short length, staged combustion; double-walled segmented ("shingled") liner with impingement and film cooling
+  lineage: NASA/GE Experimental Clean Combustor Program (CF6-50 size, double annular) and the QCSEE clean combustor; the E3 is shorter and more compact than QCSEE for its NOx goal
+  staging: at low power only the outer (pilot) dome is fuelled, giving a rich zone that consumes CO and HC; at high power both domes are fuelled and run very lean, with large airflow through the inner (main) dome annulus -- which starves the other aerodynamic functions of air
+  features: [split-duct diffuser, pressure-atomising fuel nozzle assembly, counter-rotating swirlers, pilot dome, main dome, centrebody dilution, shingled liner]
+  lengths_cm: {eccp_cf6_50: 32.8, qcsee: 17.8}
+  lengths_in: {eccp_cf6_50: 12.9, qcsee: 7.0}
+
+goals:
+  emissions:
+    src: "Table I p.4 — EPA 1981 standards for newly certified Class T2 engines (thrust >= 89 kN)"
+    units: "kg per kN-hour of thrust over the EPA landing-takeoff cycle (lb per 1000 lb thrust-hour cycle)"
+    co:  {si: 1.49, us: 3.0}
+    hc:  {si: 0.2,  us: 0.4}
+    nox: {si: 1.49, us: 3.0}
+    smoke_sae_number: 20
+    note: the 1981 CO and NOx standards were later withdrawn and the HC standard tightened after 1984; the E3 kept all four as program goals -- more demanding than the standards in force
+  performance:
+    src: "Table II p.5 — key performance and operating requirements"
+    combustion_efficiency_slto_pct_min: 99.5
+    total_pressure_drop_slto_pct_max: 5.0
+    exit_pattern_factor_slto_max: 0.250
+    exit_profile_factor_slto_max: 0.125
+    altitude_relight_km_min: 9.1
+    altitude_relight_ft_min: 30000
+    ground_idle_thrust_pct_slto_max: 6.0
+    note: GE's conventional combustors already met or beat these; the emissions and life goals are the stretch
+  life:
+    src: "Table III p.5 — parts life goals; hours and flight cycles"
+    hot_parts: {first_repair: 9000, total: 18000}
+    cold_parts: {total: 36000}
+    design_margin: GE standard requires twice the technical life goal, so 9,000 cycles to repair means an 18,000-cycle predicted capability
+    cf6_50_reference: 3,000 cycles before first repair for the rolled-ring combustor
+    note: the same 9,000 / 18,000 / 36,000 ladder as the HPT report's Table XV -- hot parts 18,000 with a repair at 9,000, cold parts 36,000
+
+liner_selection:
+  src: "sec 3.2 p.10; Fig.4 p.11"
+  finding: a machined-ring film-plus-impingement liner would not meet the 9,000-cycle first-repair goal, so a segmented film liner -- the shingle -- was adopted
+  shingle_features: [segmented axial and circumferential panels, reduced stress, 360-degree support structure carries the mechanical loads, maintainability, life above 1e5 cycles, cooling levels consistent with NOx, needed for growth cycles]
+  other_features: [short high-area-ratio split-step diffuser, duplex fuel tips, counter-rotating airblast swirl cups, opposed dilution jets]
+
+aero_requirements:
+  src: "Table IV p.12; sec 4.1"
+  combustion_efficiency_min_pct: 99.5
+  combustion_efficiency_idle_min_pct: 99
+  total_pressure_drop_max_pct: 5.0
+  pattern_factor_max: 0.250
+  profile_factor_max: 0.125
+  ground_start_to_idle_s: 60
+  altitude_relight_km: 9.1
+  others: [stable combustion in the flight envelope, carbon-free, no resonance or starting growl]
+  radial_profile:
+    src: "Fig.5 p.13 — turbine inlet radial temperature profile requirements, SLTO standard day; (T_local - T_avg)/dT_avg vs percent blade height; read off"
+    design_profile: {hub: -0.30, at_20pct: -0.05, peak: 0.10, peak_at_pct_height: 65, tip: -0.30}
+    tolerance_limit: {peak: 0.13, at_65pct: 0.13}
+    maximum_temperature_limit_pf: 0.25
+    pf_limit_span_pct: [20, 90]
+    note: the pattern-factor limit of 0.25 is drawn as a vertical line between 20 and 90 percent height; the profile peaks at about 65 percent, where the HPT blade's rupture-limiting section sits
+
+cycle_comparison:
+  src: "Table V p.18 — combustor inlet conditions as the cycle was refined: PDR (7/78), IDR (4/79), DDR (8/81)"
+  ground_idle_6pct_fn:
+    t3_K: [485, 517, 497]
+    t3_R: [873, 931, 894]
+    p3_MPa: [0.40, 0.043, 0.43]
+    p3_psia: [58, 62, 63]
+    far: [0.012, 0.0141, 0.0123]
+    as_printed: "IDR P3 prints 0.043 MPa beside 62 psia (0.43 MPa). A dropped decimal place. Recorded."
+  slto_100pct_fn:
+    t3_K: [814, 815, 815]
+    t3_R: [1465, 1467, 1467]
+    p3_MPa: [3.01, 3.02, 3.02]
+    p3_psia: [438, 439, 439]
+    far: [0.0244, 0.0244, 0.0245]
+  note: the pilot dome is sized to the ground-idle equivalence ratio, and ground idle moved by 30 K and 15 percent in fuel-air ratio between the reviews; CO is very sensitive to pilot-dome equivalence ratio (Fig.6 -- the minimum sits near 0.9-1.0)
+
+airflow_distribution:
+  src: "Fig.8 p.17 — E3 combustor design airflow distribution, core engine, percent of Wc (compressor flow); labels read off the drawing, grouped by where the arrow lands"
+  pilot_dome_pct: 15.9
+  pilot_dome_equivalence_ratio_at_6pct_gi: 1.040
+  main_dome_pct: 24.7
+  outer_liner_pct: [2.8, 2.2, 2.2, 1.7, 1.8, 1.7, 0.8]
+  centerbody_pct: [2.2, 2.2, 1.1, 1.9, 1.1, 2.7, 4.8]
+  inner_liner_pct: [4.4, 4.5, 5.8, 4.0, 3.0, 2.4, 5.1, 1.0]
+  total_pct: 100.0
+  reading: the twenty-four labels sum to exactly 100.0 -- the whole compressor flow accounted for through the combustor
+  baseline:
+    src: "Fig.7 p.16 — baseline (same as FPS) distribution, percent Wc; labels read off, grouping less certain"
+    pilot_dome_pct: 23.0
+    main_dome_pct: 27.9
+    other_labels_pct: [1.2, 2.0, 3.2, 2.5, 2.2, 2.2, 0.75, 1.0, 0.7, 0.75, 0.95, 4.3, 1.45, 2.5, 0.75, 1.0, 1.0, 4.0, 4.8, 3.4, 2.2, 4.0, 4.0, 2.35, 0.75, 1.0]
+    sum_as_read_pct: 105.9
+    note: "the labels as read sum to about 106; some of the 0.75-1.0 labels at the aft end are turbine-cooling or leakage flows rather than combustor flows, or are duplicates on both sides of a part. Held as read, flagged for a second read; the dome flows (23.0 and 27.9 against 15.9 and 24.7 in the core design) are the point of the comparison"
+  dome_change: the pilot dome went from 23.0 to 15.9 percent and the main from 27.9 to 24.7 between the baseline and the core design -- the aerodynamics moved substantially as the cycle and the emissions tests came in
+
+diffuser:
+  src: "sec 4.2.2 pp.18-20; Fig.9"
+  type: dual-passage step diffuser ("split duct") for the large area change between the compressor discharge and the double-dome height
+  requirements: [positive flow distribution, stable separation-free flow, short length, low pressure loss, bleed airflow capability]
+  turbine_cooling_extraction: trailing-edge design chosen -- metering through circular orifices in the splitter-vane base dumping into the strut cavity; dirt separation, stability, strength, easy re-metering; static-pressure fed with slightly warmer air
+  leading_edge_alternative_rejected: positive total-pressure feed and cooler air (slightly better sfc) but dimensional sensitivity of the slot metering, higher frontal blockage (higher OGV Mach, longer passages), cost and rework risk
+  prediffuser_struts: 30
+  inlet_mach_m3: 0.3
+  passage_mach: 0.16
+  bleed_pct: 5.9
+  predicted_mass_weighted_total_pressure_loss_pct: 1.5
+  analysis: Stanford diffuser separation correlations; CAFD with the 30 struts' blockage and an estimated compressor-discharge radial profile; then a water-table model and a full-annular full-scale aerodynamic model at GE CRD
+
+fuel_nozzle:
+  src: "sec 4.2.3 pp.21-23; Fig.10; Fig.11; Table XIV p.50; sec 4.3 pp.46-50"
+  count: 30
+  max_pressure_drop_kPa: 3102
+  max_pressure_drop_psid: 450
+  type: single-stem, duplex (primary and secondary) tips for both pilot and main; dual valve package above the flange, cooled by fan air; double internal insulation
+  material: Hastelloy X stem; 347 and 321 stainless fuel system
+  natural_frequency_min_Hz: 1000
+  life_cycles: {per_installation: 9000, total: 27000}
+  spray_angle_deg: {primary: 50, secondary: 70}
+  spray_angle_why: {primary: emissions and ignition, secondary: uniform exit temperature}
+  primary_systems_identical: pilot and main primaries identical, so with both primaries on the fuel splits equally
+  main_to_pilot_above_secondary_cut_in: about 2 to 1, biasing fuel to the lean main dome for NOx
+  split_adjustment: fixed orifice in the main-stage line; e.g. pilot at 2.41 MPa (349.5 psi) with a 0.35 MPa (50.8 psi) restriction added to the main line gives the 40 percent pilot-to-total curve
+  flow_characteristics:
+    src: "Fig.11 p.23 — Jet A at standard temperature; read off"
+    primary_only_kg_h: {at_1_4_MPa: 20, at_3_1_MPa: 30}
+    pilot_stage_primary_and_secondary_kg_h_at_3_1_MPa: 82
+    main_stage_kg_h_at_3_1_MPa: {wp_over_wt_0_40: 125, wt_split_0_33: 165}
+    ground_idle_6pct_MPa: 1.35
+    slto_MPa: 2.4
+  staging:
+    src: "Fig.27 p.51 — pilot to main staging vs core speed, FPS standard-day operating line; read off"
+    ground_start: pilot primary only
+    pilot_secondary_cut_in_pct_nh: 78
+    main_stage_on_pct_nh: 80
+    approach_pct_nh: 85
+    slto_pct_nh: 100
+    fuel_flow_kg_h: {ground_start: 100, idle: 300, approach: 950, slto: 2600}
+    note: pilot-only through ground idle was the start mode finally chosen (sec 4.4) for the simplest control and best ignition
+
+swirl_cup:
+  src: "sec 4.3 pp.41-46; Fig.21 p.43; Figs.22-24"
+  features: [axial-flow primary swirler, counter-rotating radial-inflow secondary swirler, venturi for carbon prevention, slip joint between primary and secondary for thermal growth, simple mechanics]
+  controls: [fuel spray quality, recirculation strength, venturi velocity, primary-to-secondary airflow ratio, fuel-nozzle eccentricity and immersion]
+  common_to_both_domes: true
+  primary: {vane_angle_deg: 60, inlet_angle_deg: 23, effective_area_cm2: 0.92, effective_area_in2: 0.143, venturi_throat_diameter_cm: 1.58, venturi_throat_diameter_in: 0.623}
+  secondary: {vane_angle_deg: 80, vane_height_cm: {pilot: 0.70, main: 1.02}, vane_height_in: {pilot: 0.275, main: 0.400}, effective_area_cm2: {pilot: 1.38, main: 1.87}, effective_area_in2: {pilot: 0.214, main: 0.290}}
+  as_printed: "the venturi throat diameter row is headed 'cm2 (in2)'; 0.623 in is 1.58 cm -- a diameter, not an area"
+  emissions_reduction_sleeve: {location: cup discharge, initial_exit_angle_deg: 45, selected_after_test_deg: 90, purpose: controls the recirculation the flame seats on}
+  recirculation_target: {fraction_of_cup_flow: [0.16, 0.20], at_pressure_drop_pct: 5.0, src: "Fig.23 -- recirculation rises linearly with sleeve included angle, 0.11 at 0 to 0.22 at 90 degrees"}
+  venturi_anticarboning:
+    src: "Fig.24 p.47 — ECCP parametric study; carbon-free region"
+    e3_point: {lt_over_dt: 0.81, aes_over_at: 0.47}
+    carbon_boundary: "carbon on the fuel nozzle and venturi below and left of the line from (0.22, 1.05) through (0.32, 0.6)"
+
+dilution:
+  src: "sec 4.3 p.46; Figs.25-26"
+  thimble_types: [full liner pressure drop, spent-impingement (about half the overall dP/P)]
+  penetration: {src: "Fig.26 -- velocity-centreline penetration Z/D vs X/D; read off at X/D = 3", full_dp: 7.0, spent_impingement: 5.3}
+  why_two: flexibility to shape the exit temperature profile
+
+emissions_estimate:
+  src: "Table XIII p.41 — pilot and main at approach, pilot only at ground idle; EPAP g/kN (lb/1000 lb) thrust-hour cycle"
+  condition: [idle_6pct, target, goal]
+  co:  [0.94, 1.24, 1.49]
+  co_us: [1.9, 2.5, 3.0]
+  hc:  [0.02, 0.15, 0.2]
+  hc_us: [0.05, 0.30, 0.4]
+  nox: [1.34, 1.34, 1.49]
+  nox_us: [2.7, 2.7, 3.0]
+  smoke_sn: [15, 16, 20]
+  note: the design was expected to meet all four goals with margin at 6 percent idle with pilot-only operation and both domes at approach (30 percent thrust)
+
+design_summary:
+  src: "sec 4.4 p.50"
+  items: [preliminary aerodynamic design selected, swirl cups and sleeves and fuel nozzles defined, ground start on the pilot stage only, component test results folded into the final aero definition of Fig.8]
+
+mechanical_requirements:
+  src: "Table XV p.52; sec 5.1"
+  to_first_repair: {hours: 18000, cycles: 9000}
+  total_life: {hours: 36000, cycles: 18000}
+  mission_hours: 2
+  growth_max_operating: {t3_K: 927, t3_R: 1669, p3_MPa: 3.91, p3_psia: 567, far: 0.025}
+  design_condition: growth-engine hot-day takeoff, the most severe anticipated
+  as_printed: "Table III lists the hot-part goals as 9,000 hours AND 9,000 cycles; Table XV, using the 2-hour mission, makes 9,000 cycles 18,000 hours. Two conventions in one report -- the HPT report's one-cycle-per-hour and the LPT's two-hour mission. Both recorded."
+
+general_design:
+  src: "sec 5.2 pp.52-55; Figs.28-29"
+  domes: double annular with a common swirl cup; centrebody between the outer pilot and inner main dome
+  fuel_nozzles: 30 dual-tip, each with independent metering to each dome
+  support_pins: 30
+  support_pins_note: at the upstream end, carrying all mechanical loads from liners and dome to the outer case
+  turbine_interface: machined fishmouth seals for relative growth and stack-up
+  outer_casing_carries: [combustor, fuel nozzles, fuel delivery, ignition, engine firewall]
+  casing_ports: [borescope, compressor-discharge bleed, instrumentation]
+  materials:
+    src: "Fig.29 p.54; sec 5.3.1 p.55; Fig.30 p.56"
+    fuel_nozzle: 347 SS (stem and body), 321 SS tubes, Hastelloy X tips
+    support_pin: Inco 718
+    impingement_support_liner: Inco 625
+    outer_casing: Inco 718
+    shingles: X-40 (cobalt-base)
+    dome: Hastelloy X
+    splash_plate: Hastelloy X
+    dilution_eyelet: Hastelloy X
+    combustor_turbine_seal: L605
+    centerbody_flame_side: thermal barrier coating to be applied
+  post_pdr_changes: [shingle array optimised to three axial rows, shingle edges with circumferential overlap seals eliminating 105 leaf seals, turbine cooling-air filtration screens at the aft end removed]
+
+starting_studies:
+  src: "sec 4.2.4 pp.24-33; Tables VI-X; Figs.12-16"
+  requirements: [stable ignition and propagation, 60-second accel to idle, start free of stall and noise]
+  eccp_background: {src: "Table VI p.24", cf6_50_double_annular: "56 successful engine starts, one aborted on a T4.9 limit", staging: "pilot only to approach power, pilot and main above"}
+  chronology:
+    src: "Table VII p.25"
+    entries:
+    - {period: "Jan-Oct 1978", state: original concept, pilot-only ignition through ground idle}
+    - {period: "Dec 1978-Sep 1979", state: engine start model predicts a high maximum T4.1 with the pilot only fuelled}
+    - {period: "Feb 1979-Mar 1980", state: ignition studies to start with both domes fuelled}
+    - {period: "Jan 1980-May 1981", state: development combustor aimed at both-domes ignition from light-off through idle}
+    - {period: "May 1981-", state: start studies resumed with new component data -- pilot-only start satisfactory}
+  the_problem:
+    src: "Fig.12 p.26; Fig.13 p.28"
+    early_model: "9/79 model with 30 percent start bleed: combustor fuel-air ratio 0.036 at light-off (core flow function ~6) falling to 0.032 at 10 and 0.013 at ground idle (27.5); maximum T4 1149 C (2100 F)"
+    profile_at_46pct_core_speed: "pilot-only exit profile peaks at (T-Tavg)/dTavg of +0.95 at 70-90 percent height and -0.9 at the hub; pilot-and-main flattens it to +0.65 peak and -0.4 hub"
+    consequence: unacceptable turbine metal temperatures, especially on the uncooled LPT
+  the_detour:
+    approaches: [primary-secondary fuel nozzle, alternate fuel nozzles fuelled at subidle, rich domes with reduced main-dome airflow]
+    changes_forced: [duplex fuel nozzles in both domes, complex control staging at ignition, reduced main-dome airflow, crossfire-tube improvements]
+    dome_velocities_m_s:
+      src: "Fig.14 p.29 — at ground idle (~78 percent NH), read off"
+      pilot: 6.0
+      rich_main: 9.5
+      lean_main: 13.0
+      at_ground_start_20pct_nh: {pilot: 2.5, rich_main: 3.5, lean_main: 4.5}
+      note: the main dome's smaller annulus keeps its velocity high even with the airflow cut for a rich design
+    staging_sequences:
+      src: "Fig.15 p.30 — pilot-to-total fuel flow vs core speed, read off"
+      pilot_only: {wp_over_wt: 1.0, to_pct_nh: 78, then: 0.4}
+      pilot_and_main: {ignition_at_pct_nh: 35, wp_over_wt_range: [0.25, 0.6], then_at_78pct: [0.4, 0.6]}
+    adverse_impacts:
+      src: "Table VIII p.31"
+      items: [more fuel-staging complexity, more control logic, a more complex main-stage nozzle with a primary orifice and more insulation in a larger heavier envelope, richer main dome at high power with more NOx and hotter liners]
+  the_resolution:
+    src: "Table IX p.33; sec 4.2.4 p.31; Fig.16 p.32"
+    date: "1981 Q1 component data; start model updated 5/81"
+    new_inputs: [compressor subidle representation from the 1-10 tests, improved low-speed turbine efficiencies from the E3 turbine component tests, lower bleed flows required, improved profile mixing through the HPT]
+    results: {ground_start_s: 60, stall_margin_below_65pct_nc_pct: 10, max_average_t41_K: 1228, max_average_t41_F: 1750, previous_t41_K: 1422, previous_t41_F: 2100, start_bleed_pct: 0, previous_start_bleed_pct: 30}
+    fig16: "5/81 model with 0 percent bleed: light-off at fuel-air 0.020 (flow function 8), 0.019-0.022 through 10-20, 0.015 at idle -- against the 9/79 model's 0.036 light-off"
+    verdict: pilot-only ground start preferred for the pilot dome's ignition characteristics and the much simpler control; the development effort went back to the lean main dome after considerable work on a rich one
+  ignition_study:
+    src: "Table X p.33"
+    both_meet_60s: true
+    both_domes_cost: more complex heavier fuel system and control logic; crossfire to the main stage needed
+    pilot_only_best_for: [ignition and flame propagation, growl-free subidle]
+    both_domes_best_for: stall-free subidle from a lower and more uniform exit temperature
+
+emissions_study:
+  src: "sec 4.2.5 pp.34-40; Table XI p.34; Table XII p.40; Figs.17-20"
+  ground_idle_comparison:
+    src: "Table XI — ground idle cycle comparison"
+    combustor: [QCSEE, CF6_ECCP, LOPER, E3]
+    t3_K: [414, 429, 422, 497]
+    t3_R: [745, 772, 760, 894]
+    p3_MPa: [0.25, 0.30, 0.30, 0.43]
+    p3_psia: [36, 43, 44, 63]
+    fuel_air: [0.016, 0.0110, null, 0.0123]
+    vref_m_s: [14.9, 18.3, 22.9, 14.6]
+    vref_fps: [49, 60, 75, 48]
+    as_printed: "the reference-velocity column is headed 'MPa (fps)'; 49 fps is 14.9 m/s. Recorded."
+    finding: the E3 idles 70-80 K hotter and 0.13-0.18 MPa higher than the combustors that had already shown low CO and HC -- more favourable inlet conditions
+  targets_vs_experience:
+    src: "Fig.17 p.36 — emission indices, g/kg; 6 percent idle for CO and HC, SLTO for NOx; read off"
+    co_idle: {cf6_eccp: 22, qcsee: 31, cfm56: 26.5, e3_target: 21}
+    hc_idle: {cf6_eccp: 1.5, qcsee: 2.0, cfm56: 2.5, e3_target: 2.9}
+    nox_slto: {cf6_eccp: 27, qcsee: 14.5, cfm56: 24, e3_target: 17.5}
+  adjusted_data:
+    src: "Figs.18-19 pp.37-38 — ECCP, QCSEE and LOPER data corrected to E3 conditions; read off"
+    co_goal_at_6pct_idle_497K_g_kg: 21
+    hc_goal_at_idle_g_kg: 3
+    nox_goal_at_slto_815K_g_kg: 17
+    nox_split: 0.40 pilot-to-main
+    finding: CO and HC expected below target with margin; NOx approaching the goal closely once residence time is adjusted for the short E3 length
+  co_tradeoff:
+    src: "Fig.20 p.39 — EI(CO) at 4 percent idle vs at approach (30 percent thrust) for EPAP CO = 1.49; climb and SLTO held constant"
+    line: EI(CO)_idle from 20 at zero approach CO to zero at 40 g/kg approach CO
+    eccp_d13: {pilot_only: [3, 12.5], pilot_and_main: [10, 12.5]}
+    qcsee_da: {pilot_only: [2, 11], pilot_and_main: [10, 11]}
+    note: staging the main dome at approach costs 7-8 g/kg of approach CO and still sits well inside the line
+  adjustment_relationships:
+    src: "Table XII p.40"
+    co: "EI = EI_meas x (P3/P3cyc)^1.5 x (Vref/V) x exp((T3 - T3cyc)/b), b = infinity"
+    hc: "EI = EI_meas x (P3/P3cyc)^2.5 x (Vref/V) x exp((T3 - T3cyc)/B), B = infinity"
+    nox: "EI = EI_meas x (P3cyc/P3)^1.0 x (V/Vref)^1.0 x (F_P/F_Pcyc)^0 x (F_M/F_Mcyc)^0.37 x exp((T3cyc - T3)/345 + (H_std - H)/53.19)"
+    smoke: "SN = SN_meas x (P3 ER_dome/T3)^1.5 ratio x (Wc/(P3 N_F)) ratio, z = 1.5"
+    note: the CO and HC temperature terms are switched off (b, B infinite); pressure exponents 1.5 and 2.5; NOx carries a 345 K temperature scale and a humidity term
+
+liner_design:
+  src: "sec 5.3.2 pp.55-64; Figs.31-36; Table XVI p.60"
+  construction: 360-degree load-carrying support liner (impingement-cooled, laser-drilled holes) carrying individual shingles segmented axially and circumferentially; from the GE/ATEGG and GE23 cast-shingle lineage
+  laser_drilling: all cooling and dilution holes in both support liners, a first for combustors, cheaper and faster than EDM
+  shingle_geometry:
+    src: "Table XVI p.60 — shingle geometry comparison"
+    rows:
+      - {design: E3, liner: outer, axial_panels: 3, circumferential_segments: 20, panel_length_cm: 4.47, panel_length_in: 1.76, feet: 11, thickness_cm: 0.127, thickness_in: 0.050, arc_width_cm: 11.76, arc_width_in: 4.63}
+      - {design: E3, liner: inner, axial_panels: 3, circumferential_segments: 15, panel_length_cm: 4.78, panel_length_in: 1.88, feet: 11, thickness_cm: 0.127, thickness_in: 0.050, arc_width_cm: 12.24, arc_width_in: 4.82}
+      - {design: GE23, liner: outer, axial_panels: 4, circumferential_segments: 20, panel_length_cm: 4.62, panel_length_in: 1.82, feet: 11, thickness_cm: 0.127, thickness_in: 0.050, arc_width_cm: 11.41, arc_width_in: 4.49, panel_length_note: max}
+      - {design: GE23, liner: inner, axial_panels: 4, circumferential_segments: 20, panel_length_cm: 3.56, panel_length_in: 1.40, feet: 9, thickness_cm: 0.127, thickness_in: 0.050, arc_width_cm: 9.68, arc_width_in: 3.81, panel_length_note: max}
+    shingle_count_e3: {outer: 60, inner: 45, total: 105}
+    note: 20 x 11.76 cm is a 235 cm circumference (37.4 cm radius) at the outer liner and 15 x 12.24 is 184 cm (29.2 cm) at the inner -- the combustor annulus
+  support_feet:
+    src: "Fig.33 p.61 — foot width W and slot width S, cm (in)"
+    ge23: {outer: {w_cm: [0.58, 0.66], s_cm: [0.33, 0.38], w_over_s: 1.8}, inner: {w_cm: [0.51, 0.66], s_cm: [0.31, 0.38], w_over_s: 1.9}}
+    e3: {outer: {w_cm: 0.51, s_cm: 0.51, w_over_s: 1.0}, inner: {w_cm: [0.46, 0.56], s_cm: [0.46, 0.56], w_over_s: 1.0}}
+    why: maximum coolant introduction between feet with enough foot width for strength -- cyclic fatigue traded against rupture life
+  edge_seal:
+    src: "Fig.34 p.62; Fig.35 p.64; text p.63"
+    ge23: individual sheet-metal leaf seals in slots along the shingle edges; 0.152 cm (0.060 in) cold gap
+    e3: overlapping edges, no separate seals; 0.152 cm (0.060 in) cold gap, 0.025 cm (0.010 in) step, 0.191 cm (0.075 in) at the overlap on a 0.127 cm (0.050 in) shingle; nominal cold overlap 0.178 cm (0.070 in) with a 0.0102-0.0406 cm (0.004-0.016 in) gap
+    parts_eliminated: 105
+    penalty: controlled leakage, slight loss of coolant; maximum metal temperature increase 19 K (34 F)
+    leakage_curve: {src: "Fig.35 — percent of total film air vs increase in maximum shingle temperature, read off", min: {leakage_pct: 6.5, dt_K: 11}, nominal: {leakage_pct: 11, dt_K: 15}, max: {leakage_pct: 16, dt_K: 19}}
+  dilution_eyelet: supported by the support liner with a co-annular gap at the shingle so the hot shingle and cold eyelet never interfere; the aft gap flow restarts the film the dilution jet strips (an ATEGG technique)
+
+casing:
+  src: "sec 5.3.2 pp.63-70; Figs.37-40"
+  material: Inco 718
+  ports:
+    src: "Fig.38 p.67 and Fig.39 p.68"
+    fuel_nozzle: 30
+    instrumentation: 30
+    support_pin_holes: 30
+    igniter: {count: 2, at_deg: [120, 240]}
+    cdp_bleed: 8
+    borescope: {fig38: 6, fig39: {count: 4, at_deg: [0, 60, 180, 300]}}
+    as_printed: "Fig.38 labels six borescope ports; Fig.39's rollout draws four. Recorded."
+  symmetry: about the vertical centreline
+  support_pin:
+    src: "Fig.40 p.69; text p.63"
+    count: 30
+    diameter_cm: 0.953
+    diameter_in: 0.375
+    material: Inconel 718
+    max_load_N: 805
+    max_load_lb: 181
+    max_bending_stress_MPa: 345
+    max_bending_stress_ksi: 50
+    yield_avg_minus_3sigma_MPa: 793
+    yield_avg_minus_3sigma_ksi: 115
+    clearance_to_cowl_strut_cm: 0.318
+    clearance_to_cowl_strut_in: 0.125
+    wear_surfaces: {pin: Triballoy coating, cowl: Stellite 6 bushing}
+    function: bolted to the outer case, locating the combustor axially through mating holes in the cowl struts and carrying the aerodynamic force loads; the CF6 design
+
+dome:
+  src: "sec 5.3.2 pp.70-72; Figs.41-42"
+  swirl_cups_per_dome: 30
+  structure: 360-degree spectacle plate, fully shielded from the gas by a splash plate at each cup; domes bolted to the cowl assembly whose struts carry dome and liner loads to the support pins
+  swirlers: machined from adjustable-area castings; the primary swirler floats on a slip joint to the cup, taking up stack-up and dome-to-nozzle thermal growth and keeping the swirler exit concentric with the nozzle tip
+  cowl_scallops: fuel nozzles removable without major disassembly
+  splash_plate_material_option: ODS alloy
+
+centerbody:
+  src: "sec 5.3.2 pp.70-74; Figs.43-46"
+  function: separates the pilot and main primary zones
+  structure: 360-degree machined piece, film and impingement cooled, with a brazed sheet-metal impingement baffle inside
+  dilution_eyelets_per_dome: 30
+  crossfire_tubes: 2
+  crossfire_tubes_note: in line with the two igniters, carrying the flame across the centrebody to the main dome
+  tip_redesign:
+    src: "Fig.45 p.76; Fig.46 p.77"
+    initial: {material: uncoated Hastelloy X, first_flex_Hz: 800, per_rev: 4.0}
+    chosen: {coating: zirconate thermal barrier, tip: shortened and slotted for stress relief, first_flex_Hz: 3000, per_rev: 15, construction: brazed}
+    also: gill cooling holes downstream of each crossfire tube; the difficult tip-hole drilling eliminated
+    note: 800 Hz at 4/rev and 3,000 Hz at 15/rev both put the core at 12,000 rpm -- the 100 percent HP speed of 12,303 in the published data
+
+fuel_delivery:
+  src: "sec 5.3.2 pp.74-80; Figs.47-49"
+  systems: two fully independent, one per dome, through a single-stem nozzle
+  manifolds_and_pigtails: stainless steel
+  nozzle_body: 347 stainless steel forging
+  features: [positive check valve per circuit to keep the manifolds full and cut fill time, double heat insulation by a stem heat shield and a coking gap round each passage, individual primary and secondary tubes to each tip, extended valve standoff isolating the metering valve from casing heat]
+  studies: vibration and geometry, to keep critical frequencies out of the high-power range within the envelope and with least aerodynamic loss
+
+heat_transfer:
+  src: "sec 5.4.1 pp.81-105; Figs.50-63; Tables XVII-XVIII"
+  method: steady-state heat transfer program (SSHT) on a digitised node network from a 10x cross-section, with SSHTNHGN for the node hookup and NPLTSSHT for the coordinate file and plots; two materials per node so thermal-barrier coatings can be modelled; radiation and film effectiveness calibrated on CF6-50 double-annular liner data and adjusted to the E3 cycle
+  limiting_panel: inner liner panel 1
+  two_d_calculations:
+    src: "Table XVII p.92 — summary of two-dimensional temperature calculations and cycle data"
+    condition:        [baseline_std_day_takeoff, growth_approach, growth_hot_day_27F_takeoff, growth_hot_day_63F_takeoff, growth_max_climb, growth_90pct_takeoff, growth_flight_idle]
+    t3_K:             [815, 668, 909, 922, 893, 884, 584]
+    t3_R:             [1467, 1201, 1638, 1660, 1607, 1592, 1051]
+    p3_MPa:           [3.03, 1.44, 3.75, 3.22, 3.75, 3.41, 0.66]
+    p3_psia:          [439, 209, 544, 467, 544, 494, 95.5]
+    w_comb_kg_s:      [55.3, 30.7, 65.3, 65.3, 67.0, 60.4, 15.1]
+    w_comb_pps:       [122, 67.6, 144.0, 123.8, 147.8, 133.2, 33.25]
+    fuel_air:         [0.024, 0.0147, 0.0282, 0.0278, 0.0253, 0.0266, 0.0127]
+    main_fuel_fraction: [0.7, 0, 0.7, 0.7, 0.7, 0.7, 0.7]
+    panels_calculated:
+      baseline: {hot_streak: [1_outer, 2_outer, 3_outer, 1_inner, centerbody_tip], nominal: [1_outer, 3_outer, 1_inner]}
+      growth_approach: {hot_streak: [centerbody_tip]}
+      growth_hot_day_27F: {hot_streak: [1_inner], nominal: [1_inner]}
+      growth_hot_day_63F: {hot_streak: [1_inner], nominal: [1_inner]}
+      growth_max_climb: {hot_streak: [1_inner]}
+      growth_90pct_takeoff: {hot_streak: [1_inner]}
+      growth_flight_idle: {hot_streak: [1_inner]}
+    component_test_point: {t3_K: 814, w_comb_kg_s: 30.1, w_comb_pps: 66.3, fuel_air: 0.0244, main_fuel_fraction: 0.8}
+    as_printed:
+      - "growth +63 F takeoff W_comb prints 65.3 kg/s beside 123.8 pps; 123.8 pps is 56.2 kg/s and 65.3 kg/s is 144 pps (the +27 F column's value). Recorded."
+      - "growth approach f/a prints '0147' for 0.0147"
+      - "the footnote gives the component-test T3 as '814 K (1465 F)'; the column heading is R"
+  panel1_inner_profile:
+    src: "Fig.56 p.93 — growth +27 F hot-day takeoff; nodes adjacent to the gas; read off"
+    axial_cm:      [0.2, 0.5, 1.0, 2.0, 3.0, 4.0, 4.5, 5.2]
+    hot_streak_K:  [940, 1000, 1110, 1170, 1210, 1250, 1290, 1270]
+    average_K:     [940, 990, 1080, 1100, 1110, 1120, 1160, 1130]
+    peak_location: the panel feet, which cannot be convection cooled and rely on conduction to the overhang or the impingement-cooled band
+  foot_width_study:
+    src: "Figs.57-59 pp.94-96 — three-dimensional models; peak temperatures read off"
+    full_foot: {foot_cm: 0.61, slot_cm: 0.31, foot_in: 0.24, slot_in: 0.12, peak_K: 1120, peak_F: 1560, circumferential_spread_K: 25}
+    half_foot: {foot_cm: 0.31, slot_cm: 0.61, foot_in: 0.12, slot_in: 0.24, peak_K: 1080, peak_F: 1485, circumferential_spread_K: 5}
+    final_design: about halfway between the two -- Fig.33's 0.51 cm foot and 0.51 cm slot
+  baseline_liner_temperatures:
+    src: "Table XVIII p.97 — predicted liner temperatures, baseline development combustor, standard-day takeoff; one-dimensional"
+    panel:   [1_outer, 2_outer, 3_outer, 1_inner, 2_inner, 3_inner]
+    K:       [1090, 1072, 1039, 1172, 1131, 1085]
+    F:       [1501, 1471, 1410, 1651, 1576, 1493]
+    note: inner panel 1 is the hottest at 1172 K -- the limiting panel; the engine combustor's flow distribution differs again but the baseline temperatures were within limits so no reanalysis until engine data
+  centerbody_analysis:
+    src: "sec 5.4.1.3 p.97"
+    conditions: standard-day takeoff; main-to-total fuel splits 50, 60, 70 percent; uncoated and with 0.02 in of thermal barrier coating; Mod I flow distribution
+
+centerbody_temperatures:
+  src: "Figs.60-63 pp.98-103 — baseline standard-day takeoff, Mod I flow distribution; K (F in the companion figures); 1 = uncoated (cold surface / hot surface), 2 = 0.051 cm (0.02 in) thermal barrier coating, cold surface"
+  panel_pilot_side_K:
+    x_in: [0.4, 0.8, 1.2, 1.6]
+    split_50_50: {uncoated_cold: [989, 1018, 1034, 1048], uncoated_hot: [1034, 1072, 1092, 1111], tbc_cold: [947, 972, 985, 997]}
+    split_40_60: {uncoated_cold: [943, 968, 982, 992], uncoated_hot: [980, 1009, 1026, 1039], tbc_cold: [914, 934, 945, 953]}
+    split_30_70: {uncoated_cold: [905, 922, 932, 941], uncoated_hot: [931, 953, 966, 977], tbc_cold: [884, 899, 908, 915]}
+  panel_main_side_K:
+    x_in: [0.4, 0.8, 1.2]
+    split_50_50: {uncoated_cold: [971, 1009, 1038], uncoated_hot: [1016, 1065, 1103], tbc_cold: [922, 950, 973]}
+    split_40_60: {uncoated_cold: [769, 1045, 1084], uncoated_hot: [1057, 1112, 1157], tbc_cold: [942, 976, 1002]}
+    split_30_70: {uncoated_cold: [1035, 1086, 1129], uncoated_hot: [1100, 1160, 1215], tbc_cold: [965, 1002, 1033]}
+    as_printed: "the 40-60 main-side x = 0.4 cold surface prints 769 K beside a hot surface of 1057 and the F figure's 1344 F (1002 K). A dropped hundred: 969. Recorded."
+  tip_surface_K:
+    src: "Fig.62b p.102"
+    pilot_side: {x_0_4: {split_50_50: [1088, 1043], split_40_60: [1068, 1023], split_30_70: [1053, 1007]}, x_0_8: {split_50_50: [1142, 1094], split_40_60: [1127, 1077], split_30_70: [1117, 1064]}}
+    main_side:  {x_0_4: {split_50_50: [1090, 1036], split_40_60: [1113, 1047], split_30_70: [1138, 1062]}, x_0_8: {split_50_50: [1069, 1103], split_40_60: [1204, 1124], split_30_70: [1239, 1146]}}
+    columns: [uncoated, tbc]
+    as_printed: "main side x = 0.8, 50-50 prints uncoated 1069 below its coated 1103 (the F figure has 1465 / 1526 the same way) -- the one cell where the coating reads hotter"
+  tip_distribution:
+    src: "Fig.63 p.103 — x = 1.016 cm (0.4 in), pilot fuel fraction 0.4, 0.051 cm TBC; node temperatures K"
+    pilot_dome_side_K: [1007, 1002, 997, 993]
+    convective_hole_K: [985, 989, 988, 999, 1007]
+    main_dome_side_K: [1018, 1031, 1046, 1062]
+    max_K: 1062
+    max_F: 1451
+  finding: the main-dome side runs hotter than the pilot side and gets hotter as the main dome takes more fuel; the 0.051 cm thermal barrier coating takes 40-90 K off the cold surface
+
+fuel_nozzle_thermal:
+  src: "sec 5.4.1.4 pp.104-105; Fig.64"
+  carbon_formation_critical_K: [422, 450]
+  carbon_formation_critical_R: [760, 810]
+  uninsulated_wall_K: 478
+  uninsulated_wall_R: 860
+  fps_max_fuel_inlet_K: 408
+  fps_max_fuel_inlet_R: 734
+  fix: insulating tubes in the fuel passages (rig nozzles); external heat shield plus insulating tubes (core and ICLS); FPS insulating gap opened from 0.02 to 0.051 cm (0.008 to 0.020 in)
+  worst_location: near the flange, where the heat shield touches the stem and conducts
+  fig64_conditions: {p3_MPa: 3.03, p3_psia: 439, t3_K: 815, t3_F: 1007, w3_kg_s: 47.7, w3_lb_s: 105, wf_total_kg_h: 4864, wf_total_pph: 10700}
+  fig64_read_off: {film_temperature_K_at_inlet_290K: 325, film_temperature_K_at_inlet_430K: 450, fuel_temperature_rise_K_at_ambient: 6.5, fuel_temperature_rise_K_at_430K: 2.8, max_allowable_inlet_K: 408}
+  as_printed: "Fig.64 prints W3 = 47.7 kg/s (105 pph); 105 lb/s is 47.6 kg/s, so the unit is pounds per second"
+  ignition_lead: {core_cowl_purge_K: 478, core_cowl_purge_R: 860, soak_back_peak_K: 616, soak_back_peak_R: 1109, teflon_limit_K: 700, teflon_limit_R: 1260, verdict: standard lead without auxiliary cooling}
+
+stress_and_life:
+  src: "sec 5.4.2 pp.106-123; Figs.65-78; Table XIX"
+  mission_mix:
+    src: "Fig.65 p.107 — recommended mission mix; percent of flights vs change in engine inlet temperature"
+    cold_day: {pct: 30, dt2_K: [-30, -5]}
+    standard_day: {pct: 20, dt2_K: [-5, 3]}
+    tropical_day: {pct: 30, dt2_K: [3, 15]}
+    hot_day: {pct: 20, dt2_K: [15, 35]}
+    life_basis: constant hot-day +15 K (27 F) operation -- conservative; the tropical (+15 K) day limits life over the +35 K day because its metal gradients are higher
+  shingle:
+    model: MASS finite elements, half a shingle by symmetry, curved plates and beams on the actual casting; pressure, mechanical and thermal loads
+    pressure_stress:
+      src: "Fig.67 p.110 — maximum anticipated liner pressure drop x 1.5 for surge"
+      safety_factor: 1.5
+      max_panel_MPa: 125
+      end_foot_bending_MPa: 148
+      end_foot_bending_ksi: 21.5
+      location: support foot -- rupture-limited region
+    rupture:
+      src: "Fig.68 p.111 — hot-day growth takeoff, 1.5 x shingle dP, avg -3 sigma"
+      e3_design: {kt: 1.7, w_over_s: 0.95, rupture_life_h: 1300}
+      goal_h: 300
+      note: "life rises steeply with foot-to-slot width ratio: Kt 1.5 gives 300 h at W/S 0.45 and 8,000 at 1.35; Kt 2.0 gives 300 h at W/S 1.1"
+    lcf:
+      src: "Figs.69-71 pp.112-114 — hot-day growth takeoff; hot streak 100 K (180 R) above the mean, a narrow axial band at the quarter-shingle position; MPa"
+      hot_streak_dt_K: 100
+      stress_peaks_MPa: [225, 225]
+      hot_streak_temperature_peak_K: 1260
+      life_limited_region: aft support foot
+      e3_design_cycles_with_hold_time: 20000
+      goal_cycles: 9000
+      w_over_s: 1.0
+      no_hold_time_cycles: 100000
+      note: life falls steeply with W/S (opening the slot admits more coolant) but rupture needs the foot -- the 1.0 ratio is the compromise
+    predicted_life:
+      src: "Table XIX p.115"
+      goal: {lcf_cycles: 9000, rupture_h: 300}
+      baseline_x40: {t_max_K: 1111, t_max_F: 1540, lcf_cycles_as_printed: 105, lcf_cycles_taken: 100000, rupture_h: 5000}
+      growth_mar_m_509: {t_max_K: 1283, t_max_F: 1850, lcf_cycles: 26000, rupture_h: 1000}
+      as_printed: "the baseline LCF prints '105' -- a superscript lost in typesetting, 10^5. Taken as 100,000; Fig.71's no-hold-time curve is there."
+      note: the growth combustor needs Mar-M-509 shingles for the cyclic life at 1283 K
+  support_liners:
+    src: "sec 5.4.2.2 pp.115-121; Figs.72-76"
+    tools: CLASS-MASS for stress; BOSOR for buckling
+    material: Inconel 625
+    condition: {p3_MPa: 3.834, p3_psia: 556, t3_K: 914, t3_F: 1185}
+    yield_0_02pct_at_922K_MPa: 275
+    yield_0_02pct_at_922K_ksi: 40
+    outer_liner_stress_MPa: {front_peak: 245, first_hook: 100, mid: 30, aft: 145}
+    inner_liner_stress_MPa: {front_peak: 190, mid_peak: 125, aft_hooks: [95, 115], aft: 170}
+    buckling:
+      src: "Fig.74 p.119; Fig.75 p.120; Fig.76 p.121"
+      dp_MPa: 0.193
+      dp_psia: 28
+      line_loads_N_cm: [35.4, 35.7, 18.7]
+      line_loads_lb_in: [20.2, 20.4, 10.7]
+      p3_MPa: 3.91
+      p3_psia: 567
+      thickness_range_mm: [0.76, 1.27]
+      thickness_range_in: [0.03, 0.05]
+      round_shell_1_02mm: {min_critical_MPa: 1.24, min_critical_psi: 180, nodes: 9, fixity: dome only; 1.37 MPa at N = 10 fixed at both ends}
+      out_of_round_design: {radial_out_of_round_cm: 0.025, min_yielding_pressure_MPa: 0.42, full_dp_MPa: 0.193, margin: 2.2}
+      chosen_margin: 2x at maximum growth
+      as_printed:
+        - "Fig.74 prints T3 = '94 K (1185 F)' for 914 K, and the liner thickness as '0.26-1.27 mm (0.03-0.05 in)' where 0.03 in is 0.76 mm"
+        - "the text gives the thickness range as '0.76 to 1.27 mm (0.038 to 0.050 inch)'; 0.76 mm is 0.030 in"
+        - "Fig.75 prints T = 1.02 mm (0.40 in) for 0.040 in"
+  casing:
+    src: "sec 5.4.2.3 p.116; Fig.77 p.122"
+    tool: CLASS-MASS at growth maximum pressure; temperature near uniform and a little below compressor discharge
+    thickness_criterion: maximum stress at 50 percent of the material yield
+    conditions: {p3_MPa: 3.91, p3_psia: 567, t3_K: 914, t3_F: 1185, pressure_load_MPa: 3.72, pressure_load_psi: 540, t_case_K: 867, t_case_F: 1100}
+    axial_loads_kN: {forward_flange: 249.1, mid: 31.1, aft_flange: 222.4}
+    axial_loads_lb: {forward_flange: 56000, mid: 7000, aft_flange: 50000}
+    fifty_pct_yield_avg_minus_3sigma_MPa: 360
+    fifty_pct_yield_ksi: 52
+    stress_read_off_MPa: {forward_peak: 335, forward_trough: 55, aft_plateau: 410, aft_end: 135}
+    nominal_thickness_in: 0.15
+    as_read: the aft plateau at about 410 MPa sits above the 360 MPa 50-percent-yield line the figure draws as the design intent; recorded as read
+  centerbody_life:
+    src: "sec 5.4.2.4 pp.116-123; Fig.78 — baseline standard-day takeoff, avg -3 sigma Hastelloy X; cycles vs main-dome fuel fraction; read off"
+    main_dome_fuel_pct: [50, 60, 70]
+    baseline:               [100, 200, 100]
+    with_thermal_barrier:   [200, 600, 240]
+    with_tip_slots:         [3300, 1800, 700]
+    with_slots_and_barrier: [400000, 90000, 7000]
+    goal_cycles: 9000
+    finding: only the slotted, coated tip reaches the goal, and only up to about 69 percent main-dome fuel -- the slots buy 15-30x, the coating 2-3x, together 100-2000x
+
+fuel_nozzle_vibration:
+  src: "sec 5.4.3 pp.124-135; Figs.79-87; Table XX"
+  original_goal_min_Hz: 1000
+  method: MASS finite elements, the stem as constant-area beams with the fuel passages and insulation removed from the section
+  cf6_lessons: [forged construction, maximum blend radii between stem and flange, metering valve isolated from the stem]
+  candidates_Hz: [750, 1000]
+  temperature_effect: frequency falls with speed as Young's modulus falls with temperature -- 816 Hz at room temperature for 750 at takeoff
+  campbell:
+    src: "Fig.82 p.128 — read off"
+    current_design_Hz: {at_0: 810, at_takeoff: 750}
+    stiffened_Hz: {at_0: 1080, at_takeoff: 1000}
+    takeoff_rpm: {baseline: 12900, growth: 13300}
+    per_rev_lines: [1, 2, 3, 4, 5, 6, 7, 8]
+  chosen_Hz: 750
+  why_not_1000: about 50 percent more stem blockage in the outer passage that carries turbine cooling air (Figs.83-85), and too large to pass through the casing port between the diffuser and the cowls with the combustor in place (Fig.86)
+  comparison:
+    src: "Table XX p.129 — first-flex natural frequencies"
+    design: [CF6-50_ruggedized, CFM56_F101, E3]
+    first_flex_Hz: [900, 500, 750]
+    per_rev_at_takeoff: [5.5, 2, 3.5]
+    note: 750 Hz at 3.5/rev is a 12,860 rpm takeoff -- the baseline line of Fig.82
+  bench_test: nozzle on a rigid plate simulating the casing, to confirm the stem frequency (Fig.87)
+
+development_testing:
+  src: "sec 6 pp.136-414 -- summary tables LVII-LXII pp.410-415 and the Mod VI exit-temperature test pp.388-393"
+  configurations:
+    src: "Table LVII p.410 — full-annular combustor configurations"
+    mod_i: {pilot: [swirl cup flow reduced, cooling reduced], main: increased swirl cup flow, centerbody: reduced pilot dilution, outer_liner: [increased primary dilution, trim dilution, ring 1 cooling], inner_liner: [increased trim dilution, ring 1 cooling]}
+    mod_ii: {pilot: reduced swirl cup flow, main: reduced swirl cup flow, centerbody: [increased pilot and main dilution, increased cooling, shortened], outer_liner: [increased primary dilution, reduced ring 1 cooling], inner_liner: [increased primary dilution, added panel 2 dilution]}
+    mod_iii: {pilot: dome cooling reduced, main: [swirl cup flow reduced, dome cooling reduced], centerbody: extended crossfire tube, outer_liner: aft dilution increased, inner_liner: [aft dilution increased, panel 2 dilution eliminated]}
+    mod_iv: {inner_liner: [aft dilution reduced, panel 2 dilution added]}
+    mod_v: {centerbody: reduced primary dilution thimble, outer_liner: added panel 2 dilution, inner_liner: reduced primary dilution thimble}
+    mod_vi: {main: swirl cup flow increased, centerbody: original crossfire tube, outer_liner: [panel 2 removed, aft dilution reduced], inner_liner: aft dilution reduced}
+    mod_vii: {inner_liner: panel 2 dilution increased}
+    arc: baseline and Mod I lean main dome; Mods II-V the rich-main-dome detour; Mods VI-VII back to the lean dome
+  results:
+    src: "Table LVIII pp.411-412"
+    baseline: {pilot_ignition: marginal, main_ignition: poor at subidle, pattern_factor: {at_40_60: 0.41, at_50_50: 0.26}, epap: {co: 8.20, hc: 3.03, nox: 2.78}}
+    mod_i: {pilot_ignition: significantly improved -- goal with margin, main_ignition: not as good as baseline, pattern_factor_40_60: 0.24, profile: beyond limit in the hub, epap: {co: 4.55, hc: 0.47, nox: 2.81}}
+    mod_ii_a: {pilot_ignition: not as good as Mod I but acceptable, comment: inner panel-2 dilution and centerbody cooling currents stop the pilot flame entering the main annulus through the crossfire tubes}
+    mod_iii_a: {main_ignition: staging possible down to 45 percent core speed at true inlet pressures, comment: crossfire tube needs moving forward}
+    mod_iii_b: {main_ignition: staging at 40 percent with little or no bleed, pattern_factor_40_60: 0.45, comment: too much inner trim dilution for the mixing length}
+    mod_iv: {main_ignition: deteriorated -- inner panel-2 dilution hurts it}
+    mod_v: {main_ignition: staging at 50 percent, pattern_factor_40_60: 0.50, profile: inward peaked well beyond the limit, conclusion: removing primary-zone air from the main stage for ignition is bad for exit temperature in a combustor this short; a rich main dome with acceptable ignition and EGT would need substantial further development}
+    mod_vi: {pilot_ignition: satisfies the 6/81 start cycle with margin, main_ignition: no full propagation at subidle, pattern_factor_40_60: 0.36, profile: beyond limit in the hub, comment: poor hardware quality}
+    mod_vii: {ignition: like Mod VI, pattern_factor_40_60: 0.27, profile: slightly beyond limit in the hub, epap: {co: 3.27, hc: 0.58, nox: 2.96}, comment: main stage ignites above 10 percent power}
+  subidle_ignition:
+    src: "Table LIX p.413 — overall fuel-air ratio at ignition"
+    configuration: [baseline, mod_i, mod_ii, mod_iii, mod_iv, mod_v, mod_vi, mod_vii]
+    pilot_far: [0.031, 0.025, 0.031, 0.026, 0.029, 0.029, 0.015, 0.013]
+    pilot_target_far: [0.032, 0.032, 0.032, 0.032, 0.032, 0.032, 0.0155, 0.0155]
+    pilot_target_speed_pct: 32
+    main_far: [null, null, null, 0.064, 0.070, 0.070, null, null]
+    main_target_far: [null, null, 0.022, 0.022, 0.022, 0.022, null, null]
+    main_target_speed_pct: 35
+    mod_i_alternate: 0.021
+    mod_ii_main: no light
+    finding: every pilot stage met its target (the 6/81 start cycle halved the target to 0.0155 and Mods VI-VII met that too); no main stage came within a factor of three of its 0.022 target
+  emissions_summary:
+    src: "Table LX p.414 — EPAP lb/1000 lb thrust-hour-cycle; 6 percent idle, pilot only at approach, Jet A, FPS cycle"
+    configuration: [mod_vii, mod_i, baseline, goal]
+    co:  [3.3, 4.55, 8.22, 3.0]
+    hc:  [0.58, 0.57, 3.10, 0.40]
+    nox: [2.96, 2.81, 2.81, 3.0]
+    as_printed: "Table LVIII prints the baseline as CO 8.20 / HC 3.03 and Mod VII as CO 3.27; Table LX prints 8.22 / 3.10 and 3.3 for the same tests. Recorded."
+  exit_temperature:
+    src: "Table LXI p.414 — atmospheric test, pilot-to-total 0.40"
+    configuration: [baseline, mod_i, mod_ii, mod_iii, mod_iv, mod_v, mod_vi, mod_vii]
+    pattern_factor: [0.41, 0.25, null, 0.56, null, 0.40, 0.36, 0.27]
+    profile_factor: [0.14, 0.10, null, 0.04, null, 0.20, 0.12, 0.09]
+    main_dome: [lean, lean, rich, rich, rich, rich, lean, lean]
+    goal: {pattern_factor: 0.25, profile_factor: 0.125}
+    mod_vi_detail:
+      src: "sec 6.2.3.10 pp.390-393; Table LII; Fig.232"
+      test_date: "1981-06-29"
+      facility: ACL Cell A3W
+      nozzle_tips_kg_h: {pilot: 2.3, main: 6.4}
+      nozzle_tips_pph: {pilot: 5, main: 14}
+      slto_points: {t3_K: 1007, t3_R: 1813, w3_kg_s: 2.41, w_bleed_kg_s: 0.15, w_comb_kg_s: 2.26, fuel_air: 0.0245, splits: [0.50, 0.40, 0.30], wf_pilot_kg_h: [99, 80, 60], wf_main_kg_h: [99, 119, 139]}
+      pattern_factor_at_0_4: 0.36
+      pilot_only_pattern_factor: {at_30pct_thrust: 1.35, at_6pct_thrust: 1.60}
+      profile: centre-peaked and within limit at 0.5; inner-peaked and well beyond the hub limit at 0.4 and 0.3
+      cause: streaks in the flame, the worst from pilot cup 7 over an undersized primary dilution hole; on inspection, out-of-round and dented emission sleeves, too-long main-stage sleeves, cocked dilution thimbles with the co-annular gap closed on one side, burred holes, weld beads in the centerbody primary holes
+  fps_prediction:
+    src: "Table LXII p.415 — EPAP lb/1000 lb thrust-hour-cycle, SLS standard day, pilot only at approach"
+    goal: {co: 3.00, hc: 0.40, nox: 3.00}
+    ground_idle_4pct: {co: 2.45, hc: 0.22, nox: 2.98, margin_pct: {co: 23, hc: 82, nox: 1}}
+    ground_idle_6pct: {co: 1.58, hc: 0.11, nox: 2.80, margin_pct: {co: 90, hc: 364, nox: 7}}
+    basis: the rig diffuser performed much worse than the engine diffuser is predicted to, so the rig's high NOx is not taken as representative of the FPS
+    as_printed: "the HC margin at 6 percent idle prints 364 percent; 0.40/0.11 - 1 is 264. The other five margins recompute to the percent. Recorded."
+  concluding_remarks:
+    src: "sec 7 p.415"
+    open_items: [main-stage crossfire good enough to stage at ground idle, combustion efficiency at 30 percent approach in the staged mode, high-power NOx]
