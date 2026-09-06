@@ -76,7 +76,7 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     cooling and its pressure drop from geometry — the last needs the
     liner hole areas, which Stage A did not transcribe.
 4. **Stage E (mechanical) — started.** `solvers/mechanical/`, its own
-    `STEP0.md`, findings 73–81. **Unit E1 met E1's closure**: all ten HPC
+    `STEP0.md`, findings 73–88. **Unit E1 met E1's closure**: all ten HPC
     blade root stresses within 6.5 % of Table X from geometry alone, and
     the blade material crossover fell out of the data at the inertia weld.
     **Unit E2 met half of E2's closure**: the bore doubling for a small
@@ -87,9 +87,18 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     also rejected the assumption behind the stage: **not one of nineteen
     published rotor stresses scales as N²** — the rotor is thermal at its
     limiting times, bores peaking at 875 s and gas-washed parts at 40 s.
+    **Unit E3 built and validated a beam** (`mechanical/beam.py`, exact to
+    0.0001 % on three closed-form boundary conditions) and ran it on the
+    four blades whose Campbell diagrams are transcribed: the unshrouded
+    booster closes at **−2.7 %**, the fan and both HPC vanes bracket
+    correctly, and two misses are recorded — the pinned-tip LPT blade
+    45 % high, and centrifugal stiffening 30–41 % low on both free blades.
+    E3's stated closure is **gated on HPC Figs 33–42**, which
+    `hpc-mechanical.yaml` marks figure-status; the ten predictions are
+    recorded so the gate is a comparison, not a rebuild.
     Next: gas bending and the root stress, HPT blade creep by
-    Larson–Miller against the published rupture life, then E3 (vibration
-    and Campbell diagrams), E4 (rotordynamics), E5 (attachments).
+    Larson–Miller against the published rupture life, the flutter screen
+    and the Goodman HCF margin, then E4 (rotordynamics), E5 (attachments).
 5. Then F (materials and mass), G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 
@@ -112,6 +121,9 @@ compressor's radial redistribution (C1 unit 4b finding 17).
 
 ## Open items carried
 
+- **HPC rotor Campbell diagrams (Figs 33–42) un-digitised.** This is the
+  only thing standing between unit E3's ten predictions and E3's stated
+  closure. Second-highest-value item in the A3 backlog.
 - **Disc cross-sections un-digitised.** This now blocks E2's Fig. 64
   peak-stress comparison and its 120 % burst margin, and will block F2's
   disc masses. Highest-value item in the A3 backlog.

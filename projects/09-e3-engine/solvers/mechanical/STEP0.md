@@ -245,3 +245,189 @@ Density and Poisson's ratio for René 95 are handbook values
     already carried the disc cross-sections as un-digitised; this unit is
     the first work to be *stopped* by that gap, and it is recorded as the
     reason to digitise them rather than as a modelling failure.
+
+---
+
+## Unit E3 — blade natural frequency
+
+The work plan's E3 closure: *first three modes of every HPC stage within
+**5 %** of the published Campbell lines* — HPC report Figs 33–42.
+
+**That closure is gated and cannot be evaluated.** `hpc-mechanical.yaml`
+records Figs 33–54 as *"remain figure-status (A3)"*: the ten rotor Campbell
+diagrams were never transcribed, so there is nothing to compare an HPC
+rotor against. Written down, not worked around. What *is* transcribed is
+four Campbell diagrams from three other reports and one rig — and each
+names a **different tip condition**, which turns out to be the interesting
+part:
+
+| Blade | Report | Tip condition, as the report itself calls it | First flex at 0 rpm |
+|---|---|---|---|
+| LPT stage 1 | CR-168289 Fig. 62 | *"pinned-tip resonant frequency analysis"* — integral tip shroud | 2,050 Hz |
+| Booster rotor | CR-165148 Fig. 55 | unshrouded | 250 Hz |
+| Fan rotor | CR-165148 Fig. 45 | part-span shroud at **55 %** height | 80 Hz |
+| HPC stage-9 and -10 vanes | 10A rig Figs 55–56 | a vane, banded inboard | 18.3 and 28.5 kHz |
+
+METHOD.md's step 0 for this stage names the tool: *"LPT Fig. 62; **a
+cantilever beam first**"*. So the beam is built and validated against
+closed-form eigenvalues before it sees a blade.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Uniform cantilever, first three modes | βL = 1.87510, 4.69409, 7.85476 | **±0.5 %** | closed form; 60 Hermite elements should do far better |
+| Uniform clamped–pinned, first three | βL = 3.92660, 7.06858, 10.21018 | **±0.5 %** | the LPT's own named boundary condition |
+| Uniform clamped–clamped, first three | βL = 4.73004, 7.85320, 10.99561 | **±0.5 %** | the vane bracket's stiff end |
+| Southwell coefficient, uniform cantilever, zero hub radius | **1.19** | **±5 %** | the standard value; validates the geometric-stiffness matrix independently of any blade |
+| Section properties | Green's theorem on a closed polygon | exact | the LPT's transcribed coordinates need **no shape factor at all** |
+| Booster first flex | 250 Hz | **±15 %** | an unshrouded, low-aspect-ratio blade is the case a beam should get right; ±15 % allows for a handbook modulus and a read-off Campbell curve |
+| Fan first flex | 80 Hz | must fall **inside** the twist bracket | a part-span-shrouded blade is not a cantilever; a bracket is the honest prediction, not a number |
+| LPT stage-1 first flex | 2,050 Hz | **±15 %** | the report names the boundary condition, so the model can be held to the same standard as the booster |
+| HPC stage-9 and -10 vanes | 18.3, 28.5 kHz | must fall **inside** cantilever-to-built-in | the inner band is a partial restraint of unknown stiffness |
+| Southwell coefficient, the two unshrouded blades | from each published Campbell pair | **±25 %** | wide, because S ∝ f² and a 7 % read error on the at-speed frequency is 25 % on S |
+
+Twist is carried as a bracket rather than a fudge: a section bends most
+easily about **its own** weak axis and least easily if the whole blade is
+forced to bend about the **root's**; a real twisted blade is between.
+
+Elastic properties are handbook and are **not** in the E³ reports:
+Ti-6Al-4V 114 GPa / 4,430 kg/m³, René 77 207 GPa / 8,220, nickel 200 GPa /
+8,190. The material split for the ten HPC rotors is E1's own output —
+titanium 1–4, nickel 5–10 — not a fresh assumption.
+
+---
+
+## Unit E3 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07 (`cd solvers && python -m mechanical.blade_frequency`)
+
+```
+validation (mechanical/beam.py)
+  clamped-free     +0.0000 / +0.0000 / +0.0000 %
+  clamped-pinned   +0.0000 / +0.0000 / +0.0001 %
+  clamped-clamped  +0.0000 / +0.0000 / +0.0001 %
+  Southwell, uniform cantilever, R = 0:   S = 1.1931
+  and as the hub grows:  S = 1.193 + 1.571 (R/L)   (1.571 = pi/2 to four figures)
+
+1. First flex at zero speed
+   blade                     BC   L cm   R/L     weak  root-axis  published   weak %  stiff %
+   LPT stage 1       pinned tip  10.90  3.14     2974       3459       2050     45.1     68.7
+   booster rotor           free  14.58  3.59      243        317        250     -2.7     26.8
+   fan rotor               free  62.14  0.67       43         89         80    -46.8     11.7
+
+2. The fan blade is not a cantilever: a part-span shroud at 55 % height
+   free at the tip             43 -   89 Hz
+   pinned at the shroud        84 -  587 Hz
+   published (Fig 45)          80 Hz          -> INSIDE the bracket
+
+3. Centrifugal stiffening: f_N^2 = f_0^2 + S (N/60)^2
+   blade              rpm    R/L   S model  S published    err %
+   LPT stage 1       4000   3.14     15.91      -216.56   -107.3
+   booster rotor     3653   3.59      7.43        12.52    -40.6
+   fan rotor         3653   0.67      2.48         3.56    -30.4
+
+4. The ten HPC rotors -- PREDICTED, not validated
+    stage   material   L cm   R/L    1F Hz    2F Hz    3F Hz  1F stiff
+        1  Ti-6Al-4V  15.66  1.22      405     1322     3020       929
+        2  Ti-6Al-4V  10.59  2.16      426     1825     4468       889
+        3  Ti-6Al-4V   7.56  3.33      905     2878     6998      1421
+        4  Ti-6Al-4V   5.71  4.61      895     4040    10306      1481
+        5     nickel   4.55  5.90     1171     5276    13472      1995
+        6     nickel   3.67  7.39     1502     7026    18161      2227
+        7     nickel   3.06  8.93     2704    11010    28462      4088
+        8     nickel   2.57 10.62     2813    13606    35599      3992
+        9     nickel   2.30 11.88     3090    15420    40724      4300
+       10     nickel   2.07 13.24     4048    19158    50295      5034
+
+5. The one HPC frequency that WAS transcribed: the stage-9 and -10 vanes
+     vane   L cm      cantilever kHz      built-in kHz  published kHz  inside?
+        9   2.19        3.5 -    3.9      27.7 -  30.6           18.3      yes
+       10   1.99        4.8 -    5.9      38.1 -  46.0           28.5      yes
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Uniform cantilever, 3 modes | 0.0000 % | ±0.5 % | pass |
+| Clamped–pinned, 3 modes | 0.0001 % | ±0.5 % | pass |
+| Clamped–clamped, 3 modes | 0.0001 % | ±0.5 % | pass |
+| Southwell, uniform cantilever | 1.1931 | 1.19 ±5 % | pass |
+| Booster first flex | **−2.7 %** on the weak axis | ±15 % | **pass** |
+| Fan first flex inside the twist bracket | 43 < 80 < 89 Hz | must be inside | **pass** |
+| LPT stage-1 first flex | +45.1 % | ±15 % | **fail — finding 84** |
+| HPC vanes inside cantilever-to-built-in | 18.3 and 28.5 kHz both inside | must be inside | **pass** |
+| Southwell, booster and fan | −40.6 %, −30.4 % | ±25 % | **fail — finding 85** |
+| **E3's stated closure** (HPC Figs 33–42) | — | ±5 % | **gated on transcription** |
+
+### Findings
+
+82. **An unshrouded blade really is a beam, to 2.7 %.** The booster rotor
+    — 14.6 cm long, aspect ratio 2.1, no shroud — comes out at 243 Hz
+    against a published 250. Nothing was fitted: the sections are built by
+    the same double-circular-arc-and-quarter-sine construction C3 unit 12
+    uses on Table XXII, the second moments are Green's theorem on the
+    resulting polygons, and the only free choices are a handbook modulus
+    and the weak-axis end of the twist bracket. **This is the result that
+    licenses the other three**, and it is why METHOD.md says a cantilever
+    beam first.
+83. **The three blades need three different boundary conditions, and each
+    report names its own.** The LPT's Fig. 62 is titled *pinned-tip*; the
+    booster is unshrouded; the fan carries a part-span shroud at 55 %
+    height. Applying one condition to all three would have been the
+    obvious mistake and would have read the fan 5× stiff and the LPT
+    5× soft. **The fan's 80 Hz sits inside the free-cantilever twist
+    bracket, 43–89 Hz, and *below* the shroud-pinned bracket's floor of
+    84.** That is exactly right for the mode Fig. 45 labels: the *lowest
+    in-phase* system mode with two nodal diameters, in which all 32 blades
+    move together and the part-span shroud ring translates with them
+    rather than restraining them. The shroud is worth almost nothing in
+    that particular mode — and everything in the higher-nodal-diameter
+    ones, which is why it is there.
+84. **The pinned-tip LPT blade reads 45 % high, and temperature is only
+    half the story.** For a rigidly clamped, room-temperature beam to fall
+    to 2,050 Hz its modulus would have to be 98 GPa — 47 % of René 77's
+    room-temperature value. Nickel superalloys lose roughly 30 % of their
+    modulus by 900 °C, and Table X puts this blade's metal at 882 °C, so
+    hot modulus is worth about 15 % of the 45 %. The rest is the **root**:
+    a beam clamped at the hub is the stiffest root a blade can have, and a
+    two-tang dovetail in a slot is not that. Recorded as a miss with its
+    cause named, not closed by choosing a modulus.
+85. **The model under-predicts centrifugal stiffening by 30–41 % on both
+    unshrouded blades, and the direction is consistent.** S = 7.43 against
+    a published 12.52 for the booster, 2.48 against 3.56 for the fan. The
+    geometric-stiffness matrix is not the suspect: it reproduces the
+    uniform-cantilever coefficient 1.193 at zero hub radius and grows
+    exactly as 1.193 + (π/2)(R/L). Two effects are missing and both push
+    the same way — the **mass outboard that is not airfoil** (the fan's
+    part-span shroud sits at 55 % height and every gram of it raises the
+    tension inboard of it; the booster's tip is thickened *deliberately*,
+    the report says, to move its stripe mode), and the **flap–lag coupling
+    of a staggered blade**, which a single-axis beam cannot represent.
+    Note also that S ∝ f², so the ±7 % spread in reading an at-speed
+    Campbell curve is ±25 % in S on its own; the stated band was ±25 % for
+    exactly that reason and both blades still miss it.
+86. **A pinned-tip blade's frequencies FALL with speed, and the published
+    Campbell diagram says so.** The LPT stage-1 blade goes 2,050 → 1,800 Hz
+    between 0 and 4,000 rpm — a Southwell coefficient of **−217**. No
+    tension-stiffening model of any kind can produce a negative
+    coefficient; centrifugal load can only stiffen a beam in bending. The
+    LPT report's own note explains it: on a shrouded, tip-interlocked
+    blade the *interlock stiffness* the model assumes relaxes as the blade
+    untwists under load, and the forcing lines rise while the frequency
+    lines fall, which is why the crossings sit at the top of the operating
+    band rather than the bottom. Recorded as a structural difference
+    between shrouded and free blades, not as a model error.
+87. **The one HPC frequency Stage A did transcribe brackets correctly, and
+    the two stages agree with each other.** The stage-9 and stage-10 vanes
+    are published at 18.3 and 28.5 kHz. A cantilever of the same section
+    gives 3.5–3.9 and 4.8–5.9 kHz; built in at both ends gives 27.7–30.6
+    and 38.1–46.0. Both published values sit inside, and both sit at the
+    **same fraction of the built-in value — 0.66 and 0.62** — which is
+    what a real inner band is: a partial restraint, the same design on both
+    stages. Two independent vanes agreeing on the fraction is better
+    evidence that the sections and the beam are right than either one
+    alone would be.
+88. **The ten HPC rotors are predicted and recorded so the gate is one
+    line of work, not a fresh unit.** First flex runs 405 Hz on stage 1 to
+    4,048 Hz on stage 10, with the material split taken from E1's own
+    output rather than assumed again. Nothing is claimed for these numbers
+    until Figs 33–42 are digitised — but when they are, E3's closure is a
+    comparison, not a rebuild.

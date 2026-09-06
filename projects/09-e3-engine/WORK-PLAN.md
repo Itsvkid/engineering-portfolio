@@ -852,9 +852,26 @@ three printed numbers cannot separate the two loads (finding 79).
 ## E3 · Vibration · 20 h
 
 Built to [METHOD.md](METHOD.md); step 0 named in the table there.
-- [ ] Blade modal analysis per HPC stage; **Campbell diagrams vs HPC report
-      Figs. 33–42** — ten published diagrams to match, with the stage-3
-      root-thickening for 4/rev as the test
+- [x] **The beam, validated first** — **unit E3**,
+      `solvers/mechanical/beam.py`: Euler–Bernoulli FE with Green's-theorem
+      section properties and centrifugal geometric stiffness. Reproduces
+      the clamped-free, clamped-pinned and clamped-clamped eigenvalues to
+      **0.0001 %**, and the uniform-cantilever Southwell coefficient
+      **1.193** (growing as 1.193 + (π/2)·R/L)
+- [x] Blade modal analysis on the four blades whose Campbell diagrams *are*
+      transcribed — `solvers/mechanical/blade_frequency.py`. **The booster
+      rotor closes at −2.7 %** against a published 250 Hz, from built
+      sections and a handbook modulus, nothing fitted (finding 82). Each
+      blade needed the tip condition its own report names, and the fan's
+      80 Hz falls inside the free-cantilever bracket and *below* the
+      shroud-pinned one — right for the lowest in-phase mode (finding 83).
+      **The stage-9 and stage-10 HPC vanes both bracket correctly and agree
+      on the same 0.62–0.66 restraint fraction** (finding 87)
+- [ ] **Campbell diagrams vs HPC report Figs. 33–42** — ten published
+      diagrams to match, with the stage-3 root-thickening for 4/rev as the
+      test. **GATED**: `hpc-mechanical.yaml` records Figs 33–54 as
+      "remain figure-status (A3)". The ten predictions are made and
+      recorded (finding 88) so the gate is a comparison, not a rebuild
 - [ ] Vane Campbell vs Figs. 46–56
 - [ ] LPT stage 1 coupled blade–disc (LPT report Fig. 63); tip-shroud and
       angel-wing effects
@@ -863,7 +880,14 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] HCF margin by Goodman on top of the E1 mean stress
 
 *Closes when:* first three modes of every HPC stage within **5 %** of the
-published Campbell lines.
+published Campbell lines. **Gated 2026-09-07** on transcribing HPC Figs
+33–42; recorded as finding 88 rather than skipped. What could be tested
+was: the booster closes at −2.7 %, the fan and both HPC vanes bracket
+correctly, and two misses are recorded rather than tuned — the pinned-tip
+LPT blade reads 45 % high with the rigid clamp named as the cause
+(finding 84), and centrifugal stiffening is under-predicted by 30–41 % on
+both free blades (finding 85). A pinned-tip blade's frequencies *fall*
+with speed, which no tension model can produce (finding 86).
 
 ## E4 · Shafts, bearings, rotordynamics · 16 h
 - [ ] LP and HP shaft torsion and bending; the LP shaft through the HP
@@ -1029,7 +1053,7 @@ is reverted.
 | B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ⬜ ⬜ ⬜ ⬜ |
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
-| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ⬜ ⬜ ⬜ |
+| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ⬜ ⬜ |
 | F | F1 materials · F2 mass | ⬜ ⬜ |
 | G | geometry | ⬜ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
