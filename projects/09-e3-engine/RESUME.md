@@ -76,7 +76,7 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     cooling and its pressure drop from geometry — the last needs the
     liner hole areas, which Stage A did not transcribe.
 4. **Stage E (mechanical) — started.** `solvers/mechanical/`, its own
-    `STEP0.md`, findings 73–88. **Unit E1 met E1's closure**: all ten HPC
+    `STEP0.md`, findings 73–96. **Unit E1 met E1's closure**: all ten HPC
     blade root stresses within 6.5 % of Table X from geometry alone, and
     the blade material crossover fell out of the data at the inertia weld.
     **Unit E2 met half of E2's closure**: the bore doubling for a small
@@ -96,9 +96,18 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     E3's stated closure is **gated on HPC Figs 33–42**, which
     `hpc-mechanical.yaml` marks figure-status; the ten predictions are
     recorded so the gate is a comparison, not a rebuild.
+    **Unit E4 met E4's first closure half**: no rotor critical sits inside
+    the operating band (worst margin 1.61×), Table XXII checks itself to
+    0.008, and the aft seal disc's published critical implies a mode
+    stiffening of S = 8.20 from three printed numbers. Shaft torque came
+    out of the cycle with the spool speed from each report's own N/√T —
+    **takeoff LP speed closes at −0.5 % across three independent
+    documents** — and the LP shaft turns out to carry 2.4× the HP shaft's
+    torque. Fan blade-out is 746 kN, 76 tonnes. The thrust-bearing half is
+    **gated**: no bearing load or capacity is printed anywhere.
     Next: gas bending and the root stress, HPT blade creep by
     Larson–Miller against the published rupture life, the flutter screen
-    and the Goodman HCF margin, then E4 (rotordynamics), E5 (attachments).
+    and the Goodman HCF margin, then E5 (attachments).
 5. Then F (materials and mass), G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 

@@ -890,16 +890,39 @@ both free blades (finding 85). A pinned-tip blade's frequencies *fall*
 with speed, which no tension model can produce (finding 86).
 
 ## E4 · Shafts, bearings, rotordynamics · 16 h
-- [ ] LP and HP shaft torsion and bending; the LP shaft through the HP
-      spool with clearance
+- [x] LP and HP shaft torque — **unit E4**,
+      `solvers/mechanical/rotordynamics.py`. **The LP shaft carries 68.6 kNm
+      against the HP's 28.7 on a third of the power** (finding 89), and it
+      is the thin one, bounded by the HP rotor bore. Power from the cycle,
+      speed from each report's own N/√T: **takeoff LP speed closes at
+      −0.5 % against the fan report's 3,653 rpm across three independent
+      documents** (finding 90). Bending awaits the E4 bearing spans
 - [ ] Bearing loads: radial from mass and unbalance, axial from D3 thrust
-      balance; check against bearing type (ball 1, 3; roller 2, 4, 5)
-- [ ] Critical speeds of each rotor with bearing stiffness; squeeze-film
-      damper effect (CR-168219 §5.11, Figs. 56–57)
-- [ ] Blade-out unbalance load into mounts (§5.9.2; 33.94 / CS-E 810)
+      balance; check against bearing type (ball 1, 3; roller 2, 4, 5) —
+      **GATED**: CR-168219 sec 5.7 names all five bearings but prints no
+      load and no capacity, and D's thrust balance is not done
+- [x] Critical speeds — **Table XXII checks itself to 0.008** on the
+      report's own margin definition, and **0 of 4 criticals sit inside the
+      operating band** (findings 91). The aft seal disc's 610 rps critical
+      is 22 % above the rigid-disc value, and that gap gives an implied
+      mode stiffening of **S = 8.20** from three printed numbers
+      (finding 92); Fig. 88's second printed point implies N = 1.25 and
+      belongs to another curve (finding 93)
+- [x] Blade-out unbalance load into mounts (§5.9.2; 33.94 / CS-E 810) —
+      **746 kN, 76 tonnes, out of one fan blade** at 3,653 rpm; the airfoil
+      alone is 492 kN, and the whole HPT stage-1 blade is 110 g and 77 kN
+      (finding 94). Airfoil mass audited against Table VI: 66 % of a fan
+      blade, 48 % of a booster blade (finding 95)
+- [x] The bolted joint that carries the core torque: 34 studs need a
+      6.81 cm bolt circle after 9,000 h of creep relaxation has taken 16 %
+      of the clamp load, against a 31 cm disc (finding 96)
 
 *Closes when:* no rotor critical inside the operating band without a
 damper, and thrust-bearing load stays inside capacity in both directions.
+**Half closed 2026-09-07**: no critical is inside the band, with 1.61× the
+maximum speed as the worst margin. The thrust-bearing half is gated on
+bearing capacities the reports never print and on Stage D's thrust
+balance.
 
 ## E5 · Attachments and joints · 10 h
 - [ ] HPC dovetails per HPC report §3.2.3: neck tensile, tang shear, crush;
@@ -1053,7 +1076,7 @@ is reverted.
 | B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ⬜ ⬜ ⬜ ⬜ |
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
-| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ⬜ ⬜ |
+| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ◧ ⬜ |
 | F | F1 materials · F2 mass | ⬜ ⬜ |
 | G | geometry | ⬜ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |

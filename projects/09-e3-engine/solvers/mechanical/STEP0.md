@@ -431,3 +431,160 @@ validation (mechanical/beam.py)
     output rather than assumed again. Nothing is claimed for these numbers
     until Figs 33–42 are digitised — but when they are, E3's closure is a
     comparison, not a rebuild.
+
+---
+
+## Unit E4 — shafts, criticals, bolted joints and blade-out
+
+The work plan's E4 closure: *no rotor critical inside the operating band
+without a damper, and the thrust-bearing load stays inside capacity in
+both directions.*
+
+**The second half is gated.** CR-168219 sec 5.7 names all five bearings —
+1 ball (LP thrust), 2 roller, 3 ball (HP thrust), 4 intershaft roller,
+5 aft roller — with their sumps, their seals and their lubrication, and
+prints **no bearing load and no bearing capacity**. Stage D's thrust
+balance is not done either. Nothing to compare against; written down, not
+worked around.
+
+The first half is settled by HPT report Table XXII, which prints four
+critical speeds *and* the margin *and* sec 5.2.1.11 prints the definition
+— three printed quantities and one definition, so the table checks itself
+rather than being trusted.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Criticals inside the operating band | must be **0 of 4** | — | E4's own closure half; max engine speed 233 rps |
+| Table XXII margins, recomputed | 2.52, 1.62, 3.42, 1.61 | **±0.01** | (critical − maximum)/maximum, the report's own definition; a rounding tolerance |
+| Aft-seal-disc critical, from the travelling wave | 610 rps | implied stiffening must satisfy **0 < S < N²** | below zero there is no stiffening; above N² the backward wave never reaches zero and no critical exists at all |
+| LP physical speed at takeoff | 3,653 rpm (fan report's maximum) | **±2 %** | from the *LPT* report's N/√T cycle-match parameter and the cycle's own T45 — two different reports, neither derived from the other |
+| HP physical speed at max climb | 12,645 rpm | **±3 %** | same, from the HPT report's parameter and T41 |
+| Fan and booster airfoil mass | Table VI: 7.272 and 0.284 kg a blade | airfoil must be **40–90 %** of it | the printed weight is the whole blade — airfoil, platform, dovetail, and on the fan the part-span shroud |
+| Inducer-disc joint | *"torque through flange friction only with no slip"* | required bolt-circle radius must be **smaller than the disc** | the radius is not printed, so it is inverted rather than assumed |
+
+Friction coefficient 0.15, metal on metal, is handbook and stated; it is
+the only free number in the joint calculation and the result is reported
+as a *required radius*, which scales inversely with it.
+
+---
+
+## Unit E4 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07 (`cd solvers && python -m mechanical.rotordynamics`)
+
+```
+1. Rotor criticals against Table XXII (max engine speed 233 rps = 13,980 rpm)
+   component             N  crit rps   margin  printed    diff
+   forward_shaft         4       820    2.519     2.52  -0.001
+   inner_tube            3       610    1.618     1.62  -0.002
+   outer_liner           7      1030    3.421     3.42  +0.001
+   aft_seal_disk         5       610    1.618     1.61  +0.008
+   -> criticals inside the operating band: 0 of 4
+
+2. The aft seal disc's travelling wave (Fig 88)
+   5 nodal diameters, 2500 cps at rest, backward wave zero at 610 rps
+   a RIGID disc would cross at f0/N = 500 rps
+   implied S = 8.20   (f_disc there 3050 = N x Omega = 3050)
+   the forward wave at 440 rps: model 5000 cps, printed 3350
+   -> implies N = 1.25, not 5
+
+3. Shaft torque, power from the cycle and speed from N/sqrt(T)
+   rating       HP MW   HP rpm   HP kNm   LP MW   LP rpm   LP kNm
+   max_climb    16.10   12,449     12.4   11.36    3,483     31.2
+   max_cruise   15.55   12,317     12.1   10.80    3,442     30.0
+   takeoff      38.83   12,936     28.7   26.13    3,636     68.6
+
+4. The joint that carries it: 34 inducer-disc studs, friction only
+   worst HP torque 28.7 kNm at takeoff
+   clamp 98 kN new, 82.5 kN after 9,000 h (16 % relaxation)
+   bolt-circle radius needed at mu = 0.15: 5.74 cm new, 6.81 cm relaxed
+
+5. Blade mass audit against Table VI
+   blade            airfoil kg  printed kg  airfoil %   r_cg cm
+   fan rotor             4.788       7.272         66      70.1
+   booster rotor         0.135       0.284         48      58.6
+
+6. Blade-out
+   fan rotor    whole blade (Table VI)     3,653   7.272 kg   746 kN    76 tonnes
+   fan rotor    airfoil only               3,653   4.788 kg   492 kN    50 tonnes
+   HPT stage 1  mass from the dovetail load 13,948  0.110 kg    77 kN     8 tonnes
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Criticals inside the band | **0 of 4** | must be 0 | **pass — E4's first closure half met** |
+| Table XXII margins recomputed | worst 0.008 | ±0.01 | pass |
+| Aft-seal-disc implied stiffening | S = 8.20 | 0 < S < 25 | pass |
+| LP speed at takeoff | 3,636 vs 3,653 rpm, **−0.5 %** | ±2 % | pass |
+| HP speed at max climb | 12,449 vs 12,645 rpm, −1.6 % | ±3 % | pass |
+| Fan airfoil mass fraction | 66 % | 40–90 % | pass |
+| Booster airfoil mass fraction | 48 % | 40–90 % | pass |
+| Required bolt-circle radius | 6.81 cm relaxed, against a 31 cm disc | must be smaller | pass |
+| **Thrust-bearing load vs capacity** | **not attempted** | — | **gated: no capacity published, no thrust balance yet** |
+
+### Findings
+
+89. **The LP shaft carries more than twice the HP shaft's torque, on a
+    third of the power.** 68.6 kNm against 28.7 at takeoff, because torque
+    is power over speed and the LP spool turns at 3,636 rpm against
+    12,936. The LP shaft is also the *thin* one — it runs the length of
+    the engine **inside** the HP spool with clearance, so its outer
+    diameter is bounded by the HP rotor's bore. The most torque-critical
+    shaft in a two-spool engine is the one with the least room, and that
+    is a geometric consequence of the architecture, not a design choice.
+90. **Two reports and a cycle model agree on the physical spool speed to
+    half a per cent.** The LPT report prints N/√T = 11.21 rad·s⁻¹·K^−½ as
+    its cycle-match parameter; the cycle model, built from the *fan* and
+    combustor data, gives T45; the product at takeoff is **3,636 rpm**
+    against the *fan* report's stated maximum of **3,653**. The HP side
+    agrees to 1.6 %. None of the three was derived from the others, and
+    this is the first time in the project that a mechanical quantity has
+    closed across three separate documents.
+91. **Table XXII checks itself, and the one printed inconsistency is
+    rounding.** All four margins recompute from (critical − 233)/233 to
+    within 0.008. The transcription had already flagged that the inner
+    tube and the aft seal disc share a 610 rps critical yet print 1.62 and
+    1.61; both are 1.618, and the report has simply rounded the same
+    number two ways. Recorded as read — no correction to the source.
+92. **The aft seal disc's critical is 22 % above where a rigid disc would
+    put it, and that gap *is* the stiffening.** With 5 nodal diameters and
+    2,500 cps at rest, a disc whose frequency did not change with speed
+    would cross zero on the backward wave at f₀/N = **500 rps**. Fig. 88
+    puts the critical at **610**. The only way to reconcile them is a disc
+    that stiffens as it spins, and the implied coefficient is **S = 8.20**
+    — comfortably inside the 0 < S < N² = 25 window outside which no
+    critical would exist at all. The number was not put in; it fell out of
+    three printed quantities.
+93. **Fig. 88's second printed point belongs to a different curve.** The
+    forward wave at 440 rps is printed at 3,350 cps; the 5-nodal-diameter
+    model gives 5,000. Backing N out of the printed value instead gives
+    **N = 1.25**, so the read is almost certainly from the 1-diameter
+    curve on the same figure rather than the 5-diameter one the critical
+    comes from. Flagged for a re-read of Fig. 88 rather than reconciled by
+    adjusting the model.
+94. **Seventy-six tonnes out of one fan blade.** At 3,653 rpm a released
+    blade throws its own centrifugal load into the mounts: 7.272 kg at a
+    CG radius of 70.1 cm is **746 kN**. The airfoil alone — which is what
+    a blade-out release actually liberates above the dovetail — is 4.788
+    kg and 492 kN, and the difference between those two numbers is why the
+    certification case (33.94 / CS-E 810) is argued over release plane
+    rather than over blade weight. The whole HPT stage-1 blade, by
+    contrast, is **110 g** and throws 77 kN: the hot end of the engine is
+    not where the mount loads come from.
+95. **The airfoil is two-thirds of a fan blade and half a booster blade.**
+    Integrating the reconstructed sections gives 4.788 kg of fan airfoil
+    against Table VI's 7.272 kg a blade, and 0.135 against 0.284 for the
+    booster. The remainder is platform, dovetail and — on the fan — the
+    part-span shroud. The short blade pays proportionally twice as much
+    for its attachment, which is the mass argument against low-aspect-ratio
+    blading that the aerodynamic argument usually wins anyway.
+96. **The joint that transmits the core's torque needs a 7 cm radius and
+    has a 31 cm disc to do it in.** The 34 inducer-disc studs must carry
+    28.7 kNm through flange friction with no slip; at μ = 0.15 that needs
+    a bolt circle at 5.74 cm when new and **6.81 cm after 9,000 h of creep
+    relaxation has taken 16 % of the clamp load away**. Any plausible
+    flange radius on a disc whose rim is at 31 cm clears it several times
+    over — which is consistent with the report saying this joint is
+    *governed by* torque transfer while still showing an 8 % margin on
+    clamp load: the binding constraint is the bolt's own relaxation, not
+    the friction radius.
