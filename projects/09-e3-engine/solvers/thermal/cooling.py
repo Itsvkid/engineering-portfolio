@@ -137,3 +137,110 @@ if __name__ == "__main__":
     print(f"  T_gas {alt.t_gas_C:.0f} C, T_metal {alt.t_metal_C:.0f} C, phi {alt.phi:.3f}, "
           f"phi/(1-phi) {alt.ratio:.3f} vs fitted {pred:.3f}  ({(pred/alt.ratio-1)*100:+.1f} %)")
     print("  -- the outlier is a station mismatch, not a cooling anomaly.")
+
+
+# ---------------------------------------------------------------------------
+# Unit D2: the chordwise metal temperature of the stage-1 blade.
+#
+# CR-167955 Fig 23 prints the external heat-transfer coefficient against
+# surface distance from the stagnation point, and Fig 27 the metal
+# temperatures. A steady balance on the wall gives, at each station,
+#
+#     T_m = (h_g T_aw + H_c T_c) / (h_g + H_c)
+#
+# with H_c = h_c (A_c/A_g) the internal conductance referred to the
+# external area. Rearranged, the LOCAL effectiveness obeys
+#
+#     phi/(1 - phi) = H_c / h_g          (no film)
+#
+# so a plot against 1/h_g is a straight line THROUGH THE ORIGIN whose
+# slope is H_c. That is the shape test, and it costs one parameter.
+# ---------------------------------------------------------------------------
+
+@dataclass
+class ChordStation:
+    name: str
+    surface: str
+    distance_cm: float
+    h_gas: float
+    t_metal_published_C: float
+
+
+def _interp_pairs(x, pairs):
+    pairs = sorted(pairs)
+    if x <= pairs[0][0]:
+        return pairs[0][1]
+    if x >= pairs[-1][0]:
+        return pairs[-1][1]
+    for (x0, y0), (x1, y1) in zip(pairs, pairs[1:]):
+        if x0 <= x <= x1:
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    return pairs[-1][1]
+
+
+def stage1_blade_stations():
+    """the three chordwise points the work plan's D1 closure names, with the
+    external heat-transfer coefficient read from Fig 23 at each"""
+    d = load()
+    b = d["stage1_blade"]
+    h = b["external_heat_transfer_coefficient"]["surface_distance_from_stagnation_cm_and_h"]
+    fig21 = b["fig21_metal_temperatures_C"]
+    return [
+        ChordStation("leading edge", "stagnation", 0.0,
+                     _interp_pairs(0.0, h["suction_side"]), fig21["leading_edge"]),
+        ChordStation("suction surface", "suction", 4.0,
+                     _interp_pairs(4.0, h["suction_side"]), fig21["suction_surface"]),
+        ChordStation("midchord", "suction", 2.0,
+                     _interp_pairs(2.0, h["suction_side"]), fig21["midchord"]),
+    ]
+
+
+def blade_conditions():
+    c = load()["stage1_blade"]["metal_temperatures"]["conditions"]
+    return c["t_tb_C"], c["t_cp_C"], c["t_bulk_C"]
+
+
+def local_effectiveness(t_metal, t_gas, t_cool):
+    return (t_gas - t_metal) / (t_gas - t_cool)
+
+
+def fit_internal_conductance(stations=None):
+    """one parameter: the slope of phi/(1-phi) against 1/h_g, forced
+    through the origin (least squares, no intercept)"""
+    stations = stations or stage1_blade_stations()
+    t_g, t_c, _ = blade_conditions()
+    xs, ys = [], []
+    for s in stations:
+        phi = local_effectiveness(s.t_metal_published_C, t_g, t_c)
+        xs.append(1.0 / s.h_gas)
+        ys.append(phi / (1 - phi))
+    slope = sum(x * y for x, y in zip(xs, ys)) / sum(x * x for x in xs)
+    implied = [y / x for x, y in zip(xs, ys)]
+    return dict(H_c=slope, implied_per_station=implied,
+                spread_pct=(max(implied) - min(implied)) / slope * 100)
+
+
+def predict_chordwise(H_c=None, stations=None):
+    stations = stations or stage1_blade_stations()
+    H_c = H_c if H_c is not None else fit_internal_conductance(stations)["H_c"]
+    t_g, t_c, _ = blade_conditions()
+    out = []
+    for s in stations:
+        t_m = (s.h_gas * t_g + H_c * t_c) / (s.h_gas + H_c)
+        out.append(dict(name=s.name, h_gas=s.h_gas, predicted_C=t_m,
+                        published_C=s.t_metal_published_C,
+                        error_K=t_m - s.t_metal_published_C))
+    return out, H_c
+
+
+def film_effectiveness_needed(station, H_c=None):
+    """the film effectiveness that would close a station's error, i.e. the
+    adiabatic wall temperature the metal implies once the internal
+    conductance is fixed by the other stations"""
+    t_g, t_c, _ = blade_conditions()
+    H_c = H_c if H_c is not None else fit_internal_conductance()["H_c"]
+    t_aw = (station.t_metal_published_C * (station.h_gas + H_c) - H_c * t_c) / station.h_gas
+    return (t_g - t_aw) / (t_g - t_c)
+
+
+LE_FILM_HOLES = dict(rows=3, holes_per_row=10, pct_w25=0.49, angle_deg=25, orientation="radial")

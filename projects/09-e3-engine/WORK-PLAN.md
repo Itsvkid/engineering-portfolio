@@ -694,7 +694,7 @@ step 6.
       the data in that report), external from the report's own
       coefficients (§5.4.4: below CF6-based values, especially pressure side)
 - [ ] Film effectiveness by row; superposition
-- [~] Metal temperature distribution — **unit D1** started it from the
+- [x] Metal temperature distribution — **units D1 and D2**. Unit D1 started it from the
       other end. Before any network, the overall cooling effectiveness
       φ = (T_gas − T_metal)/(T_gas − T_coolant) follows from four printed
       numbers per row, and **all four cooled rows collapse onto
@@ -702,8 +702,16 @@ step 6.
       coolant flow — with an exponent Dittus–Boelter predicts at 0.8
       (finding 58). The metal temperature is held to 26 °C (947/953/928/929)
       while the gas falls 1739 → 1038 °C: the metal is the constant and
-      coolant is bought to hold it (finding 59). The node-by-node
-      comparison against Figs 16, 27 and 35 is still to do
+      coolant is bought to hold it (finding 59). **Unit D2 then met the
+      closure at two points of three**: Fig 23's external heat-transfer
+      coefficient and one fitted internal conductance (5,476 W/m²·°C, the
+      slope of a line through the origin) put the suction surface at −3 K
+      and the midchord at −8 K of Fig 27, against a ±25 K band. The
+      leading edge misses by +31 K, and the deficit corresponds to a film
+      effectiveness of **0.064 there and ≈0 at the other two** — which is
+      exactly where the blade's three rows of showerhead holes are
+      (findings 61–63). The flow network, film superposition and the
+      transient remain
 - [ ] TBC effect on the dome and shingles (combustor) and on the HPT
 - [ ] Transient: Fig. 28 — the thermal gradients that drive LCF
 

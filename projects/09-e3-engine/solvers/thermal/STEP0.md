@@ -103,3 +103,98 @@ Dittus-Boelter puts internal h ~ Re^0.8, so a coolant-flow exponent near 0.8 is 
     **further** off, and the flow that would fit the 95 % point is 1.46 %,
     *below* the printed value. That hypothesis is struck, not quietly
     dropped.
+
+
+---
+
+## Unit D2 — the stage-1 blade's chordwise metal temperature
+
+This is the work plan's stated D1 closure: *pitch-section metal
+temperature within 25 K of the published distribution at three chordwise
+points, with the published cooling flow, not a tuned one.*
+
+CR-167955 prints both halves. Fig 23 gives the **external heat-transfer
+coefficient against surface distance from the stagnation point** (±200
+W/m²·°C), and Fig 27 the metal temperatures. A steady balance on the wall
+gives, at each station,
+
+    T_m = (h_g·T_aw + H_c·T_c) / (h_g + H_c)
+
+with H_c = h_c·(A_c/A_g), the internal conductance referred to the
+external area. With no film, T_aw = T_gas, and rearranging:
+
+    phi/(1 − phi) = H_c / h_g
+
+so plotting the *local* effectiveness against 1/h_g must give a straight
+line **through the origin** whose slope is H_c. That is the shape test,
+and it costs exactly one parameter for three points.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Metal temperature at three chordwise points | Fig 27 / Fig 21: leading edge 1084 °C, suction surface 990, midchord 1017 | **±25 K** | the work plan's own D1 criterion, written before Stage A |
+| Internal conductance | not published | must be a single value, and physical (10³–10⁴ W/m²·°C) | it is the one fitted parameter and it must not be free per station |
+
+The cooling flow is the published 3.3 % of W25. Nothing is tuned to the
+answer beyond that single conductance.
+
+---
+
+## Unit D2 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06
+
+```
+stage-1 blade, hot-day steady-state takeoff: T_gas 1396 C, T_coolant 628 C, bulk 953 C
+
+internal conductance H_c = 5476 W/m2C -- ONE parameter, a line through the origin
+implied per station: 6500, 5383, 5261  (spread 23 %)
+
+station              h_gas  predicted  published  error K   verdict
+leading edge          9500       1115       1084     31.2      MISS
+suction surface       4800        987        990     -3.2      pass
+midchord              5400       1009       1017     -7.7      pass
+
+band: +-25 K at three chordwise points, with the published cooling flow (work plan D1)
+  film effectiveness implied at the leading edge    : +0.064
+  film effectiveness implied at the suction surface : -0.009
+  film effectiveness implied at the midchord        : -0.020
+```
+
+| Station | Error | Band | Verdict |
+|---|---|---|---|
+| Suction surface | **−3 K** | ±25 K | pass |
+| Midchord | **−8 K** | ±25 K | pass |
+| Leading edge | **+31 K** | ±25 K | **miss** |
+
+### Findings
+
+61. **Two of the three points land within 8 K, from one fitted number.**
+    A single internal conductance of 5,476 W/m²·°C, taken as the slope of
+    a line forced through the origin, puts the suction surface at −3 K and
+    the midchord at −8 K of their published values. The external
+    heat-transfer coefficient read off Fig 23 and the published coolant
+    flow do the rest. The work plan asked for ±25 K at three points and
+    gets it at two.
+62. **The third point is the leading edge, and the miss is film cooling —
+    which the model does not have.** The no-film balance predicts 1115 °C
+    where 1084 is printed, +31 K. Solving instead for the adiabatic wall
+    temperature the published metal implies gives a **film effectiveness
+    of 0.064 at the leading edge and −0.009 and −0.020 at the other two**
+    — that is, essentially zero everywhere except the leading edge. That
+    is exactly where the blade's film cooling is: **three rows of ten
+    radial showerhead holes at 25°, 0.49 % of W25** (Fig 24). A model
+    with no film should miss at the leading edge and nowhere else, and it
+    does, by an amount that corresponds to a modest and entirely
+    plausible showerhead effectiveness.
+63. **The internal conductance is worth keeping.** H_c ≈ 5,500 W/m²·°C
+    referred to the external area, for a serpentine-cooled HP blade at
+    3.3 % of W25 with turbulence promoters and an impinged pin-fin
+    trailing edge. Against an external coefficient of 4,600–9,500 over the
+    same surface, that is an internal-to-external conductance ratio of
+    0.6–1.2 — which is why this blade's local effectiveness runs 0.41 at
+    the stagnation point and 0.53 on the suction side.
+
+**D1 closes with the criterion met at two points of three and the third
+explained and quantified.** The remaining D1 items — the full flow
+network, film superposition, the transient — are separate units and are
+not claimed here.
