@@ -721,8 +721,25 @@ cooling flow, not a tuned one.
 
 ## D2 · Combustor · 12 h
 - [ ] Liner cooling: impingement + effusion per shingle row, from the
-      combustor report; wall temperatures
-- [ ] Exit temperature profile and pattern factor — the HPT vane's input
+      combustor report; wall temperatures — **and the pressure drop from
+      geometry, which unit D5 did NOT attempt**: it needs the liner hole
+      areas and discharge coefficients, and Stage A transcribed the
+      airflow split but not the hole geometry (it is in drawings). The
+      5.0 % is a maximum requirement and the cycle uses exactly 5.0 %, so
+      nothing downstream is blocked
+- [x] Exit temperature profile and pattern factor — **unit D5**,
+      `solvers/thermal/combustor.py`. **T41 is the rotor inlet, not the
+      combustor exit**: used as the exit average it gives a pattern factor
+      of 0.386 against a 0.25 requirement. Solving the noted 0.26 instead
+      gives a combustor exit of 1503 °C, **82 °C above T41 — which is
+      exactly what the nonchargeable coolant does**, and agrees with what
+      Stage B's cycle solver computed independently from the other end
+      (55 K at max climb on 7.46 % W25 against 9.46 % here at a hotter
+      condition). Fig 5's profile peaks at 65 % height, where the HPT
+      blade's rupture-limiting section sits, and the pattern-factor limit
+      is policed only between 20 and 90 % (findings 70–72). Fig 8's 24
+      airflow labels sum to exactly 100.0 % — 40.6 % through the domes,
+      59.4 % on liner cooling and dilution
 - [ ] Loading, residence time, primary-zone equivalence ratio at the three
       rating points; pilot-only vs both domes
 - [ ] Emissions estimate against Tables XVI–XVII, method from AGARD CP-422

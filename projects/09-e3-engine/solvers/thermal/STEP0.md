@@ -6,6 +6,13 @@ after its run; results and findings are appended below it.
 *Numbering note:* units 16 and 17 belong to another session working C3's
 booster and section stacking, so Stage D's findings begin at 58.
 
+*Unit names against the work plan:* **units D1 and D2 below are both parts
+of the work plan's D1** (HPT cooling) — D1 is the bulk effectiveness of all
+four rows, D2 the chordwise distribution that D1's closure criterion names.
+**Units D3 and D4 map directly** to the plan's D3 (secondary-air map) and
+D4 (clearance control). The plan's **D2, the combustor, is not covered
+here**.
+
 ## Unit D1 — do the four cooled rows lie on one curve?
 
 Before a cooling network is built, there is a question worth asking of the
@@ -405,3 +412,90 @@ stage2        6.98          0.6   0.0419     0.041   0.0009        0.013
     "make the gap small".
 
 **D4's closure is met on both halves.**
+
+
+---
+
+## Unit D5 — the combustor exit (the work plan's D2)
+
+The plan's D2 closure has two halves: *pressure drop 5.0 % reproduced
+from the geometry, and the exit profile is what D1 used.*
+
+**The first half is not attempted, and that is stated rather than
+skipped quietly.** Reproducing the pressure drop from geometry needs the
+liner hole areas and their discharge coefficients. Stage A transcribed the
+airflow *split* — Fig 8's twenty-four labels — but not the hole geometry,
+which is in drawings. The 5.0 % is a *maximum requirement* in Table IV, and
+the cycle uses exactly 5.0 %, so nothing downstream is blocked.
+
+The second half is fully checkable, and the **pattern factor is the
+bridge** between the two reports:
+
+    PF = (T_max − T_avg) / (T_avg − T3)
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Fig 8's twenty-four airflow labels | 100.0 % of Wc | exact | printed to 0.1 |
+| Pattern factor at the HPT's design point | ≤0.25 required (Table IV); 0.26 noted in CR-167955 | ±0.02 | both printed |
+| The radial profile's peak height | 65 % (Fig 5) | — | printed |
+
+---
+
+## Unit D5 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06 (`cd solvers && python -m thermal.combustor`)
+
+```
+1. The airflow split (Fig 8)
+   pilot dome       15.9 % of Wc
+   main dome        24.7 % of Wc
+   outer liner      13.2 % of Wc
+   centerbody       16.0 % of Wc
+   inner liner      30.2 % of Wc
+   total           100.0   printed 100.0   from 24 read labels
+   domes together: 40.6 %; cooling and dilution: 59.4 %
+
+2. The pattern factor, and what it says the combustor exit was
+   T3 597 C, T40 max peak (hot streak) 1739 C, T41 design (rotor inlet) 1421 C
+   if T41 were the combustor exit average, PF = 0.386  -- against a 0.25 requirement and a noted 0.26
+   solving PF = 0.26 instead gives a combustor exit average of 1503 C,
+   which is 82 C above T41 -- the nonchargeable coolant's worth
+
+3. Fig 5's radial profile, as temperatures at that exit average
+   hub             1231 C   (profile factor -0.30)
+   at_20pct        1458 C   (profile factor -0.05)
+   peak            1594 C   (profile factor +0.10)
+   tip             1231 C   (profile factor -0.30)
+   peak sits at 65 % height; the pattern-factor limit is drawn between 20 and 90 % height
+   note: the pattern-factor limit of 0.25 is drawn as a vertical line between 20 and 90 percent height; the profile peaks at about 65 percent, where the HPT blade's rupture-limiting section sits
+```
+
+### Findings
+
+70. **Twenty-four read labels sum to exactly 100.0 % of compressor
+    flow.** 15.9 % through the pilot dome and 24.7 through the main —
+    40.6 % of the core doing combustion — and **59.4 % spent on liner
+    cooling and dilution**. Read off a drawing, one arrow at a time, and
+    closing to the printed total without adjustment.
+71. **T41 is not the combustor exit temperature, and treating it as one
+    makes the E³ appear to miss its own pattern-factor requirement by
+    50 %.** With T3 = 597 °C, a hot-streak peak of 1739 °C and the rotor
+    inlet T41 = 1421 °C, the pattern factor computes as **0.386** against
+    a required 0.25. But CR-167955 notes 0.26 for the same design point,
+    and solving that for the average gives a **combustor exit of
+    1503 °C — 82 °C above T41**. That gap is precisely what the
+    nonchargeable coolant does: it is introduced upstream of the vane-1
+    throat, cools the gas before the rotor sees it, and still does work.
+    **Stage B's cycle solver reached the same conclusion from the other
+    end**, computing 55 K between combustor exit and rotor inlet at max
+    climb with 7.46 % of W25; this design point runs 9.46 % at a hotter
+    condition, and 82 °C is what that scales to. Two stages, two methods,
+    one number.
+72. **The combustor aims its hot spot at the turbine's weakest span, on
+    purpose.** Fig 5's radial profile peaks at **65 % of blade height**,
+    and the report says plainly that this is where the HPT blade's
+    rupture-limiting section sits. The pattern-factor limit is drawn as a
+    vertical line only between 20 and 90 % height — the ends are allowed
+    to run cooler and are not policed. A combustor exit profile is not a
+    flat target with tolerance; it is shaped to the turbine's stress
+    distribution.

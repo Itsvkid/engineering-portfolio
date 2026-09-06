@@ -68,12 +68,13 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     Docker present with its daemon stopped. Installing a multi-gigabyte
     image is the user's call. Until then every C4 item waits.
 3. **Stage D (thermal) — started.** `solvers/thermal/`, its own
-    `STEP0.md`, findings 58–69. **D4 (clearance control) is closed.** Unit D1 put all four cooled rows on one
+    `STEP0.md`, findings 58–72. **D3 (secondary air) and D4 (clearance control) are closed; D2's exit profile is done.** Unit D1 put all four cooled rows on one
     effectiveness curve; **unit D2 met D1's ±25 K closure at two points of
     three** and located the third's deficit as the leading-edge film.
-    **D3 (secondary air) and D4 (clearance control) are both closed.**
     Next: film superposition and the cooling transient, the remaining
-    rim-seal cavities and the thrust balance, then D2 (combustor).
+    rim-seal cavities and the thrust balance, and the combustor's liner
+    cooling and its pressure drop from geometry — the last needs the
+    liner hole areas, which Stage A did not transcribe.
 4. Then E (mechanical), F (materials and mass), G (geometry generation),
     H (hand CAD, gated on a working install), I (verification),
     J (publication).
