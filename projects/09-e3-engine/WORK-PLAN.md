@@ -398,9 +398,22 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       end-wall and tip clearance loss, Carter deviation with the SP-36
       corrections, incidence range. **Validate on NACA TN 3916** cascades
       before touching the E³
-- [ ] **Turbine loss** per Ainley–Mathieson R&M 2974 (profile, secondary,
-      tip clearance, trailing edge), with the SP-290 vol. 2 method as the
-      cross-check. Validate on the worked cases in the report
+- [x] **Turbine loss** per Ainley–Mathieson R&M 2974 (profile, secondary,
+      tip clearance, trailing edge) — `solvers/meanline/losses.py` from
+      `data/methods/ainley-mathieson-rm2974.yaml` (Figs 4–9 digitised,
+      equations 1, 4, 5, 6, the report's stage calculation). **Validated
+      on the report's own worked example**: every row coefficient within
+      its chart-read band, the stage characteristic within 0.010 in
+      pressure ratio and 0.3 point in efficiency at four flows, choking
+      flow within 0.1 %. **Applied to the E³ LPT** it reads 0.837 (0.869
+      with the Dunham–Came aspect-ratio term, an assumption until the
+      paper is on disk) against 0.917: a 1951 correlation with no height
+      term and 1951 profile losses, the reasons named in STEP0 unit 2.
+      Strict xfails pin both
+- [ ] Turbine loss cross-check per SP-290 vol. 2 (Stewart's momentum-
+      thickness method, chapters 7–8), and the two later corrections
+      (Dunham–Came 1970, Kacker–Okapuu 1982) once their papers are on
+      disk — **unit 2b**, what closes the LPT to ±2 points
 - [ ] Stage-by-stage HPC: work split, DF per row, de Haller, stall margin
       estimate, VSV schedule effect. Compare stagewise with HPC report
       Figs. 14, 17, 18, 27

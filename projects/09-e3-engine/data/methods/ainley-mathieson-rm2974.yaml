@@ -1,0 +1,221 @@
+# Ainley & Mathieson, "A method of performance estimation for axial-flow
+# turbines", ARC R&M 2974 (NGTE R.111, 1951; printed 1955). Crown copyright
+# expired. The correlations of Figs 4-9 read from the scanned charts at
+# 300 dpi (sources/arc-rm2974-ainley-mathieson-turbine-loss.pdf, PDF pages
+# 25-27), and the report's own worked example (Appendix II, pp.14-19,
+# Figs 14-16) as the validation case. Every read carries an uncertainty.
+#
+# Sign convention (report Fig 1): outlet angles negative for a turbine.
+# Here the tables are keyed by the MAGNITUDE of the outlet angle.
+
+meta:
+  source: arc-rm2974-ainley-mathieson-turbine-loss.pdf
+  pages_read: "1-19 (text), 24-30 (figures)"
+  transcribed: 2026-09-06
+  stated_accuracy: "summary p.1: +-2.0 percent on efficiency, +-3 percent on mass flow, for turbines of the day"
+  reynolds_basis: 2.0e5 on blade chord (Figs 4, 5, 7)
+  read_off_uncertainty: {profile_loss: 0.003, stalling_incidence_deg: 1.5, lambda: 0.0008, te_factor: 0.02, outlet_angle_deg: 0.5}
+
+# Fig 4a: profile loss at zero incidence, nozzle blades (beta1 = 0),
+# t/c = 0.20, Re 2e5, M < 0.6. Y_p vs pitch/chord for each outlet angle.
+fig4a_nozzle_profile_loss:
+  src: "Fig.4a p.24"
+  s_over_c: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+  curves:
+    40: [0.052, 0.040, 0.031, 0.025, 0.022, 0.020, 0.019, 0.019, 0.019]
+    50: [0.054, 0.042, 0.033, 0.027, 0.024, 0.022, 0.021, 0.021, 0.022]
+    60: [0.057, 0.045, 0.036, 0.031, 0.028, 0.027, 0.029, 0.032, 0.035]
+    65: [0.059, 0.047, 0.039, 0.035, 0.034, 0.035, 0.038, 0.041, 0.045]
+    70: [0.062, 0.050, 0.043, 0.040, 0.040, 0.043, 0.049, 0.055, 0.060]
+    75: [0.062, 0.053, 0.048, 0.047, 0.048, 0.051, 0.056, 0.060, 0.065]
+    80: [0.063, 0.059, 0.057, 0.057, 0.059, 0.062, 0.066, 0.070, 0.075]
+  note: "75 and 80 are dashed (extrapolated) in the source; values beyond s/c 1.0 on 75 and 80 are my extrapolation"
+
+# Fig 4b: impulse blades (beta1 = -alpha2), same conditions.
+fig4b_impulse_profile_loss:
+  src: "Fig.4b p.24"
+  s_over_c: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+  curves:
+    40: [0.145, 0.113, 0.090, 0.075, 0.068, 0.066, 0.068, 0.072]
+    50: [0.146, 0.117, 0.097, 0.084, 0.077, 0.075, 0.078, 0.084]
+    55: [0.147, 0.121, 0.102, 0.091, 0.086, 0.087, 0.092, 0.100]
+    60: [0.148, 0.125, 0.109, 0.102, 0.102, 0.106, 0.113, 0.122]
+    65: [0.156, 0.132, 0.120, 0.116, 0.119, 0.126, 0.138, 0.150]
+    70: [0.162, 0.145, 0.137, 0.140, 0.150, 0.163, 0.178, 0.192]
+  note: "65 and 70 dashed in the source"
+
+# Equation (5) p.5: Y_p = {Y_p(b1=0) + (b1/a2)^2 [Y_p(b1=-a2) - Y_p(b1=0)]} (t/c / 0.2)^(b1/a2),
+# the exponent taken as the magnitude of b1/a2; t/c clipped to 0.15-0.25 on impulse-type blades.
+equation_5:
+  src: "sec 5.2(i) p.5; worked example p.17: [0.0238 + 0.74^2 x 0.0484] x 0.75^0.74 = 0.0406"
+  thickness_reference: 0.20
+  thickness_clip: [0.15, 0.25]
+
+# Fig 5: outlet angle at M2 < 0.5 vs cos^-1(o/s), straight-backed blades.
+fig5_outlet_angle:
+  src: "Fig.5 p.24"
+  acos_o_over_s_deg: [35, 40, 50, 60, 70, 80]
+  alpha2_star_deg:   [30.5, 35.5, 46.5, 57.7, 69.0, 80.0]
+  equation_1: "alpha2 = alpha2* - 4 (s/e), e the mean radius of the suction surface between throat and trailing edge; worked example: 64.1 deg -> 62.4, 51.0 deg -> 47.2"
+
+# Fig 6: profile loss at incidence over its zero-incidence value vs i/i_s.
+fig6_incidence:
+  src: "Fig.6 p.25; the six anchors are the worked example's own reads (p.18)"
+  i_over_is: [-4.0, -3.0, -2.0, -1.5, -1.0, -0.8, -0.5, 0.0, 0.5, 1.0, 1.5, 1.7]
+  yp_ratio:  [6.0, 4.28, 2.75, 2.10, 1.55, 1.39, 1.15, 1.0, 1.25, 2.0, 4.48, 6.0]
+
+# Fig 7: stalling incidence. (a) shift with s/c from the s/c = 0.75 datum;
+# (mid) outlet-angle ratio vs s/c; (b) i_s at s/c = 0.75 vs beta1/alpha2.
+fig7a_stall_shift:
+  src: "Fig.7a p.25"
+  s_over_c: [0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85]
+  delta_is_deg_common: [7.8, 6.3, 4.2, 1.7, 0.0, -1.5, -3.5]
+  branches_s_over_c: [0.85, 0.9, 0.95, 1.0]
+  branches:
+    40: [-3.5, -4.5, -5.5, -6.5]
+    50: [-3.5, -6.0, -8.5, -11.0]
+    60: [-3.5, -7.0, -11.0, -14.5]
+fig7_mid_outlet_angle_ratio:
+  src: "Fig.7 middle p.25"
+  s_over_c: [0.4, 0.75, 1.0]
+  alpha2_over_alpha2_at_075: [1.11, 1.0, 0.905]
+fig7b_stalling_incidence:
+  src: "Fig.7b p.25 — i_s (deg) at s/c = 0.75; keyed by |alpha2|; x = beta1/alpha2 with the report's sign (negative for an accelerating row)"
+  beta1_over_alpha2: [-1.0, -0.9, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 1.0]
+  curves:
+    30: [5.0, 5.5, 7.5, 8.5, 9.0, 9.5, 10.0, 11.0, 12.0, 14.0]
+    40: [5.5, 6.5, 9.0, 11.0, 12.5, 13.5, 14.5, 15.5, 16.5, 18.5]
+    50: [7.0, 8.0, 13.0, 15.5, 18.0, 19.8, 20.5, 21.0, 20.5, 19.0]
+    55: [7.5, 8.5, 16.0, 19.5, 22.5, 24.5, 25.5, 25.5, 24.0, 19.0]
+    60: [8.0, 9.0, 19.0, 24.0, 28.0, 30.0, 31.0, 30.0, 27.0, 19.0]
+    65: [10.5, 12.5, 24.0, 30.0, 35.0, 37.5, 37.5, 35.0, 30.0, 19.0]
+    70: [14.0, 17.0, 32.0, 38.0, 42.0, 43.5, 43.0, 39.5, 32.0, 19.0]
+  note: "30, 40 and 70 dashed; the -1.0 column on 65 and 70 is my extrapolation. Worked example: beta1/alpha2 = -0.74 at alpha2 48.6 -> 9.5 deg"
+
+# Fig 8: secondary-loss factor lambda vs (A2/A1)^2 / (1 + ID/OD).
+fig8_secondary_lambda:
+  src: "Fig.8 p.26"
+  x: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
+  lambda: [0.0055, 0.0058, 0.0065, 0.0075, 0.0088, 0.0105, 0.0128, 0.0158, 0.0195, 0.0235, 0.0278]
+  equation_6: "Y_s + Y_k = [lambda + B k/h] [C_L/(s/c)]^2 [cos^2 a2 / cos^3 a_m]; C_L/(s/c) = 2 (tan a1 - tan a2) cos a_m; tan a_m = (tan a1 + tan a2)/2; A1 = An1 cos a1, A2 = An2 cos a2"
+  B: {radial_tip_clearance: 0.5, shroud_seal: 0.25}
+  incidence_range: "used for -1.5 < i/i_s < 1.0, held constant outside"
+  note: "worked example: 0.115 -> 0.0065, 0.386 -> 0.0183"
+
+# Fig 9: trailing-edge thickness factor on the total loss.
+fig9_trailing_edge:
+  src: "Fig.9 p.26"
+  te_over_s: [0.0, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12]
+  factor:    [0.91, 1.0, 1.105, 1.24, 1.385, 1.53, 1.69]
+  note: "worked example: 0.01 -> 0.96"
+
+# Equation (4) p.4: outlet angle with tip clearance.
+equation_4:
+  src: "sec 5.1 p.4"
+  X: {radial_tip_clearance: 1.35, simple_shroud: 0.70}
+  form: "a2 = atan{[1 - X (k/h) cos b1 / cos a2'] tan a2' + X (k/h) (cos b1 / cos a2') tan b1}"
+
+# The worked example, Appendix II: a single-stage turbine at one speed.
+worked_example:
+  src: "Appendix II pp.14-19; Figs 13-16"
+  gas: {cp_ft_pdl_per_lb_C: 12300, R_ft_pdl_per_lb_C: 3073, gamma: 1.3330, cp_J_kgK: 1142.7, R_J_kgK: 285.5}
+  inlet: {T_K: 1100, P_psia: 40, N_over_sqrtT_rpm_sqrtK: 435, U_ft_s: 708}
+  annulus: {ID_in: 9.5, OD_in: 13.0, reference_D_in: 11.25, area_sq_in: 61.85, height_in: 1.75}
+  stator:
+    beta1_deg: 0
+    chord_in: 1.33
+    pitch_in: 0.9817
+    s_over_c: 0.739
+    opening_in: 0.429
+    e_in: 3.516
+    s_over_e: 0.279
+    t_over_c: 0.20
+    te_over_s: 0.020
+    o_over_s: 0.437
+    acos_o_over_s_deg: 64.1
+    k_in: 0
+    throat_area_sq_in: 26.97
+    results:
+      alpha2_star_deg: -62.4
+      alpha2_low_mach_deg: -63.5
+      alpha2_mach1_deg: -64.1
+      Yp: 0.0288
+      CL_over_sc: 2.83
+      cos2a2_over_cos3am: 0.566
+      lambda_x: 0.115
+      lambda: 0.0065
+      Ys_plus_Yk: 0.0295
+      Yt: 0.0583
+  rotor:
+    beta1_deg: 36.0
+    chord_in: 0.95
+    pitch_in: 0.7113
+    s_over_c: 0.749
+    opening_in: 0.447
+    e_in: 2.00
+    s_over_e: 0.355
+    t_over_c: 0.15
+    te_over_s: 0.010
+    o_over_s: 0.629
+    acos_o_over_s_deg: 51.0
+    k_in: 0.030
+    k_over_h: 0.01715
+    throat_area_zero_clearance_sq_in: 38.9
+    results:
+      alpha2_star_deg: -47.2
+      alpha2_zero_clearance_deg: -48.6
+      alpha2_with_clearance_deg: -47.3
+      alpha2_mach1_deg: -50.3
+      throat_area_with_clearance_sq_in: 39.46
+      Yp_beta1_zero: 0.0238
+      Yp_impulse: 0.0722
+      Yp_zero_incidence: 0.0406
+      beta1_over_alpha2: -0.74
+      stalling_incidence_deg: 9.5
+      A1_sq_in: 50.0
+      A2_sq_in: 40.9
+      lambda_x: 0.386
+      lambda: 0.0183
+      secondary_plus_clearance_factor: 0.0269
+      te_factor: 0.96
+      incidence_table:
+        i_over_is:      [-3.0, -1.5, -0.8, 0.0, 1.0, 1.5]
+        i_deg:          [-28.5, -14.3, -7.6, 0.0, 9.5, 14.3]
+        alpha1_deg:     [7.5, 21.7, 28.4, 36.0, 45.5, 50.3]
+        CL_over_sc:     [null, 2.88, 3.22, 3.65, 4.30, null]
+        cos2_over_cos3: [null, 0.528, 0.494, 0.465, 0.44, null]
+        Ys_plus_Yk:     [0.1178, 0.1178, 0.1378, 0.1668, 0.2186, 0.2186]
+        Yp:             [0.1739, 0.0853, 0.0565, 0.0406, 0.0812, 0.1820]
+        Yt:             [0.2917, 0.2031, 0.1943, 0.2074, 0.2998, 0.4006]
+        Yt_corrected:   [0.2800, 0.1950, 0.1867, 0.199, 0.288, 0.3845]
+  fig14_rotor_total_loss_read:
+    src: "Fig.14 p.29, the curve beyond the table's incidences, read off"
+    i_deg: [-40.0, -28.5, 15.0, 17.0]
+    Yt:    [0.43, 0.28, 0.38, 0.44]
+    read_off_uncertainty: 0.02
+  stage_characteristic:
+    src: "Fig.15 p.29, read off; Fig.16 p.30 line 1 for the selected flows"
+    W_sqrtT_over_P_lb_sqrtK_s_psi: [6.0, 7.0, 8.0, 9.0, 10.0, 10.268]
+    P3_over_P1:                    [0.915, 0.870, 0.820, 0.765, 0.660, 0.520]
+    efficiency_pct:                [74.5, 85.0, 87.5, 87.0, 83.0, 77.5]
+    read_off_uncertainty: {pressure_ratio: 0.01, efficiency_pct: 1.0}
+    choking_flow: 10.268
+    note: "the rotor chokes first; beyond 10.268 the flow is constant and the expansion moves downstream of the rotor"
+
+# ─────────────────────────────────────────────────────────────────────────
+# NOT IN R&M 2974. The aspect-ratio dependence of the secondary loss that
+# Dunham and Came added in 1970. Their paper is not on disk; the form is
+# as recalled from the published paper and from Dixon & Hall's textbook
+# account of it, and is labelled an assumption until the paper is fetched.
+# ─────────────────────────────────────────────────────────────────────────
+dunham_came_1970:
+  src: assumption
+  reference: "J. Dunham and P. M. Came, 'Improvements to the Ainley-Mathieson method of turbine performance prediction', ASME J. Eng. Power 92 (1970) 252-256 — not on disk"
+  secondary: "Y_s = 0.0334 (c/h) (cos a2 / cos b1) [C_L/(s/c)]^2 [cos^2 a2 / cos^3 a_m] — replaces lambda with a chord-to-height term"
+  clearance: "Y_k = B (c/h) (k/c)^0.78 [C_L/(s/c)]^2 [cos^2 a2 / cos^3 a_m], B = 0.47 unshrouded, 0.37 shrouded"
+  constants: {secondary: 0.0334, B_unshrouded: 0.47, B_shrouded: 0.37, clearance_exponent: 0.78}
+  note: >
+    The E3 LPT rows have h/c of 2.6 (S1) to 8 (R4); the R&M 2974 data
+    behind Fig 8 came from turbines of h/c about 1 to 3, and Fig 8 has no
+    height term. Used here as a second route, reported beside the pure
+    R&M 2974 result, never in its place.

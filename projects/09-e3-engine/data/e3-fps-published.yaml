@@ -618,6 +618,38 @@ exhaust:
     fps_projection: {mixing_effectiveness: 0.85, pressure_loss_dP_P: 0.0057, sfc_improvement: 0.029}
     best_scale_model: {mixing_effectiveness: 0.79, pressure_loss_dP_P: 0.0057, sfc_improvement: 0.026}
     original_goal:  {mixing_effectiveness: 0.75, pressure_loss_dP_P: 0.0020, sfc_improvement: 0.031}
+    original_goal_reference: "Table XXIII cites this as 'Reference 1' = Johnston et al., NASA CR-159583, Nov 1979 — not on disk in this project's sources/ (distinct from CR-159584/Patt, which is a different, later reference and is on disk)"
+    fps_text_on_the_gap: "CR-168219 p.102: 'The original pressure loss goal is now seen as unrealistic; however, better mixing effectiveness is projected based in part on an increase in mixer protrusion into the flowpath. The original sfc improvement goal can be achieved with a different combination of mixer pressure loss and mixing effectiveness.' — i.e. GE's own explanation for the 0.20%→0.57% loss growth is a deliberate trade for deeper lobe penetration, not a design miss"
+
+  # A design generation earlier — the preliminary/trade-study mixer, before the FPS's 18-lobe
+  # geometry existed. Genuinely new find, not previously transcribed anywhere in this project:
+  # a different lobe count, sized against a published nondimensional correlation, with the
+  # thermodynamic mixing loss and the parasitic mixer/duct loss computed and reported as two
+  # separate numbers by GE itself.
+  mixer_preliminary_design_task3:
+    src: "CR-135444 (Preliminary Design/Trade Studies, Task III engine) pp.246-249, 'f. Mixer Design' and 'g. Pressure Losses'"
+    lobes: 24
+    lobe_material_note: "not restated here; centerbody and mixer given elsewhere in this report as Inco 625 (p.214, 'die-formed chutes... welded to the turbine frame')"
+    sizing_method: "an empirical design-practice curve of mixing effectiveness vs. the nondimensional group PL/D_h^2 (Perimeter x mixing Length / hydraulic-diameter^2), 'based on the data obtained at General Electric on scale model and full scale engine tests as well as the data of T.H. Frost (Reference 10)'"
+    target: {mixing_effectiveness: 0.65, PL_over_Dh2: 7.3}
+    geometry_that_achieved_it:
+      mixing_plane_perimeter_m: 16.26   # 640 in
+      mixing_length_m: 0.889            # 35 in
+      integrated_avg_hydraulic_diameter_m: 1.404  # 55.5 in
+      check: "16.26 x 0.889 / 1.404^2 = 7.34, reproduces the printed 7.3 to within rounding"
+    mixing_plane_mach: 0.56
+    mixing_plane_mach_design_band: [0.50, 0.60]
+    mixing_plane_mach_note: "chosen as 'an optimization of the external boattail angle and internal losses', not mixing performance alone"
+    pressure_loss_breakdown_table_68_pct_dPT_PT:
+      src: "Table 68, p.249, Task III engine, cruise (M0.8/35kft)"
+      fan_duct_total: 1.27
+      fan_duct_mixer_chutes_friction_and_pressure: 0.11
+      core_duct_total: 0.83
+      core_duct_mixer_chutes_friction_and_pressure: 0.47
+      tail_pipe_total: 0.32
+      note: "mixer-chute rows are parasitic (friction + local pressure) losses only"
+    thermodynamic_mixing_loss_treated_separately: "p.248: 'The pressure losses due to the mixer and ducting are discussed above. However, the pressure loss due to the thermodynamic mixing of the two flows is calculated in the cycle deck based on momentum, energy and continuity equations.' — GE's own accounting keeps the irreversible-mixing floor (a momentum/energy/continuity balance across the mixing plane) out of the Table 68 hardware-loss line items entirely; they are reported as two distinct numbers, not one lumped 'mixer loss'"
+    design_evolution_note: "this Task III (~1980) preliminary design is 24 lobes at a 65% effectiveness target; the FPS final design (CR-168219, 1983) is 18 lobes at 75% (original) -> 85% (FPS projection) -> 79% (best rig) — fewer, and per the FPS text above, deeper-penetrating lobes carrying a higher effectiveness target across the life of the program"
 
 nacelle:
   src: "CR-168219 sec 5.9 pp.102-114"

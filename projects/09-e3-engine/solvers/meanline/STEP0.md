@@ -155,3 +155,143 @@ plane is part of the definition of a printed number.*
    streamline through the stator is computed rather than assumed.
 
 The figure: `figures/lpt-vector-diagrams.png`.
+
+---
+
+# Unit 2 — Ainley–Mathieson turbine loss model, validated on R&M 2974's own example
+
+*Process note, stated plainly:* the row-level correlations were checked
+against the worked example's numbers once before this section was
+written, to find out whether the chart reads and the sign conventions
+were usable at all. That run found two errors in my reading of the
+method (the sign of the 4·s/e term; λ evaluated once at zero incidence)
+and showed my profile-loss chart reads 0.002–0.004 above the authors'
+own. Both corrections are method, not tuning. The bands below were set
+from the chart read-off uncertainty recorded in the data file and from
+the report's own stated accuracy, before the stage-characteristic
+validation (Fig 15) was run.
+
+`losses.py` implements the method from `data/methods/ainley-mathieson-
+rm2974.yaml` alone: Figs 4–9 digitised, equations (1), (4), (5), (6),
+the incidence range rule, the trailing-edge factor, and the report's
+stage calculation of sec 6 with its constant gas properties.
+
+| Check | Known answer | Band | Basis of the band |
+|---|---|---|---|
+| Outlet angles: α₂*, low-Mach α₂ (stator and rotor), rotor with clearance | −62.4, −63.5; −47.2, −48.6, −47.3 | ±0.6° | Fig 5 read ±0.5° |
+| Profile loss: stator Y_p, rotor Y_p(β₁=0), Y_p(impulse), Y_p at zero incidence | 0.0288; 0.0238, 0.0722, 0.0406 | ±0.005 | two chart reads at ±0.003 each |
+| Stalling incidence | 9.5° | ±1.5° | Fig 7b read |
+| Secondary factors at zero incidence: C_L/(s/c), cos²/cos³, λ, Y_s+Y_k | 3.65, 0.465, 0.0183, 0.1668 | ±1 %, ±1 %, ±0.0008, ±5 % | closed form; Fig 8 read |
+| Rotor Y_t at the six incidences of the table | 0.280, 0.195, 0.187, 0.199, 0.288, 0.3845 | ±0.015 | the profile band × Fig 6 ratio + secondary |
+| Stage: P₃/P₁ at W√T/P = 6, 7, 8, 9 | 0.915, 0.870, 0.820, 0.765 (Fig 15) | ±0.015 | Fig 15 read ±0.01 plus the loss band |
+| Stage: efficiency at the same flows | 74.5, 85.0, 87.5, 87.0 % | ±2.0 points | the report's own stated accuracy |
+| Choking flow | 10.268 | ±2 % | report p.19; its stated ±3 % on flow |
+
+Assumptions: the constant-property stage calculation uses the report's
+K_p, R and γ; outlet angles vary linearly with Mach between 0.5 and 1.0
+(the report offers this or a sketched curve); the rotor loss is
+interpolated linearly in incidence between the table's six points, as
+Fig 14 does by eye.
+
+**Application to the E³ LPT** follows in the same unit once the method
+passes: every row's loss from Table III's solidity and trailing-edge
+blockage, the sections' pitch and thickness, the mean-line angles of
+unit 1, shroud-seal B = 0.25 and the LPT report's design clearance;
+stage efficiencies and the five-stage total against the LPT report's
+0.917 (Table I) and the Block II rig's 0.920 five-stage design point.
+Band: ±2.0 points — the method's own, and the plan's 0.5-point closure
+is what C4 must earn, not a 1951 correlation.
+
+
+---
+
+## Unit 2 after the run — nothing above was edited; what follows was added
+
+### Validation on the worked example (`tests/test_ainley_mathieson.py`)
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Outlet angles (five) | within 0.5° | ±0.6° | pass |
+| Stator Y_p | 0.0332 vs 0.0288 (+0.0044) | ±0.005 | pass — observation 1 |
+| Rotor Y_p(β₁=0), Y_p(impulse), Y_p at i=0 | +0.0015, +0.0026, +0.0018 | ±0.005 | pass |
+| Stalling incidence | 10.3° vs 9.5° | ±1.5° | pass |
+| Secondary factors at i=0 | C_L/(s/c) 3.65, cos²/cos³ 0.465, λ 0.0185, Y_s+Y_k 0.167 | ±1 %, ±1 %, ±0.0008, ±5 % | pass |
+| Rotor Y_t at the six incidences | within 0.011 | ±0.015 | pass |
+| Stage P₃/P₁ at W√T/P = 6, 7, 8, 9 | 0.914, 0.877, 0.830, 0.768 vs 0.915, 0.870, 0.820, 0.765 | ±0.015 | pass |
+| Stage efficiency at the same flows | 75.0, 85.0, 87.7, 86.9 vs 74.5, 85.0, 87.5, 87.0 | ±2 points | pass |
+| Choking flow | 10.257 vs 10.268 (−0.1 %) | ±2 % | pass |
+
+The method is reproduced. Two readings of it were wrong at the first
+row-level check and are recorded above: the 4·s/e term adds to the
+outlet-angle magnitude, and λ is evaluated once, at zero incidence. One
+data point was added after the stage check: Fig 14's rotor loss at −40°
+(0.43), because the lowest flow runs at −45° incidence, beyond the
+table's last point, and the linear extrapolation read 78.7 % where the
+figure gives 74.5.
+
+*Observation 1.* My read of Fig 4a at 63.5°, s/c 0.739 is 0.0044 above
+the authors' own read; the rotor reads are within 0.003. The 1955
+printing's 0.02-per-square grid is the limit; the report's stator
+value sits below the −60° curve as printed, which suggests the authors
+read a larger original. Worth 0.15 point of stage efficiency; recorded.
+
+### Application to the E³ LPT (`lpt_losses.py`, `tests/test_lpt_losses.py`)
+
+```
+row    s/c   t/c   te/s   h/c    a1    a2    k/h   i_s     Yp   Ys+k     Yt Ys+k DC  Yt DC      Re
+S1   0.501 0.106  0.022  1.56   0.0  61.0 0.0036  32.5 0.0453 0.0442 0.0904  0.0600 0.1064  430159
+R1   0.697 0.183  0.036  3.92  45.2  62.8 0.0032  17.9 0.0692 0.1055 0.1892  0.0694 0.1502  173306
+     stage 1: dh 73.0 kJ/kg  T 1059->997 K  p 265.7->195.8 kPa (DC 196.7; Table II chain 204.4)  eta_tt 0.8163 (DC 0.8287)
+S2   0.609 0.248  0.029  3.22  46.7  64.1 0.0028  18.8 0.0913 0.1122 0.2134  0.0789 0.1784  206495
+R2   0.725 0.207  0.034  4.83  46.1  65.6 0.0025  20.8 0.0814 0.0902 0.1840  0.0548 0.1460  140606
+     stage 2: dh 79.1 kJ/kg  T 997->930 K  p 195.8->135.2 kPa (DC 138.0; Table II chain 151.4)  eta_tt 0.7811 (DC 0.8133)
+S3   0.625 0.252  0.026  3.53  49.7  64.8 0.0023  17.9 0.0996 0.1259 0.2320  0.0758 0.1804  173913
+R3   0.728 0.210  0.031  5.46  44.5  65.5 0.0021  21.5 0.0788 0.0847 0.1734  0.0458 0.1321  112621
+     stage 3: dh 82.1 kJ/kg  T 930->859 K  p 135.2->89.8 kPa (DC 93.5; Table II chain 108.1)  eta_tt 0.7910 (DC 0.8298)
+S4   0.578 0.131  0.028  4.43  47.4  62.3 0.0019  16.7 0.0643 0.1329 0.2053  0.0599 0.1293  118384
+R4   0.733 0.134  0.039  8.03  34.6  62.0 0.0018  22.3 0.0480 0.0658 0.1249  0.0274 0.0827   64716
+     stage 4: dh 70.2 kJ/kg  T 859->797 K  p 89.8->62.7 kPa (DC 66.8; Table II chain 79.5)  eta_tt 0.8286 (DC 0.8817)
+S5   0.582 0.083  0.029  5.19  36.0  56.0 0.0016  17.8 0.0504 0.0948 0.1524  0.0404 0.0952   82884
+R5   0.713 0.084  0.027  5.88  17.0  52.5 0.0016  19.3 0.0303 0.0472 0.0802  0.0227 0.0548   68360
+     stage 5: dh 49.3 kJ/kg  T 797->753 K  p 62.7->48.4 kPa (DC 52.2; Table II chain 63.1)  eta_tt 0.8608 (DC 0.9050)
+
+LPT eta_tt: R&M 2974 as printed 0.8373; with the Dunham-Came aspect-ratio term 0.8685; LPT report Table I 0.917, status at max climb 0.915, rig 0.920
+LPT PR: 5.490 (DC 5.089); Table II chain 4.210; cycle 4.551
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Five-stage η_tt, R&M 2974 as printed | **0.837** vs 0.917 | ±2 points | **miss by 8 points** |
+| Five-stage η_tt, with the Dunham–Came c/h term (assumption) | **0.869** vs 0.917 | ±2 points | **miss by 5 points** |
+| Row chords at mid-span vs Fig 52 root/tip | within the root–tip range, R4 below both ends (the 'flask') | ±3 % | pass |
+| Trailing-edge blockage t_e/(s cos α₂) vs Table III | 6–17 % above on every row | ±25 % | pass — Table III's t_e is a little under the sections' gap |
+
+### Findings
+
+2. **A 1951 correlation reads a 1983 low-pressure turbine 8 points
+   low, and the reasons are nameable.** (a) R&M 2974's secondary-loss
+   factor λ (Fig 8) has no blade-height term; its data came from
+   turbines of h/c about 1–3, and the E³ rows run 1.6 (S1) to 8 (R4).
+   Replacing it by the Dunham–Came c/h form recovers 3 points, most on
+   the tall rear stages (stage 5 from 0.861 to 0.905). (b) The profile
+   loss is the 1951 level: Fig 4 for conventional sections, with the
+   thickness factor (t/c ÷ 0.2)^(β₁/α₂) charging the hollow, thick
+   vanes S2 and S3 (t/c 0.25) a further 18 %. Kacker and Okapuu's 1982
+   finding that post-1960 blading needs about two-thirds of the
+   Ainley–Mathieson profile loss is the known next correction; their
+   paper is not on disk and is not applied. (c) The chord Reynolds
+   numbers of the rear rows (65,000–120,000) sit below the 200,000 the
+   charts assume, which would move the prediction further down, not up.
+   The stage efficiencies rise rearward on both routes, as the
+   aspect ratio does.
+3. **The loss level and the cycle disagree on the expansion ratio.** With
+   these losses the five stages need 5.49 (5.09 with Dunham–Came) to
+   deliver the cycle's work against the cycle's 4.55 at η 0.925 and
+   Table II's pre-rematch 4.21. Consistent with finding 2: too much loss
+   per stage.
+
+**What closes C1's turbine-loss item** is therefore not a better read of
+R&M 2974 but the two later corrections and the SP-290 vol. 2 boundary-
+layer method the plan names as the cross-check (Stewart's momentum-
+thickness loss, chapters 7–8 of the volume on disk). Carried as unit 2b.
+The figure: `figures/lpt-losses.png`.
