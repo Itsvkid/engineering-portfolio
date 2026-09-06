@@ -223,3 +223,15 @@ block_ii_rig_results:
     loading:  [1.1,   1.4,   1.65,  2.0,   2.5,   3.2]
     block_i:  [0.883, 0.883, 0.885, 0.874, 0.845, 0.812]
     block_ii: [0.907, 0.900, 0.891, 0.880, 0.850, 0.815]
+
+# ─────────────────────────────────────────────────────────────────────────
+# DERIVED (METHOD.md step 6): numbers this project computed, with method
+# and validation case. Not printed in any report.
+# ─────────────────────────────────────────────────────────────────────────
+derived:
+  throughflow_blockage:
+    value: 0.955
+    uncertainty: 0.012
+    method: "B4 (solvers/e3cycle/stations.py): continuity at Table II's pitch stage-exit axial Mach against the sections' annulus at all five rotor trailing edges, with the cycle's flow (checked to Table XXI by two routes); the five read 3.4-5.5 percent under the annulus, uniformly"
+    validated_against: "LPT report sec 2.6 says the calculation model carries blockage; the value is not printed"
+    date: 2026-09-06

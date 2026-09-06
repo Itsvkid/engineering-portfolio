@@ -409,7 +409,14 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] HPT: two stages at 56.5 / 43.5 % work, cooled-turbine efficiency
       definition matching the report's (thermodynamic vs primary)
 - [ ] LPT: five stages, loading and flow coefficient per stage, stage 4
-      acoustic gap
+      acoustic gap — **kinematics done** (`solvers/meanline/lpt.py`,
+      unit 1 of `solvers/meanline/STEP0.md`): from the cycle state, Δh and
+      α₂ per stage and the sections' pitch radii, 28 of 50 Table II pitch
+      quantities inside their bands, loading on four of five stages; the
+      22 misses are four systematic findings (station plane; Table II's φ
+      and reaction columns not its own angles' kinematics; its stage PRs
+      are the pre-rematch cycle's, product 4.21 vs 4.55; β₂ 3–7° low,
+      carried to C2). Loss model and efficiency are unit 2
 - [ ] **Derive the stage counts** from loading limits, then compare with
       1 / ¼ / 10 / 2 / 5
 
