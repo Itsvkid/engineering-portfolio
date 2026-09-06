@@ -797,9 +797,18 @@ within 0.04 % of span, five times inside the band.
 # STAGE E — Mechanical design · 90 h
 
 ## E1 · Blades · 24 h
-- [ ] Centrifugal stress per row from the C3 sections — area distribution,
-      taper, stacking; compare with HPC Table X `centrifugal_stress` all
-      ten stages
+- [x] Centrifugal stress per row — **unit E1**,
+      `solvers/mechanical/blade_stress.py`, and **E1's closure is met**:
+      all ten stages within **6.5 %** against a 10 % band, from the
+      section geometry alone (Table XXII's chord and t/c at twelve
+      sections, the root and tip radii, one speed, one density — the
+      airfoil shape constant cancels because only A(r)/A_root enters).
+      **The material crossover falls out of the data at stages 4/5** —
+      titanium forward, nickel aft, and neither works for the other group
+      — which is exactly where CR-168219 says the rotor is inertia-welded
+      (finding 74). Table X's stresses are at the **deteriorated-engine
+      13,948 rpm**, not the 12,303 aero design point; using the latter
+      reads every stage 22 % low (finding 75)
 - [ ] Gas bending from the C1 loads; tilt to cancel; compare Table X
       `max_root_stress`
 - [ ] **FEA in CalculiX** on HPC rotor 1, HPT blade 1, LPT blade 1: mesh

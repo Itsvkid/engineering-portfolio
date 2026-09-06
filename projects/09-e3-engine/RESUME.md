@@ -75,9 +75,16 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     rim-seal cavities and the thrust balance, and the combustor's liner
     cooling and its pressure drop from geometry — the last needs the
     liner hole areas, which Stage A did not transcribe.
-4. Then E (mechanical), F (materials and mass), G (geometry generation),
-    H (hand CAD, gated on a working install), I (verification),
-    J (publication).
+4. **Stage E (mechanical) — started.** `solvers/mechanical/`, its own
+    `STEP0.md`, findings 73–76. **Unit E1 met E1's closure**: all ten HPC
+    blade root stresses within 6.5 % of Table X from geometry alone, and
+    the blade material crossover fell out of the data at the inertia weld.
+    Next: gas bending and the root stress, HPT blade creep by
+    Larson–Miller against the published rupture life, then E2 (discs),
+    E3 (vibration and Campbell diagrams), E4 (rotordynamics),
+    E5 (attachments).
+5. Then F (materials and mass), G (geometry generation), H (hand CAD,
+    gated on a working install), I (verification), J (publication).
 
 Carried, unresolved, and worth picking up in C3 or later: the LPT's rotor
 inlet relative angle 3–7° low at pitch (C1 unit 1 finding 4), the HPT
