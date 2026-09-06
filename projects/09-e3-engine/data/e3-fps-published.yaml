@@ -140,6 +140,43 @@ bearings:
     src: "CR-168219 sec 5.7.4 p.100; sec 5.2.1 p.52"
 
 # ─────────────────────────────────────────────────────────────────────────
+# TURBINE (REAR) FRAME.  Downstream of LPT stage 5, upstream of the mixer.
+# Structural AND aerodynamic — the exact dual-duty part §11 of the vault's
+# Engine-Systems note discusses. Not previously transcribed; found while
+# answering "how is LPT exit swirl corrected".
+# ─────────────────────────────────────────────────────────────────────────
+turbine_rear_frame:
+  src: "CR-168219 sec 5.6 pp.90-95; Figs.34-36"
+  functions:
+    - maintain rotor-system alignment within the static structure
+    - transmit loads across the gas flowpath
+    - provide engine structural spring elements
+    - help maintain airfoil tip clearances
+    - "designed for removing residual turbine swirl (p.90)"
+    - support the centerbody, mixer, and the No.5 bearing housing
+    - three engine mount lugs and ground-handling features
+    - route sump lube lines across the gas flowpath
+    - vent ACC air to ambient (center vent tube)
+    - acoustic treatment for noise
+  construction:
+    outer_casing: variable-thickness polygonal casing, chem-milled panels between strut ends, Inco 718
+    radial_struts: 12
+    strut_material: Inco 718; fabricated, machined strut ends
+    strut_aero: "cambered to remove residual turbine swirl — Fig.36 caption: '12 Radial Struts Cambered To Eliminate Swirl'; text p.95: 'the struts have been cambered to remove residual turbine swirl'"
+    strut_structural_role: radial (not semitangential) struts chosen for a required spring rate of 1,751,181 N/cm (1e6 lbf/in) from the No.5 bearing to the strut plane at the casing — shorter and lighter than semitangential struts would be for the same rate
+    thermal_management: sheet-metal heat shield on the outer casing (radiation shield, slows casing thermal response); forward hub ring convectively heated by flowpath gas bled radially inward between the LPT last stage and the frame hub (0.147% W25); aft hub ring heated similarly via a baffle (0.05% W25) — both vent to the center vent tube
+  note: >
+    This is the same part CR-168219's mass table (weights.lpt_module) groups
+    as "frame_mixer_centerbody: 221 kg" and the bearings block already cites
+    for bearing No.5 ("mounted to the aft turbine frame") and the exhaust
+    block for "aft mount links positioned over the turbine frame". No
+    published numeric residual-swirl angle downstream of the frame was
+    found (unlike Table II's pre-frame stage-5 exit swirl, which IS
+    published at hub/pitch/tip — see lpt-aero.yaml vector_diagrams.stage5).
+    The strut count, spring rate and swirl-removal function are as printed;
+    a per-span camber schedule for the struts is not published.
+
+# ─────────────────────────────────────────────────────────────────────────
 # THE VALIDATION TARGET.  Run the cycle model with the component performance
 # below, at the design point above, and reproduce this table.
 # ─────────────────────────────────────────────────────────────────────────
@@ -564,6 +601,7 @@ lpt:
 # ─────────────────────────────────────────────────────────────────────────
 exhaust:
   src: "CR-168219 sec 5.8 pp.101-104"
+  upstream_deswirl: "the turbine rear frame's 12 radial struts, immediately ahead of the mixer, are cambered to remove residual LPT exit swirl before it reaches the mixer inlet — see turbine_rear_frame block above (sec 5.6 pp.90-95)"
   type: full-length duct, mixed flow, single exhaust nozzle
   nozzle: converging-diverging, low area ratio
   mixer:

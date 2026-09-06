@@ -192,7 +192,8 @@ def solve(rating: Rating, inp: Inputs, *, mixed=True, mixer_eff=None, extra_loss
                   w_core, w_fuel, f, transition_loss, p6_core / p6_byp, p4 / p45, p45 / p5,
                   (fg_mix - fg_sep) / fg_sep * 100,
                   dict(t0=t0, p0=p0, t13=t13, p13=p13, t23=t23, p23=p23, t25=t25, p25=p25, t3=t3, p3=p3, t4=t4, p4=p4,
-                       t41=t41, t45=t45, p45=p45, t5=t5, p5=p5, t6=t6, p6=p6, w41=w41, w45=w45, w5=w5, w6=w6))
+                       t41=t41, t45=t45, p45=p45, t5=t5, p5=p5, t6=t6, p6=p6, w41=w41, w45=w45, w5=w5, w6=w6,
+                       hpt_dh_per_kg=hpc_power / (w41 * eta_mech), lpt_dh_per_kg=fan_power / (w45 * eta_mech)))
 
 
 def solve_rating(rating: Rating, inp: Inputs, **kw):

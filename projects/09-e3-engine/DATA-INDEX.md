@@ -133,12 +133,14 @@ front-matter offset (given per report below) to get the PDF page.
 | HPT stage exit annulus areas | **T** | HPT report Fig. 1 p.7 (design points ≈ 0.0895 / 0.151 m²) |
 | Whole engine | **D** | CR-168219 Fig. 1 p.4 |
 | Nacelle GA, inlet, exhaust | **D** | CR-168219 Fig. 40 p.106 |
+| **Annulus by continuity at max climb** — `solvers/e3cycle/stations.py`, `figures/annulus.png`: HPT stage exits −3.6 / +0.2 % against Fig 3; HPC −5.5 / −10.2 % geometric, −2.5 / −0.2 % with Table XXI's blockage 0.97 / 0.90; LPT stage exits at pitch Mach a uniform 3.4–5.5 % under the sections (an unprinted 4–5 % blockage); vane-1 LE Mach 0.32 by continuity against Fig 7's 0.40; fan-face Mach 0.63. Turbine cycle-match tables by two routes: HPT W41√T/P +0.8 %, Δh/T +0.7 %; T49 +0.25 %; LPT W49√T/P −0.5 %, Δh/T +2.8 % | **D** | derived; B4, `tests/test_e3stations.py`, findings in `solvers/e3cycle/STEP0.md` |
 
 ## Discs, shafts, bearings, structure
 
 | Quantity | Status | Source |
 |---|---|---|
 | **Bearing arrangement** — 5 bearings, 2 sumps, which shaft each supports, thrust vs. roller, intershaft No. 4 | **T** | CR-168219 §5.7.1–5.7.3 pp.96–99; Figs. 37, 38 |
+| **Turbine (rear) frame** — 12 radial struts, Inco 718 polygonal casing, spring rate 1.75×10⁶ N/cm bearing-to-strut-plane, No.5 bearing housing/mixer/centerbody support, 3 mount lugs; **struts explicitly cambered to remove residual LPT exit swirl** (Fig.36 caption) | **T** | CR-168219 §5.6 pp.90–95; Figs. 34–36; `data/e3-fps-published.yaml` `turbine_rear_frame` |
 | PTO gearbox location and drive | **T** | CR-168219 §5.7.2 p.96 |
 | Sump sealing and venting | **T** | CR-168219 §5.7.2–5.7.3 pp.96–98 |
 | HPC rotor construction — inertia-welded, single bolt joint, bore-cooled | **T** | CR-168219 §5.2.2 p.52 |

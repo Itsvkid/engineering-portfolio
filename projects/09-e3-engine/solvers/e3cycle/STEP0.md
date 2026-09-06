@@ -144,3 +144,107 @@ Convergence: bisection on the fuel–air ratio to 1e-10, Newton inversions
 to 1e-6 relative; the sfc is reported to four figures and does not move
 in the fifth when the Newton tolerance is tightened to 1e-9 (step 6 —
 there is no grid to refine).
+
+---
+
+# Step 0 for B4 — station properties and the annulus, written before the run
+
+`stations.py` takes the max-climb solve (the cycle match point, which every
+component report names as its aerodynamic design point) and, at each
+station where a report gives both a design Mach number and dimensioned
+radii, computes the annulus area by continuity with real-gas static
+properties and compares it with the transcribed annulus. It also runs the
+two-route checks against the turbine cycle-match tables.
+
+| Check | Known answer | Band | Source of the known answer |
+|---|---|---|---|
+| Fan-face specific flow | 208.9 kg/s·m² with the fan annulus from r 105.4 / 36.05 cm | ±1 % | CR-165148; engine-flowpath.yaml |
+| HPC rotor-1 inlet annulus | 0.2869 m² at meridional Mach 0.602, Table XXI's pitch swirl | ±3 % | hpc-flowpath.csv R1 LE; hpc-stagewise.yaml |
+| HPC exit annulus | 0.0354 m² at meridional Mach 0.30 (23:1 operating line), OGV exit swirl 4° | ±4 % — a ±0.01 read-off on the Mach is ±3 % | hpc-flowpath.csv S10 TE; hpc-stagewise.yaml |
+| HPT stage-1 exit annulus | 0.0925 m² (Fig 3) at Mach 0.34 with 16° swirl; 56.5 % of the work in stage 1 at the overall efficiency | ±4 % | e3-fps-published.yaml hpt |
+| HPT stage-2 exit annulus | 0.1518 m² (Fig 3; Fig 1 reads 0.151) at Mach 0.42, no swirl | ±3 % | same |
+| HPT corrected flow W41√T41/P41 | 0.8643 g·√K/(s·Pa), W41 = combustor exit + nonchargeable coolant | ±2 % | CR-168219 Table XVIII |
+| HPT Δh/T41 | 355.5 J/(kg·K) | ±2 % | Table XVIII |
+| LPT inlet temperature T49 | 1056.3 K | ±1.5 % | CR-168219 Table XXI |
+| LPT corrected flow W49√T49/P49 | 3.936 g·√K/(s·Pa) | ±2 % | Table XXI |
+| LPT Δh/T49 | 326.5 J/(kg·K) | ±3 % — the LPT report's Table II stage sum is 2.5 % above Table XXI's (pre- and post-rematch) | Table XXI |
+| LPT vane-1 leading-edge annulus | 0.1940 m² at Mach 0.40 (Fig 7, both walls) | ±4 % | lpt-flowpath.csv S1 LE; lpt-aero.yaml |
+| LPT stage 1–5 exit annuli | the sections' rotor trailing-edge annulus at Table II's stage-exit axial Mach, the state from Table II's Δh and pressure ratio per stage | ±5 % — Table II's hub-to-tip Mach spread is ±10 % on the flux; the mass-flux mean of the three is used | lpt-flowpath.csv; lpt-aero.yaml |
+
+Assumptions, stated first: max climb is the design point of every
+component; no total-pressure loss in the HPT–LPT transition duct (none is
+listed); the two HPT stages share the overall efficiency; the stage-7
+coolant rejoins at HPT exit as in B2, so the stage-1 exit flow is W41; the
+LPT inlet is swirl-free (Table III's stage-2 exit swirl is 0°); the fan
+specific flow is on the corrected flow, as CR-165148 defines it.
+
+Plots: `figures/annulus.png` — hub and tip from the tables, the
+continuity-implied tip radius at each check station with its band;
+`figures/ts-diagram.png` — the max-climb cycle on T–s with Table XII's T41
+and Table XXI's T49 as the published points.
+
+---
+
+## B4 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06 (`cd solvers && python -m e3cycle.stations`)
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Fan-face specific flow | 209.6 vs 208.9 (+0.34 %); fan-face Mach 0.634 by continuity | ±1 % | pass |
+| HPC rotor-1 inlet annulus | −5.45 % geometric; **−2.53 % with Table XXI's inlet blockage 0.97** | ±3 % | miss / pass |
+| HPC exit annulus | −10.15 % geometric; **−0.17 % with the exit blockage 0.90** | ±4 % | miss / pass |
+| HPT W41√T/P | 0.8711 vs 0.8643 (+0.79 %) | ±2 % | pass |
+| HPT Δh/T41 | 357.9 vs 355.5 (+0.68 %) | ±2 % | pass |
+| HPT stage-1 exit annulus | −3.58 % (interstage 1275 K; stage PRs 2.30 / 2.17 at the 56.5 % split) | ±4 % | pass |
+| HPT stage-2 exit annulus | +0.19 % | ±3 % | pass |
+| T49 | 1058.9 vs 1056.3 K (+0.25 %) | ±1.5 % | pass |
+| LPT W49√T/P | 3.915 vs 3.936 (−0.54 %) | ±2 % | pass |
+| LPT Δh/T49 | 335.8 vs 326.5 (+2.84 %); the solver's Δh 355.6 kJ/kg is +0.5 % on Table II's stage sum 353.8 | ±3 % | pass |
+| LPT vane-1 LE annulus | −18.5 % at Fig 7's 0.40; continuity puts the LE Mach at **0.316** | ±4 % | **miss** — finding 2 |
+| LPT stage exits, h/p/t mean | −14.7 / −17.2 / −16.4 / −13.7 / −6.1 % | ±5 % | **miss** — finding 3 |
+| LPT stage exits, pitch Mach only (diagnostic) | −3.4 / −5.5 / −4.1 / −5.2 / −3.7 % | ±5 % | three of five; uniform |
+
+The check that misses by my own error was the first run's rotor-1 inlet
+at +44 %: the swirl was read from the row's β column (the relative angle,
+56°) instead of the IGV exit α (10.0°). Fixed by reading the column by
+name; recorded here so the number is not mistaken for a finding.
+
+### Findings
+
+1. **The geometric annulus reads short by exactly the published
+   blockage.** Table XXI's through-flow carries a blockage of 0.97 at the
+   inlet and 0.90 at the exit (HPC report p.19); continuity at the design
+   meridional Mach reads the exit annulus 10.2 % short and the inlet 5.5 %.
+   With the blockage the exit closes to 0.2 % and the inlet to 2.5 %. The
+   E³ compressor runs with a tenth of its exit annulus in end-wall
+   boundary layer, and that is design intent, not a discrepancy.
+2. **Fig 7's vane-1 leading-edge Mach is not the mean-flow Mach.** The
+   sections' annulus and the cycle's flow, both checked to within 1 % by
+   other routes, put the LE meridional Mach at 0.316; the axisymmetric
+   duct analysis reads 0.40 on both walls of a coarse plot whose radii
+   are themselves 5–10 % off the sections. The HPT exit (0.42 at 0.1518 m²)
+   diffusing to 0.194 m² gives 0.32 by continuity, so the sections and
+   Table III agree with each other and Fig 7 is the odd one out.
+3. **Table II's hub and tip Mach columns do not carry the flow.** Equal
+   weighting of hub/pitch/tip axial Mach (0.335 / 0.261 / 0.303 on
+   stage 1 — the 0.20-reaction hub exits fast) overstates the flow by
+   6–17 %. The pitch value alone lands every stage 3.4–5.5 % under the
+   sections' annulus, uniformly from stage 1 to 5 — the signature of a
+   through-flow blockage of 4–5 %, which the LPT report says it applies
+   (sec 2.6, "blockage and radial loss gradients") and does not print.
+   The number is inferred, and labelled so.
+
+### Station table, max climb (10.67 km, M0.8, ISA+10)
+
+| Station | 0 | 13 | 23 | 25 | 3 | 4 | 41 | 45 | 5 | 6 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| T_t, K | 258.2 | 304.4 | 304.9 | 304.9 | 796.5 | 1572.8 | 1517.2 | 1058.9 | 749.1 | 366.3 |
+| p_t, kPa | 36.3 | 61.1 | 61.8 | 60.4 | 1395.5 | 1325.7 | 1325.7 | 265.7 | 58.4 | 59.8 |
+
+Flows, kg/s: fan 244.9 (646 corrected), core 31.8, bypass 213.1,
+combustor 26.7, W41 29.7, W49 32.0, LPT exit 32.4, mixed 245.5, fuel 0.74.
+
+**B4 closes:** the computed annulus is inside the band at every
+dimensioned HPT station; the disagreement elsewhere is quantified and
+explained, twice by a published blockage and once by a coarse figure.

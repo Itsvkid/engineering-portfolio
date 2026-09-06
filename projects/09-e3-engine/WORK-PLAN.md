@@ -355,14 +355,34 @@ Second finding: fan hub PR × HPC PR exceeds the printed OPR by 1.4–2.3 %
 takes it from the OPR and records it (2.22 / 1.84 / 1.41 %).
 
 ## B4 · Station properties and the annulus · 8 h
-- [ ] T, p, ρ, ṁ, c_x, Mach at every station in `flowpath.stations`
-- [ ] Annulus area by continuity at the axial Mach each row was designed to
-      (HPC report Fig. 12 pitch-line meridional Mach; HPT Fig. 5)
-- [ ] Computed hub/tip against digitised hub/tip — **the meridional plot**
+- [x] T, p, ṁ at every cycle station; ρ, c_x, Mach at every station a
+      report gives a design Mach for — `solvers/e3cycle/stations.py`
+- [x] Annulus area by continuity at the axial Mach each row was designed
+      to (HPC Fig 12 meridional Mach; HPT Table III exit Mach; LPT Table II
+      and Fig 7), real-gas static properties
+- [x] Computed hub/tip against the tables' hub/tip — **the meridional
+      plot**, `solvers/e3cycle/figures/annulus.png`, with the pass band
+      drawn on every check station
 
 *Closes when:* the computed annulus lies inside the digitising uncertainty
 of NASA's at every station where NASA's is dimensioned (HPT), and the
 disagreement elsewhere is quantified and explained.
+
+*Status 2026-09-06 — closed.* HPT stage-1 and stage-2 exits −3.6 % and
++0.2 % against Fig 3 at Table III's exit Mach numbers. The turbine
+cycle-match tables close by two routes each: HPT W41√T/P +0.8 % and
+Δh/T +0.7 % (Table XVIII), T49 +0.25 %, LPT W49√T/P −0.5 % and Δh/T
++2.8 % (Table XXI); the fan-face specific flow +0.3 %. **Three findings**
+(STEP0 B4): the HPC geometric annulus reads 5.5 / 10.2 % short at inlet /
+exit and closes to 2.5 / 0.2 % with Table XXI's own blockage 0.97 / 0.90;
+Fig 7's vane-1 LE Mach 0.40 is 18 % off the sections and the cycle, which
+put it at 0.32; Table II's hub/tip Mach columns cannot be equal-weighted
+(6–17 % over), and at the pitch Mach all five LPT stage exits sit a
+uniform 3.4–5.5 % under the sections' annulus — a through-flow blockage of
+4–5 % the LPT report applies and does not print. Strict xfails pin each.
+
+**Stage B closes** with two items carried: the mixer level to Stage H
+(B1), the constant-thrust day effect at takeoff to Stage C (B3).
 
 ---
 

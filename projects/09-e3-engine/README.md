@@ -85,8 +85,11 @@ phase that designs it out.
 
 This one starts from the thermodynamics and lets the geometry fall out of
 it. The headline figure is not the cutaway. It is **computed annulus radius
-against NASA's published annulus radius**, then **ten Campbell diagrams
-against NASA's ten**, then the render.
+against NASA's published annulus radius** — the first version is
+[`solvers/e3cycle/figures/annulus.png`](solvers/e3cycle/figures/annulus.png),
+continuity at each report's design Mach against the transcribed walls with
+the pass band drawn — then **ten Campbell diagrams against NASA's ten**,
+then the render.
 
 ## What it builds on
 
@@ -129,8 +132,9 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 361 tests, plain interpreter
+python -m pytest tests/     # 388 tests, plain interpreter
 python solvers/e3cycle/run.py   # Stage B: the three Table XII ratings, the mixer, sensitivities
+(cd solvers && python -m e3cycle.stations)   # B4: station table, annulus checks, the two figures
 ```
 
 Stage B's cycle solver is `solvers/e3cycle/`; its `STEP0.md` states every
