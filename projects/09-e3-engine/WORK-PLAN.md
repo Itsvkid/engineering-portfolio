@@ -239,11 +239,10 @@ independent cross-check.
 
 ## A3 · Digitise every flowpath · 8 h
 
-- [ ] **LPT airfoil coordinates** — the appendix (pp.143–173) tabulates every
-      row at 10/50/90 % span as (Z, R, Rθ) in inches, suction and pressure
-      surfaces, ~45 points each: ~2,700 triples. The only printed source of
-      the E³'s actual turbine airfoil shapes. OCR then check: monotonic Z on
-      each surface, LE/TE closure, extents against Figs 9–18. Budget 6 h.
+- [x] **LPT airfoil coordinates** — all 30 sections transcribed from the
+      appendix page images (the OCR layer was a second route, 30–70 % clean),
+      2,879 triples, held by the section checker and by tests against Fig 52
+      chords, Table VII radii and gas-path order. `data/lpt-airfoils/`
 - [ ] Fan and booster — CR-168219 Fig. 13, scaled to 2.11 m; fan hardware
       report may give dimensions directly
 - [ ] HPC — HPC report Fig. 15 CAFD flowpath against Table X radii
