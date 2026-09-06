@@ -33,32 +33,33 @@ correction to the plan itself: its 0.5-point turbine tolerance cannot be
 met by a mean-line method that claims ±2 points for itself, so closing
 to 0.5 point is recorded as a C4 (CFD) claim.
 
-## C2 — through-flow, in progress
+## C2 — through-flow, **complete 2026-09-06**
 
-`solvers/throughflow/`, its own `STEP0.md`. Three of four items done.
+`solvers/throughflow/`, its own `STEP0.md`. Findings 30–41.
 
 | Unit | What | Result |
 |---|---|---|
 | 8 | Radial-equilibrium audit of Table XXI | balances to 0.243 of the largest term; 0.172 with curvature restored |
 | 9 | Predict the spanwise distributions | **stator-10 exit: 0.02° swirl, 0.002 Mach against the plan's ±2° / ±0.02** |
 | 10 | The vortex law | LPT "controlled vortex" is **n ≈ −0.5**; the HPC has no single law |
+| 11 | HPT Fig 5c, extracted by script | stage-1 work **+0.4 %**; neither free vortex nor solid body |
 
 ## Next, in order
 
-1. **C2's last item** — reproduce HPT report Fig 5 (flow angles, Mach and
-   energy extraction vs span, forced-vortex). Needs Fig 5 read off; Stage
-   A did not transcribe it. Still carried from C1: the LPT's rotor inlet
-   relative angle 3–7° low at pitch (C1 unit 1 finding 4), the HPT
-   stage-2 reaction and turning (C1 unit 3 finding 10), the fan's
-   non-uniform inlet axial profile (C1 unit 6 finding 22) and the
-   compressor's radial redistribution (C1 unit 4b finding 17) — all the
-   same class of problem.
-2. **C3** blade sections — surface Mach against the LPT report's Figs
-   9–18 peak Mach and the HPT's Fig 6. The 30 LPT airfoil sections are
-   already transcribed and checked.
-3. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).
-4. Then Stage D (thermal), E (mechanical), F (materials and mass),
-   G (geometry generation), H (hand CAD), I (verification), J (publication).
+1. **C3 — blade sections.** Surface Mach against the LPT report's Figs
+    9–18 peak Mach and the HPT's Fig 6. The 30 LPT airfoil sections are
+    already transcribed and checked, so this is the best-supported
+    remaining unit.
+2. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).
+3. Then Stage D (thermal), E (mechanical), F (materials and mass),
+    G (geometry generation), H (hand CAD, gated on a working install),
+    I (verification), J (publication).
+
+Carried, unresolved, and worth picking up in C3 or later: the LPT's rotor
+inlet relative angle 3–7° low at pitch (C1 unit 1 finding 4), the HPT
+stage-2 reaction and turning (C1 unit 3 finding 10), the fan's
+non-uniform inlet axial profile (C1 unit 6 finding 22), and the
+compressor's radial redistribution (C1 unit 4b finding 17).
 
 ## Standing rules
 

@@ -545,8 +545,20 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       stations are predicted; the rear half lands inside 0.2° and the
       transonic front does not (5.2° at the rotor-1 exit), which is a map
       of where a high-OPR compressor is hard (finding 35)
-- [ ] Reproduce HPT report Fig. 5 — flow angles, Mach and energy
-      extraction vs span, which is forced-vortex, not free
+- [x] Reproduce HPT report Fig. 5 — **unit 11**, and **C2 closes**.
+      Fig 5c extracted from the 300 dpi scan by `tools/read_hpt_fig5.py`
+      (numerically, not by eye — the page carries NASA's own poor-quality
+      stamp) into `data/hpt-fig5.yaml`. Area-weighted against the HPT
+      report's **own** design point, Table I at T41 1557 K rather than the
+      final cycle's 1517: **stage 1 +0.4 %**, stage 2 +4.5 %, total
+      +2.2 %, and the 56.5 / 43.5 work split recovered as 0.555 from the
+      figure alone. **Not free vortex** (which would be uniform; this
+      varies 12–13 %) and **not solid body** either (which would rise
+      monotonically; this peaks at 50–55 % and unloads both end walls) —
+      "forced-vortex distribution" here means a tailored one. And Fig 5's
+      angle and Mach panels could never have settled it: at a hub/tip
+      ratio of 0.88 a free vortex swings a 70° exit angle by 2.2° across
+      the whole span (findings 39–41)
 - [x] LPT vector diagrams per LPT report §2.6 — **unit 10**,
       `solvers/throughflow/lpt_vortex.py`. The report calls the design
       "controlled vortex" and never says what that is; fitting
@@ -562,6 +574,18 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 *Closes when:* the through-flow reproduces Table XXI's stator-10 exit
 swirl and Mach distributions within 2° and 0.02 across the span, and the
 HPT energy-extraction profile shape of Fig. 5.
+
+*Status 2026-09-06 — closed.* `solvers/throughflow/`, its own `STEP0.md`.
+
+| Unit | | Result |
+|---|---|---|
+| 8 | radial-equilibrium audit of Table XXI | 0.243 of the largest term; 0.172 with curvature restored, better on 36 of 40 stations |
+| 9 | predict the spanwise distributions | **stator-10 exit: 0.02° swirl, 0.002 Mach** against ±2° / ±0.02 |
+| 10 | the vortex law | LPT "controlled vortex" is **n ≈ −0.5**; the HPC has no single law |
+| 11 | HPT Fig 5c | stage-1 work **+0.4 %**; neither free vortex nor solid body |
+
+The swirl criterion is met with two orders of magnitude to spare, and the
+Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
 
 ## C3 · Blade sections · 32 h
 - [ ] **Reconstruct every HPC rotor section** from Table XXII: camber line

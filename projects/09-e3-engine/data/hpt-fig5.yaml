@@ -1,0 +1,28 @@
+# HPT report CR-167955 Figure 5c, "Blading Parameters" -- stage energy
+# extraction against annulus height, read off the 300 dpi scan by
+# tools/read_hpt_fig5.py (not by eye). The page carries NASA's own
+# "ORIGINAL PAGE IS OF POOR QUALITY" stamp; see the uncertainty below.
+
+meta:
+  src: "CR-167955 Fig.5c p.13 (PDF page 22); extracted by tools/read_hpt_fig5.py"
+  transcribed: 2026-09-06
+  method: rightmost thin dark run per scan line inside the plot box, excluding gridlines and box edges
+  read_off_uncertainty_kJ_kg: 5
+  axis: {y: annulus height percent, x: stage energy extraction kJ/kg}
+  as_printed: >
+    The stage-1 panel's four labelled gridlines are evenly spaced to
+    under a pixel (289.7 px per 50 kJ/kg), so its box spans exactly
+    200-350. The stage-2 panel's single interior gridline sits 303.5 px
+    from its left edge; at the stage-1 scale that is 252.4, not the 250
+    it is labelled, and its right-hand box edge falls at about 295-299
+    rather than the 300 the axis suggests. Calibrating on the two
+    labelled gridlines gives a scale 5.6 percent finer than assuming 300
+    at the edge. Recorded, not corrected: the panel is hand-drawn and
+    the page carries NASA's own poor-quality stamp.
+
+stage1:
+  pct_height: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 65, 70, 75, 80, 85, 90]
+  dh_kJ_kg:   [285.3, 293.9, 301.9, 307.3, 312.3, 316.4, 319.6, 321.8, 323.3, 323.6, 322.4, 321.0, 317.9, 314.2, 309.2, 302.7]
+stage2:
+  pct_height: [5, 10, 15, 20, 25, 35, 45, 50, 55, 60, 65, 70, 75, 85, 90, 95]
+  dh_kJ_kg:   [229.4, 233.6, 237.3, 246.6, 245.9, 254.3, 261.1, 262.2, 262.2, 261.3, 259.5, 257.3, 254.6, 248.4, 245.8, 242.7]

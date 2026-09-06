@@ -270,3 +270,136 @@ HPC exponent over the nine swirling stators: -0.764 to +0.540 -- no single law
 
 **C2's LPT item closes.** Only the HPT's Fig 5 forced-vortex comparison
 remains, and it needs a figure read off that Stage A did not transcribe.
+
+
+---
+
+## Unit 11 — the HPT's spanwise work, and what "forced vortex" can be tested
+
+CR-167955 §2.3 says its through-flow "gradients characterize the
+forced-vortex flow distribution and small gradients in stage energy
+extraction", and prints that distribution as **Fig 5c** and nowhere else.
+Stage A left it as a figure. `tools/read_hpt_fig5.py` now extracts it
+from the 300 dpi scan numerically — the rightmost thin dark run per scan
+line inside the plot box, excluding gridlines and box edges — because the
+page carries NASA's own "ORIGINAL PAGE IS OF POOR QUALITY" stamp and
+eye-reading it would not be reproducible.
+
+Two vortex laws make a testable prediction about that curve:
+
+| law | angular momentum | what Δh(r) does |
+|---|---|---|
+| free vortex | r·c_θ constant | **uniform** across the span |
+| solid body (forced) | c_θ ∝ r | **∝ r²**, rising monotonically |
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Area-weighted Δh, each stage | the HPT report's own design-point work × the printed 56.5 / 43.5 split | ±5 % | ±5 kJ/kg read + axis calibration + area weighting |
+| Work split from Fig 5c alone | 0.565 | ±0.03 | same |
+| Spread of Δh across the span | must exceed the read uncertainty, or the report's "not free vortex" is untestable | — | — |
+
+Stated before the run: the comparison is against the HPT report's **own**
+design point, Table I's max-climb column at **T41 1557 K**, not
+CR-168219's final Table XVIII at 1517 K. Fig 5 is the design through-flow
+and predates the final cycle rematch, which this project already recorded
+in Stage A as a 40 K drop in T41.
+
+### Results, 2026-09-06 (`cd solvers && python -m throughflow.hpt_spanwise`)
+
+```
+stage 1: annulus 32.33-36.60 cm (hub/tip 0.883)
+ height %    Fig 5c  free vortex  solid body
+       10     285.3        314.0       283.0
+       15     293.9        314.0       286.7
+       20     301.9        314.0       290.4
+       25     307.3        314.0       294.1
+       30     312.3        314.0       297.9
+       35     316.4        314.0       301.7
+       40     319.6        314.0       305.5
+       45     321.8        314.0       309.4
+       50     323.3        314.0       313.2
+       55     323.6        314.0       317.1
+       65     322.4        314.0       325.0
+       70     321.0        314.0       328.9
+       75     317.9        314.0       332.9
+       80     314.2        314.0       337.0
+       85     309.2        314.0       341.0
+       90     302.7        314.0       345.0
+  area-weighted 314.0 kJ/kg vs the cycle's 312.7 (+0.4 %); peak 324 at 55 % height; spread 12.2 % of the mean
+  rms departure from a free vortex 3.5 %, from solid body 5.6 %
+  a free vortex would swing a 70 deg exit angle by only 2.2 deg across this annulus
+
+stage 2: annulus 31.12-38.10 cm (hub/tip 0.817)
+ height %    Fig 5c  free vortex  solid body
+        5     229.4        251.6       206.3
+       10     233.6        251.6       210.9
+       15     237.3        251.6       215.6
+       20     246.6        251.6       220.3
+       25     245.9        251.6       225.0
+       35     254.3        251.6       234.7
+       45     261.1        251.6       244.5
+       50     262.2        251.6       249.6
+       55     262.2        251.6       254.6
+       60     261.3        251.6       259.7
+       65     259.5        251.6       264.9
+       70     257.3        251.6       270.1
+       75     254.6        251.6       275.4
+       85     248.4        251.6       286.0
+       90     245.8        251.6       291.4
+       95     242.7        251.6       296.9
+  area-weighted 251.6 kJ/kg vs the cycle's 240.8 (+4.5 %); peak 262 at 50 % height; spread 13.0 % of the mean
+  rms departure from a free vortex 4.1 %, from solid body 10.2 %
+  a free vortex would swing a 70 deg exit angle by only 3.4 deg across this annulus
+
+work split from Fig 5c alone: 0.555 vs the printed 0.565
+total from Fig 5c: 565.6 kJ/kg vs the HPT report's own design point 553.5 (T41 1557 K, pre-rematch) [+2.2 %]; the final cycle is 543.0
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Stage 1 area-weighted Δh | 314.0 vs 312.7 (**+0.4 %**) | ±5 % | pass |
+| Stage 2 area-weighted Δh | 251.6 vs 240.8 (+4.5 %) | ±5 % | pass, only just |
+| Total | 565.6 vs 553.5 (+2.2 %) | ±5 % | pass |
+| Work split from Fig 5c alone | 0.555 vs 0.565 | ±0.03 | pass |
+
+### Findings
+
+39. **Fig 5c integrates to the HPT report's own design point, and only to
+    that one.** Against Table I's pre-rematch max-climb work (T41 1557 K)
+    the stage-1 curve area-weights to +0.4 % and the total to +2.2 %;
+    against CR-168219's final cycle it is +4.7 %. A spanwise distribution
+    can only be checked against the cycle it was drawn for, and this
+    engine has two.
+40. **The E³ HPT is neither a free vortex nor a solid body.** A free
+    vortex predicts a uniform Δh; the E³ varies **12–13 %** across the
+    span, far outside the ±2 % read uncertainty, so the report's claim
+    that it is not free-vortex is confirmed rather than assumed. But a
+    solid body predicts a monotonic rise, and the E³ **peaks at 50–55 %
+    height and falls at both ends** — the hub 12 % below the peak, the
+    tip 6–7 % below. The rms departure from solid body is 5.6 % on stage
+    1 and 10.2 % on stage 2, worse than from a free vortex in both cases.
+    "Forced-vortex flow distribution" in this report means a **tailored**
+    one that unloads both end walls, which is what a designer does to cut
+    secondary loss — not textbook solid-body rotation.
+41. **Two of Fig 5's three panels cannot distinguish the vortex laws at
+    all.** At the stage-1 hub/tip ratio of 0.883, a *free* vortex would
+    swing a 70° exit flow angle by only **2.2°** across the entire span
+    (3.4° on stage 2, at 0.817). That is comparable to the line width of
+    the figure and well inside its read precision, which is why the exit
+    flow angles in Fig 5a are drawn almost vertical whatever the law. On
+    a blade this short the angles carry no information about the vortex
+    law; only the energy-extraction panel does, and the text points at it.
+
+### As printed
+
+The stage-1 panel's four labelled gridlines are evenly spaced to under a
+pixel. The stage-2 panel's single interior gridline sits where 252.4
+would be at that scale, not the 250 it is labelled, and its right-hand box
+edge falls near 295–299 rather than the 300 its axis suggests. The
+extraction calibrates on the labelled gridlines by least squares rather
+than assuming the edge, which is 5.6 % finer; the discrepancy is recorded
+in `data/hpt-fig5.yaml`, not corrected.
+
+**Stage C2 closes.** Four units: the radial-equilibrium audit, the
+spanwise prediction, the vortex law of the LPT and HPC, and the HPT's
+spanwise work.
