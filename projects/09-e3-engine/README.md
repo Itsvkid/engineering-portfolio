@@ -132,7 +132,7 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 673 tests, plain interpreter
+python -m pytest tests/     # 683 tests, plain interpreter
 python solvers/e3cycle/run.py   # Stage B: the three Table XII ratings, the mixer, sensitivities
 (cd solvers && python -m e3cycle.stations)   # B4: station table, annulus checks, the two figures
 ```

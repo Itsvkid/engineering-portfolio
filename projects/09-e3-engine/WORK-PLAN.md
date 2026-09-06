@@ -731,9 +731,21 @@ cooling flow, not a tuned one.
 exit profile is what D1 used.
 
 ## D3 · The secondary-air map · 16 h
-- [ ] Every bleed, cavity, seal and sink as a network: sources (fan, stage
-      5, stage 7, CPD), pressures, flows, temperatures at max climb and TO
-- [ ] Rim seals: purge vs ingestion margin at each disc cavity
+- [x] Every bleed, cavity, seal and sink as a network — **unit D3**,
+      `solvers/thermal/secondary_air.py`. The eight detailed-design items
+      sum to exactly the printed 18.87 % of W25 and the four final streams
+      to **16.14 % against this plan's 16.1 target**; the 2.7-point
+      difference is the recorded consequence of core testing finding lower
+      heat-transfer coefficients. Each stream's source and the report's own
+      reason for it are recorded (finding 66)
+- [~] Rim seals: purge vs ingestion margin — **the stage-1 nozzle's two
+      cavities are done** (unit D3): both keep hot gas out on either
+      definition, and the printed backflow margin was recomputed from the
+      printed pressures. **The printed definition names the gas *total*
+      pressure but only the forward cavity reproduces that way**; the aft
+      cavity's 1.0 % comes out exactly against the gas *static*, and is
+      0.32 % against the total — the thinnest seal in the turbine
+      (finding 65). The remaining disc cavities are still to do
 - [ ] Labyrinth seal leakages from clearance and pressure ratio
       (sealing report); sump pressurisation (§5.7)
 - [ ] **Thrust balance** on each rotor across the mission; balance-piston

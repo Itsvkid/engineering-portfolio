@@ -198,3 +198,113 @@ band: +-25 K at three chordwise points, with the published cooling flow (work pl
 explained and quantified.** The remaining D1 items — the full flow
 network, film superposition, the transient — are separate units and are
 not claimed here.
+
+
+---
+
+## Unit D3 — the secondary-air network
+
+The work plan's D3 closure: *total secondary air lands at Table XI's
+16.1 % of W25 and every cavity has a pressure that keeps hot gas out.*
+
+Both halves are checkable from printed numbers. CR-167955 Table VII gives
+the detailed-design budget item by item; CR-168219 Table XI gives the four
+final streams by source. And Fig 13 gives the stage-1 nozzle's cavity
+static pressures, the gas pressure they seal against, and the report's own
+**backflow margin** — with its definition printed beside it, so it can be
+recomputed rather than believed.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Detailed budget, eight items | 18.87 % of W25 (Table VII) | exact | the items are printed to 0.01 |
+| Final budget, four streams | **16.1 %** (the work plan's D3 target, from Table XI) | ±0.1 point | printed to 0.01 |
+| Every cavity's backflow margin | positive, and reproducing the printed value from the printed pressures | ±0.1 point | the definition is printed |
+
+---
+
+## Unit D3 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06 (`cd solvers && python -m thermal.secondary_air`)
+
+```
+1. Does the secondary air add up?
+stream                                             % W25        source          charge
+nonchargeable_cooling_and_leakage                   9.46           CDP   nonchargeable
+cdp_leakage_and_purge                               2.25           CDP      chargeable
+stage1_shroud                                       0.60           CDP      chargeable
+stage1_blade                                        3.30   CDP_inducer      chargeable
+stage2_vane_and_interstage_seal_blockage            2.00        stage7      chargeable
+stage2_shroud                                       0.35        stage7      chargeable
+stage2_blade                                        0.76   CDP_inducer      chargeable
+disk2_aft_cavity_purge                              0.15        stage5      chargeable
+detailed-design total (Table VII)                  18.87   printed 18.87
+
+final FPS, CPD nonchargeable                        7.46
+final FPS, CPD chargeable                           5.33
+final FPS, stage 7                                  1.95
+final FPS, stage 5                                  1.40
+final FPS total (Table XI)                         16.14   work plan D3 target 16.1
+
+2. Does every cavity keep the hot gas out?
+   definition as printed: 100 (Ps_coolant - Pt_gas) / Pt_gas
+cavity               Ps cool   Pt gas   Ps gas    vs Pt    vs Ps  printed   matches
+forward cavity         2.563    2.526    2.509     1.46     2.15     1.45        Pt
+aft cavity             2.534    2.526    2.509     0.32     1.00     1.00        Ps
+
+3. Where each row's coolant comes from, and why
+   stage1_nozzle    combustor-liner bypass air, from the compressor-diffuser exit
+   stage1_rotor     diffuser mean-line bleed, not end-wall
+                    why: cooler than end-wall air; lower deterioration; also back-pressures the CDP seal
+   stage2_nozzle    compressor stage-7 stator exit, via manifolds and pipes
+                    why: lower-pressure air means less shaft work spent compressing it, and less of it is needed at the lower temperatu
+   stage2_rotor     through the stage-1 rotor inducer system
+   clearance_control fan air, impinged on the casing, both stages
+```
+
+| Check | Result | Verdict |
+|---|---|---|
+| Detailed budget | 18.87 vs a printed 18.87 | pass, exact |
+| Final budget | **16.14 vs a target 16.1** | pass |
+| Forward cavity margin | +1.46 recomputed vs +1.45 printed | pass |
+| Aft cavity margin | +1.00 recomputed **against static** vs +1.00 printed | pass, with finding 65 |
+| Both cavities positive | yes, on either definition | pass |
+
+### Findings
+
+64. **The budget closes twice, and the two budgets are 2.7 points apart
+    for a stated reason.** The eight detailed-design items sum to exactly
+    the printed 18.87 % of W25; the four final FPS streams to 16.14
+    against the work plan's 16.1 target. The difference is not an error —
+    core testing found lower heat-transfer coefficients than the
+    CF6-based design assumptions, so nonchargeable went 9.46 → 7.46, CPD
+    chargeable 6.91 → 5.33 and stage 7 2.35 → 1.95, while **stage 5 went
+    up**. It is already recorded in `hpt-cooling.yaml`; this unit
+    confirms both totals arithmetically.
+65. **The printed backflow-margin definition does not fit both printed
+    margins.** The definition beside them reads
+    100·(Ps_coolant − **Pt**_gas)/Pt_gas. The forward cavity's printed
+    1.45 % reproduces that way (1.46). The aft cavity's printed 1.0 % does
+    **not** — it comes out 0.32 against the gas total, and exactly 1.00
+    against the gas **static**. So the same printed quantity is evaluated
+    against two different gas pressures. Physically that is defensible:
+    the forward cavity vents near the leading edge where the gas is close
+    to stagnation, the aft cavity further back where the flow has
+    accelerated and the local static is what it must exceed. Recorded as
+    printed, not corrected — and worth knowing, because on the strict
+    total-pressure definition the **aft cavity's margin is 0.32 %**, the
+    thinnest seal in the turbine.
+66. **Every stream is taken from the lowest pressure that will do the
+    job, and the report says why each time.** The stage-2 nozzle is fed
+    from compressor stage 7 rather than CPD because "lower-pressure air
+    means less shaft work spent compressing it, and less of it is needed
+    at the lower temperature". The stage-1 rotor is fed from a diffuser
+    **mean-line** bleed rather than the end wall because that air is
+    cooler, deteriorates less, and back-pressures the CDP seal as a side
+    benefit. The clearance control uses fan air. That is the whole
+    secondary-air design philosophy in three sentences, and it is the
+    reason chargeable and nonchargeable are worth separating in the cycle
+    at all.
+
+**D3's closure is met on both halves.** The rim-seal ingestion margins at
+the remaining disc cavities, the labyrinth leakages and the thrust balance
+are separate units and are not claimed here.
