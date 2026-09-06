@@ -925,14 +925,36 @@ bearing capacities the reports never print and on Stage D's thrust
 balance.
 
 ## E5 · Attachments and joints · 10 h
-- [ ] HPC dovetails per HPC report §3.2.3: neck tensile, tang shear, crush;
-      weak-link order disc > blade > airfoil
-- [ ] HPT and LPT dovetail / fir-tree; boltless retainers (HPT Fig. 66)
-- [ ] Casing flange bolting per HPC Table XVII; rotor bolt relaxation
-      (HPT Figs. 89–91)
+- [ ] HPC dovetails per HPC report §3.2.3 — **GATED**: `hpc-mechanical.yaml`
+      has no blade block and no dovetail block at all; only Tables XV–XIX
+      and Figs 55–62 were transcribed
+- [x] HPT, fan, booster and LPT dovetails — **unit E5**,
+      `solvers/mechanical/attachments.py`. **A hand tension calculation
+      reads the HPT dovetail 6.4× low** (finding 97). The printed tang
+      stresses track the printed neck widths to **0.47 %**, which fixes the
+      load split at 57/43 and makes the report's "deeper tang for the
+      higher load" quantitative (finding 98). The fan and booster crush
+      figures are **not quoted over the same bearing area** — 1.88 flanks
+      against 0.98 (finding 99). **LPT Fig. 70's printed Kt reproduces from
+      its own stresses to 0.6 % on both blade sections and on neither disc
+      section** (finding 100)
+- [x] Blade retainers: all three LPT stages have margin, the third exactly
+      on the allowable, and the load law is recoverable — **t2 with F/t²
+      to 3.5 %** where the next candidate manages 7.6 % (finding 101)
+- [x] Casing flange bolting per HPC Table XVII — at the 2× criterion the
+      rear flanges need **979 and 1,119 MPa** of bolt stress against a
+      ~1,000 MPa proof: **bolt-limited by their own criterion**
+      (finding 102). Rotor bolt relaxation was done in E4 (finding 96)
+- [x] Weak-link order: fan post margin 1.47 > blade dovetail 1.28; booster
+      dovetail corner below its airfoil peak; **both HPT attachments sit
+      exactly on their own life requirement** (finding 103)
 
 *Closes when:* every attachment has margin on all three stresses and the
-weak-link order holds.
+weak-link order holds. **Substantially closed 2026-09-07**: the weak-link
+order holds everywhere it can be checked, every attachment with a printed
+allowable has margin, and the one that does not — the manifold casing
+flange at its own 2× criterion — is recorded as a finding rather than
+smoothed over. The HPC dovetails are gated on transcription.
 
 ---
 
@@ -1076,7 +1098,7 @@ is reverted.
 | B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ⬜ ⬜ ⬜ ⬜ |
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
-| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ◧ ⬜ |
+| E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ◧ ◧ |
 | F | F1 materials · F2 mass | ⬜ ⬜ |
 | G | geometry | ⬜ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |

@@ -588,3 +588,183 @@ as a *required radius*, which scales inversely with it.
     *governed by* torque transfer while still showing an 8 % margin on
     clamp load: the binding constraint is the bolt's own relaxation, not
     the friction radius.
+
+---
+
+## Unit E5 — attachments and joints
+
+The work plan's E5 closure: *every attachment has margin on all three
+stresses and the weak-link order holds* — disc slot stronger than blade
+root, blade root stronger than airfoil.
+
+**One item is gated.** E5's first bullet asks for the HPC dovetails per
+HPC report sec 3.2.3, and `hpc-mechanical.yaml` has **no blade block and
+no dovetail block at all**: its meta records only Tables XV–XIX and
+Figs 55–62 as transcribed. Nothing to work with. Written down, not worked
+around.
+
+Everything else is printed in full, and the point of this unit is that the
+printed numbers can be made to check **each other**. Every band below is a
+relation between quantities the reports print side by side, none of which
+was derived from another.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| HPT two-tang load split | the text says *"a deeper tang for the higher load"* | the two printed stresses must be in a **fixed ratio to the two printed neck widths**, within **±2 %** | five printed numbers — one load, one chord, two widths, two stresses — and one geometry; the split is recoverable, not assumed |
+| Fan and booster dovetail crush | printed, 30.4 and 16.9 kN/cm² | implied bearing area must be **1 or 2 printed flanks**, ±10 % | the load follows from E4's Table VI mass audit, so the area is an output |
+| LPT Fig. 70's Kt | printed, 1.59–1.62 for four sections | position 2 / position 1 must equal it within **±1 %** *if* those two are the nominal and concentrated reading of one place | the figure prints six stresses *and* a Kt for each section |
+| LPT blade retainers | all three stages, one allowable of 634.3 MPa | **margin ≥ 1.00** on every stage | E5's own closure, and the report says stage 3 "sits exactly on the allowable" |
+| Which retainer thickness carries the load | not stated | the winning law must beat the others by **2×** on worst error | four candidates: t1 or t2, F/t or F/t² |
+| Weak-link order | *"attachments stronger than airfoils, as the goals demanded"* | disc-post margin **>** blade-dovetail margin; booster dovetail corner **<** airfoil peak | the Goodman figures state the conclusion; the stresses let it be checked |
+| Casing flange bolts | *"no axial flange separation at 2 × maximum operating pressure"* | required bolt stress must be **at or below** a superalloy proof stress (~1,000 MPa) | bolt count and size printed; pressure from the cycle |
+
+Two stated assumptions, both flagged where they enter: the casing flange
+radius is taken as the flowpath **tip radius** at that station (no flange
+diameter is printed anywhere), and πr² is used for the projected area,
+which is an **upper bound** on the separating load. The bolt tensile
+stress area is the standard 3/8-24 UNF value, 0.7854(d − 0.9743/n)².
+
+---
+
+## Unit E5 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07 (`cd solvers && python -m mechanical.attachments`)
+
+```
+1. The HPT stage-1 two-tang dovetail
+   blade load 77.395 kN over an axial chord of 3.45 cm
+   printed stresses  862 / 746 MPa     ratio 1.1555
+   printed widths    0.952 / 0.820 cm  ratio 1.1610
+   -> the two ratios agree to 0.47 %, so sigma is proportional to w
+   -> the load splits as w^2: 57.4 % upper, 42.6 % lower
+      (an equal-stress design would split by area and read 127 MPa on both)
+   nominal neck tension 135 / 117 MPa; the printed combined stress is 6.4x nominal
+
+2. Dovetail crush: the load is known, so the bearing area is an output
+   blade            load kN   printed  one flank   implied  flanks
+   fan rotor          746.4      30.4      13.09     24.55    1.88
+   booster rotor       24.4      16.9       1.47      1.44    0.98
+
+3. LPT Fig 70's Kt, against its own stresses
+   section      pos 1   pos 2   ratio  printed Kt   err %
+   blade_A      118.6   191.8   1.617        1.62    -0.2
+   blade_B      136.5   215.8   1.581        1.59    -0.6
+   disk_C        66.9   191.7   2.865        1.60    79.1
+   disk_D       144.8   143.4   0.990        1.60   -38.1
+
+4. LPT blade retainers: three stages, one allowable of 634.3 MPa
+    stage   force N   t1 cm   t2 cm    sigma   margin
+        1       894   0.109   0.267    620.5    1.022
+        2      1103   0.127   0.292    627.5    1.011
+        3      1561   0.173   0.343    634.3    1.000
+   t2 with F/t^2   worst  3.5 %      t1 with F/t     worst  7.6 %
+   t1 with F/t^2   worst 32.2 %      t2 with F/t     worst 33.0 %
+
+5. Weak-link order
+   fan blade dovetail corner      39.3 of 50.3 kN/cm2   margin 1.28
+   fan disc post corner           31.9 of 46.9 kN/cm2   margin 1.47
+   fan blade dovetail crush       30.4 of 50.3 kN/cm2   margin 1.65
+   booster: airfoil peak 18.5 vs dovetail corner 13.8   -> attachment below airfoil
+   HPT: blade tang 862 MPa vs disc slot 1000 MPa (as printed)
+        disc slot LCF 36,000 against a required 36,000;
+        blade dovetail >18,000 against 18,000
+
+6. Casing flanges at 2 x maximum pressure (takeoff)
+   3/8-24 UNF tensile stress area 56.7 mm2
+   flange          bolts   p MPa    r cm  separating MN  per bolt kN  bolt MPa
+   front              60    0.16    36.2           0.13          2.2        38
+   front at p3        60    3.28    36.2           2.70         45.1       796
+   aft                32    3.28    29.3           1.78         55.5       979
+   manifold           28    3.28    29.3           1.78         63.4      1119
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| HPT tang stress ∝ neck width | **0.47 %** | ±2 % | pass |
+| Fan crush bearing area | 1.88 flanks | 1 or 2, ±10 % | pass (two) |
+| Booster crush bearing area | 0.98 flanks | 1 or 2, ±10 % | pass (**one** — finding 99) |
+| LPT Fig. 70 Kt, blade sections | −0.2 %, −0.6 % | ±1 % | pass |
+| LPT Fig. 70 Kt, disc sections | +79 %, −38 % | ±1 % | **fail — finding 100** |
+| LPT retainer margins | 1.022, 1.011, **1.000** | ≥ 1.00 | pass, the third exactly |
+| Retainer load law | t2 with F/t² at 3.5 %, next 7.6 % | must win by 2× | pass (2.2×, marginal) |
+| Weak-link order, fan | post 1.47 > blade 1.28 | must hold | pass |
+| Weak-link order, booster | 13.8 < 18.5 kN/cm² | must hold | pass |
+| Casing bolt stress | 796 / 979 / **1,119** MPa | ≤ ~1,000 MPa | **the manifold flange exceeds it — finding 102** |
+| **HPC dovetails (sec 3.2.3)** | **not attempted** | — | **gated: nothing transcribed** |
+
+### Findings
+
+97. **A hand tension calculation reads a dovetail six times low.** The HPT
+    stage-1 blade pulls 77.4 kN through two tangs whose necks total 6.1
+    cm² — a nominal tension of 117–135 MPa. The report's own printed
+    combined-with-Kt stresses are 746 and 862 MPa: **6.4× the nominal, and
+    the same 6.4 on both tangs.** That factor is the tang's cantilever
+    bending, the gas-bending moment and the fillet's concentration
+    together, and it is the whole reason the E³ does dovetails with
+    MULTI-HOOK and FINITE rather than with a neck area. Anyone sizing a
+    blade root on tension alone would clear the material by 5× and lose
+    the blade.
+98. **The two tangs are not equally stressed, and the printed numbers say
+    by how much.** The printed stresses, 862 and 746 MPa, are in the ratio
+    1.1555; the printed neck widths, 0.952 and 0.820 cm, in the ratio
+    1.1610. **They agree to 0.47 %** — so stress is proportional to neck
+    width, which means the load splits as w² and the upper tang carries
+    **57.4 %**, not the 54 % an equal-stress design (load by area, 127 MPa
+    on both) would give. The report's one-line description — "the upper
+    tang with a generous fillet for Kt and a **deeper tang for the higher
+    load**" — turns out to be quantitative, and the quantity is in two
+    numbers printed a line apart.
+99. **The fan and booster crush stresses are not quoted over the same
+    thing.** The blade load is known independently — from E4's mass audit
+    against Table VI — so the bearing area the report used is an output.
+    The fan's implied area is **1.88** printed flanks and the booster's is
+    **0.98**. One figure quotes the crush over both flanks and the other
+    over one, or one of the two printed flank widths is a total rather
+    than a per-flank value. Both readings are internally consistent to
+    better than 6 %; what is inconsistent is between the two figures.
+    Recorded as a source observation, and a warning against carrying a
+    crush stress from one figure to another.
+100. **Fig. 70's stress-concentration factor is checkable, and it checks
+     for the blade and not for the disc.** For both blade sections the
+     ratio of the position-2 to the position-1 stress reproduces the
+     printed Kt to better than 0.6 % — 1.617 against 1.62, 1.581 against
+     1.59 — so positions 1 and 2 are the nominal and the concentrated
+     reading of the same place. The two disc sections give 2.865 and 0.990
+     against a printed 1.60. Either the disc's nominal is read at a
+     different position, or the figure's disc pair is not the same kind of
+     pair. Flagged for a re-read of Fig. 70, not reconciled.
+101. **Three retainers, three loads 75 % apart, one stress.** The LPT
+     stage-1 to stage-3 retainers carry 894, 1,103 and 1,561 N and read
+     620.5, 627.5 and 634.3 MPa — a 75 % rise in load for a 2 % rise in
+     stress, and the third sits *exactly* on the 634.3 MPa allowable. The
+     thickness was the design variable, and which thickness and which law
+     can be recovered: **t2 with σ ∝ F/t² reproduces all three to 3.5 %**,
+     where t1 with F/t manages 7.6 % and the other two combinations are
+     over 30 % out. The retainer is a bending part and t2 is its section.
+     The margin ordering — 1.022, 1.011, 1.000 — is what designing three
+     parts against one allowable looks like when it is done properly.
+102. **The rear casing flanges are bolt-limited at their own criterion.**
+     Table XVII asks for no axial separation at **twice** maximum
+     operating pressure. Taking the full projected area πr² — an upper
+     bound on the separating load, since the reports print no flange
+     diameter — the aft flange's 32 bolts need **979 MPa** and the
+     manifold flange's 28 need **1,119 MPa**, against a superalloy proof
+     stress around 1,000. That the bound lands *on* the material limit
+     rather than a factor away from it is the finding: either these
+     flanges really are sized by the 2× criterion, or the true separating
+     area is somewhat below πr². It also explains the bolt counts — 60 on
+     the front flange where the pressure is 1.6 bar and only 28 on the
+     manifold where it is 33.
+103. **The weak-link order holds where it can be checked, and the two HPT
+     attachments sit exactly on their own life requirements.** The fan
+     disc post has more margin than the fan blade dovetail (1.47 against
+     1.28) and the booster's dovetail corners are below its airfoil peak
+     (13.8 against 18.5 kN/cm²) — attachments stronger than airfoils, as
+     the reports' Goodman figures state and as the design goals demanded.
+     On the HPT the printed disc-slot stress (1,000 MPa) is *above* the
+     blade tang's (862), which reads the wrong way round until the lives
+     are looked at: the disc slot makes **36,000 cycles against a required
+     36,000** and the blade dovetail **>18,000 against a required 18,000**.
+     Different alloys, different limiting instants, and both sized to
+     their own requirement rather than to each other. The weak-link order
+     is a statement about *margin*, not about stress.

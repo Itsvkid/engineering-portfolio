@@ -76,7 +76,7 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     cooling and its pressure drop from geometry — the last needs the
     liner hole areas, which Stage A did not transcribe.
 4. **Stage E (mechanical) — started.** `solvers/mechanical/`, its own
-    `STEP0.md`, findings 73–96. **Unit E1 met E1's closure**: all ten HPC
+    `STEP0.md`, findings 73–103. **Unit E1 met E1's closure**: all ten HPC
     blade root stresses within 6.5 % of Table X from geometry alone, and
     the blade material crossover fell out of the data at the inertia weld.
     **Unit E2 met half of E2's closure**: the bore doubling for a small
@@ -105,9 +105,17 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     documents** — and the LP shaft turns out to carry 2.4× the HP shaft's
     torque. Fan blade-out is 746 kN, 76 tonnes. The thrust-bearing half is
     **gated**: no bearing load or capacity is printed anywhere.
+    **Unit E5 closed E5 substantially**: the weak-link order holds
+    everywhere it can be checked, every attachment with a printed
+    allowable has margin, and the printed numbers were made to check each
+    other — the HPT tang stresses track the neck widths to 0.47 % (fixing
+    the load split at 57/43), LPT Fig. 70's printed Kt reproduces from its
+    own stresses to 0.6 % on the blade sections and on neither disc
+    section, and a hand tension calculation reads a dovetail **6.4× low**.
+    The HPC dovetails are gated: nothing from §3.2.3 was transcribed.
     Next: gas bending and the root stress, HPT blade creep by
     Larson–Miller against the published rupture life, the flutter screen
-    and the Goodman HCF margin, then E5 (attachments).
+    and the Goodman HCF margin — then Stage F.
 5. Then F (materials and mass), G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 
@@ -130,6 +138,8 @@ compressor's radial redistribution (C1 unit 4b finding 17).
 
 ## Open items carried
 
+- **HPC blade and dovetail data (§3.2.3, Table XIV) un-transcribed.**
+  `hpc-mechanical.yaml` has no blade block at all. Blocks E5's first item.
 - **HPC rotor Campbell diagrams (Figs 33–42) un-digitised.** This is the
   only thing standing between unit E3's ten predictions and E3's stated
   closure. Second-highest-value item in the A3 backlog.
