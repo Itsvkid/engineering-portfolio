@@ -1,0 +1,88 @@
+# NASA Rotor 37 — the validation case for any CFD this project runs, and
+# the known answer written down BEFORE a solver exists. US Government work.
+#
+# Sources on disk:
+#   nasa-tp1337-rotor37-design-and-performance.pdf  (Reid & Moore, 1978)
+#   nasa-rotor37-cfd-code-validation.pdf            (Ameri, NASA/CR-2010-216235)
+#
+# Rotor 37 is the standard transonic-compressor CFD test case. It is here
+# because METHOD.md forbids trusting a solver on the E3 before it has
+# reproduced a published experiment.
+
+meta:
+  src: "TP-1337 Table I (design) and Table V(a) (measured, 100 % speed); CR-2010-216235 (a published CFD result to compare against)"
+  transcribed: 2026-09-06
+  why: "the E3's own transonic rows (HPC rotor 1 at M_rel 1.35, the fan at 1.41) are where the C1 loss correlations are least trustworthy; nothing goes near them until a solver reproduces this"
+
+design_point:
+  src: "TP-1337 Table I p.64, the stage-37 column"
+  rotor_total_pressure_ratio: 2.106
+  stage_total_pressure_ratio: 2.050
+  rotor_total_temperature_ratio: 1.270
+  rotor_adiabatic_efficiency: 0.877
+  rotor_polytropic_efficiency: 0.889
+  stage_adiabatic_efficiency: 0.842
+  rotor_head_rise_coefficient: 0.333
+  flow_coefficient: 0.453
+  mass_flow_kg_s: 20.188
+  flow_per_unit_annulus_area_kg_s_m2: 200.549
+  rpm: 17188.7
+  tip_speed_m_s: 454.136
+  hub_tip_radius_ratio: 0.70
+  rotor_aspect_ratio: 1.19
+  rotor_blades: 36
+  stator_blades: 46
+  blade_material: Maraging 200
+  as_printed: "Table I prints the rpm for stage 37 as '17185.700' where the other three stages read 17188.700 and Table II gives 17 188.7 for all four; the 17188.7 is taken"
+
+measured_100pct_speed:
+  src: "TP-1337 Table V(a) p.71 — five readings along the 100 % speed line"
+  reading:                    [4193,  4192,  4182,  4188,  4187]
+  rotor_total_pressure_ratio: [1.785, 1.917, 2.056, 2.157, 2.196]
+  rotor_total_temperature_ratio: [1.214, 1.237, 1.261, 1.283, 1.296]
+  rotor_adiabatic_efficiency: [0.842, 0.862, 0.876, null,  null]
+  airflow_at_orifice_kg_s:    [20.93, 20.83, 20.74, 20.43, 19.60]
+  percent_design_speed:       [100.0, 99.9,  100.4, 100.2, 100.1]
+  choking_flow_kg_s: 20.93
+  as_printed: >
+    The scan's efficiency column is corrupted on the last two readings:
+    it prints 0.667 for reading 4188 and 0.952 for 4187, neither of which
+    is possible beside their own pressure and temperature ratios (0.871
+    and 0.854 respectively when recomputed). The momentum-rise row is
+    corrupted too, printing 0.040 for reading 4193 where 0.840 is meant.
+    Those four values are recorded as null rather than transcribed, and
+    tests/test_rotor37_case.py recomputes them from the ratios instead.
+    The three clean efficiencies recompute to within 0.005.
+  note: >
+    Reading 4182, at 20.74 kg/s and a pressure ratio of 2.056, is the
+    near-peak-efficiency point every CFD comparison in the literature
+    uses. Normalised on the choking flow of 20.93 it is 0.991.
+
+published_cfd_reference:
+  src: "NASA/CR-2010-216235, Ameri, Glenn-HT"
+  code: Glenn-HT (formerly TRAF3D)
+  grid_cells: 1.8e+6
+  grid_generator: GridPro, multi-block, tip clearance meshed rather than modelled
+  near_peak_efficiency_normalised_flow: 0.98
+  near_stall_normalised_flow: 0.925
+  exit_angle_agreement_deg: 3
+  verdict_as_printed: "most of the measures of performance are well within the measurement uncertainties and the exit profiles of interest agree with the experimental measurements"
+  unresolved_as_printed: "the author records that he could not reconcile the agreement of the spanwise adiabatic efficiency (his Fig 9) with the disagreement of the efficiency on the map (his Fig 6)"
+  grid_independence: >
+    NONE. The report states plainly: "Only one grid resolution was tried".
+    METHOD.md step 6 requires a grid-independence study, so this reference
+    supplies a comparison result but NOT a converged one, and cannot be
+    used to skip that step.
+
+pass_bands:
+  note: "stated here, before any solver is installed, per METHOD.md step 0"
+  mass_flow_at_choke_pct: 1.0
+  pressure_ratio_at_the_peak_efficiency_point: 0.02
+  adiabatic_efficiency_points: 1.5
+  spanwise_exit_angle_deg: 3.0
+  grid_convergence_index_pct: 3.0
+  basis: >
+    The efficiency band is the experimental scatter along the 100 % speed
+    line, not a tolerance chosen to be reachable: the three clean readings
+    either side of the peak span 0.842 to 0.876. A solver that lands
+    outside these does not get pointed at the E3's transonic rows.

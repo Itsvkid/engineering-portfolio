@@ -650,10 +650,21 @@ throat passes its flow.
 ## C4 · CFD, selectively · 32 h
 Not every row. The rows where a loss correlation is least trustworthy, and
 only after the method is validated.
-- [ ] **Validate OpenFOAM on NASA Rotor 37** (TP-1337 geometry, the CFD
-      validation report as the reference): mesh convergence, pressure
-      ratio and efficiency vs mass flow, spanwise profiles. PF-05's GCI
-      discipline applies
+- [~] **Validate OpenFOAM on NASA Rotor 37** — **the case is written, the
+      solver is not installed.** `data/methods/rotor37-validation-case.yaml`
+      holds the design point (PR 2.106, TR 1.270, η 0.877, 20.188 kg/s at
+      17,188.7 rpm, 36 blades, hub/tip 0.70), the measured 100 % speed line
+      with its choking flow of 20.93 kg/s, the published Glenn-HT result to
+      compare against, and **the pass bands, stated before any solver
+      exists**: 1 % on choking flow, 0.02 on pressure ratio at the
+      peak-efficiency point, 1.5 points of efficiency, 3° of spanwise exit
+      angle, GCI 3 %. `tests/test_rotor37_case.py` proves the case is
+      internally consistent — the printed efficiencies follow from the
+      printed ratios, and four scan-corrupted values are recorded null and
+      recomputed rather than transcribed.
+      **GATE: no CFD solver is installed** — no OpenFOAM, no SU2, no
+      Homebrew formula, and Docker's daemon is stopped. Installing a
+      multi-gigabyte image is the user's decision, not this project's
 - [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
       vs the mean-line and Table X/XXII
 - [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5
@@ -663,6 +674,13 @@ only after the method is validated.
 *Closes when:* Rotor 37 pressure ratio and efficiency at design flow land
 within the published experimental scatter, and the E³ row results move the
 mean-line prediction *toward* the published efficiency, not away.
+
+*Status 2026-09-06 — gated, not skipped.* The validation case and its
+bands are written and tested; every E³ row item below waits on a solver.
+Worth noting for when one arrives: the published Glenn-HT reference used
+**one grid resolution only**, by its own statement, so it supplies a
+comparison but not a converged result and cannot stand in for METHOD.md's
+step 6.
 
 ---
 
@@ -676,9 +694,16 @@ mean-line prediction *toward* the published efficiency, not away.
       the data in that report), external from the report's own
       coefficients (§5.4.4: below CF6-based values, especially pressure side)
 - [ ] Film effectiveness by row; superposition
-- [ ] Metal temperature distribution, stage 1 blade pitch section, at
-      steady-state takeoff — compare with HPT report Fig. 27; vane Fig. 16;
-      stage 2 Fig. 35
+- [~] Metal temperature distribution — **unit D1** started it from the
+      other end. Before any network, the overall cooling effectiveness
+      φ = (T_gas − T_metal)/(T_gas − T_coolant) follows from four printed
+      numbers per row, and **all four cooled rows collapse onto
+      φ/(1−φ) = 0.421·Wc^0.916, R² = 0.98** across an eightfold range of
+      coolant flow — with an exponent Dittus–Boelter predicts at 0.8
+      (finding 58). The metal temperature is held to 26 °C (947/953/928/929)
+      while the gas falls 1739 → 1038 °C: the metal is the constant and
+      coolant is bought to hold it (finding 59). The node-by-node
+      comparison against Figs 16, 27 and 35 is still to do
 - [ ] TBC effect on the dome and shingles (combustor) and on the HPT
 - [ ] Transient: Fig. 28 — the thermal gradients that drive LCF
 

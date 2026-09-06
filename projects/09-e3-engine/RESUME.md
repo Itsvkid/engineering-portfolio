@@ -61,10 +61,20 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     sweep 60°, lean 0–20°) and section stacking with the published
     pretwist and tilt. The LPT's Figs 9–18 surface Mach needs a
     blade-to-blade solver and is really C4.
-2. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).
-3. Then Stage D (thermal), E (mechanical), F (materials and mass),
-    G (geometry generation), H (hand CAD, gated on a working install),
-    I (verification), J (publication).
+2. **C4 — GATED on a CFD solver.** The Rotor 37 validation case and its
+    pass bands are written and tested
+    (`data/methods/rotor37-validation-case.yaml`), so the target is ready.
+    But no solver is installed: no OpenFOAM, no SU2, no Homebrew formula,
+    Docker present with its daemon stopped. Installing a multi-gigabyte
+    image is the user's call. Until then every C4 item waits.
+3. **Stage D (thermal) — started.** `solvers/thermal/`, its own
+    `STEP0.md`, findings 58–60. Unit D1 has all four cooled rows on one
+    effectiveness curve; the node-by-node comparison against Figs 16, 27
+    and 35 is next, then D2 (combustor), D3 (secondary-air map) and D4
+    (clearance control).
+4. Then E (mechanical), F (materials and mass), G (geometry generation),
+    H (hand CAD, gated on a working install), I (verification),
+    J (publication).
 
 Carried, unresolved, and worth picking up in C3 or later: the LPT's rotor
 inlet relative angle 3–7° low at pitch (C1 unit 1 finding 4), the HPT
