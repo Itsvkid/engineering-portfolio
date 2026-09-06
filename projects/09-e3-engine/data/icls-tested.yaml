@@ -1,0 +1,157 @@
+# E3 Integrated Core/Low Spool — the engine AS TESTED, as printed.
+# Source: NASA CR-168211, "Energy Efficient Engine Integrated Core/Low
+# Spool Design and Performance Report" (GE; E. M. Stearns; August 1983),
+# 649 pages. PDF page = report page + 25 in the body. US Government work.
+#
+# This file carries the MEASURED numbers -- the top of the validation
+# ladder. Everything else in data/ is design intent; this is what the
+# engine did on the stand. Every value carries its source.
+
+meta:
+  source: e3-icls-design-and-performance-CR-168211.pdf
+  pages_read: "1-8, 240-247, 279-286, 620-623"
+  transcribed: 2026-09-06
+  status: summary, cycle table, overall performance results and conclusions; the component sections (pp.217-620) are the Stage B and I targets and remain to be read as each solver reaches them
+
+test:
+  src: "sec 1 p.1; sec 5"
+  vehicle: full-scale turbofan ground-test engine on FPS hardware except the gearbox, control, nacelle and fan frame; no thrust reverser; static test inlet
+  hours: 64.83
+  hours_printed: "64 hours and 50 minutes"
+  completed: "1983-06-15"
+  purpose: demonstrate the readiness of the technologies; evaluate components in the turbofan environment; measure the complete system
+  mechanical_verdict: nearly perfect -- nothing inhibited the planned testing; every temperature and every blade vibration within limits
+  start_s: 44
+  start_note: automatic, no stall, no bleed required -- starting had been the early worry of the whole programme (see combustor-design.yaml)
+
+cycle_characteristics:
+  src: "Table I p.8 — E3 FPS cycle characteristics"
+  cycle_pressure_ratio_max_climb: 38
+  bypass_ratio_max_climb: 6.8
+  fan_pressure_ratio_max_climb: 1.65
+  t41_sls_warm_day_takeoff_C: 1343
+  t41_sls_warm_day_takeoff_F: 2450
+  sfc_max_cruise_bare_kg_hN: 0.0553
+  sfc_max_cruise_bare_lb_hlbf: 0.542
+  sfc_max_cruise_installed_kg_hN: 0.0575
+  sfc_max_cruise_installed_lb_hlbf: 0.564
+  notes: {max_climb: "aerodynamic design point, M 0.8, 10.67 km, standard day +10 C", warm_day: "standard +15 C (27 F)", max_cruise: "performance evaluation point, M 0.8, 10.67 km, standard day"}
+  design_thrust_kN: 162
+  design_thrust_lbf: 36500
+  design_thrust_condition: sea-level static standard day takeoff
+
+measured_sfc:
+  src: "sec 1 pp.1-2; sec 6.1.9 p.279; sec 7 p.620"
+  sls_rated_thrust:
+    as_tested_kg_hN: 0.0332
+    as_tested_lb_hlbf: 0.326
+    as_tested_mg_Ns: 9.234
+    predicted_mg_Ns: 9.008
+    predicted_lb_hlbf: 0.318
+    above_prediction_pct: 2.5
+    corrected_for_test_faults_kg_hN: 0.0327
+    corrected_for_test_faults_lb_hlbf: 0.321
+    test_faults: [inlet bellmouth misalignment, nacelle leaks, cowling panels protruding into the airstream]
+    fully_corrected_kg_hN: 0.0316
+    fully_corrected_lb_hlbf: 0.310
+    fully_corrected_mg_Ns: 8.781
+    fully_corrected_basis: [diagnostic instrumentation removed, first-stage nozzle areas of both turbines and the exhaust area rematched, cooling flows properly set, 100 percent ram recovery]
+    thrust_kN: 162.36
+    thrust_lbf: 36500
+    repeatability_pct: 0.6
+    repeatability_src: "sec 6.1.3 p.240 -- least-squares fit with 95 percent confidence bands, Fig.131"
+    as_printed: "sec 7 p.620 prints '0.332 kg/hr N (0.326 lbm/hr-lbf)' for the 0.0332 of the summary; the pound figure is the same. Recorded."
+    record_claim: as far as is known, a record low fuel consumption for a turbofan (sec 7)
+  max_cruise_projected:
+    uninstalled_kg_hN: 0.0561
+    uninstalled_lb_hlbf: 0.550
+    uninstalled_mg_Ns: 15.579
+    installed_kg_hN: 0.0561
+    installed_lb_hlbf: 0.551
+    condition: M 0.8, 10.67 km, standard day, maximum cruise thrust
+    improvement_over_cf6_50c_uninstalled_pct: 12.1
+    improvement_over_cf6_50c_installed_pct: 13.2
+    installed_extras: [nacelle drag, integral oil cooler]
+    objective_pct: 12
+    objective_exceeded_by_pct: 1.2
+    adjustments_for_forecast:
+      src: "Table XIII p.284"
+      items: [ideal inlet, no instrumentation, flight-type nacelle with reverser, reduced cooling flows, rematched turbine and exhaust areas, flight-type exhaust nozzle, operating clearances]
+  takeoff_thrust:
+    achieved_corrected_kg: 16971
+    achieved_corrected_lbf: 37415
+    above_design_pct: 2.5
+
+sfc_stackup_at_takeoff:
+  src: "Table XII p.284 — overall performance stackup; the 2.5 percent between measured and predicted sfc"
+  component:              [inlet, fan, fan_hub, lp_turbine, exhaust, cdp_bleed]
+  variation_from_prediction: ["-0.8 percent recovery", "-0.6 percent efficiency", "+1.0 percent efficiency", "-1.0 percent efficiency", "leakage, pressure loss", "+0.35 percent"]
+  sfc_pct:                [0.2, 0.4, -0.2, 0.9, 1.0, 0.2]
+  total_pct: 2.5
+  note: the six items sum to exactly the 2.5 percent; the exhaust system and overboard leakage alone is 1.0 (sec 6.1.8), the LPT's missing point 0.9
+
+component_results:
+  src: "sec 1 pp.2-4; sec 7 pp.620-622; maximum-cruise levels"
+  acoustics: {margin_epndb_average: 5, features: [full-length fan duct with mixer, bulk absorber in nacelle and exhaust], verdict: exceeded the programme goals}
+  fan:
+    bypass_efficiency: 0.886
+    bypass_over_goal_pct: 0.4
+    hub_and_booster_efficiency: 0.901
+    hub_over_goal_pct_summary: 1.4
+    hub_over_goal_pct_conclusions: 1.1
+    as_printed: "the summary (p.2) says the hub stream beat its goal by 1.4 percent, the conclusions (p.621) by 1.1. Recorded, both kept."
+    construction: solid titanium blades with 50 percent span shrouds; OGVs integral with the fan frame
+    shroud_note: "50 percent here and in CR-168219; the fan hardware report says 55 (fan-design.yaml)"
+    panels: some acoustic panels deteriorated and were replaced
+  compressor:
+    pressure_ratio: 23
+    stages: 10
+    efficiency: 0.856
+    over_goal_points: 0.5
+    stalls: none
+    icls_vs_core: efficiencies generally lower than the core test but as expected at the ICLS clearances; corrected flow matched prediction at takeoff, with the cycle model needing revision between 88 and 93 percent speed where the IGV schedule changes slope (sec 6.1.4 p.245)
+  combustor:
+    efficiency: slightly above goal status at high power
+    operation: start, staging from single to double annular, all characteristics smooth and trouble-free; no smoke
+    emissions: HC and CO better than goal; NOx slightly over
+    icls_vs_core: essentially unchanged
+  hp_turbine:
+    efficiency: 0.925
+    goal: 0.919
+    over_goal_pct: 0.6
+    eccentricity: rotor assembled eccentric to the casing and grew more eccentric in operation; the ACC system was modified to partially restore concentricity, so clearance control could not be fully used -- ACC including fan air was still demonstrated; not a production-engine problem
+    initial_checkout:
+      src: "Fig.136 p.247 — mechanical checkout, CDP bleed from calibration; read off"
+      pretest_prediction_at_92_96pct: 0.90
+      measured_at_92_96pct: [0.895, 0.905]
+      note: tip clearance was the dominant factor; the stage-2 clearance needed to reconcile the deficit was larger than reasonable and trended the wrong way with speed (sec 6.1.4 p.245)
+  lp_turbine:
+    efficiency_vs_goal_pct: -0.7
+    efficiency_vs_rig_points: [-1.0, -1.5]
+    verdict: the deviation from rig levels was not expected and, as yet, is unexplained
+    acc: operated successfully; turbine-discharge gas purge of the aft rotor cavity successful
+  mixer:
+    effectiveness_over_model_summary_pct: 8
+    effectiveness_over_model_conclusions_pct: ">5"
+    as_printed: "'8 percent better than expected' on p.3, 'over 5 percent' on p.622. Recorded."
+    causes: flow-quality differences and the centre vent tube, since built into the mixer modelling
+  bearings_and_dynamics: two sumps, five bearings; fan shaft on a thrust-and-roller bearing forward and a roller aft; core forward on a spring-mounted, squeeze-film-damped thrust bearing from the front frame, aft spring-mounted from the fan shaft; vibrations well behaved
+  active_clearance_control: used on the compressor, HPT and LPT
+  control: on-engine FADEC in manual and automatic modes; FICA (failure indication and corrective action) replaced failed single and double sensor signals with calculated values and kept control
+
+performance_curves:
+  src: "Figs.162-165 pp.280-283; Fig.133 p.243; Figs.134-135 pp.244-246; read off"
+  epr_vs_fan_speed: {fan_speed_pct: [33, 40, 50, 60, 70, 81, 84, 88], epr: [1.35, 1.65, 2.2, 2.7, 3.5, 4.6, 4.95, 5.6], agreement: on the pretest prediction at every point}
+  bpr_vs_fan_speed: {fan_speed_pct: [33, 41, 51, 61, 70, 80, 83, 88], bpr: [9.4, 9.3, 8.95, 8.7, 8.3, 7.7, 7.55, 7.3], note: above prediction at low speed by up to 0.2}
+  core_vs_fan_speed: {fan_speed_pct: [33, 41, 51, 60, 70, 81, 84, 88], core_speed_pct: [77, 82, 87, 90, 93, 96, 96.5, 97]}
+  sfc_vs_thrust: {thrust_kN: [45, 68, 92, 128, 143, 153, 160], sfc_mg_Ns: [8.7, 8.6, 8.65, 8.9, 9.05, 9.2, 9.25], note: the prediction sits 0.15-0.3 mg/N.s below the data above 90 kN; the bucket is at about 70 kN}
+  core_pumping: {temperature_ratio: [2.4, 2.6, 2.85, 3.05, 3.3, 3.45], pressure_ratio: [1.4, 1.9, 2.3, 2.75, 3.35, 3.7], note: on prediction at high power, lower at low power}
+  compressor_efficiency: {corrected_flow_kg_s: [18, 27, 32, 38, 43, 46], efficiency: [0.76, 0.81, 0.815, 0.83, 0.84, 0.845], acc: "CACC on adds about 0.005 at high flow"}
+  compressor_flow: {corrected_speed_pct: [76, 86, 90, 92, 94, 95.5], corrected_flow_kg_s: [22, 34, 40, 45, 49, 51], note: takeoff matched; 88-93 percent needed model revision}
+
+references_named:
+  src: "sec 8 p.623"
+  entries:
+  - "CR-159583 -- FPS preliminary analysis and design, Nov 1979"
+  - "CR-167980 -- FPS preliminary analysis and design update, Jul 1982"
+  - "CR-168069 -- core design and performance report, Dec 1983"

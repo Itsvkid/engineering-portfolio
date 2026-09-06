@@ -138,8 +138,9 @@ leaves a complete piece of work.
 ## A1 · Every source on disk · 4 h
 - [x] `fetch-sources.sh` — 41 documents across every discipline, all
       public domain or openly published; `--check` lists what is missing
-- [ ] Run it; confirm every file is a PDF and readable as page images
-- [ ] Record each report's front-matter page offset in `DATA-INDEX.md`
+- [x] Run it; 39 of 41 on disk and readable; the two DTIC AGARD files
+      still fail on the host (re-run when it is back)
+- [x] Record each report's front-matter page offset in `DATA-INDEX.md`
 
 *Closes when:* `./fetch-sources.sh --check` reports zero missing.
 
@@ -226,7 +227,11 @@ The blade-level data is what separates L2 from L1. All of it goes into
 - [x] HP turbine cooling model CR-165374 — reviewed: it is **Pratt &
       Whitney's** E³ blade-passage flow-visualisation report, not GE's.
       Kept as a design-practice reference; nothing to transcribe for this engine.
-      against which the FPS *design* numbers can be compared
+- [x] **ICLS CR-168211** — the *tested* numbers against which the FPS design
+      is compared: sfc as tested and corrected, thrust, the 2.5 % stack-up,
+      component efficiencies, the curves. `data/icls-tested.yaml`. The
+      component sections (pp.217–620) are read as each Stage B/I solver
+      reaches them.
 
 *Closes when:* every table in `DATA-INDEX.md` marked **L** is marked **T**,
 and `tests/test_published_data.py` holds every new table to at least one
