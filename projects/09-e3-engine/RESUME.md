@@ -46,20 +46,19 @@ to 0.5 point is recorded as a C4 (CFD) claim.
 
 ## C3 — blade sections, in progress
 
-`solvers/blading/`, its own `STEP0.md`. Findings 42–51.
+`solvers/blading/`, its own `STEP0.md`. Findings 42–54.
 
 | Unit | What | Result |
 |---|---|---|
 | 12 | HPC sections rebuilt from Table XXII; throats | **throat margin 4.0 % vs a stated 6 %** on the transonic rotors; stators circular-arc, rotors aft-loaded |
 | 13 | LPT throats and Zweifel from the coordinates | **outlet angle to 1.4° rms** of Table II; Zweifel to 0.083 of Table III |
 | 14 | HPT throats from Table IV's aspect ratio | **outlet angle to 1.8° rms** of the unit-3 mean-line, with no coordinates |
+| 15 | Fan blade — **designed, not transcribed** | **throat margin 11–17 % vs a published 5–8.8 %**; camber 35° → 1°, tip solidity 1.43 vs 1.40 |
 
 ## Next, in order
 
-1. **C3's remaining items** — the fan blade, which is **not published**
-    and must be designed and labelled as designed (SP-36 / AGARD LS-167
-    for the transonic outer sections at tip relative Mach 1.4); the
-    booster rows and inner OGV; section stacking with the published
+1. **C3's remaining items** — the booster rows and inner OGV (published
+    sweep 60°, lean 0–20°) and section stacking with the published
     pretwist and tilt. The LPT's Figs 9–18 surface Mach needs a
     blade-to-blade solver and is really C4.
 2. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).

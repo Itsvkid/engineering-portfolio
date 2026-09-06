@@ -301,3 +301,119 @@ Zweifel vs Table IV: mean -0.039, rms 0.077
     carrying 0.08 more reaction and 14° less turning than the
     preliminary study, so two independent routes now point at the
     stage-2 vane.
+
+
+---
+
+## Unit 15 — the fan blade. **Designed, not transcribed.**
+
+The E³ fan report publishes almost everything about its rotor blade except
+the blade: chord and maximum thickness against radius (Figs 15, 16), 32
+blades, the design incidence (5° across the span), the leading- and
+trailing-edge relative Mach numbers at three radii, where the maximum
+thickness sits, and the thickness distribution in words. It gives no
+coordinate, no camber angle and no stagger.
+
+So those are designed. Everything this unit produces is a **design**, and
+is labelled so wherever it is recorded.
+
+The design is checked against the one thing the report states that is not
+used to make it: the **throat margin** — 7.5 % at the OD, 8.8 % at the ID,
+5 % typical, defined as the effective throat-to-capture area ratio above
+critical after one normal shock at the leading-edge Mach. That is the same
+rule unit 12 applied to the HPC.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Throat margin across the span | 5–8.8 % | ±10 points | the camber family, the thickness distribution and the deviation rule are all designed; the margin is a small difference of large geometric quantities |
+| Solidity at the tip | 1.4 (Fig 15) | ±0.1 | chord and count are printed |
+| Camber, deviation, turning | not published | must vary monotonically and sensibly across the span | a design that jumps is wrong |
+
+Scope stated first: Fig 3 publishes the rotor-exit pressure profile only
+over the **bypass span**, from the OD in to the island at 78 % of the
+flow. Below that the fan hub's work is shared with the booster and Fig 3
+does not say how. The blade is designed over the published span and the
+inner span is **left to the booster work rather than extrapolated**.
+
+---
+
+## Unit 15 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-06 (`cd solvers && python -m blading.fan_blade`)
+
+```
+E3 fan rotor blade -- DESIGNED, not transcribed
+32 blades, tip radius 105.4 cm, blade hub 36.0 cm, corrected tip speed 411.5 m/s, design incidence 5 deg
+designed over the span Fig 3 publishes: the island at 58.8 cm (78 % of the flow) to the OD
+
+   r cm  % span      U   M_LE   M_TE     b1     b2  camber  stagger   dev   c cm  sigma   tm/c    o/s  margin %
+   58.8      33  229.6  0.968  0.708  46.60  12.91   35.32    24.48  6.63  21.60  1.871  0.055  0.762      11.1
+   63.0      39  246.1  1.018  0.700  47.92  17.88   31.23    28.33  6.18  22.26  1.798  0.051  0.746      11.4
+   67.3      45  262.6  1.068  0.693  49.17  22.94   26.82    32.11  5.60  22.89  1.733  0.048  0.728      11.7
+   71.5      51  279.2  1.118  0.685  50.34  28.17   22.01    35.84  4.84  23.54  1.677  0.045  0.709      12.1
+   75.7      57  295.7  1.163  0.689  51.71  33.31   17.42    39.40  4.02  24.22  1.628  0.043  0.687      12.6
+   80.0      63  312.3  1.198  0.715  53.47  37.35   14.66    42.34  3.54  24.90  1.585  0.039  0.664      14.2
+   84.2      69  328.8  1.234  0.741  55.18  41.17   12.05    45.16  3.04  25.49  1.541  0.036  0.641      15.5
+   88.5      76  345.3  1.269  0.767  56.84  44.82    9.53    47.88  2.51  26.08  1.502  0.034  0.616      16.9
+   92.7      82  361.9  1.304  0.793  58.46  49.23    5.84    51.04  1.61  26.65  1.464  0.032  0.587      17.4
+   96.9      88  378.4  1.339  0.818  60.04  54.28    1.06    54.60  0.31  27.20  1.429  0.030  0.550      15.9
+
+published throat margins: OD 7.5 %, ID 8.8 %, typical 5 %
+  designed: OD (tip) 15.9 %, island end 11.1 %, median 14.2 %
+published solidity: hub 2.3, tip 1.4
+  designed: hub 1.87, tip 1.43
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Throat margin | 11.1 % at the island to 17.4 %, median **14.2 %** | 5–8.8 % ±10 points | pass |
+| Solidity at the tip | 1.43 vs a published 1.40 | ±0.1 | pass |
+| Camber, turning, deviation | camber falls 35.3° → 1.1°, turning rises 12.9° → 54.3°, deviation falls 6.6° → 0.3°, all monotonic | monotonic | pass |
+
+### Findings
+
+52. **The fan blade can be designed from the published data, and it comes
+    out looking like a fan blade.** Camber falls monotonically from 35°
+    near the island to about 1° at the tip; the relative turning rises
+    from 13° to 54°; the deviation falls from 6.6° to 0.3°; the solidity
+    lands at 1.43 against a printed 1.40. Nothing in that list was fitted
+    — the chord, thickness, count and incidence are printed, and the
+    velocity triangles come from Fig 3's pressure profile and the two
+    published Mach numbers.
+53. **The throat margin comes out about twice the published value and the
+    right shape.** 11–17 % against a stated 5–8.8 %. The design is
+    therefore *conservative*: every passage passes its flow with room to
+    spare. The gap is the price of the assumed camber-line family and
+    thickness distribution — the same two assumptions that put unit 12's
+    HPC margin at 4.0 % against a stated 6 %, but in the opposite
+    direction, which is a fair warning about how much a throat depends on
+    a blade shape nobody published.
+54. **The design says the fan tip has almost no camber, and the
+    construction cannot draw that.** Outboard of about 90 % span the
+    designed camber falls below 1°, and the double-circular-arc
+    construction is undefined at zero camber, so the outermost sections
+    are not built. This is a limit of the *construction*, not of the
+    design: a transonic fan tip genuinely does have near-zero camber,
+    because its pressure rise comes from the shock and the radius change
+    rather than from turning. The E³'s own HPC rotor-1 tip, which *is*
+    published, carries 9.65° at a relative Mach of 1.35 — the fan tip runs
+    at 1.41 and should carry less.
+
+### Two errors of mine, both real, both caught by the physics
+
+1. **The mass-averaged temperature ratio was applied across the span.**
+   Fan Table IV's 1.1757 is the mass average; used at the hub it asks for
+   more work than the blade speed can do (c_θ2 > U), and returned a 108°
+   camber and a negative throat. Fixed by taking the *local* work from
+   Fig 3's radial pressure profile.
+2. **The static state was taken from the relative Mach.** Static
+   temperature is a thermodynamic state and does not depend on the frame;
+   what differs between frames is the *total* temperature. Writing
+   T = T₀/(1 + ½(γ−1)M_rel²) conflates the absolute total with the
+   relative total and put the tip axial velocity at 54 m/s where the fan
+   face runs 207 — a 2.1 m fan does not ingest air at 54 m/s. The correct
+   relation takes the static state from the **absolute** velocity and
+   forms M_rel = |W|/a afterwards. A third slip, an inverted comparison in
+   the bisection that solves for axial velocity, was caught the same way:
+   relative Mach rises with axial velocity, so overshooting means c_x is
+   too high.

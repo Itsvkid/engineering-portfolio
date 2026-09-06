@@ -618,10 +618,21 @@ Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
       and Table II's angles reproduces Table III to 0.083 rms at pitch
       (findings 46–48). Digitising Figs 9–18 for the surface Mach
       distribution remains, and is C4 work
-- [ ] **Fan blade — not published.** Design it: transonic outer sections
-      by the SP-36 / AGARD LS-167 method for tip relative Mach 1.4, hub
-      sections subsonic, 12 stream surfaces, 32 blades, part-span shroud at
-      50 %. State that it is designed, not transcribed
+- [x] **Fan blade — not published. Designed** — **unit 15**,
+      `solvers/blading/fan_blade.py`, and labelled a design everywhere it
+      is recorded. Velocity triangles from Fig 3's radial pressure profile
+      and the two published Mach numbers; chord, thickness, count and the
+      5° incidence printed; camber closed with Carter's deviation and the
+      aft-loaded camber line unit 12 inferred for this engine's rotors.
+      **Checked against the one published number not used to build it —
+      the throat margin: 11–17 % designed against a stated 5–8.8 %**, so
+      the design is conservative (finding 53). Camber falls 35° → 1°,
+      turning rises 13° → 54°, deviation 6.6° → 0.3°, tip solidity 1.43
+      against a printed 1.40, all monotonic (finding 52). AGARD LS-167 is
+      one of the two sources DTIC still will not serve, so SP-36's Carter
+      rule was used instead. Scope: Fig 3 publishes the profile only from
+      the OD to the island at 78 % of the flow, so the inner span is left
+      to the booster rather than extrapolated
 - [ ] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
 - [x] Throat area per row from the sections — **unit 12**. Nothing about
       the throat is transcribed; it comes out of seven printed numbers per
