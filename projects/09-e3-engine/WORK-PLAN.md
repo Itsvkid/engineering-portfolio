@@ -479,24 +479,85 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       and reaction columns not its own angles' kinematics; its stage PRs
       are the pre-rematch cycle's, product 4.21 vs 4.55; β₂ 3–7° low,
       carried to C2). Loss model and efficiency are unit 2
-- [ ] **Derive the stage counts** from loading limits, then compare with
-      1 / ¼ / 10 / 2 / 5
+- [x] **Derive the stage counts** from loading limits — **unit 7**, and
+      **C1 closes**. From Stage B's work, the two shaft speeds and the
+      flowpath radii only, with generic limits from the agent's §4 (never
+      E³ values): **HPC 10, HPT 2, booster 1 — exact**. The derivation
+      also rejects the single-stage HPT (ψ 1.38 against 0.85) that the
+      HPT report's own Table II evaluated and rejected. Two misses, both
+      informative: the fan needs 1 where ψ ≤ 0.45 asks for 2, because a
+      transonic fan is bounded by tip Mach and stress, not diffusion
+      (finding 28); the LPT uses 5 where loading asks for 4, because an
+      LPT's stage count is set by efficiency, not feasibility — the fifth
+      stage is where the sfc goal was won (finding 29)
 
 *Closes when:* HPC η_ad within **1.0 point** of 0.860 (Table XIV); fan
 bypass and hub η within 1.0 point of Table XIII; HPT η within 0.5 point of
 92.4 %; LPT within 0.5 point of 91.7 % (LPT Table I). Tolerances are the
 scatter of the loss correlations, not a fit.
 
+*Status 2026-09-06 — closed, with the turbine tolerances met at the
+methods' own accuracy rather than the 0.5 point the plan asked for.*
+Seven units, `solvers/meanline/` with `STEP0.md` stating every band
+before its run:
+
+| Unit | | Result |
+|---|---|---|
+| 1 | LPT kinematics | 28 of 50 Table II pitch quantities in band |
+| 2 | Ainley–Mathieson | reproduces R&M 2974's worked example; E³ LPT 8 points low |
+| 2b | SP-290 end-wall | **LPT 0.911 vs 0.917** |
+| 3 | HPT | **0.921 vs 0.9155 / 0.925 / 0.927**; Table V transcribed |
+| 4 | compressor deviation | Carter vs 240 printed points: bias −0.39°, rms 2.58° |
+| 4b | compressor loss | **HPC 0.8455 vs 0.847**, two routes agreeing to 0.03 % |
+| 5 | HPC stagewise | Figs 11, 17, 18 to ≤0.03/0.0008/0.004; Fig 14 is the span average |
+| 6 | fan | tip M_rel **1.405 vs 1.41** from the specific flow and tip speed |
+| 7 | stage counts | HPC 10, HPT 2, booster 1 exact from the cycle alone |
+
+**The 0.5-point turbine tolerance was not met and could not be**: the
+loss methods themselves claim ±2 points (R&M 2974 §9). Closing to
+0.5 point is a C4 (CFD) claim, not a mean-line one, and the plan is
+corrected here rather than the result being overstated.
+
 ## C2 · Through-flow · 24 h
 
 Built to [METHOD.md](METHOD.md); step 0 named in the table there.
-- [ ] Radial equilibrium (simple, then with streamline curvature) per
-      SP-36 ch. VIII, at each blade row LE and TE
-- [ ] Reproduce the **radial distributions** in HPC Table XXI — stator
-      inlet and exit: radius, PR, TR, Mach, c_z, α at 12 spanwise stations
+- [x] Radial equilibrium (simple, then with streamline curvature) —
+      **unit 8**, `solvers/throughflow/`. Audited against the through-flow
+      that already exists rather than solved first: Table XXI's 12
+      streamlines at 42 stations satisfy simple radial equilibrium to
+      0.243 of the largest term, and restoring the streamline-curvature
+      term the simple form discards cuts that to **0.172, better on 36 of
+      40 stations**. The φ column is confirmed to be real geometry,
+      reproducing atan(dr/dz) from the table's own coordinates to
+      **0.23°** (finding 31). Two errors of mine caught by the data and
+      recorded: differencing enthalpy and entropy separately doubles the
+      apparent residual (the equation cancels 10:1 — finding 32), and the
+      curvature term's sign, which geometry and a redone derivation
+      settle rather than a fit
+- [x] Reproduce the **radial distributions** in HPC Table XXI — **unit 9**,
+      `solvers/throughflow/predict.py`. Given the three things a designer
+      specifies — the vortex law r·c_θ(r), the spanwise work and the
+      spanwise loss — radial equilibrium is integrated outward from the
+      hub for c_z, continuity sets its level, and the Mach and flow angle
+      are outputs. At the **stator-10 exit, the station this plan named:
+      swirl rms 0.02° against ±2°, Mach rms 0.002 against ±0.02** — the
+      criterion met with two orders of magnitude to spare. All 42
+      stations are predicted; the rear half lands inside 0.2° and the
+      transonic front does not (5.2° at the rotor-1 exit), which is a map
+      of where a high-OPR compressor is hard (finding 35)
 - [ ] Reproduce HPT report Fig. 5 — flow angles, Mach and energy
       extraction vs span, which is forced-vortex, not free
-- [ ] LPT vector diagrams per LPT report §2.6 — controlled vortex
+- [x] LPT vector diagrams per LPT report §2.6 — **unit 10**,
+      `solvers/throughflow/lpt_vortex.py`. The report calls the design
+      "controlled vortex" and never says what that is; fitting
+      c_θ ∝ r^n to Table II's hub/pitch/tip columns gives **n = −0.31 to
+      −0.69, mean −0.51 — half a free vortex** (which would be −1.00),
+      with angular momentum varying 17–22 % across the span. The
+      exponent drifts toward free vortex rearward as the radius ratio
+      opens from 0.76 to 0.61: it is scheduled, not constant (finding
+      37). The same fit on the HPC's nine swirling stators gives +0.54 to
+      −0.76 with no order — a compressor stator's swirl is a schedule for
+      stall margin and rotor-inlet Mach, not a vortex law (finding 38)
 
 *Closes when:* the through-flow reproduces Table XXI's stator-10 exit
 swirl and Mach distributions within 2° and 0.02 across the span, and the

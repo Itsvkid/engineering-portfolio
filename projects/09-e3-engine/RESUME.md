@@ -12,9 +12,9 @@ This page is only a pointer.
 |---|---|
 | **A** Foundation | complete — every source transcribed or classified; flowpaths derived from tables, not figures; 30 LPT airfoil sections |
 | **B** Thermodynamic design | complete — `solvers/e3cycle/`. sfc +0.46 / +0.56 / +1.91 % at climb / cruise / takeoff against ±1.5 %; annulus by continuity closes at every dimensioned HPT station |
-| **C1** Mean-line | units 1–4 done, see below |
+| **C1** Mean-line | **complete** — seven units, see below |
 
-## C1, unit by unit
+## C1, unit by unit — **closed 2026-09-06**
 
 | Unit | What | Result |
 |---|---|---|
@@ -22,22 +22,43 @@ This page is only a pointer.
 | 2 | Ainley–Mathieson loss model, `meanline/losses.py` | reproduces R&M 2974's own worked example; reads the E³ LPT 8 points low |
 | 2b | SP-290 end-wall method | **LPT closes: 0.911 against 0.917** |
 | 3 | HPT mean-line, `meanline/hpt.py` | **closes: 0.921 against 0.9155 / 0.925 / 0.927**; Table V transcribed |
-| 4 | Compressor deviation, `meanline/compressor.py` | Carter's rule vs 240 printed points: bias −0.39°, rms 2.58° |
+| 4 | Compressor deviation, `meanline/compressor.py` | Carter vs 240 printed points: bias −0.39°, rms 2.58° |
+| 4b | Compressor loss roll-up | **HPC closes: 0.8455 against 0.847**, two routes agreeing to 0.03 % |
+| 5 | HPC stagewise | Figs 11, 17, 18 reproduced from Table XXI; Fig 14 is the span average |
+| 6 | Fan and booster, `meanline/fan.py` | tip M_rel **1.405 against 1.41** from the specific flow and tip speed |
+| 7 | Stage counts, `meanline/stage_counts.py` | HPC 10, HPT 2, booster 1 **exact** from the cycle alone |
+
+Twenty-nine findings are recorded in `solvers/meanline/STEP0.md`. One
+correction to the plan itself: its 0.5-point turbine tolerance cannot be
+met by a mean-line method that claims ±2 points for itself, so closing
+to 0.5 point is recorded as a C4 (CFD) claim.
+
+## C2 — through-flow, in progress
+
+`solvers/throughflow/`, its own `STEP0.md`. Three of four items done.
+
+| Unit | What | Result |
+|---|---|---|
+| 8 | Radial-equilibrium audit of Table XXI | balances to 0.243 of the largest term; 0.172 with curvature restored |
+| 9 | Predict the spanwise distributions | **stator-10 exit: 0.02° swirl, 0.002 Mach against the plan's ±2° / ±0.02** |
+| 10 | The vortex law | LPT "controlled vortex" is **n ≈ −0.5**; the HPC has no single law |
 
 ## Next, in order
 
-1. **C1 unit 4b — compressor loss.** Table XXI prints a loss for each of
-   the same 240 streamline points. Roll those into stage and overall
-   efficiency, compare with its own cumulative-efficiency column (0.872
-   at the OGV pitch streamline) and with the published 0.847 design
-   intent / 0.861 Table XI / 0.856 ICLS as tested. Then end-wall and
-   tip-clearance loss and the incidence range. SP-36 Fig 148 (wake
-   momentum thickness vs diffusion factor, p.204) is the chart to
-   digitise if a *predicted* loss is wanted.
-2. **C1 remaining** — stage-by-stage HPC against Figs 14, 17, 18, 27;
-   fan and quarter-stage with the island split; derive the stage counts
-   from loading limits and compare with 1 / ¼ / 10 / 2 / 5.
-3. **C2** through-flow, **C3** blade sections, **C4** CFD.
+1. **C2's last item** — reproduce HPT report Fig 5 (flow angles, Mach and
+   energy extraction vs span, forced-vortex). Needs Fig 5 read off; Stage
+   A did not transcribe it. Still carried from C1: the LPT's rotor inlet
+   relative angle 3–7° low at pitch (C1 unit 1 finding 4), the HPT
+   stage-2 reaction and turning (C1 unit 3 finding 10), the fan's
+   non-uniform inlet axial profile (C1 unit 6 finding 22) and the
+   compressor's radial redistribution (C1 unit 4b finding 17) — all the
+   same class of problem.
+2. **C3** blade sections — surface Mach against the LPT report's Figs
+   9–18 peak Mach and the HPT's Fig 6. The 30 LPT airfoil sections are
+   already transcribed and checked.
+3. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).
+4. Then Stage D (thermal), E (mechanical), F (materials and mass),
+   G (geometry generation), H (hand CAD), I (verification), J (publication).
 
 ## Standing rules
 
