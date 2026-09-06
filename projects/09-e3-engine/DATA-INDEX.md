@@ -58,6 +58,7 @@ front-matter offset (given per report below) to get the PDF page.
 | Takeoff thrust | **T** | CR-168219 §4.3 p.32 |
 | Mixer effectiveness, ΔP/P, sfc gain | **T** | CR-168219 Table XXIII p.104 |
 | Fan duct Mach 0.40–0.45 | **T** | CR-168219 §5.8 p.101 |
+| **Cycle solved** — `solvers/e3cycle/`: the three Table XII ratings from Table XI's components and the four secondary-air streams, real gas. What the reports do not print and the solver gives: the booster-to-HPC transition loss the printed OPR implies, 2.22 / 1.84 / 1.41 % (climb / cruise / takeoff); takeoff fan corrected flow 580 kg/s at 173.5 kN; T3 796 / 784 / 877 K; combustor exit 1573 / 1540 / 1695 K behind T41 1517 / 1485 / 1638; HPT PR 4.99 / 5.00 / 4.98; LPT PR 4.55 / 4.45 / 4.12; T5 749 / 734 / 840 K; core at 0.95–0.96 of bypass pressure at the mixing plane. sfc +0.46 / +0.56 / +1.91 % against Table XII | **D** | derived; B1–B3, `tests/test_e3cycle.py`, findings in `solvers/e3cycle/STEP0.md` |
 
 ## Blade speed and spool speed
 

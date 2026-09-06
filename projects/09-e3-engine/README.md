@@ -129,10 +129,13 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 37 tests, plain interpreter
+python -m pytest tests/     # 361 tests, plain interpreter
+python solvers/e3cycle/run.py   # Stage B: the three Table XII ratings, the mixer, sensitivities
 ```
 
-`build.py` arrives with Stage B.
+Stage B's cycle solver is `solvers/e3cycle/`; its `STEP0.md` states every
+band before the run and records the two misses and three findings after it.
+`build.py`, the discipline loop, arrives with Stage C.
 
 ---
 

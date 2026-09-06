@@ -282,39 +282,77 @@ The cycle is the root of everything downstream; it has to be right at three
 rating points, not one, and it has to carry the flows the real engine carries.
 
 ## B1 · Mixed-flow cycle · 12 h
-- [ ] Add a mixer model to PF-08: constant-area or constant-pressure mixing
-      of core and bypass, mixing effectiveness as an input (E³: 0.838
-      Table XI; 0.85 FPS projection Table XXIII), duct losses per Table XI
-- [ ] Single C-D nozzle with the published coefficient 0.996
-- [ ] Two fan pressure ratios — bypass and hub streams — as the E³ quotes them
-- [ ] Real-gas properties: cp(T) for air and for products at the
-      fuel–air ratio; PF-08 `gas.py` extended, not replaced
+- [x] Mixer model — `solvers/e3cycle/cycle.py`: ideal mixing by
+      mass-weighted total pressure, effectiveness as the fraction of the
+      ideal thrust gain realised (0.838 Table XI), Table XI duct losses
+      **on the two streams ahead of the mixing plane** (both rows are
+      labelled "duct mixer"; the 1.7 % is not a booster-to-HPC loss)
+- [x] Single C-D nozzle with the published coefficient 0.996
+- [x] Two fan pressure ratios — bypass and hub streams — as the E³ quotes them
+- [x] Real-gas properties — `solvers/e3cycle/gas.py`, Walsh & Fletcher
+      polynomials for air and for products at the fuel–air ratio, h and φ
+      integrated analytically, four chart points within 0.5 %.
+      **Deviation from the plan:** PF-08's `gas.py` is constant-cp inside
+      frozen dataclasses; it stays as the closed-form-validated baseline
+      and the E³ solver has its own module rather than extending it
 
 *Closes when:* the mixer model reproduces Table XXIII's sfc improvement of
 2.9 % for 85 % effectiveness against a separate-flow baseline of the same
 core.
 
+*Status 2026-09-06 — open on the level.* 3.6 % at 85 % against a
+separate-flow engine without the mixer's 0.57 % loss. Table XXIII's
+column-to-column differences (−0.5, +0.3 points across its three
+effectiveness/loss pairs) are reproduced to 0.25 point; the level is
+0.7 point high because mass-weighted total pressure is the ideal upper
+bound. The momentum-balance mixing plane that brings it down needs the
+mixing-plane area (Figs 39–40, undimensioned) — Stage H. Pinned as a
+strict xfail in `tests/test_e3cycle.py`; STEP0 finding 3.
+
 ## B2 · Secondary air in the cycle · 8 h
-- [ ] Every Table XI stream at its published fraction and its published
-      source and sink: CPD nonchargeable (upstream of vane-1 throat),
-      CPD chargeable (downstream), stage 7 → HPT vane 2, stage 5 → LPT
-- [ ] Chargeable vs nonchargeable handled correctly in turbine work
-- [ ] Zero customer bleed and power extraction, 100 % ram — as the report
+- [x] Every Table XI stream at its published fraction, source and sink:
+      CPD nonchargeable mixed in at T3 ahead of the rotor, the fuel–air
+      ratio solved so that Table XII's T41 is met after it; CPD chargeable
+      and stage 7 rejoin at HPT exit and do LPT work; stage 5 at LPT exit.
+      Bleed-port temperatures from Table XXI's stator-5 and stator-7 exit
+      total pressures (0.305 and 0.506 of HPC exit)
+- [x] Chargeable vs nonchargeable handled in turbine work
+- [x] Zero customer bleed and power extraction, 100 % ram, no shaft loss
+      (none listed in Table XI) — as the report
 
 *Closes when:* turbine work per spool changes by the amount the cooling
 bookkeeping predicts, and the HPT work split still lands at 56.5 % stage 1.
 
+*Status 2026-09-06.* The spool balance is in the solver (HPT pressure
+ratio 5.0 at all three ratings, LPT 4.1–4.6). The 56.5 % stage split is a
+mean-line quantity and is carried to C1.
+
 ## B3 · Three rating points · 12 h
-- [ ] Max climb (the match point), max cruise, sea-level takeoff at the
-      flat-rating temperatures in §4.4
+- [x] Max climb (the match point), max cruise, sea-level takeoff at the
+      flat-rating temperatures of §4.4 p.33: +10, +10, +15 °C
 - [ ] Component maps or scalings so off-design points follow from the
-      match point rather than being re-matched — PF-08 `off_design.py`
-- [ ] Reproduce all seven rows of Table XII at all three points
+      match point — **deferred to Stage C**; each point is solved with
+      Table XII's own ratios and T41 as inputs, the sfc the output
+- [x] Table XII at all three points; takeoff sized to its published
+      173.5 kN, which puts the fan at 580 kg/s corrected (0.90 of the
+      match point) — a derived number for the Stage C fan map to check
 
 *Closes when:* sfc, OPR, BPR, both FPRs, HPC PR and T41 agree with Table XII
 at all three points to a tolerance stated **before** the run — and the
 tolerance is the same at all three. A model tuned to one point and off at
 the others has been tuned, not validated.
+
+*Status 2026-09-06 — two of three inside the band.* sfc +0.46 / +0.56 /
++1.91 % against ±1.5 % stated first in `solvers/e3cycle/STEP0.md`;
+takeoff is a strict xfail with its size pinned. **Finding:** Table XII is
+a mixed-day table — T41 on the flat-rating day (footnote 2), sfc on the
+standard day (header, §4.4). On the flat-rating day the core reaches the
+mixing plane at 0.95–0.96 of the bypass pressure at all three ratings; on
+the standard day 1.15–1.18, which no mixer can run. The residual has the
+sign and ordering of the constant-thrust day effect and needs the maps.
+Second finding: fan hub PR × HPC PR exceeds the printed OPR by 1.4–2.3 %
+— a booster-to-HPC transition loss the report never lists; the solver
+takes it from the OPR and records it (2.22 / 1.84 / 1.41 %).
 
 ## B4 · Station properties and the annulus · 8 h
 - [ ] T, p, ρ, ṁ, c_x, Mach at every station in `flowpath.stations`
