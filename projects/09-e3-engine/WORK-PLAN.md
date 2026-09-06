@@ -588,21 +588,49 @@ The swirl criterion is met with two orders of magnitude to spare, and the
 Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
 
 ## C3 · Blade sections · 32 h
-- [ ] **Reconstruct every HPC rotor section** from Table XXII: camber line
-      from camber angle and family (Special / bi-convex / 65-series),
-      thickness from tm/c, %c, te/c; stagger; twelve sections per rotor
-      stacked on the stacking axis with the published pretwist and tilt
+- [x] **Reconstruct every HPC section** from Table XXII — **unit 12**,
+      `solvers/blading/`. Camber line a double circular arc with the join
+      solved so each section reproduces β₁*, β₂* **and** the printed
+      stagger, which makes the join position an output: **stators come out
+      as circular arcs (median max camber 49 % of chord), rotors
+      aft-loaded (55 %)** (finding 43). Thickness by the quarter-sine
+      distribution CR-165148 §II.A documents for this engine. Stacking on
+      the stacking axis with pretwist and tilt is still to do
 - [ ] HPC stators from Table XXI section data; vane counts
-- [ ] HPT vanes and blades: digitise Fig. 6 hub/pitch/tip shapes; check
-      Zweifel and solidity against Table IV
-- [ ] LPT: digitise LPT report Figs. 9–18 per stage
+- [x] HPT vanes and blades — **unit 14**, and Fig 6 was **not needed**.
+      Table IV's aspect ratio *is* height over throat, and Fig 3 gives the
+      annulus heights, so the throat follows from two printed numbers:
+      o/s 0.257–0.488, and through R&M 2974's Fig 5 outlet angles within
+      **1.8° rms** of unit 3's mean-line, which was built from the cycle
+      and the work split and shares no input with this. Zweifel from the
+      printed solidity and the mean-line angles matches Table IV on
+      **three of four rows to 0.03**; the stage-2 vane is 0.15 low — the
+      same row unit 3 flagged (findings 49–51). Digitising Fig 6 remains
+      only if the actual shapes are wanted for Stage G
+- [x] LPT sections — **unit 13**, and better than digitising the figures:
+      the appendix *coordinates* were transcribed in A3, so two published
+      relations can be tested against them directly.
+      **R&M 2974's outlet-angle rule, applied to the throat computed from
+      the E³'s own coordinates, reproduces Table II's printed exit angles
+      to 1.4° rms** (mean −0.71° from Fig 5 alone, +0.27° once equation
+      (1)'s −4(s/e) term is added with *e* fitted to the suction surface
+      between throat and trailing edge). **Zweifel** from the coordinates
+      and Table II's angles reproduces Table III to 0.083 rms at pitch
+      (findings 46–48). Digitising Figs 9–18 for the surface Mach
+      distribution remains, and is C4 work
 - [ ] **Fan blade — not published.** Design it: transonic outer sections
       by the SP-36 / AGARD LS-167 method for tip relative Mach 1.4, hub
       sections subsonic, 12 stream surfaces, 32 blades, part-span shroud at
       50 %. State that it is designed, not transcribed
 - [ ] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
-- [ ] Throat area per row from the sections; check it passes the station
-      mass flow at the design Mach
+- [x] Throat area per row from the sections — **unit 12**. Nothing about
+      the throat is transcribed; it comes out of seven printed numbers per
+      section. **The transonic rotors 1–4 land at 4.0 % above choking
+      against the report's stated 6 %**, and the margin rises monotonically
+      2.2 % at rotor 1 → 6.2 % at rotor 4 → 28.0 % at rotor 10, so the
+      constraint binds only where the flow is transonic — which is the
+      arithmetic of why a compressor's throat is a front-stage problem
+      (finding 42)
 
 *Closes when:* every row's section set reproduces the published chord,
 camber, stagger and thickness within transcription precision, and every

@@ -44,12 +44,24 @@ to 0.5 point is recorded as a C4 (CFD) claim.
 | 10 | The vortex law | LPT "controlled vortex" is **n ≈ −0.5**; the HPC has no single law |
 | 11 | HPT Fig 5c, extracted by script | stage-1 work **+0.4 %**; neither free vortex nor solid body |
 
+## C3 — blade sections, in progress
+
+`solvers/blading/`, its own `STEP0.md`. Findings 42–51.
+
+| Unit | What | Result |
+|---|---|---|
+| 12 | HPC sections rebuilt from Table XXII; throats | **throat margin 4.0 % vs a stated 6 %** on the transonic rotors; stators circular-arc, rotors aft-loaded |
+| 13 | LPT throats and Zweifel from the coordinates | **outlet angle to 1.4° rms** of Table II; Zweifel to 0.083 of Table III |
+| 14 | HPT throats from Table IV's aspect ratio | **outlet angle to 1.8° rms** of the unit-3 mean-line, with no coordinates |
+
 ## Next, in order
 
-1. **C3 — blade sections.** Surface Mach against the LPT report's Figs
-    9–18 peak Mach and the HPT's Fig 6. The 30 LPT airfoil sections are
-    already transcribed and checked, so this is the best-supported
-    remaining unit.
+1. **C3's remaining items** — the fan blade, which is **not published**
+    and must be designed and labelled as designed (SP-36 / AGARD LS-167
+    for the transonic outer sections at tip relative Mach 1.4); the
+    booster rows and inner OGV; section stacking with the published
+    pretwist and tilt. The LPT's Figs 9–18 surface Mach needs a
+    blade-to-blade solver and is really C4.
 2. **C4** CFD, selectively — validated on Rotor 37 first (`sources/`).
 3. Then Stage D (thermal), E (mechanical), F (materials and mass),
     G (geometry generation), H (hand CAD, gated on a working install),
