@@ -230,15 +230,25 @@ def placed_section(s: Section, n=120):
     return suction + list(reversed(pressure))[1:-1]
 
 
-def blade_solid(scale=IN):
-    """the lofted, capped, sewn blade -- Stage G's machinery, in metres"""
+def blade_solid(scale=IN, shifted=False, trimmed=False):
+    """the lofted, capped, sewn blade -- Stage G's machinery, in metres.
+
+    `shifted` puts the hub leading edge at x = 0, which is the flow path's
+    own datum. `trimmed` then cuts the blade with the casing less the
+    running clearance, which is what the geometry says actually happens:
+    Appendix C tabulates sections at fixed radii for manufacture and the
+    outermost of them lies outside the casing over its whole chord."""
     from geometry.blades import loft_capped, wrapped_wire
     secs, _ = load()
+    dx = sections_against_the_casing()[1] if (shifted or trimmed) else 0.0
     wires = []
     for s in secs:
-        pts = [(x * scale, y * scale) for x, y in placed_section(s)]
+        pts = [((x + dx) * scale, y * scale) for x, y in placed_section(s)]
         wires.append(wrapped_wire(s.radius * scale, pts))
-    return loft_capped(wires)
+    solid = loft_capped(wires)
+    if trimmed:
+        solid = solid.intersect(casing_solid())
+    return solid
 
 
 def blade_report():
@@ -319,3 +329,169 @@ def annulus_check():
         casing_fall_cm=casing_at_le - fp["outer"][-1][1],
         annulus_at_le_cm=casing_at_le - hub_at_le,
         annulus_at_exit_cm=fp["outer"][-1][1] - fp["inner"][-1][1])
+
+
+# ------------------------------------------------- the tip, and the domain
+
+TIP_CLEARANCE_MM = 0.356        # Rotor 37's running clearance; the CFD
+                                # validation report meshes the gap rather
+                                # than modelling it
+
+
+def casing_at(x_cm):
+    fp = flow_path()
+    pts = fp["outer"]
+    if x_cm <= pts[0][0]:
+        return pts[0][1]
+    if x_cm >= pts[-1][0]:
+        return pts[-1][1]
+    for (x0, r0), (x1, r1) in zip(pts, pts[1:]):
+        if x0 <= x_cm <= x1:
+            return r0 + (r1 - r0) * (x_cm - x0) / (x1 - x0)
+
+
+def hub_at(x_cm):
+    fp = flow_path()
+    pts = fp["inner"]
+    if x_cm <= pts[0][0]:
+        return pts[0][1]
+    if x_cm >= pts[-1][0]:
+        return pts[-1][1]
+    for (x0, r0), (x1, r1) in zip(pts, pts[1:]):
+        if x0 <= x_cm <= x1:
+            return r0 + (r1 - r0) * (x_cm - x0) / (x1 - x0)
+
+
+def blade_axial_range_in():
+    """where the blade actually sits, from the placed sections"""
+    secs, _ = load()
+    xs = [x for s in secs for x, _ in placed_section(s)]
+    return min(xs), max(xs)
+
+
+def sections_against_the_casing():
+    """Which printed sections lie outside the casing, and where.
+
+    The flow path is datumed on the rotor-blade HUB leading edge, so the
+    placed blade has to be shifted to put that point at x = 0 before the
+    two can be compared at all. Once it is, only the outermost section
+    exceeds the casing -- and it does so over its entire chord."""
+    secs, _ = load()
+    shift = -placed_section(secs[0])[0][0]
+    out = []
+    for sec in secs:
+        xs = [pt[0] + shift for pt in placed_section(sec)]
+        le, te = xs[0], max(xs)
+        out.append(dict(radius=sec.radius, le_x_in=le, te_x_in=te,
+                        casing_at_le_in=casing_at(le * 2.54) / 2.54,
+                        casing_at_te_in=casing_at(te * 2.54) / 2.54,
+                        outside_at_te=sec.radius > casing_at(te * 2.54) / 2.54,
+                        outside_at_le=sec.radius > casing_at(le * 2.54) / 2.54))
+    return out, shift
+
+
+def casing_solid(clearance_mm=TIP_CLEARANCE_MM, pad_in=0.4):
+    """everything inside the casing less the running clearance, as a solid
+    of revolution about the engine axis"""
+    import cadquery as cq
+    x0, x1 = blade_axial_range_in()
+    shift = sections_against_the_casing()[1]
+    lo, hi = x0 + shift - pad_in, x1 + shift + pad_in
+    dr = clearance_mm / 25.4
+    xs = [lo + (hi - lo) * i / 60 for i in range(61)]
+    prof = [(x * IN, (casing_at(x * 2.54) / 2.54 - dr) * IN) for x in xs]
+    pts = [(prof[0][0], 0.0)] + prof + [(prof[-1][0], 0.0)]
+    return (cq.Workplane("XZ").polyline(pts).close()
+            .revolve(360, (0, 0, 0), (1, 0, 0)).val())
+
+
+def trimmed_blade_height():
+    """what the casing leaves. The published aspect ratio of 1.19 needs a
+    mean blade height of 2.599 in against a leading-edge span of 2.933
+    (finding 130); this is where that height comes from."""
+    secs, _ = load()
+    rows, shift = sections_against_the_casing()
+    hub_le_x, hub_te_x = rows[0]["le_x_in"], rows[0]["te_x_in"]
+    h_le = casing_at(hub_le_x * 2.54) / 2.54 - hub_at(hub_le_x * 2.54) / 2.54
+    h_te = casing_at(hub_te_x * 2.54) / 2.54 - hub_at(hub_te_x * 2.54) / 2.54
+    mean_chord = sum(sec.chord for sec in secs) / len(secs)
+    case = yaml.safe_load((DATA / "methods" / "rotor37-validation-case.yaml").read_text())
+    ar_pub = case["design_point"]["rotor_aspect_ratio"]
+    return dict(height_le_in=h_le, height_te_in=h_te, mean_height_in=0.5 * (h_le + h_te),
+                mean_chord_in=mean_chord,
+                aspect_ratio=0.5 * (h_le + h_te) / mean_chord,
+                aspect_ratio_published=ar_pub,
+                err_pct=(0.5 * (h_le + h_te) / mean_chord / ar_pub - 1) * 100)
+
+
+def x_max_for_radius(r_in, clearance_mm=TIP_CLEARANCE_MM):
+    """the furthest downstream a section at radius r can reach before the
+    casing (less the running clearance) cuts it"""
+    dr = clearance_mm / 25.4
+    lo, hi = -0.5, 3.0
+    if casing_at(hi * 2.54) / 2.54 - dr > r_in:
+        return hi
+    if casing_at(lo * 2.54) / 2.54 - dr < r_in:
+        return lo
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if casing_at(mid * 2.54) / 2.54 - dr > r_in:
+            lo = mid
+        else:
+            hi = mid
+    return 0.5 * (lo + hi)
+
+
+def trimmed_sections(extra=14, clearance_mm=TIP_CLEARANCE_MM):
+    """The blade as the casing leaves it.
+
+    Appendix C tabulates sections at fixed radii for manufacture, and the
+    outermost of them lies outside the casing over its whole chord. The
+    physical blade is machined to the casing line less the running
+    clearance, so each section is clipped where it crosses it. Because the
+    casing falls through the rotor, that clip takes the outer *trailing*
+    corner off -- which is where the published aspect ratio's missing blade
+    height went (finding 130).
+
+    Sections are added by interpolation above the last unclipped one, so
+    the trimmed corner is resolved rather than cut in one step."""
+    secs, _ = load()
+    shift = sections_against_the_casing()[1]
+
+    def interp_section(r):
+        a, b = secs[-2], secs[-1]
+        f = (r - a.radius) / (b.radius - a.radius)
+        ls = [la + f * (lb - la) for la, lb in zip(a.l, b.l)]
+        hp = [x + f * (y - x) for x, y in zip(a.hp, b.hp)]
+        hs = [x + f * (y - x) for x, y in zip(a.hs, b.hs)]
+        return Section(radius=r, r1=a.r1 + f * (b.r1 - a.r1), r2=a.r2 + f * (b.r2 - a.r2),
+                       l_sp=a.l_sp + f * (b.l_sp - a.l_sp),
+                       h_sp=a.h_sp + f * (b.h_sp - a.h_sp),
+                       gamma_deg=a.gamma_deg + f * (b.gamma_deg - a.gamma_deg),
+                       l=ls, hp=hp, hs=hs)
+
+    r_top = casing_at(0.0) / 2.54 - clearance_mm / 25.4
+    all_secs = list(secs[:-1])
+    for i in range(1, extra + 1):
+        all_secs.append(interp_section(secs[-2].radius
+                                       + (r_top - secs[-2].radius) * i / extra))
+
+    out = []
+    for sec in all_secs:
+        pts = [(x + shift, y) for x, y in placed_section(sec)]
+        xm = x_max_for_radius(sec.radius, clearance_mm)
+        kept = [p for p in pts if p[0] <= xm]
+        if len(kept) < 8:
+            continue
+        out.append(dict(radius=sec.radius, x_max=xm, points=kept,
+                        clipped=len(kept) < len(pts),
+                        kept_frac=len(kept) / len(pts)))
+    return out
+
+
+def trimmed_solid():
+    from geometry.blades import loft_capped, wrapped_wire
+    rows = trimmed_sections()
+    wires = [wrapped_wire(r["radius"] * IN, [(x * IN, y * IN) for x, y in r["points"]])
+             for r in rows]
+    return loft_capped(wires), rows

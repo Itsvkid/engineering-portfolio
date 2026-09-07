@@ -4,7 +4,7 @@ import "./atlas.css";
 import Link from "next/link";
 import { useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
 import ThemeToggle from "../../components/ThemeToggle";
-import { getEffectiveTheme, subscribeToTheme } from "../../lib/theme";
+import { applyTheme, getEffectiveTheme, subscribeToTheme } from "../../lib/theme";
 import Engine from "./Engine";
 import { AboutDialog, Controls, Inspector, SearchBox, SystemChips, SystemsPanel, TourPanel } from "./panels";
 import { PART_BY_ID } from "./parts";
@@ -44,9 +44,18 @@ function fromUrl() {
   if (part && PART_BY_ID[part]) {
     out.selected = part;
     out.drawer = "part";
+    // ?frame=1 flies the camera to the part on load.
+    if (q.get("frame") === "1") out.frameRequest = { part: PART_BY_ID[part], n: 1 };
   }
   const camera = q.get("camera");
   if (camera && ["iso", "front", "side", "top", "aft"].includes(camera)) out.cameraPreset = { id: camera, n: 1 };
+  // ?cam=x,y,z&at=x,y,z: a free camera in world metres (engine axis = x).
+  const num3 = (v) => {
+    const a = (v ?? "").split(",").map(Number);
+    return a.length === 3 && a.every(Number.isFinite) ? a : null;
+  };
+  const cam = num3(q.get("cam"));
+  if (cam) out.cameraPreset = { id: "custom", n: 1, position: cam, target: num3(q.get("at")) ?? [1.9, 0, 0] };
   if (q.get("cut") === "0") out.cutaway = false;
   const sep = Number(q.get("sep"));
   if (q.has("sep") && sep >= 0 && sep <= 1) out.separation = sep;
@@ -211,6 +220,12 @@ export default function Atlas() {
   useEffect(() => {
     if (reducedMotion && state.motion) dispatch({ type: "set", key: "motion", value: false });
   }, [reducedMotion, state.motion]);
+
+  // ?theme=dark|light forces a scheme, for embeds and renders.
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("theme");
+    if (t === "dark" || t === "light") applyTheme(t);
+  }, []);
 
   // A ?tour= link starts the tour once the scene exists.
   useEffect(() => {

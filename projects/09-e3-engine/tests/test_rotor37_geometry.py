@@ -150,13 +150,51 @@ def test_the_flow_path_is_datumed_on_the_blade_and_lands_on_it():
     assert a["casing_at_le_in"] == pytest.approx(10.0, abs=1e-9)
 
 
-def test_appendix_c_stops_short_of_the_blade_tip():
-    """finding 134 -- a mesh built to the last printed section would carry
-    a tip gap five times too large"""
-    from cfd.rotor37 import annulus_check
-    a = annulus_check()
-    assert a["gap_at_le_mm"] > 4 * a["running_clearance_mm"]
-    assert 1.6 < a["gap_at_le_mm"] < 1.8
+def test_appendix_cs_outermost_section_lies_outside_the_casing():
+    """finding 134, as corrected: comparing against the casing at x = 0 --
+    the HUB leading edge -- makes it look like the appendix stops short.
+    At the tip section's own leading edge the casing is already below it."""
+    from cfd.rotor37 import sections_against_the_casing
+    rows, shift = sections_against_the_casing()
+    assert shift == pytest.approx(0.7872, abs=0.001)
+    assert rows[0]["le_x_in"] == pytest.approx(0.0, abs=1e-9)   # the datum
+    inside = [r for r in rows if not r["outside_at_te"]]
+    outside = [r for r in rows if r["outside_at_te"]]
+    assert len(outside) == 1 and outside[0]["radius"] == 9.9330
+    assert outside[0]["outside_at_le"]                # outside over its WHOLE chord
+    assert len(inside) == 11
+
+
+def test_the_blade_is_trimmed_by_the_casing_from_the_trailing_corner():
+    """finding 134 -- the casing falls through the rotor, so the trim takes
+    the outer trailing corner"""
+    from cfd.rotor37 import trimmed_sections
+    rows = trimmed_sections()
+    unclipped = [r for r in rows if not r["clipped"]]
+    clipped = [r for r in rows if r["clipped"]]
+    assert max(r["radius"] for r in unclipped) == 9.6100
+    assert clipped
+    fracs = [r["kept_frac"] for r in clipped]
+    assert fracs == sorted(fracs, reverse=True)       # cuts deeper going out
+    assert min(fracs) < 0.30
+
+
+def test_the_trimmed_blade_is_a_valid_solid_and_smaller():
+    from cfd.rotor37 import blade_solid, trimmed_solid
+    from OCP.BRepCheck import BRepCheck_Analyzer
+    solid, _ = trimmed_solid()
+    assert BRepCheck_Analyzer(solid.wrapped).IsValid()
+    assert 0.01 < 1 - solid.Volume() / blade_solid(shifted=True).Volume() < 0.10
+
+
+def test_the_trim_recovers_the_published_aspect_ratio():
+    """finding 135 -- this answers finding 130, and in one number it
+    confirms the axial datum, the flow path and the chord together"""
+    from cfd.rotor37 import trimmed_blade_height
+    h = trimmed_blade_height()
+    assert abs(h["err_pct"]) < 2.0
+    assert abs(h["err_pct"]) < 0.5                    # in fact 0.28 %
+    assert h["height_le_in"] > h["height_te_in"]      # the annulus contracts
 
 
 def test_the_hub_rises_exactly_as_much_as_the_casing_falls():

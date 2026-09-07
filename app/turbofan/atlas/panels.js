@@ -469,8 +469,10 @@ export function AboutDialog({ onClose }) {
             engine length is printed.
           </li>
           <li>
-            Fan blade sections are designed, not transcribed; HPC sections are rebuilt from seven numbers per section; HPT airfoils are
-            inferred from throat and aspect ratio; only the LPT sections are transcribed coordinates.
+            Blade rows: the ten HPC rotors and eleven stators are lofted from all twelve printed sections per row of Table XXII
+            (chord, camber, stagger and thickness at each radius); the ten LPT rows from the printed surface coordinates of the LPT
+            report at three spans, hub and tip extrapolated. The HPT airfoils are inferred from throat and aspect ratio, and the fan is designed,
+            not transcribed: the E³ never published its fan sections.
           </li>
           <li>Disc profiles are generic web-and-bore shapes at the published rim and bore radii.</li>
           <li>

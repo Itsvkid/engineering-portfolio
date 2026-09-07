@@ -235,6 +235,10 @@ NASA Rotor 37 blade, TP-1337 Appendix C: 12 sections
      radii are *leading-edge* radii. Anyone who takes a chord from this
      appendix and an aspect ratio from Table I and divides one by the other
      will get a blade height that does not exist.
+
+     > **Answered 2026-09-07 by finding 135.** The missing height is what
+     > the casing trims off. Mean blade height 2.5915 in over mean chord
+     > 2.1838 gives 1.1867 against the published 1.19, −0.28 %.
 131. **The blade thins by more than a factor of three from hub to tip, and
      that is the transonic design.** t/c runs **0.0868 at the hub to
      0.0257 at the tip** while the chord barely changes (2.152 to 2.202
@@ -281,18 +285,44 @@ lets it be checked against Appendix C with no model in between.
      the datum they share is a physical edge of the blade. Together with
      the tip-speed check (finding 129) that is both ends of the blade tied
      to independently transcribed numbers.
-134. **Appendix C does not reach the blade tip, and a mesh built as if it
-     did would carry a tip gap five times too large.** The casing at the
-     leading edge is 10.0000 in and the outermost tabulated section is at
-     **9.9330** — a gap of 0.0670 in, **1.70 mm**, against Rotor 37's
-     running tip clearance of about 0.36 mm. The appendix simply stops
-     tabulating below the tip. Any tip-clearance CFD built on the last
-     printed section would model a gap nearly five times the real one, and
-     tip-clearance flow is what sets this rotor's stall margin. **The blade
-     must be extrapolated to the casing less the clearance before it is
-     meshed**, and that is a modelling decision that has to be stated, not
-     absorbed.
-135. **The hub rises exactly as much as the casing falls: 1.651 cm each.**
+134. **Appendix C's outermost section lies OUTSIDE the casing, and the
+     blade is trimmed to it.**
+
+     > **Corrected 2026-09-07, within the hour it was written.** This
+     > finding first said the opposite — that Appendix C "does not reach
+     > the blade tip" and the blade "must be extrapolated to the casing
+     > less the clearance". ~~That was wrong, and it was wrong because the
+     > comparison used the wrong axial station:~~ the casing at **x = 0**
+     > is 10.0000 in and the outermost section is at 9.9330, which looks
+     > like a 1.70 mm shortfall. But x = 0 is the *hub* leading edge, and
+     > the tip section's own leading edge sits at **x = 0.294 in**, by
+     > which point the casing has already fallen to 9.9278 — *below* the
+     > section. Over its whole chord, to x = 1.215 in where the casing is
+     > at 9.672, the outermost printed section is **outside the flow
+     > path**. Extrapolating outward would have added blade where the
+     > casing already is.
+
+     The physical blade is machined to the casing line less the running
+     clearance, which is ordinary practice, and the trim takes the outer
+     **trailing** corner off because the casing falls through the rotor.
+     Clipping each section where it crosses that line leaves the sections
+     up to 9.6100 in untouched and removes a smoothly growing fraction
+     above it — 2 % at 9.637, 45 % by 9.798, 75 % by 9.852. The trimmed
+     solid is **2.9 % smaller** than the lofted one.
+135. **The trim is where the published aspect ratio went, and it closes to
+     0.28 %.** Finding 130 recorded that Table I's rotor aspect ratio of
+     1.19 does not follow from Appendix C's chord, which gives 1.343, and
+     that 1.19 implies a mean blade height of 2.599 in against a
+     leading-edge span of 2.933. **That height is exactly what the casing
+     leaves.** Taking the blade height as the casing minus the hub at the
+     hub's own leading edge (3.000 in) and at its trailing edge (2.183 in),
+     the mean is **2.5915 in**, and over the mean chord of 2.1838 that is
+     an aspect ratio of **1.1867 against a published 1.19 — −0.28 %.**
+     Finding 130 is answered: nothing was wrong with either number, the
+     ratio is simply built on the trimmed blade and the appendix on the
+     manufacturing sections. It also confirms, in one number, the axial
+     datum, the flow-path transcription and the chord together.
+136. **The hub rises exactly as much as the casing falls: 1.651 cm each.**
      The annulus closes from 7.620 cm at the leading edge to 4.318 at the
      exit — a 43 % area contraction — and it is split symmetrically between
      the two walls to four figures. On a stage designed in 1978 that is

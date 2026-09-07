@@ -3,7 +3,8 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, NoToneMapping, Plane, Quaternion, Vector3 } from "three";
+import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, NoToneMapping, Plane, PMREMGenerator, Quaternion, Vector3 } from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
 import { ENGINE_CENTRE } from "./flowpath";
 import { bladeGeometry, bladeRingMatrices, cyl, doorRing } from "./geometry";
@@ -109,8 +110,10 @@ const PartMesh = memo(function PartMesh({ part, geometry, color, state, dispatch
   const opacity = isShell ? state.shellOpacity : 1;
   const offset = useMemo(() => separationOffset(part, state.separation), [part, state.separation]);
 
+  // Selection paints the part in the site's accent outright; an emissive
+  // tint alone washed out to pink on the bright metals.
   const emissive = selected ? "#ff6d3b" : hovered ? color : "#000000";
-  const emissiveIntensity = selected ? 0.55 : hovered ? 0.25 : 0;
+  const emissiveIntensity = selected ? 0.3 : hovered ? 0.2 : 0;
 
   return (
     <mesh
@@ -129,11 +132,12 @@ const PartMesh = memo(function PartMesh({ part, geometry, color, state, dispatch
       onPointerOut={() => dispatch({ type: "hover", id: null })}
     >
       <meshStandardMaterial
-        color={color}
+        color={selected ? "#ff7a4a" : color}
         emissive={emissive}
         emissiveIntensity={emissiveIntensity}
-        metalness={0.25}
-        roughness={0.5}
+        metalness={0.35}
+        roughness={0.42}
+        envMapIntensity={0.32}
         side={DoubleSide}
         transparent={opacity < 1}
         opacity={opacity}
@@ -190,11 +194,12 @@ const VsvRow = memo(function VsvRow({ part, color, state, dispatch, cut }) {
       onPointerOut={() => dispatch({ type: "hover", id: null })}
     >
       <meshStandardMaterial
-        color={color}
+        color={selected ? "#ff7a4a" : color}
         emissive={selected ? "#ff6d3b" : hovered ? color : "#000000"}
-        emissiveIntensity={selected ? 0.55 : hovered ? 0.25 : 0}
-        metalness={0.25}
-        roughness={0.5}
+        emissiveIntensity={selected ? 0.3 : hovered ? 0.2 : 0}
+        metalness={0.35}
+        roughness={0.42}
+        envMapIntensity={0.32}
         side={DoubleSide}
         clippingPlanes={cut ? CUT_PLANES : null}
         clipIntersection
@@ -253,7 +258,7 @@ function CameraDriver({ preset, frameRequest, built, controlsRef, reduced }) {
   const portrait = size.width < size.height;
   const tween = useRef(null);
   // -1 so the first preset is applied on mount (a portrait viewport needs its lift).
-  const seen = useRef({ preset: -1, frame: frameRequest?.n ?? -1 });
+  const seen = useRef({ preset: -1, frame: -1 });
 
   const start = (position, target) => {
     const controls = controlsRef.current;
@@ -278,7 +283,7 @@ function CameraDriver({ preset, frameRequest, built, controlsRef, reduced }) {
   useEffect(() => {
     if (!preset || preset.n === seen.current.preset) return;
     seen.current.preset = preset.n;
-    const c = CAMERA_PRESETS[preset.id] ?? CAMERA_PRESETS.iso;
+    const c = preset.id === "custom" ? preset : (CAMERA_PRESETS[preset.id] ?? CAMERA_PRESETS.iso);
     const target = new Vector3(...c.target);
     if (portrait) target.y -= 1.6; // keep the engine above the phone's drawer
     start(new Vector3(...c.position), target);
@@ -340,6 +345,28 @@ function CameraDriver({ preset, frameRequest, built, controlsRef, reduced }) {
   return null;
 }
 
+/**
+ * three's procedural room, prefiltered once into an environment map: it is
+ * what gives a curved metal surface its highlight and lets a blade's camber
+ * read. Generated on the GPU at start; no image files are fetched.
+ */
+function StudioEnvironment() {
+  const get = useThree((s) => s.get);
+  useEffect(() => {
+    const { gl, invalidate } = get();
+    const pmrem = new PMREMGenerator(gl);
+    const target = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    get().scene.environment = target.texture;
+    invalidate();
+    return () => {
+      get().scene.environment = null;
+      target.dispose();
+      pmrem.dispose();
+    };
+  }, [get]);
+  return null;
+}
+
 /** A portrait viewport gets a wider lens so the long engine still fits across it. */
 function Lens() {
   const size = useThree((s) => s.size);
@@ -393,10 +420,11 @@ function Scene({ state, dispatch, theme, palette }) {
   return (
     <>
       <color attach="background" args={[palette.background]} />
-      <hemisphereLight args={[palette.skyLight, palette.groundLight, 1.4]} />
-      <directionalLight position={[4, 8, 6]} intensity={2.2} />
-      <directionalLight position={[-6, 3, -5]} intensity={0.9} />
-      <directionalLight position={[2, -5, 2]} intensity={0.5} />
+      <hemisphereLight args={[palette.skyLight, palette.groundLight, 0.7]} />
+      <directionalLight position={[4, 8, 6]} intensity={1.3} />
+      <directionalLight position={[-6, 3, -5]} intensity={0.5} />
+      <directionalLight position={[2, -5, 2]} intensity={0.3} />
+      <StudioEnvironment />
 
       <group rotation={[0, 0, -Math.PI / 2]} onPointerMissed={() => dispatch({ type: "select", id: null })}>
         <Spool speed={lpSpeed}>{groups.lp.map(render)}</Spool>

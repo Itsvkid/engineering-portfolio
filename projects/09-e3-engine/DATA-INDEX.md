@@ -202,6 +202,11 @@ its location, function and provenance tag (`[E3: report, page]`,
 `[derived]`, `[schematic]`, `[textbook]`). It is the first page-cited pass
 through CR-168017 (controls) and through CR-168219 §5.7.4–5.7.5, §5.9.2–5.9.3
 and §5.10. The page's numbers are copied from it; change the sheet first.
+The page's blade geometry comes from this directory too:
+`tools/export_atlas_sections.py` turns `hpc-blade-sections.yaml` (Table XXII,
+all 12 sections per row) and `lpt-airfoils/*.csv` (30 printed sections,
+resampled to 14 points a surface) into `app/turbofan/atlas/data/e3-sections.js`.
+Re-run it after either source changes.
 
 | Quantity | Status | Source |
 |---|---|---|

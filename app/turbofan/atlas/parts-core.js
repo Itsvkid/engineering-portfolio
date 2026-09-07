@@ -129,16 +129,28 @@ const fanModule = [
       merge([
         bladeRow(
           {
-            span: FAN.rTip - FAN.rHub - 0.01,
-            chordRoot: FAN.chordRoot,
-            chordTip: FAN.chordTip,
-            staggerRoot: 22,
-            staggerTip: 63,
-            camberRoot: 46,
-            camberTip: 9,
-            thickness: 0.055,
-            stations: 12,
-            sweepTip: 0.08,
+            // Designed, not transcribed (the E³ never published its fan
+            // sections): a thick, highly cambered subsonic root thinning to a
+            // flat, thin, highly staggered supersonic tip, with the chord
+            // growing outward the way a wide-chord fan's does.
+            sections: [
+              [0.0, 0.3, 22, 52, 0.09],
+              [0.15, 0.32, 30, 42, 0.075],
+              [0.3, 0.345, 38, 33, 0.06],
+              [0.45, 0.37, 45, 25, 0.05],
+              [0.6, 0.39, 51, 18, 0.042],
+              [0.75, 0.405, 56, 13, 0.035],
+              [0.9, 0.415, 60, 10, 0.03],
+              [1.0, 0.42, 63, 8, 0.026],
+            ].map(([s, chord, stagger, camber, thickness]) => ({
+              x: (FAN.rTip - FAN.rHub - 0.01) * s,
+              chord,
+              stagger,
+              camber,
+              thickness,
+              lean: 0.08 * (FAN.rTip - FAN.rHub) * s * s,
+            })),
+            points: 12,
           },
           FAN.blades,
           FAN.rHub,
