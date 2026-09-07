@@ -687,8 +687,16 @@ only after the method is validated.
       tables months apart (finding 129). Table I's aspect ratio of 1.19
       does *not* follow from the printed chord, and the reason is recorded
       (finding 130)
+- [x] **The blade as the casing leaves it** — `solvers/cfd/rotor37.py`.
+      Appendix C's outermost section lies *outside* the flow path over its
+      whole chord, so the blade is trimmed to the casing less the running
+      clearance, taking the outer trailing corner off. **The trimmed mean
+      height recovers Table I's aspect ratio to −0.28 %** (finding 135),
+      which answers finding 130 and confirms the axial datum, the flow path
+      and the chord in one number
 - [ ] Mesh and run Rotor 37: 3D periodic sector, MRF, back-pressure sweep
-      for the 100 % speed line, then grid refinement for the GCI band
+      for the 100 % speed line, then grid refinement for the GCI band.
+      **The geometry is ready; this is the meshing and the compute**
 - [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
       vs the mean-line and Table X/XXII
 - [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5
