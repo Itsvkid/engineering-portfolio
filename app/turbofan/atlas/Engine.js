@@ -3,7 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, NoToneMapping, Plane, PMREMGenerator, Quaternion, Vector3 } from "three";
+import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, Plane, PMREMGenerator, Quaternion, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
 import { ENGINE_CENTRE } from "./flowpath";
@@ -458,10 +458,12 @@ export default function Engine({ state, dispatch, theme, palette }) {
       onCreated={({ gl }) => {
         gl.localClippingEnabled = true;
         gl.setClearColor(new Color(palette.background));
-        // No filmic tone mapping: it compresses the mid-tones and made the
-        // whole engine read as dim. Colours are chosen in sRGB and shown as such.
-        gl.toneMapping = NoToneMapping;
       }}
+      // No filmic tone mapping: it compresses the mid-tones and made the
+      // whole engine read as dim. Declared here rather than set on the
+      // renderer once, because R3F re-applies its default on every
+      // re-render of the Canvas and silently undid the earlier override.
+      flat
       style={{ touchAction: "none" }}
     >
       <Scene state={state} dispatch={dispatch} theme={theme} palette={palette} />
