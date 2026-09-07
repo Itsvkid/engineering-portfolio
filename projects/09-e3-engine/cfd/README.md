@@ -69,3 +69,22 @@ in a temp directory.
 | `Missing or invalid Function1 entry: omega` | `MRFProperties` wants `omega` in rad/s, not `rpm` |
 | `Entry 'gamma' not found` in `0/T` | the `totalTemperature` BC needs an explicit `gamma 1.4` |
 | `cannot find file /root/system/controlDict` | `bash -lc` in this image starts in `/root`; `cd /work` explicitly, `-w` is not enough |
+| `decomposeParDict specifies N but job started with M ranks` | set `numberOfSubdomains` from the same variable as `mpirun -np`. `run_parallel.sh` does |
+| ExecutionTime far below ClockTime | virtiofs. Run the case on the container's own filesystem, write only the **log** to the host |
+| Run killed for memory | 8 GB host, 6 GB VM. 455k cells 4-way does not fit; the coarse grid level does |
+
+### The MRF traps, which is where most of the time went
+
+None of these produce an error. They produce a **converged, plausible,
+wrong answer**, and the only thing that gives them away is a physical
+quantity — here the outlet temperature, which must exceed the inlet
+because a compressor compresses.
+
+| Symptom | Cause |
+|---|---|
+| T_out **below** T_in; no work at all | walls set `noSlip`. Under MRF the solution variable is the *absolute* velocity, so a wall turning with the frame needs `rotatingWallVelocity` (`MRFnoSlip` does not exist in this build) |
+| T_out still below T_in, mass flow 11× low | the **MRF cellZone spanned the whole domain including the inlet patch**, so the frame gave the incoming flow ~400 m/s of tangential velocity before `totalPressure` was evaluated |
+| Mass flow collapses to a quarter of design, residual falls to 0.03 | the **rotating wall patch spanned the whole duct** while the MRF zone covered only the passage — 4 cm of stationary-frame inlet duct with a wall spinning at 1800 rad/s, pumping swirl into the approach flow. Split the hub at the zone boundary: `hub_rotating` inside, `hub_static` outside |
+
+Each masked the next. Instrument the case with the quantity you are
+validating against **before** trusting any residual.

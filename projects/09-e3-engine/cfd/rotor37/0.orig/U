@@ -10,8 +10,10 @@ boundaryField
     // U = omega x r on it -- `noSlip` gives a stationary blade, and the
     // first run showed exactly that: outlet 278 K against an inlet 288 K,
     // the flow expanding and cooling with no work put into it at all.
-    hub     { type rotatingWallVelocity; origin (0 0 0); axis (1 0 0);
-              omega 1799.9965; value uniform (0 0 0); }
+    // only the hub inside the MRF zone turns; outside it is a duct wall
+    hub_rotating { type rotatingWallVelocity; origin (0 0 0); axis (1 0 0);
+                   omega 1799.9965; value uniform (0 0 0); }
+    hub_static   { type noSlip; }
     blade   { type rotatingWallVelocity; origin (0 0 0); axis (1 0 0);
               omega 1799.9965; value uniform (0 0 0); }
     // the casing is stationary in the absolute frame, and is listed in

@@ -5,7 +5,7 @@ boundaryField
 {
     inlet   { type turbulentIntensityKineticEnergyInlet; intensity 0.02; value uniform 10; }
     outlet  { type inletOutlet; inletValue uniform 10; value uniform 10; }
-    "(hub|blade|casing)" { type kqRWallFunction; value uniform 10; }
+    "(hub_rotating|hub_static|blade|casing)" { type kqRWallFunction; value uniform 10; }
     periodic_m { type cyclic; }
     periodic_p { type cyclic; }
 }

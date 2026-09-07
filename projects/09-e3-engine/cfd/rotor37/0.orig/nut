@@ -5,7 +5,7 @@ boundaryField
 {
     inlet   { type calculated; value uniform 0; }
     outlet  { type calculated; value uniform 0; }
-    "(hub|blade|casing)" { type nutkWallFunction; value uniform 0; }
+    "(hub_rotating|hub_static|blade|casing)" { type nutkWallFunction; value uniform 0; }
     periodic_m { type cyclic; }
     periodic_p { type cyclic; }
 }
