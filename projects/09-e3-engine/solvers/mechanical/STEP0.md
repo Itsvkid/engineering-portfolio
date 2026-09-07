@@ -63,17 +63,37 @@ within 10 % on nickel:   stages [5, 6, 7, 8, 9, 10]
     alone.** The chord and thickness at twelve sections per rotor, the
     root and tip radii, one rotational speed and one density — nothing
     else. The work plan asked for 10 % and the worst stage is 6.5.
-74. **The material crossover falls out of the stress data, and it lands
-    exactly on the weld.** Stages 1–4 match a titanium density to within
-    6.5 %; stages 5–10 match a nickel-alloy density to within 5.5 %; and
-    neither works for the other group — titanium reads the rear stages
-    **47 % low** and nickel reads the front stages **90 % high**. The E³
-    reports never state a blade material stage by stage. But CR-168219
-    describes the HPC rotor as "**inertia-welded forward and aft
-    sections** joined by a single bolt joint", and the crossover this
-    calculation finds — between stage 4 and stage 5 — is where that weld
-    is. A published stress table and a one-line construction note,
-    neither referring to the other, locate the same joint.
+74. **The material crossover falls out of the stress data.** Stages 1–4
+    match a titanium density to within 6.5 %; stages 5–10 match a
+    nickel-alloy density to within 5.5 %; and neither works for the other
+    group — titanium reads the rear stages **47 % low** and nickel reads
+    the front stages **90 % high**. So the density changes between stage 4
+    and stage 5.
+
+    > **Corrected 2026-09-07 by unit F1 (finding 105).** Two further
+    > claims were made here and both were wrong.
+    >
+    > ~~"The E³ reports never state a blade material stage by stage."~~
+    > **HPC report Table X prints a material for every one of the ten
+    > stages, in the same table this unit took its stresses from.** It
+    > says Ti-8-1-1 for stages 1–6 and Inco 718 for 7–10. It was not
+    > looked for.
+    >
+    > ~~"The crossover lands exactly on the inertia weld CR-168219
+    > describes."~~ **CR-168219 says the rotor is "inertia-welded forward
+    > and aft sections joined by a single bolt joint" and never says
+    > where the weld is.** The weld's position was inferred from this
+    > unit's own crossover and the agreement then presented as
+    > corroboration. Circular; withdrawn.
+    >
+    > The **crossover itself stands**, and unit F1 evidences it far
+    > better: Table X's airfoil *weight* and root *area* give the density
+    > of every blade as a measurement, independent of the stress column,
+    > and it puts the change at stage 5 — and the printed weights at
+    > stages 5 and 6 are 1.49× and 1.57× the heaviest a titanium blade of
+    > that root section and span could possibly be. See
+    > `solvers/materials/STEP0.md` unit F1, findings 104–106.
+
 75. **Table X's stresses are at the deteriorated-engine speed, and its
     own footnote is the only place that says so.** 13,948 rpm, not the
     12,303 of the max-climb aero design point. That is a factor of 1.29

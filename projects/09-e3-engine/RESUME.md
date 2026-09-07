@@ -115,8 +115,19 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     The HPC dovetails are gated: nothing from §3.2.3 was transcribed.
     Next: gas bending and the root stress, HPT blade creep by
     Larson–Miller against the published rupture life, the flutter screen
-    and the Goodman HCF margin — then Stage F.
-5. Then F (materials and mass), G (geometry generation), H (hand CAD,
+    and the Goodman HCF margin.
+5. **Stage F (materials and mass) — started.** `solvers/materials/`, its
+    own `STEP0.md`, findings 104 onward. **Unit F1 substantially closed
+    F1** and, more importantly, **corrected E1**: Table X's airfoil weight
+    and root area make the density of every HPC blade a measurement, and
+    it disagrees with Table X's own material column at stages 5 and 6,
+    where the printed weight exceeds the heaviest possible titanium blade
+    of that root section. E1's finding 74 is struck in two of its three
+    parts (the crossover stands; the "no per-stage material is printed"
+    and "it lands on the inertia weld" claims are withdrawn).
+    MIL-HDBK-5J's room-temperature allowables are transcribed; its
+    **elevated-temperature data is figure-status and gated**.
+6. Then G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 
 Carried, unresolved, and worth picking up in C3 or later: the LPT's rotor

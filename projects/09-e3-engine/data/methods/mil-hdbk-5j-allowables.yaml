@@ -1,0 +1,85 @@
+meta:
+  src: "MIL-HDBK-5J, Metallic Materials and Elements for Aerospace Vehicle Structures, 31 January 2003 (sources/mil-hdbk-5j-metallic-materials.pdf)"
+  transcribed: 2026-09-07
+  scope: >
+    Room-temperature design allowables for the three alloys the E3 reports
+    name for rotating parts, in the product form each part is actually made
+    in. Transcribed as printed, in ksi and lb/in^3, with the SI conversion
+    computed rather than read.
+  what_is_NOT_here: >
+    MIL-HDBK-5J gives elevated-temperature strength as FIGURES -- percentage
+    of the room-temperature allowable against temperature -- not as tables.
+    Those figures were not digitised, so no allowable at temperature appears
+    in this file. Anything that needs one is gated on digitising them, and
+    that is stated where it bites (solvers/materials/STEP0.md unit F1).
+  conversions:
+    ksi_to_MPa: 6.894757
+    lb_in3_to_kg_m3: 27679.9
+  as_printed: >
+    MIL-HDBK-5J prints Greek letters through a symbol font that does not
+    survive text extraction; the density row reads "A, lb/in.3" and the
+    Poisson row "u" in the extracted text. Read as rho and nu.
+
+alloys:
+
+  ti_6al_4v_die_forging:
+    src: "Table 5.4.1.0(f) p.5-58 -- AMS 4928, die forging, alpha-beta processed, annealed, thickness <= 2.000 in"
+    used_for: "E3 fan blades, booster blades, fan disk (CR-165148 materials block)"
+    basis: S
+    ftu_ksi: 135
+    fty_ksi: 125
+    fcy_ksi: null            # not listed for the <=2.000 in column
+    fsu_ksi: null
+    elongation_pct: 10
+    e_msi: 16.9
+    ec_msi: 17.2
+    g_msi: 6.5
+    poisson: 0.31
+    density_lb_in3: 0.160
+    elevated_temperature: "Figure 5.4.1.1.1 (Ftu, Fty vs temperature) -- figure-status, not digitised"
+
+  ti_8al_1mo_1v_forging:
+    src: "Table 5.3.2.0(c) p.5-31 -- AMS 4973, forging, solution treated and stabilised, thickness < 2.499 in"
+    used_for: "E3 HPC rotor blades, stages 1-6 as Table X prints them (see unit F1's finding)"
+    basis: S
+    ftu_ksi: 130
+    fty_ksi: 120
+    elongation_pct: 10
+    e_msi: 17.5
+    ec_msi: 18.0
+    g_msi: 6.7
+    poisson: 0.32
+    density_lb_in3: 0.158
+    elevated_temperature: "Figures 5.3.2.1.1 onward -- figure-status, not digitised"
+    note: "the handbook footnotes E and Ec as an average that may vary with test direction"
+
+  inconel_718_bar_forging:
+    src: "Table 6.3.5.0(c) p.6-53 -- AMS 5662/5663, bar and forging, solution treated and aged, 0.250-1.000 in"
+    used_for: "E3 HPC rotor blades stages 7-10; HP shaft; aft shaft and disk; casing and rotor bolts"
+    basis: S
+    ftu_ksi: 185
+    fty_ksi: 150
+    fcy_ksi: 156
+    fsu_ksi: 111
+    elongation_pct: 12
+    e_msi: 29.4
+    ec_msi: 30.9
+    g_msi: 11.4
+    poisson: 0.29
+    density_lb_in3: 0.297
+    elevated_temperature: "Figures 6.3.5.1.x -- figure-status, not digitised"
+
+substitutions:
+  src: assumption
+  note: >
+    The E3's cast and powder-metallurgy hot-section alloys -- Rene 77,
+    Rene 95, Rene 150, AF115 -- are NOT in MIL-HDBK-5J, which covers
+    wrought structural alloys. No substitute is nominated here: naming one
+    would put an unsourced allowable into the project under a handbook's
+    authority. Where a hot-section margin is needed, the E3 reports' own
+    printed allowables are used instead, and where they print none the
+    margin is recorded as gated.
+  e3_printed_allowables_used_instead:
+    - "LPT blade retainer: 634.3 MPa, 0.2 % yield at 649 C (LPT report Fig 68)"
+    - "fan blade dovetail LCF limit 50.3 kN/cm2, disk post 46.9 kN/cm2 at 72,000 cycles (CR-165148 Fig 48)"
+    - "HPT stage-1 disk dovetail 1000 MPa at 36,000 LCF cycles (HPT report Fig 62)"

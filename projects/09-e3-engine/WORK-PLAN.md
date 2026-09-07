@@ -961,16 +961,37 @@ smoothed over. The HPC dovetails are gated on transcription.
 # STAGE F — Materials and mass · 20 h
 
 ## F1 · Materials with allowables · 12 h
-- [ ] Alloy per component from the reports (HPC Table X; HPT Figs. 51–52;
-      combustor §5.3; fan §5.1.2; LPT Fig. 50)
-- [ ] Properties at temperature from **MIL-HDBK-5J**: Ti-6-4, Ti-8-1-1,
-      Inconel 718, and the nearest listed alloys for the cast and
-      single-crystal parts, with the substitution stated
+- [x] Alloy per component — **unit F1**, `solvers/materials/allowables.py`.
+      HPC Table X prints a material for all ten rotor stages, **and it
+      contradicts two of its own columns**: weight over root area gives the
+      density of every blade as a measurement (4,302–4,605 kg/m³ at stages
+      1–4, 8,225–9,177 at 5–10), and at stages 5 and 6 the printed weight
+      is **1.49× and 1.57× the heaviest a titanium blade of that root
+      section and span could be** (finding 104). **This corrects E1's
+      finding 74** (finding 105)
+- [x] Room-temperature allowables from **MIL-HDBK-5J** transcribed for
+      Ti-6-4, Ti-8-1-1 and Inconel 718 —
+      `data/methods/mil-hdbk-5j-allowables.yaml`. **No substitute is
+      nominated** for René 77/95/150 or AF115: the handbook does not carry
+      them and naming one would put an unsourced allowable in under its
+      authority
+- [ ] Properties **at temperature** — **GATED**: MIL-HDBK-5J gives
+      elevated-temperature strength as figures, not tables, and they were
+      not digitised
 - [ ] Creep data source per hot-section alloy; Larson–Miller constants
-- [ ] The Ti-fire limit and the Ti→Ni switch as a design check, not a fact
+- [x] The Ti-fire limit and the Ti→Ni switch as a design check — **Table
+      X's printed switch is exactly a temperature decision** (423 °C then
+      480 °C against a ~500 °C limit) while the measured switch at stage 5
+      sits at 361 °C with no thermal reason behind it (finding 106)
 
 *Closes when:* every stress in Stage E is compared with an allowable at
-its metal temperature, and the margin is tabulated.
+its metal temperature, and the margin is tabulated. **Substantially closed
+2026-09-07**: seventeen rows tabulated, **every stress with a printed
+allowable has margin** and three sit exactly on it (finding 107). The HPC
+blade roots carry 2.3–4.2× on room-temperature yield, so the metal would
+have to lose over half of it before the worst reached the limit — a
+conclusion that survives the elevated-temperature gate even though the
+number behind it does not (finding 108).
 
 ## F2 · Mass · 8 h
 - [ ] Mass per part from geometry and density; per module in Table XXVI's
