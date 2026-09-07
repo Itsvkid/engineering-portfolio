@@ -52,6 +52,17 @@ Booster-exit and core-duct radii between the inner OGV and the HPC IGV are
 drawing). Interpolate linearly from booster hub/tip (52.3/66.9) to HPC IGV
 hub/tip (17.3/36.2) through the transition duct and tag it `[schematic]`.
 
+**Fan-module blade geometry, added 2026-09-07 (second atlas pass):** the fan
+blade's sections are printed in CR-165148 Fig.41 p.50 (percent height 0/20/40/
+55/60/80/100: camber 68/42/24/17/15/11/8°, stagger 12/22/35/42/45/54/62°, chord
+7.3→11.3 in, t/c 10→2.6 %), the booster's in Fig.52 p.63 (camber 33/22/13/9/8°,
+stagger 23/26/31/37/42°, chord 2.8→2.5 in), and the island stator and core OGV
+angles in Table VII p.92 (`fan-design.yaml`). The quarter stage has a **second
+splitter behind the booster**: of the 143.74 kg/s corrected under the island,
+61.35 (42 %) returns to the bypass through S2OUT (34 vanes) and 82.39 enters the
+core through the 64 core OGVs (Appendix A pp.120–124). Its radius is not
+printed; 0.611 m from the 58/42 area split is `[schematic]`.
+
 ### A2. High-pressure compressor (datum: z = 0 at rotor-1 LE hub, HPC report)
 
 Every row's LE and TE at hub and tip is in `data/hpc-flowpath.csv`

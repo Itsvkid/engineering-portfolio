@@ -15,10 +15,14 @@ particular machine, account or session.
 | `rotor37/constant/MRFProperties` | the rotating frame, 1799.9965 rad/s |
 | `rotor37/0.orig/` | the boundary and initial conditions |
 | `run_shocktube.sh` | the C4-1 validation case |
+| `rotor37/constant/triSurface/blade.stl` | the trimmed blade, 5.4 MB — kept **deliberately**, so a new session can mesh without a working CAD kernel. `python -m cfd.rotor37_mesh` regenerates it |
 
-**Not committed** — everything generated, because it is large and
-reproducible: `constant/polyMesh/`, `constant/triSurface/blade.stl`,
-`system/blockMeshDict`, `log.*`, and the time directories.
+**Not committed** — everything else that is generated, because it is large
+and reproducible: `constant/polyMesh/` (~100 MB), `system/blockMeshDict`,
+`log.*`, the time directories, and any `core` dump. OpenFOAM writes a
+~250 MB `core` beside the case whenever a solver takes a floating-point
+exception, which during setup is often; it is gitignored, and GitHub will
+reject a push that contains one.
 
 ## Reproducing it
 

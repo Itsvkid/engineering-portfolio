@@ -1,4 +1,4 @@
-import { blob, doorRing, drum, hoop, lathe, merge, pipe, probeRing, ring, shell, unit } from "./geometry";
+import { blob, doorRing, drum, hoop, lathe, merge, pipe, probeRing, ring, shell, struts, unit } from "./geometry";
 import { COMBUSTOR, EXHAUST, FAN_STATIONS as FS, HPC0, HPC_ROWS, HPT0, HPT_STATIONS as HT, LPT0, LPT_ROWS, STATIONS } from "./flowpath";
 
 /**
