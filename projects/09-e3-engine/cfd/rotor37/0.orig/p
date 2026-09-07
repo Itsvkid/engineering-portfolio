@@ -4,7 +4,28 @@ internalField uniform 95000;
 boundaryField
 {
     inlet   { type totalPressure; p0 uniform 101325; value uniform 101325; }
-    outlet  { type fixedValue; value uniform 95000; }
+    // The back pressure is RAMPED. Holding the outlet at 95 kPa puts the
+    // rotor far past choke from the first iteration: the passage tries to
+    // go supersonic before any sensible flow field exists, and the solution
+    // compresses briefly (417 K at iteration 236) and then collapses onto
+    // the stalled branch -- converging, residual 0.025, to a machine
+    // passing a quarter of design flow.
+    //
+    // Ramping lets the through-flow establish at a low loading and then
+    // loads the rotor. It is also how a speed line is walked in practice:
+    // from choke toward stall, each point starting from the last.
+    outlet
+    {
+        type            uniformFixedValue;
+        uniformValue    table
+        (
+            (0    95000)
+            (300  95000)
+            (1200 150000)
+            (3000 150000)
+        );
+        value           uniform 95000;
+    }
     hub_rotating     { type zeroGradient; }
     hub_static        { type zeroGradient; }
     blade   { type zeroGradient; }

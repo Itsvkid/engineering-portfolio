@@ -45,14 +45,20 @@ real output of the project; the code exists to produce and check them.
 
 ### The next three things to do
 
-1. **Finish C4-4, the Rotor 37 solve.** The mesh is built and checked
-   (455k cells, volume within 1.2 % of the analytic annulus) and the case
-   is set up. `rhoSimpleFoam` is being walked through its dictionary
-   requirements — every trap hit so far is in `cfd/README.md`. After it
-   converges: a back-pressure sweep for the 100 % speed line, then three
-   grid levels for the GCI 3 % band. Pass bands were written in
-   `data/methods/rotor37-validation-case.yaml` **before any solver was
-   installed**.
+1. **Finish C4-4, the Rotor 37 solve — there is a bug to find.** The mesh
+   is built and checked, the solver is validated on an exact answer, and
+   the geometry is cross-checked three ways. The case runs and the rotor
+   compresses (417 K against a 288 K inlet) but **collapses onto a stalled
+   branch at 26 % of design flow, repeatably, near iteration 700** — three
+   different setups landed within 1.3 % of the same mass flow, so it is one
+   mechanism. Three MRF faults have already been found and fixed; a ramped
+   back pressure was tried and ruled out. `solvers/cfd/STEP0.md` unit C4-4
+   has the full characterisation, findings 140–142, and **four things to
+   try next in order** — starting with actually inspecting the stalled
+   field, which nothing has done yet. After that: the back-pressure sweep
+   for the 100 % speed line and three grid levels for the GCI 3 % band.
+   Pass bands were written in `data/methods/rotor37-validation-case.yaml`
+   **before any solver was installed**.
 2. **I2 and I3.** I3 (`FINDINGS.md`) is what the plan calls *the
    deliverable*: every disagreement with a published number, ranked, with
    a cause or "unresolved", plus every place the E³ *design* and the E³

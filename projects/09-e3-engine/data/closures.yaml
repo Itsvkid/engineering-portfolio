@@ -103,7 +103,15 @@ closures:
     band: null
     achieved: null
     state: gated
-    gate: "the mesh and the run: 3D periodic sector with MRF, a back-pressure sweep for the 100 % speed line, and three grid levels for the GCI band. The solver is installed and validated (C4-1) and the blade is transcribed (C4-2); this is work, not a gate on anything external."
+    gate: >
+      The mesh is built and checked (C4-3) and the case runs, but it
+      collapses onto a stalled branch at 26 % of design flow and 13 % of
+      design work, repeatably, near iteration 700. Three MRF faults were
+      found and fixed and the rotor now compresses (T_out 416.6 K at
+      iteration 236) but does not hold. Characterised in
+      solvers/cfd/STEP0.md unit C4-4, findings 140-142, with the four
+      things to try next in order. Not a gate on anything external -- this
+      is a bug to find.
 
   - stage: D3
     what: total secondary air against Table XI's 16.1 % of W25

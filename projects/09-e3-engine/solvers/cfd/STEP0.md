@@ -416,3 +416,102 @@ mesh volume 3.3696e-4 m3   analytic annulus sector 3.33e-4 m3   +1.2 %
      sector's own rotation helper puts +θ at *negative* y, so the
      right-handed vertex order is the opposite of the one the sign of the
      angle suggests.
+
+---
+
+## Unit C4-4 — the run. **Open, with the fault characterised but not found.**
+
+The mesh is built and checked (C4-3), the solver is validated against an
+exact answer (C4-1), the blade and annulus are transcribed and cross-checked
+(C4-2). The case runs. It does not yet produce a physical answer, and this
+section records exactly what it does instead, because a wrong answer that
+converges is worth more to the next person than a vague one.
+
+### What the case is
+
+`rhoSimpleFoam`, MRF at 1799.9965 rad/s (TP-1337's 17,188.7 rpm), k-omega
+SST, total-pressure inlet at standard day, one 10° passage of thirty-six
+with rotationally cyclic sides. Coarse grid level, 138,201 cells.
+
+### Three faults found and fixed
+
+Each produced a **converged, plausible, wrong answer**. None raised an
+error. The only quantity that ever exposed them was the outlet temperature,
+which must exceed the inlet because a compressor compresses.
+
+| Fault | Evidence | Fix |
+|---|---|---|
+| Walls `noSlip` under MRF — a stationary blade in a rotating frame | T_out **278 K** against a 288 K inlet | `rotatingWallVelocity`; `MRFnoSlip` is not in this build |
+| MRF cellZone spanning the **inlet patch**, so the frame spun the incoming flow to ~400 m/s tangentially before `totalPressure` was evaluated | mass flow 11× low, still no work | zone restricted to the rotor passage, 92,441 of 138,201 cells |
+| Rotating wall patch spanning the **whole duct** while the zone covered only the passage — 4 cm of stationary-frame inlet with a wall at 1800 rad/s | mass flow a quarter of design, residual 0.03 | hub split into `hub_rotating` and `hub_static` at the zone boundary |
+
+After the third fix the rotor compresses for the first time: **T_out 416.6 K
+against a 288 K inlet at iteration 236**, mass flow 21.2 kg/s.
+
+### The fault that remains
+
+It does not hold. Every run so far collapses onto the same stalled branch:
+
+```
+run A  whole-domain MRF zone      mdot -0.1456   T_out 286.3 K
+run B  zone restricted            mdot -0.1445   T_out 298.4 K
+run C  hub split + ramped p_out   mdot -0.1437   T_out 298.2 K
+```
+
+**Three different setups, three collapses to within 1.3 % of the same mass
+flow, all near iteration 700.** That is one mechanism, not three. The
+stalled branch is 5.17 kg/s — **26 % of design flow** — with a 10 K
+temperature rise against a design 78 K, so **13 % of design work**. And it
+*converges* there: the pressure residual falls to 0.024.
+
+A ramped back pressure (95 kPa held to iteration 300, then to 150 kPa by
+1200) was tried on the hypothesis that the rotor was being run far past
+choke before a sensible field existed. It collapsed at iteration 709 exactly
+as the unramped runs did, at the same mass flow. **The hypothesis was wrong
+and the ramp is not the answer.**
+
+### What to try next, in order
+
+1. **Inspect the converged stalled field.** Nothing so far has looked at
+   the solution — only at integrated quantities. Reconstruct it, and check
+   the axial velocity profile at the inlet plane and through the passage
+   for reversal, and the swirl upstream of the blade. That distinguishes
+   "the rotor does no work" from "the inlet is blocked", which the
+   integrated numbers cannot.
+2. **Check the cyclic coupling carries flow.** Plain `cyclic` matched
+   without error, so the faces align, but confirm the flux across the pair
+   is non-zero and balanced. A passage walled off by non-functioning
+   periodics would restrict flow exactly like this.
+3. **Check y+ on the blade.** At 138k cells the first cell off the blade is
+   large; if y+ is in the thousands the wall functions are outside their
+   valid range and the boundary layer is being modelled as a blockage.
+4. **Try `SRF`** (`SRFSimpleFoam` is incompressible, but the SRF machinery
+   exists) or a whole-domain rotating frame with `rotatingTotalPressure` at
+   the inlet, which is in this build. That removes the zone-boundary
+   question entirely, and for a rotor-only domain the rotating frame is the
+   natural one.
+
+### Findings
+
+140. **Three MRF faults in a row, none of which raised an error.** A
+     stationary wall in a rotating frame, a frame zone spanning the inlet
+     patch, and a rotating wall spanning the zone boundary. Each converged
+     to a plausible answer and each masked the next. The third converged
+     most convincingly of all — residual 0.03 — to a machine passing a
+     quarter of its design flow. **Residuals were useless as a guide all
+     night; the outlet temperature was the only thing that ever caught
+     them.** Instrument a rotating-machinery case with the physical
+     quantity you are validating against *before* trusting any residual.
+141. **The stalled branch is an attractor, and its repeatability is the
+     evidence.** Three different setups collapsed to mass flows of 0.1456,
+     0.1445 and 0.1437 kg/s per sector — a spread of 1.3 % — all near
+     iteration 700. Three unrelated bugs would not converge to the same
+     number. Whatever is left is one mechanism, and it is upstream of
+     everything that has been changed so far.
+142. **A ramped back pressure was tried and did not help, which rules out
+     the most likely remaining explanation.** Running a transonic rotor far
+     past choke from the first iteration is a standard way to get exactly
+     this collapse, and loading it gradually is the standard cure. It made
+     no difference: the ramped run collapsed at iteration 709 at the same
+     mass flow as the unramped ones. Recorded because a negative result on
+     an obvious hypothesis saves the next attempt from repeating it.
