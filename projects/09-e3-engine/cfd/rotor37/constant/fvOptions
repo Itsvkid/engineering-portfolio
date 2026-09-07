@@ -1,0 +1,7 @@
+FoamFile{version 2.0; format ascii; class dictionary; object fvOptions;}
+// A rotor at 1800 rad/s and 0.25 m radius has a 450 m/s frame velocity, so
+// the MRF source terms are large and the first iterations can push T or U
+// somewhere unphysical before the field settles. These bound it rather
+// than letting the thermophysical model divide by a negative temperature.
+limitT { type limitTemperature; active yes; selectionMode all; min 100; max 1000; }
+limitU { type limitVelocity;    active yes; selectionMode all; max 800; }

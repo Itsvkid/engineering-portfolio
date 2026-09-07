@@ -17,6 +17,7 @@ import {
 import {
   BOOSTER,
   COMBUSTOR,
+  ISLAND,
   EXHAUST,
   FAN,
   FAN_STATIONS as FS,
@@ -129,26 +130,15 @@ const fanModule = [
       merge([
         bladeRow(
           {
-            // Designed, not transcribed (the E³ never published its fan
-            // sections): a thick, highly cambered subsonic root thinning to a
-            // flat, thin, highly staggered supersonic tip, with the chord
-            // growing outward the way a wide-chord fan's does.
-            sections: [
-              [0.0, 0.3, 22, 52, 0.09],
-              [0.15, 0.32, 30, 42, 0.075],
-              [0.3, 0.345, 38, 33, 0.06],
-              [0.45, 0.37, 45, 25, 0.05],
-              [0.6, 0.39, 51, 18, 0.042],
-              [0.75, 0.405, 56, 13, 0.035],
-              [0.9, 0.415, 60, 10, 0.03],
-              [1.0, 0.42, 63, 8, 0.026],
-            ].map(([s, chord, stagger, camber, thickness]) => ({
-              x: (FAN.rTip - FAN.rHub - 0.01) * s,
-              chord,
-              stagger,
-              camber,
-              thickness,
-              lean: 0.08 * (FAN.rTip - FAN.rHub) * s * s,
+            // CR-165148 Fig.41: the printed sections, hub to tip. Camber
+            // 68° → 8°, stagger 12° → 62°, thickness 10 % → 2.6 % of chord.
+            sections: FAN.sections.map((sec) => ({
+              x: (FAN.rTip - FAN.rHub - 0.01) * sec.h,
+              chord: sec.chord,
+              stagger: sec.stagger,
+              camber: sec.camber,
+              thickness: sec.tm,
+              lean: 0.06 * (FAN.rTip - FAN.rHub) * sec.h * sec.h,
             })),
             points: 12,
           },
@@ -159,7 +149,7 @@ const fanModule = [
         // The mid-span shroud ring the E³ fan carries.
         tipShroud(FAN.rHub + (FAN.rTip - FAN.rHub) * FAN.shroudSpan, 0.0, 0.05, 0.012),
       ]),
-    text: "Thirty-two solid titanium blades with a shroud at half span, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic at takeoff; the root is a heavily cambered subsonic section, which is why the blade twists through some forty degrees from hub to tip.",
+    text: "Thirty-two solid titanium blades with a part-span shroud, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic; the root is a 68°-camber subsonic section set almost axially, which is why the blade twists through fifty degrees from hub to tip. The sections here are the report's own, read off its Fig. 41.",
     facts: [
       f("Blade count", "32", "CR-168219 sec 5.1.2 p.45"),
       f("Tip radius", "1.054 m", "CR-165148 Table IV"),
@@ -167,6 +157,8 @@ const fanModule = [
       f("Part-span shroud", "55 % span (CR-165148) / 50 % (CR-168219), tungsten-carbide faces", "CR-165148 Fig.46 p.56; CR-168219 sec 5.1.2 p.45"),
       f("Tip relative Mach", "1.41 (design)", "CR-165148 Fig.10; reproduced 1.405 in PF-09 unit 6"),
       f("Material", "Ti-6Al-4V, solid; 7.27 kg per blade", "CR-165148 Table V p.49, Table VI p.74"),
+      f("Sections", "camber 68 → 8°, stagger 12 → 62°, chord 18.5 → 28.7 cm, t/c 10 → 2.6 % at 0/20/40/55/60/80/100 % height", "CR-165148 Fig.41 p.50 (read off)"),
+      f("Untwist at speed", "1.6° at the tip at 3,653 rpm; the blade is pre-twisted for it", "CR-165148 Fig.43 p.53"),
     ],
   },
   {
@@ -209,10 +201,11 @@ const fanModule = [
           [FAN.rHub, 0.03],
           [0.45, 0.22],
           [BOOSTER.rHub, FS.islandVane - 0.02],
-          [BOOSTER.rHub, FS.boosterRotor + 0.08],
-          [0.46, FS.innerOgv - 0.03],
-          [0.3, 0.72],
-          [0.1, 0.8],
+          [BOOSTER.rHub, FS.boosterRotor + 0.06],
+          [ISLAND.rCoreHubAtOgv, FS.innerOgv - 0.05],
+          [ISLAND.rCoreHubAtOgv - 0.01, FS.innerOgv + 0.06],
+          [0.3, 0.8],
+          [0.1, 0.86],
         ],
         0.02
       ),
@@ -229,7 +222,16 @@ const fanModule = [
     build: () =>
       merge([
         bladeRow(
-          { span: BOOSTER.rTip - BOOSTER.rHub - 0.005, chordRoot: 0.07, staggerRoot: 18, camberRoot: 24, thickness: 0.07, mirror: true },
+          {
+            span: BOOSTER.rTip - BOOSTER.rHub - 0.005,
+            chordRoot: BOOSTER.islandVane.chord,
+            staggerRoot: BOOSTER.islandVane.staggerRoot,
+            staggerTip: BOOSTER.islandVane.staggerTip,
+            camberRoot: BOOSTER.islandVane.camberRoot,
+            camberTip: BOOSTER.islandVane.camberTip,
+            thickness: BOOSTER.islandVane.tmRoot,
+            mirror: true,
+          },
           BOOSTER.islandVanes,
           BOOSTER.rHub + 0.005,
           FS.islandVane,
@@ -238,7 +240,11 @@ const fanModule = [
         ring(BOOSTER.rHub - 0.012, BOOSTER.rHub + 0.004, FS.islandVane - 0.04, FS.islandVane + 0.04),
       ]),
     text: "Sixty vanes in the 'island' between the fan and the booster. They take the swirl the fan hub leaves in the core stream and set the flow up for the booster rotor.",
-    facts: [f("Vane count", "60, banded", "CR-165148 Table VII p.92"), f("Material", "Ti-6-4 on the FPS (CR-168219 Fig.13 says aluminium; both printed)", "CR-165148 Table VII p.92; CR-168219 Fig.13")],
+    facts: [
+      f("Vane count", "60, banded; length 15.67 cm, chord 8.13 cm", "CR-165148 Table VII p.92"),
+      f("Angles", "stagger 20.3 → 21.5°, camber 37.3 → 35.8°", "CR-165148 Table VII p.92"),
+      f("Material", "Ti-6-4 on the FPS (CR-168219 Fig.13 says aluminium; both printed)", "CR-165148 Table VII p.92; CR-168219 Fig.13"),
+    ],
   },
   {
     id: "booster-blades",
@@ -250,7 +256,16 @@ const fanModule = [
     r: 0.6,
     build: () =>
       bladeRow(
-        { span: BOOSTER.rTip - BOOSTER.rHub - 0.006, chordRoot: 0.09, chordTip: 0.085, staggerRoot: 35, staggerTip: 50, camberRoot: 32, camberTip: 16, thickness: 0.07 },
+        {
+          // CR-165148 Fig.52: camber 33 → 8°, stagger 23 → 42°, t/c 8.2 → 5.2 %.
+          sections: BOOSTER.sections.map((sec) => ({
+            x: (BOOSTER.rTip - BOOSTER.rHub - 0.006) * sec.h,
+            chord: sec.chord,
+            stagger: sec.stagger,
+            camber: sec.camber,
+            thickness: sec.tm,
+          })),
+        },
         BOOSTER.blades,
         BOOSTER.rHub,
         FS.boosterRotor
@@ -259,7 +274,8 @@ const fanModule = [
     facts: [
       f("Blade count", "56, unshrouded, Ti-6Al-4V", "CR-165148 Table IV p.47, Table V p.49"),
       f("Tip speed", "261.1 m/s corrected at climb", "CR-165148 Table IV p.47"),
-      f("Core flow split", "22.3 % of fan flow into the core", "CR-165148 island split"),
+      f("Flow", "22.3 % of the fan flow passes under the island through this rotor; 42 % of that returns to the bypass behind it, 82.4 kg/s enters the core", "CR-165148 Appendix A pp.118–124"),
+      f("Sections", "camber 33 → 8°, stagger 23 → 42°, chord 7.1 → 6.4 cm", "CR-165148 Fig.52 p.63 (read off)"),
     ],
   },
   {
@@ -268,20 +284,57 @@ const fanModule = [
     name: "Inner (core) OGV",
     system: "gas-generator",
     y: FS.innerOgv,
-    r: 0.6,
+    r: 0.55,
     build: () =>
       merge([
         bladeRow(
-          { span: BOOSTER.rTip - BOOSTER.rHub - 0.01, chordRoot: 0.085, staggerRoot: 28, camberRoot: 36, thickness: 0.07, sweepTip: -0.15, mirror: true },
+          {
+            span: BOOSTER.innerOgvRow.length - 0.004,
+            chordRoot: BOOSTER.innerOgvRow.chordRoot,
+            chordTip: BOOSTER.innerOgvRow.chordTip,
+            staggerRoot: BOOSTER.innerOgvRow.staggerRoot,
+            staggerTip: BOOSTER.innerOgvRow.staggerTip,
+            camberRoot: BOOSTER.innerOgvRow.camberRoot,
+            camberTip: BOOSTER.innerOgvRow.camberTip,
+            thickness: BOOSTER.innerOgvRow.tmRoot,
+            sweepTip: -0.3,
+            mirror: true,
+          },
           BOOSTER.innerOgv,
-          BOOSTER.rHub + 0.005,
+          ISLAND.rCoreHubAtOgv + 0.004,
           FS.innerOgv,
           0.5
         ),
-        ring(BOOSTER.rHub - 0.012, BOOSTER.rHub + 0.004, FS.innerOgv - 0.05, FS.innerOgv + 0.05),
+        ring(ISLAND.rCoreHubAtOgv - 0.012, ISLAND.rCoreHubAtOgv + 0.004, FS.innerOgv - 0.05, FS.innerOgv + 0.05),
       ]),
-    text: "Sixty-four swept and leaned aluminium vanes that take the swirl out of the booster exit flow before the transition duct turns it inward to the HPC. Sweep and lean are there to reduce the noise the booster wake makes on the vanes.",
-    facts: [f("Vane count", "64, banded, swept 60°, leaned 0→20°, 7075 aluminium", "CR-165148 Table VII p.92, sec II.D")],
+    text: "Sixty-four swept and leaned aluminium vanes in the core duct, behind the second splitter, taking the swirl out of the 58 % of the island flow that goes on to the HPC. Their 55° to 62° of camber is the largest turning of any fan-module row; sweep and lean are there to reduce the noise the booster wake makes on them.",
+    facts: [
+      f("Vane count", "64, banded, swept 60°, leaned 0→20°, 7075 aluminium", "CR-165148 Table VII p.92, sec II.D"),
+      f("Geometry", "length 11.61 cm, chord 9.25 → 5.44 cm, stagger 18.4 → 21.5°, camber 55.4 → 62.4°", "CR-165148 Table VII p.92"),
+      f("Flow", "82.4 kg/s corrected, cumulative pressure ratio 1.668", "CR-165148 Appendix A p.122"),
+    ],
+  },
+  {
+    id: "island-exit-vanes",
+    tint: "stator",
+    name: "Island exit vanes (booster flow returning to the bypass)",
+    system: "gas-generator",
+    y: FS.islandExitVanes,
+    r: 0.645,
+    build: () =>
+      bladeRow(
+        { span: ISLAND.rUnder - ISLAND.rSplit2 - 0.016, chordRoot: 0.16, staggerRoot: 12, camberRoot: 30, thickness: 0.07, mirror: true },
+        BOOSTER.islandExitVanes,
+        ISLAND.rSplit2 + 0.012,
+        FS.islandExitVanes,
+        0.5
+      ),
+    text: "The quarter-stage trick: the booster pumps more air than the core wants, so behind it a second splitter sends 42 % of the boosted flow outward, past these thirty-four vanes, back into the bypass stream behind the island. The core takes the inner 58 %. That is what lets one booster stage serve both a growth core and the bypass efficiency.",
+    facts: [
+      f("Vane count", "34: the lower part of the 34-strut vane-frame", "CR-165148 Appendix A p.123 (S2OUT)"),
+      f("Flow returned", "61.35 of 143.74 kg/s corrected, 42.7 %", "CR-165148 Appendix A p.123; summary p.3 'approximately 42'"),
+      f("Passage radii", "0.611 → 0.669 m: the second splitter sits where 58 % of the island annulus area lies below it", "", ASM),
+    ],
   },
   {
     id: "bypass-ogv",
@@ -292,9 +345,9 @@ const fanModule = [
     r: 0.88,
     build: () =>
       bladeRow(
-        { span: 1.06 - 0.69, chordRoot: 0.17, chordTip: 0.15, staggerRoot: 14, staggerTip: 10, camberRoot: 32, camberTip: 28, thickness: 0.06, sweepTip: 0.05, mirror: true },
+        { span: 1.06 - ISLAND.rTop, chordRoot: 0.17, chordTip: 0.15, staggerRoot: 14, staggerTip: 10, camberRoot: 32, camberTip: 28, thickness: 0.06, sweepTip: 0.05, mirror: true },
         BOOSTER.bypassOgv,
-        0.69,
+        ISLAND.rTop,
         FS.bypassOgv,
         0.5
       ),
@@ -981,7 +1034,7 @@ const structure = [
       merge([
         struts(12, 0.34, 0.55, FS.fanFrame, 0.16, 0.03, 15),
         ring(1.064, 1.1, FS.bypassOgv - 0.12, FS.bypassOgv + 0.14),
-        ring(0.64, 0.665, FS.bypassOgv - 0.12, FS.fanFrame + 0.16),
+        ring(ISLAND.rTop - 0.025, ISLAND.rTop, FS.bypassOgv - 0.06, FS.fanFrame + 0.16),
         // Hub: bearing support cone and the static core inner wall.
         shell([[0.19, 0.78], [0.3, 0.9], [0.34, FS.fanFrame], [0.3, 1.2], [0.18, 1.3]], 0.025),
         shell([[0.12, 0.85], [0.2, 0.78]], 0.02),
@@ -997,19 +1050,51 @@ const structure = [
     ],
   },
   {
-    id: "core-inlet-duct",
-    name: "Core inlet duct and splitter",
+    id: "island",
+    name: "Island (quarter-stage splitter body)",
     system: "structure",
-    y: 0.9,
+    y: 0.55,
+    r: 0.69,
+    build: () =>
+      lathe([
+        [ISLAND.rUnder - 0.024, ISLAND.yLE],
+        [ISLAND.rTop, ISLAND.yLE + 0.14],
+        [ISLAND.rTop, ISLAND.yTE - 0.05],
+        [ISLAND.rTop - 0.018, ISLAND.yTE],
+        [ISLAND.rUnder, ISLAND.yTE - 0.04],
+        [ISLAND.rUnder, ISLAND.yLE + 0.1],
+        [ISLAND.rUnder - 0.024, ISLAND.yLE],
+      ]),
+    text: "The ring-shaped body that gives the quarter stage its name. Its leading edge splits the fan flow at 22.3 %: the bypass stream passes over it, and the island stator and booster rotor sit under it. It also throws foreign objects outward into the bypass, which is one of the reasons the E³ chose this arrangement over a taller single fan.",
+    facts: [
+      f("Flow under the island", "22.3 % of fan flow, 143.7 kg/s corrected", "CR-165148 summary p.3, Appendix A p.120"),
+      f("Why", "core-stream efficiency, growth path, bypass efficiency at lower fan speed, FOD separation", "CR-165148 summary p.1–3"),
+      f("Growth", "the island leading edge moves out 1.0 cm for the growth engine", "CR-165148 Fig.15"),
+      f("Radii", "underside 0.669 m (booster tip); top 0.705 m", "CR-165148 Table IV; top assumed", ASM),
+    ],
+  },
+  {
+    id: "core-inlet-duct",
+    name: "Second splitter and core inlet duct",
+    system: "structure",
+    y: 0.95,
     r: 0.55,
     build: () =>
       merge([
-        shell([[0.645, FS.splitterLE], [0.675, FS.islandVane], [0.678, FS.boosterRotor], [0.676, FS.innerOgv], [0.66, 0.75], [0.62, 0.9], [0.55, 1.0], [0.44, 1.2], [HPC_ROWS.IGV.LE.rTip + 0.018, HPC_ROWS.IGV.LE.yTip]], 0.015),
-        // Inner wall from the booster drum exit to the fan-frame hub.
-        shell([[0.5, 0.6], [0.44, 0.7], [0.36, 0.85], [0.34, 0.95]], 0.012),
+        // Outer wall of the core stream: the second splitter's lower surface
+        // then the goose-neck down to the HPC inlet.
+        shell([[ISLAND.rSplit2, ISLAND.ySplit2], [ISLAND.rSplit2 - 0.004, FS.innerOgv], [0.60, 0.74], [0.585, 0.86], [0.53, 1.0], [0.45, 1.2], [HPC_ROWS.IGV.LE.rTip + 0.018, HPC_ROWS.IGV.LE.yTip]], 0.014),
+        // The splitter's upper surface, becoming the core cowl behind the island.
+        shell([[ISLAND.rSplit2, ISLAND.ySplit2], [0.62, 0.66], [0.628, 0.84]], 0.012),
+        // Inner wall from the drum exit to the fan-frame hub.
+        shell([[ISLAND.rCoreHubAtOgv - 0.012, FS.innerOgv + 0.06], [0.44, 0.78], [0.37, 0.9], [0.35, 1.0]], 0.012),
       ]),
-    text: "The splitter lip divides the fan flow into bypass and core, and the S-shaped transition duct behind the booster turns the core stream inward from 0.67 m radius to the 0.36 m of the HPC inlet. The variable bleed valve doors open through this wall.",
-    facts: [f("Flow split", "22.3 % into the core", "CR-165148")],
+    text: "Behind the booster a second splitter divides its flow again: the inner 58 % turns inward down this goose-neck, from 0.61 m radius to the 0.36 m of the HPC inlet, past the core OGVs; the outer 42 % goes up and out to the bypass. The bleed doors open through the goose-neck's outer wall.",
+    facts: [
+      f("Core flow", "82.4 kg/s corrected of the 143.7 under the island", "CR-165148 Appendix A p.122"),
+      f("Second splitter radius", "0.611 m, from the 58/42 area split", "", ASM),
+      f("Axial run to the HPC", "fan axis → rotor 1 = 1.42 m; the sheet allows 1.10–1.50", "atlas-facts.md A7", ASM),
+    ],
   },
   {
     id: "fan-duct-outer",
@@ -1027,7 +1112,7 @@ const structure = [
     system: "structure",
     y: 2.3,
     r: 0.6,
-    build: () => shell([[0.66, FS.fanFrame + 0.16], [0.62, 1.4], [0.6, 2.0], [0.6, 3.0], [0.62, EXHAUST.yMixerStart]], 0.012),
+    build: () => shell([[0.628, 0.84], [0.62, 1.4], [0.6, 2.0], [0.6, 3.0], [0.62, EXHAUST.yMixerStart]], 0.012),
     text: "The fairing over the core. Everything between it and the casings, the pipes, wires, pumps and valves on this page, is the core compartment: fire zone 2, ventilated by a trickle of bypass air.",
     facts: [f("Radius", "0.60 m along the core", "", ASM)],
   },

@@ -6,6 +6,63 @@ The two files that carry the real state are [WORK-PLAN.md](WORK-PLAN.md)
 `STEP0.md` (the band stated before every run, and the findings after it).
 This page is only a pointer.
 
+
+## Handing over — read this first if you are a new session
+
+**Everything needed to continue is in this repository.** Nothing depends
+on a Claude account, a saved conversation, or a particular machine. If you
+have the repo and the machine's toolchain, you have the project.
+
+| Question | Where the answer lives |
+|---|---|
+| What is done, what is not, and to what tolerance | `WORK-PLAN.md` — the item list, each stage's *Closes when*, and the Progress table (▣ met, ◧ half, ⬜ not started) |
+| Every closure as a machine-readable number | `data/closures.yaml`, checked by `tests/test_cross_discipline.py` |
+| Why a number is what it is | the `STEP0.md` in each `solvers/*/` directory: the band stated **before** each run, then the result and the findings |
+| Every dataset and where it came from | `DATA-INDEX.md` |
+| How to run everything | `README.md`, and `python build.py` |
+| How to reproduce the CFD | `cfd/README.md` — including a table of every toolchain trap hit so far |
+| The engineering standards this follows | `METHOD.md` |
+| The design engineer's accumulated knowledge | `../../.claude/agents/gas-turbine-designer.md` (in this repo, version-controlled, **not** in any user account) |
+
+There are 139 numbered findings across the `STEP0.md` files. They are the
+real output of the project; the code exists to produce and check them.
+
+### The rules that matter
+
+1. **State the band before the run.** METHOD.md step 0. A `STEP0.md`
+   step-0 section is never edited after its run; results and findings are
+   appended below it.
+2. **Never "correct" printed source data.** Record it as read, with an
+   `as_printed` note. Reading errors in OCR are a different thing and may
+   be repaired — say which you are doing.
+3. **A miss is a finding, not a bug to tune away.** Several closures are
+   half-met on purpose, with the missing half named.
+4. **Commit per unit of work**, and update
+   `.claude/agents/gas-turbine-designer.md` in the same commit as any
+   engine work. A change that leaves the agent stale is incomplete.
+5. `./sync-public.sh --push` mirrors publicly; it excludes `.claude/`,
+   `CLAUDE.md`, the vault, `resume/` and `cv/`.
+
+### The next three things to do
+
+1. **Finish C4-4, the Rotor 37 solve.** The mesh is built and checked
+   (455k cells, volume within 1.2 % of the analytic annulus) and the case
+   is set up. `rhoSimpleFoam` is being walked through its dictionary
+   requirements — every trap hit so far is in `cfd/README.md`. After it
+   converges: a back-pressure sweep for the 100 % speed line, then three
+   grid levels for the GCI 3 % band. Pass bands were written in
+   `data/methods/rotor37-validation-case.yaml` **before any solver was
+   installed**.
+2. **I2 and I3.** I3 (`FINDINGS.md`) is what the plan calls *the
+   deliverable*: every disagreement with a published number, ranked, with
+   a cause or "unresolved", plus every place the E³ *design* and the E³
+   *as tested* differ. 139 findings are already written and only need
+   collecting and ranking.
+3. **Stage A3 transcription** — the single biggest unblocker. It gates
+   E2's Fig. 64 peak stress and burst margin, E3's closure, E5's HPC
+   dovetails, F2's mass total and four of Stage G's seven bullets. None of
+   it is a modelling problem; they are all figures nobody has digitised.
+
 ## Done
 
 | Stage | State |

@@ -1,15 +1,22 @@
 FoamFile{version 2.0; format ascii; class dictionary; object fvSchemes;}
 ddtSchemes      { default steadyState; }
 gradSchemes     { default cellLimited Gauss linear 1; }
-divSchemes      { default none; div(phi,U) bounded Gauss linearUpwind grad(U);
-                  div(phi,e) bounded Gauss limitedLinear 1;
-                  div(phi,K) bounded Gauss limitedLinear 1;
-                  div(phi,h) bounded Gauss limitedLinear 1;
-                  div(phi,k) bounded Gauss limitedLinear 1;
-                  div(phi,omega) bounded Gauss limitedLinear 1;
-                  div(phi,Ekp) bounded Gauss limitedLinear 1;
-                  div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear; }
-laplacianSchemes{ default Gauss linear corrected; }
+divSchemes
+{
+    default         none;
+    div(phi,U)      bounded Gauss upwind;
+    div(phi,h)      bounded Gauss upwind;
+    div(phi,e)      bounded Gauss upwind;
+    div(phi,K)      bounded Gauss upwind;
+    div(phi,Ekp)    bounded Gauss upwind;
+    div(phi,k)      bounded Gauss upwind;
+    div(phi,omega)  bounded Gauss upwind;
+    div(phid,p)     Gauss upwind;
+    div(phiMRF,p)   Gauss upwind;      // MRF adds its own flux for p
+    div(phiMRF,U)   Gauss upwind;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+}
+laplacianSchemes{ default Gauss linear limited corrected 0.33; }
 interpolationSchemes { default linear; }
-snGradSchemes   { default corrected; }
+snGradSchemes   { default limited corrected 0.33; }
 wallDist        { method meshWave; }

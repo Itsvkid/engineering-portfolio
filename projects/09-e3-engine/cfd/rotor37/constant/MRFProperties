@@ -1,0 +1,11 @@
+FoamFile{version 2.0; format ascii; class dictionary; object MRFProperties;}
+MRF1
+{
+    cellZone            rotor;
+    active              yes;
+    nonRotatingPatches  ( casing );
+    origin              (0 0 0);
+    axis                (1 0 0);
+    // 17,188.7 rpm, TP-1337 Table I's design speed
+    omega               1799.9965;
+}

@@ -19,8 +19,9 @@
 // HPC report's z (rotor-1 LE hub = 0) sits at y = HPC0 (assumed).
 export const HPC0 = 1.42;
 // HPT report's x (stage-1 vane inlet = 0) sits at y = HPT0 (assumed: HPC OGV
-// trailing edge at HPC0 + 0.782 = 2.202, plus a 0.43 m diffuser + combustor).
-export const HPT0 = 2.63;
+// trailing edge at HPC0 + 0.782 = 2.202, plus 0.48 m of diffuser + combustor,
+// inside the 45–55 cm the fact sheet's A7 allows for a short double-annular).
+export const HPT0 = 2.68;
 // LPT datum is the HPT stage-2 blade exit (HPT Fig 3, x = 20 cm).
 export const LPT0 = HPT0 + 0.2;
 
@@ -34,19 +35,56 @@ export const FAN = {
   rTip: 1.054,
   rHub: 0.3605,
   blades: 32,
-  // The 50 % span shroud the E³ fan carries (CR-168219 sec 5.1.2 p.45).
-  shroudSpan: 0.5,
-  chordRoot: 0.30,
-  chordTip: 0.42,
+  // Part-span shroud at 55 % of blade height (CR-165148 p.3, Fig.2; CR-168219 says 50 %).
+  shroudSpan: 0.55,
+  // Blade sections read off CR-165148 Fig.41 p.50, percent blade height from
+  // the hub: chord (in → m), camber, stagger from axial, max thickness/chord.
+  sections: [
+    { h: 0.0, chord: 7.3 * 0.0254, camber: 68, stagger: 12, tm: 0.1 },
+    { h: 0.2, chord: 8.1 * 0.0254, camber: 42, stagger: 22, tm: 0.066 },
+    { h: 0.4, chord: 8.9 * 0.0254, camber: 24, stagger: 35, tm: 0.049 },
+    { h: 0.55, chord: 9.5 * 0.0254, camber: 17, stagger: 42, tm: 0.042 },
+    { h: 0.6, chord: 9.7 * 0.0254, camber: 15, stagger: 45, tm: 0.04 },
+    { h: 0.8, chord: 10.5 * 0.0254, camber: 11, stagger: 54, tm: 0.032 },
+    { h: 1.0, chord: 11.3 * 0.0254, camber: 8, stagger: 62, tm: 0.026 },
+  ],
 };
 export const BOOSTER = {
-  rTip: 0.669,
+  rTip: 0.669, // the island's underside
   rHub: 0.523,
   blades: 56,
   islandVanes: 60,
   innerOgv: 64,
+  islandExitVanes: 34, // S2OUT, the lower part of the 34-strut vane-frame
   bypassOgv: 34,
-  splitFraction: 0.223,
+  splitFraction: 0.223, // of fan flow under the island
+  returnFraction: 0.42, // of the island flow back to the bypass behind the booster
+  // Booster rotor sections read off CR-165148 Fig.52 p.63.
+  sections: [
+    { h: 0.0, chord: 2.8 * 0.0254, camber: 33, stagger: 23, tm: 0.082 },
+    { h: 0.2, chord: 2.74 * 0.0254, camber: 22, stagger: 26, tm: 0.076 },
+    { h: 0.5, chord: 2.65 * 0.0254, camber: 13, stagger: 31, tm: 0.065 },
+    { h: 0.8, chord: 2.56 * 0.0254, camber: 9, stagger: 37, tm: 0.056 },
+    { h: 1.0, chord: 2.5 * 0.0254, camber: 8, stagger: 42, tm: 0.052 },
+  ],
+  // Island stator and core OGV rows, CR-165148 Table VII p.92.
+  islandVane: { length: 0.1567, chord: 0.0813, staggerRoot: 20.27, staggerTip: 21.51, camberRoot: 37.29, camberTip: 35.79, tmRoot: 0.0485, tmTip: 0.062 },
+  innerOgvRow: { length: 0.1161, chordRoot: 0.0925, chordTip: 0.0544, staggerRoot: 18.4, staggerTip: 21.53, camberRoot: 55.38, camberTip: 62.38, tmRoot: 0.053, tmTip: 0.062 },
+};
+/**
+ * The quarter-stage island, assumed radii: the island's top is the bypass
+ * floor; the second splitter behind the booster sits where 58 % of the
+ * island annulus area lies below it (82.4 of 143.7 kg/s to the core), at
+ * r² = 0.523² + 0.58 (0.669² − 0.523²) → 0.611 m.
+ */
+export const ISLAND = {
+  yLE: 0.26,
+  yTE: 0.82,
+  rUnder: 0.669,
+  rTop: 0.705,
+  ySplit2: 0.55,
+  rSplit2: 0.611,
+  rCoreHubAtOgv: 0.49,
 };
 // Axial stations for the fan module (fan-report datum is the stacking axis).
 export const FAN_STATIONS = {
@@ -56,7 +94,8 @@ export const FAN_STATIONS = {
   splitterLE: 0.26,
   islandVane: 0.34,
   boosterRotor: 0.48,
-  innerOgv: 0.62,
+  innerOgv: 0.64,
+  islandExitVanes: 0.74,
   bypassOgv: 0.86, // 1.8 tip chords behind the rotor (CR-165148)
   fanFrame: 0.98,
 };

@@ -128,7 +128,14 @@ def block_mesh_dict(n_theta=40, n_radial=60, path=None):
                 "        faces", "        (", fl(fs), "        );", "    }"]
     for name, nb, fs in (("periodic_m", "periodic_p", faces_m),
                          ("periodic_p", "periodic_m", faces_p)):
-        out += ["    %s" % name, "    {", "        type cyclicAMI;",
+        # `cyclic`, not `cyclicAMI`. The two sector faces are generated
+        # with identical divisions at identical radii, so they match
+        # exactly after rotation and need no interpolation. An AMI here
+        # leaves uncovered faces (weight 0) wherever snappy refines the two
+        # sides differently, and an uncovered face returns T = 0, which the
+        # thermophysical model then divides by -- a floating-point
+        # exception during construction, before a single iteration.
+        out += ["    %s" % name, "    {", "        type cyclic;",
                 "        neighbourPatch %s;" % nb,
                 "        transform rotational;",
                 "        rotationAxis (1 0 0);", "        rotationCentre (0 0 0);",

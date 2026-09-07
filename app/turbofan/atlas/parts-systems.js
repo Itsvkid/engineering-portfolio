@@ -444,8 +444,9 @@ const air = [
     system: "air",
     y: HPT0 - 0.02,
     r: 0.55,
-    build: () => ring(0.485, 0.598, HPT0 - 0.035, HPT0 - 0.01, 96),
-    text: "A six-sector curved wall between the core casings and the core cowl at the HPT. It makes the turbine compartment a low-pressure sink so spent clearance-control air can leave through the rear-frame struts and the centre vent, and it is also the fire wall between the front and back of the core compartment. Its reinforcement was one of three named causes of an HPT casing going out of round on test.",
+    // A thin conical wall, not a slab: sheet metal in six sectors.
+    build: () => merge([shell([[0.485, HPT0 - 0.07], [0.55, HPT0 - 0.04], [0.598, HPT0 - 0.02]], 0.006), struts(6, 0.49, 0.595, HPT0 - 0.045, 0.05, 0.008, 30)]),
+    text: "A six-sector curved sheet-metal wall between the core casings and the core cowl at the HPT. It makes the turbine compartment a low-pressure sink so spent clearance-control air can leave through the rear-frame struts and the centre vent, and it is also the fire wall between the front and back of the core compartment. Its reinforcement was one of three named causes of an HPT casing going out of round on test.",
     facts: [
       f("Design", "six sectors; 389 °C radial gradient and 48 kPa; metal bellows at pipe penetrations", "CR-168219 sec 5.7.4 p.100, sec 5.4.3 p.73"),
       f("Finding", "bulkhead reinforcement next to the HPT stage-1 forward flange contributed to ICLS casing eccentricity", "CR-168211 p.375"),
@@ -656,8 +657,8 @@ const vg = [
     kind: "vbv",
     y: 0.8,
     r: 0.67,
-    vbv: { count: 12, r: 0.665, y: 0.8, width: 0.13, length: 0.16 },
-    build: () => doorRing(12, 0.665, 0.8, 0.13, 0.16, 0),
+    vbv: { count: 12, r: 0.585, y: 0.9, width: 0.13, length: 0.14 },
+    build: () => doorRing(12, 0.585, 0.9, 0.13, 0.14, 0),
     text: "Doors in the wall between the booster exit and the bypass duct. At idle the booster pumps more air than the slow-turning core can swallow and would stall; the doors open and dump the surplus into the bypass. They also throw hail and water out of the core stream. Move the slider to open them.",
     facts: [f("Arrangement", "generic; the E³ reports treat the start bleed and the booster match, not a VBV door count", "", SCH)],
   },

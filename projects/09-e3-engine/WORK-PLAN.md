@@ -694,9 +694,17 @@ only after the method is validated.
       height recovers Table I's aspect ratio to −0.28 %** (finding 135),
       which answers finding 130 and confirms the axial datum, the flow path
       and the chord in one number
-- [ ] Mesh and run Rotor 37: 3D periodic sector, MRF, back-pressure sweep
-      for the 100 % speed line, then grid refinement for the GCI band.
-      **The geometry is ready; this is the meshing and the compute**
+- [x] **Mesh** — **unit C4-3**, `solvers/cfd/rotor37_mesh.py`. A 10°
+      sector, body-fitted to the printed annulus so snappy handles the
+      blade alone: 455,606 cells, non-orthogonality 64.8° max, 7 skew
+      faces in 1.49 M, and **the mesh volume within 1.2 % of the annulus
+      integrated analytically** (findings 137–138)
+- [ ] **Run Rotor 37** — unit C4-4, in progress. `rhoSimpleFoam` with MRF
+      at 1799.9965 rad/s, total-pressure inlet, casing stationary in the
+      absolute frame. The case is set up and committed under
+      `cfd/rotor37/`; every toolchain trap met so far is tabulated in
+      `cfd/README.md`. Then the back-pressure sweep for the 100 % speed
+      line and three grid levels for the GCI band
 - [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
       vs the mean-line and Table X/XXII
 - [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5

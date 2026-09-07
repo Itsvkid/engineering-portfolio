@@ -1,0 +1,7 @@
+FoamFile{version 2.0; format ascii; class dictionary; object thermophysicalProperties;}
+thermoType { type heRhoThermo; mixture pureMixture; transport sutherland;
+             thermo hConst; equationOfState perfectGas; specie specie;
+             energy sensibleInternalEnergy; }
+mixture { specie { molWeight 28.96; }
+          thermodynamics { Cp 1004.5; Hf 0; }
+          transport { As 1.4580e-06; Ts 110.4; } }
