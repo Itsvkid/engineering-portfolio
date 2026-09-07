@@ -3,7 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls } from "@react-three/drei";
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, Plane, Quaternion, Vector3 } from "three";
+import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, NoToneMapping, Plane, Quaternion, Vector3 } from "three";
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
 import { ENGINE_CENTRE } from "./flowpath";
 import { bladeGeometry, bladeRingMatrices, cyl, doorRing } from "./geometry";
@@ -132,8 +132,8 @@ const PartMesh = memo(function PartMesh({ part, geometry, color, state, dispatch
         color={color}
         emissive={emissive}
         emissiveIntensity={emissiveIntensity}
-        metalness={0.45}
-        roughness={0.55}
+        metalness={0.25}
+        roughness={0.5}
         side={DoubleSide}
         transparent={opacity < 1}
         opacity={opacity}
@@ -193,8 +193,8 @@ const VsvRow = memo(function VsvRow({ part, color, state, dispatch, cut }) {
         color={color}
         emissive={selected ? "#ff6d3b" : hovered ? color : "#000000"}
         emissiveIntensity={selected ? 0.55 : hovered ? 0.25 : 0}
-        metalness={0.45}
-        roughness={0.55}
+        metalness={0.25}
+        roughness={0.5}
         side={DoubleSide}
         clippingPlanes={cut ? CUT_PLANES : null}
         clipIntersection
@@ -393,10 +393,10 @@ function Scene({ state, dispatch, theme, palette }) {
   return (
     <>
       <color attach="background" args={[palette.background]} />
-      <hemisphereLight args={[palette.skyLight, palette.groundLight, 0.9]} />
-      <directionalLight position={[4, 8, 6]} intensity={1.6} />
-      <directionalLight position={[-6, 3, -5]} intensity={0.6} />
-      <directionalLight position={[2, -5, 2]} intensity={0.35} />
+      <hemisphereLight args={[palette.skyLight, palette.groundLight, 1.4]} />
+      <directionalLight position={[4, 8, 6]} intensity={2.2} />
+      <directionalLight position={[-6, 3, -5]} intensity={0.9} />
+      <directionalLight position={[2, -5, 2]} intensity={0.5} />
 
       <group rotation={[0, 0, -Math.PI / 2]} onPointerMissed={() => dispatch({ type: "select", id: null })}>
         <Spool speed={lpSpeed}>{groups.lp.map(render)}</Spool>
@@ -430,6 +430,9 @@ export default function Engine({ state, dispatch, theme, palette }) {
       onCreated={({ gl }) => {
         gl.localClippingEnabled = true;
         gl.setClearColor(new Color(palette.background));
+        // No filmic tone mapping: it compresses the mid-tones and made the
+        // whole engine read as dim. Colours are chosen in sRGB and shown as such.
+        gl.toneMapping = NoToneMapping;
       }}
       style={{ touchAction: "none" }}
     >

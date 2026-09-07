@@ -180,13 +180,20 @@ function usePalette(theme) {
     // combustor a terracotta between them, static rows neutral. Same
     // reasoning as the site's line-art turbine: two shafts should be told
     // apart at a glance, and the hot section should read as hot.
-    p.lp = dark ? "#a89f8f" : "#6f6653";
-    p.hp = dark ? "#c39a63" : "#8d6a34";
-    p.combustor = dark ? "#b56a45" : "#8f4a2a";
-    p.stator = dark ? "#8c8577" : "#5d574b";
+    // Bright, light metals: titanium-white for the LP spool, warm gold for
+    // the HP spool, a hot terracotta for the combustor, pale steel for the
+    // static rows, and light casings. The first palette was toned down to
+    // match the site's charcoal and read as a dim engine; this one is what a
+    // cutaway in a manufacturer's brochure looks like.
+    p.lp = dark ? "#d8d2c6" : "#cfc8ba";
+    p.hp = dark ? "#e0b76e" : "#d9ab5a";
+    p.combustor = dark ? "#e07b52" : "#d76f44";
+    p.stator = dark ? "#b9b3a6" : "#aaa397";
+    p.structure = dark ? "#b4ada0" : "#bcb5a8";
+    p.exhaust = dark ? "#b1a6c9" : "#a89bc4";
     p.background = dark ? "#1b1815" : "#f2eee6";
-    p.skyLight = dark ? "#f1ece4" : "#ffffff";
-    p.groundLight = dark ? "#2a251f" : "#b9b0a2";
+    p.skyLight = "#ffffff";
+    p.groundLight = dark ? "#8a8378" : "#cfc8bb";
     return p;
   }, [theme]);
 }
