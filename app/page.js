@@ -26,6 +26,7 @@ const NAV = [
   { href: "#education", label: "Education" },
   { href: "#toolchain", label: "Toolchain" },
   { href: "#contact", label: "Contact" },
+  { href: "/turbofan", label: "Turbofan atlas" },
 ];
 
 // Sections are numbered by position rather than hardcoded, so reordering or

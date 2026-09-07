@@ -994,14 +994,31 @@ conclusion that survives the elevated-temperature gate even though the
 number behind it does not (finding 108).
 
 ## F2 · Mass · 8 h
-- [ ] Mass per part from geometry and density; per module in Table XXVI's
-      categories
-- [ ] Sumps, drives, seals — the 320 kg — from the E4 bearing and sump
-      geometry, not left out
-- [ ] Compare module by module; explain the worst row
+- [x] Mass per blade from geometry and density — **unit F2**,
+      `solvers/materials/mass.py`. **The first check of the C3 blading
+      reconstruction on *area*, twenty printed values**: built sections
+      come out **−7.4 % on average and negative 20 times out of 20**, which
+      makes it a model (no leading- or trailing-edge radius) and not noise
+      (finding 109). Airfoil masses inherit it at −9.8 %
+- [x] Airfoil as a fraction of whole blade, across the engine: **66 % on
+      the fan falling to 22 % by HPC stage 7** — a dovetail does not shrink
+      with the airfoil it holds (finding 110)
+- [ ] Sumps, drives, seals — the 320 kg — **GATED**: no bearing or sump
+      geometry is printed anywhere (E4's gate). It is 9.2 % of the basic
+      engine and more than twice the combustor, casing and diffuser
+- [x] Compare module by module — **five module weights, printed twice in
+      two different documents each, agree to 3.2 %** with the HPT stator
+      exact (finding 111). The worst row is the fan-plus-booster rotor,
+      whose component table includes a shaft the whole-engine table may
+      group elsewhere
 
 *Closes when:* basic engine mass within **10 %** of 3,473 kg, and no
-module more than 20 % off.
+module more than 20 % off. **Gated 2026-09-07** (finding 112): the disc
+profiles are un-digitised, the casings and frames are figure-status, and
+the 320 kg of sumps, drives and seals has no printed geometry at all. What
+remains buildable is 22–52 % of three modules out of eight, so a total
+assembled over those gaps would pass the band by arithmetic rather than by
+evidence. Not attempted.
 
 ---
 
@@ -1120,7 +1137,7 @@ is reverted.
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ⬜ ⬜ ⬜ ⬜ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ⬜ ⬜ ⬜ ⬜ |
 | E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ◧ ◧ |
-| F | F1 materials · F2 mass | ⬜ ⬜ |
+| F | F1 materials · F2 mass | ◧ ◧ |
 | G | geometry | ⬜ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
 | I | I1 consistency · I2 sensitivity · I3 findings | ⬜ ⬜ ⬜ |

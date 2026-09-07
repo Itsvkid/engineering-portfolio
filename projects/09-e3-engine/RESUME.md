@@ -127,6 +127,16 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     and "it lands on the inertia weld" claims are withdrawn).
     MIL-HDBK-5J's room-temperature allowables are transcribed; its
     **elevated-temperature data is figure-status and gated**.
+    **Unit F2** put the C3 blading reconstruction against Table X's twenty
+    printed airfoil areas for the first time — **−7.4 % mean and negative
+    20 times out of 20**, a one-sided bias that is the missing edge radii
+    — and cross-checked five module weights between a component report and
+    Table XXVI to 3.2 %. F2's stated closure is **gated**: the disc
+    profiles, the casings and frames, and the 320 kg of sumps and drives
+    are all un-drawn, so a basic-engine total would pass its band by
+    arithmetic rather than by evidence.
+    Next in F: creep data per hot-section alloy and Larson–Miller
+    constants, which is also what E1's remaining rupture-life item needs.
 6. Then G (geometry generation), H (hand CAD,
     gated on a working install), I (verification), J (publication).
 

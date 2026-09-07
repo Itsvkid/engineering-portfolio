@@ -165,3 +165,149 @@ Stage E stresses against an allowable
      did. Neither titanium nor Inco 718 loses anything like that at those
      temperatures, so the conclusion survives the gate even though the
      number behind it does not.
+
+---
+
+## Unit F2 — mass
+
+The work plan's F2 closure: *basic engine mass within **10 %** of 3,473 kg,
+and no module more than 20 % off.*
+
+**That closure is gated, and by the same A3 gaps Stage E hit.** Building
+3,473 kg from geometry needs the disc profiles (un-digitised, E2's finding
+81), the casings and frames (figure-status), and the **320 kg of sumps,
+drives and seals** that Table XXVI itself calls out — 9.2 % of the basic
+engine, more than twice the combustor, casing and diffuser together — for
+which no bearing or sump geometry is printed anywhere (E4's gate). A total
+assembled without those would be an invented engine, not a reconstructed
+one, and it would pass a ±10 % band by arithmetic rather than by evidence.
+
+What can be done splits in two, and the first half is something the
+project has never done before.
+
+**The C3 blading reconstruction has been checked on angles and on throats.
+It has never been checked on *area*.** HPC report Table X prints a root
+area and a tip area for every one of the ten rotor stages, plus an airfoil
+weight and a whole-blade weight. The sections C3 unit 12 built from
+camber, stagger and thickness can be integrated and put against all of
+them.
+
+**And the published masses can be checked against each other.** Four
+separate component reports print a module weight that CR-168219's Table
+XXVI prints again. Nothing in the project has ever had to make those
+agree.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Built section area vs Table X | 20 printed areas | **±20 %** | a double-circular-arc camber line with a quarter-sine thickness law omits the leading- and trailing-edge radii, so a bias is *expected*; the band is wide because this is a first calibration |
+| The sign of that error | — | if there is a bias it should be **one-sided** | a thickness law that under-fills does so everywhere; a scattered error would mean noise, a one-sided one means a correctable model |
+| Built airfoil mass vs Table X's airfoil weight | 10 printed weights | **±20 %** | the area error carries straight into it |
+| Airfoil as a fraction of the whole blade | printed for all ten HPC stages | must be **< 1** everywhere, and the trend is an output | the remainder is platform, shank, dovetail and shroud |
+| Module weight, component report vs Table XXVI | five modules | **±5 %** | two independent documents printing the same module; nothing in either was derived from the other |
+| **Basic engine total** | 3,473 kg | ±10 % | **gated — not attempted** |
+
+---
+
+## Unit F2 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07 (`cd solvers && python -m materials.mass`)
+
+```
+1. Twenty printed airfoil areas against the sections C3 built
+    st  root built   root X   err %   tip built   tip X   err %
+     1       6.686    6.915    -3.3       1.743   1.897    -8.1
+     2       2.465    2.596    -5.0       0.867   0.944    -8.1
+     3       1.565    1.634    -4.2       0.449   0.537   -16.5
+     4       0.813    0.908   -10.5       0.366   0.417   -12.1
+     5       0.615    0.665    -7.4       0.274   0.313   -12.5
+     6       0.416    0.485   -14.2       0.209   0.238   -12.1
+     7       0.527    0.542    -2.8       0.215   0.216    -0.5
+     8       0.396    0.418    -5.3       0.192   0.204    -6.0
+     9       0.328    0.344    -4.6       0.172   0.183    -6.3
+    10       0.302    0.313    -3.4       0.154   0.163    -5.4
+   twenty comparisons: mean -7.4 %, worst -16.5 %, 20 of 20 negative
+
+2. And what those sections weigh
+    st  material   built g  printed g   err %  whole blade g  airfoil %
+     1  titanium    271.31     284.00    -4.5         550.00         52
+     2  titanium     70.16      78.60   -10.7         183.30         43
+     3  titanium     34.13      35.60    -4.1          82.40         43
+     4  titanium     15.22      18.00   -15.5          47.70         38
+     5    nickel     16.38      19.80   -17.3          62.80         32
+     6    nickel     10.02      12.20   -17.9          44.50         27
+     7    nickel      9.10       9.40    -3.2          43.30         22
+     8    nickel      5.76       6.60   -12.7          29.50         22
+     9    nickel      4.27       4.50    -5.1          20.10         22
+    10    nickel      3.73       4.00    -6.7          15.50         26
+
+3. How much of a blade is airfoil
+   fan rotor      66 %      HPC 1   52 %      LPT stage 1   41 %
+   booster        48 %      HPC 4   38 %      HPC 7-9       22 %
+
+4. Five module weights, printed twice in two different reports
+   fan + booster rotor    496.2 vs 481    +3.2 %
+   HPT rotor              282.0 vs 283    -0.4 %
+   HPT stator             132.0 vs 132    +0.0 %
+   LPT rotor              254.4 vs 260    -2.2 %
+   LPT stator             250.4 vs 257    -2.6 %
+
+5. What fraction of a rotor module is blades
+   HPC rotor               46.5 of 214 kg   22 %   (167.5 kg is disc and joint)
+   LPT rotor              135.0 of 260 kg   52 %
+   fan + booster rotor    248.6 of 481 kg   52 %
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Built area vs 20 printed areas | mean −7.4 %, worst −16.5 % | ±20 % | pass |
+| One-sided bias | **20 of 20 negative** | must be one-sided if present | pass — finding 109 |
+| Built airfoil mass vs 10 printed weights | mean −9.8 %, worst −17.9 % | ±20 % | pass |
+| Airfoil fraction | 22–66 %, always < 1 | must be < 1 | pass |
+| Module weight across two reports | worst **+3.2 %**, one exact | ±5 % | pass — finding 111 |
+| **Basic engine total** | **not attempted** | ±10 % | **gated — finding 112** |
+
+### Findings
+
+109. **The blading reconstruction is 7 % thin, and all twenty comparisons
+     agree on the sign.** Against Table X's printed root and tip areas the
+     sections C3 built from camber, stagger and thickness come out
+     **−7.4 % on average, worst −16.5 %, and negative every single time**.
+     A one-sided error is a model, not noise: the double-circular-arc
+     camber line with a quarter-sine thickness distribution has no
+     leading- or trailing-edge radius, and a section that ends in a point
+     at both ends is lighter than one that ends in a circle. The airfoil
+     masses inherit it almost exactly — mean −9.8 %. **This is the first
+     time in the project that the reconstruction's *area* has met a
+     published number**; angles and throats were checked in C3 units 12–15
+     and area never was. The bias is recorded, not applied: correcting it
+     would need the edge radii, which Table X prints as t/c ratios that
+     the section builder already consumes.
+110. **The smaller the blade, the less of it is blade.** Airfoil as a
+     fraction of whole-blade weight runs **66 % on the fan**, 52 % on HPC
+     stage 1, 48 % on the booster, 41 % on LPT stage 1, and falls to
+     **22 % by HPC stages 7–9**. A dovetail does not shrink with the
+     airfoil it holds — it is sized by the load and by the disc rim it has
+     to fit into — so a 2 cm rear-stage compressor blade is three-quarters
+     attachment. That is the mass argument against small blades, and it
+     runs the opposite way to the aerodynamic argument for them.
+111. **Five module weights, two documents each, and they agree to 3.2 %.**
+     CR-165148's Table VI, CR-167955's Table XXIII and CR-168289's Table
+     XXI each print a module weight that CR-168219's Table XXVI prints
+     again, and none was derived from another. The HPT stator matches
+     **exactly**, the HPT rotor to 0.4 %, the LPT rotor and stator to
+     2.2 % and 2.6 %, and the fan-plus-booster rotor to 3.2 % — the last
+     being the biggest and the one whose component table includes a shaft
+     the whole-engine table may group elsewhere. For a project that has
+     spent four stages finding places where two published numbers do not
+     agree, it is worth recording a place where five do.
+112. **F2's closure is gated on the same three things Stage E was, and
+     the biggest of them is the one nobody draws.** The basic engine is
+     3,473 kg. Sumps, drives and seals are **320 kg of it — 9.2 %, more
+     than twice the combustor, casing and diffuser at 137 kg** — and not
+     one bearing load, span or capacity is printed anywhere in the E³
+     reports. Add the un-digitised disc profiles (which are 167.5 kg of a
+     214 kg HPC rotor module, and 48 % of the fan and LPT rotors) and the
+     figure-status casings and frames, and what remains buildable is 22–52
+     % of three modules out of eight. A ±10 % total assembled over those
+     gaps would pass by arithmetic and not by evidence, so it is not
+     attempted.
