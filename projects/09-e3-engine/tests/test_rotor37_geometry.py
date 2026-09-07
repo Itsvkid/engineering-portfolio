@@ -112,3 +112,56 @@ def test_the_transcription_records_how_it_was_made():
     assert "OCR" in META["how"] or "ocr" in META["how"]
     assert "POOR QUALITY" in META["how"]
     assert META["not_transcribed"]
+
+
+# --- the blade solid and the annulus ---------------------------------------
+
+def test_the_blade_builds_as_a_valid_solid_matching_its_own_section_integral():
+    from cfd.rotor37 import blade_report
+    b = blade_report()
+    assert b["valid"]
+    assert abs(b["err_pct"]) < 2.0
+    assert abs(b["err_pct"]) < 0.1                 # in fact 0.02 %
+
+
+def test_no_blade_touches_its_neighbour_at_solidity_above_one():
+    """at 65 deg stagger and solidity 1.27 the passages overlap axially,
+    so this is not a formality"""
+    from cfd.rotor37 import blade_report, interference
+    assert interference()["overlap_m3"] == 0.0
+    b = blade_report()
+    assert b["solidity_tip"] > 1.0 and b["solidity_hub"] > 1.0
+    assert b["pitch_deg"] == 10.0
+
+
+def test_the_axial_chord_shortens_from_hub_to_tip_as_the_stagger_opens():
+    from cfd.rotor37 import blade_report
+    b = blade_report()
+    assert b["axial_chord_hub_in"] > 1.7
+    assert b["axial_chord_tip_in"] < 1.0
+
+
+def test_the_flow_path_is_datumed_on_the_blade_and_lands_on_it():
+    """finding 133 -- two tables forty pages apart, cm and inches"""
+    from cfd.rotor37 import annulus_check
+    a = annulus_check()
+    assert a["hub_err_in"] < 0.01
+    assert a["hub_at_le_in"] == pytest.approx(7.0, abs=1e-9)
+    assert a["casing_at_le_in"] == pytest.approx(10.0, abs=1e-9)
+
+
+def test_appendix_c_stops_short_of_the_blade_tip():
+    """finding 134 -- a mesh built to the last printed section would carry
+    a tip gap five times too large"""
+    from cfd.rotor37 import annulus_check
+    a = annulus_check()
+    assert a["gap_at_le_mm"] > 4 * a["running_clearance_mm"]
+    assert 1.6 < a["gap_at_le_mm"] < 1.8
+
+
+def test_the_hub_rises_exactly_as_much_as_the_casing_falls():
+    """finding 135"""
+    from cfd.rotor37 import annulus_check
+    a = annulus_check()
+    assert a["hub_rise_cm"] == pytest.approx(a["casing_fall_cm"], abs=1e-9)
+    assert a["annulus_at_exit_cm"] / a["annulus_at_le_cm"] < 0.60

@@ -440,3 +440,55 @@ sections:
       - [2.1000, -0.0066, 0.0134]
       - [2.2000,  0.0004, 0.0068]
       - [2.2020,  0.0036, 0.0036]
+
+flow_path:
+  src: "TP-1337 figure 1(a), 'Flow path coordinates' table, pdf page 87 (printed 77) -- stages 35 and 37 share a flow path"
+  transcribed: 2026-09-07
+  how: read off the page image; the OCR of this table is corrupted too
+  units: cm
+  datum: >
+    Axial distance is measured from the ROTOR-BLADE HUB LEADING EDGE, per
+    the figure's own x-axis label. That datum is what makes the table
+    checkable against Appendix C: at x = 0 the inner radius is 17.780 cm,
+    which is 7.0000 in exactly -- the hub section radius of the blade.
+  columns: [axial_cm, radius_cm]
+  inner:
+    - [-22.860, 17.526]
+    - [-15.400, 17.526]
+    - [ -7.620, 17.526]
+    - [ -2.568, 17.539]
+    - [  0.000, 17.780]
+    - [  1.854, 18.255]
+    - [  4.137, 18.714]
+    - [  4.859, 18.821]
+    - [  6.566, 19.035]
+    - [  8.890, 19.279]
+    - [ 10.640, 19.380]
+    - [ 12.700, 19.431]
+    - [ 15.400, 19.431]
+  outer:
+    - [-22.860, 25.654]
+    - [-15.400, 25.654]
+    - [ -7.620, 25.654]
+    - [ -2.568, 25.643]
+    - [  0.000, 25.400]
+    - [  0.632, 25.247]
+    - [  1.854, 24.925]
+    - [  1.974, 24.882]
+    - [  3.282, 24.511]
+    - [  4.445, 24.285]
+    - [  4.859, 24.232]
+    - [  6.538, 24.145]
+    - [  8.628, 24.011]
+    - [  8.890, 23.993]
+    - [ 10.640, 23.851]
+    - [ 12.700, 23.749]
+    - [ 15.400, 23.749]
+  as_read: >
+    The casing at x = 0 is 25.400 cm, which is 10.0000 in exactly, while
+    Appendix C's outermost blade section is at 9.9330 in. The difference is
+    0.0670 in (1.70 mm), far more than Rotor 37's running tip clearance of
+    about 0.36 mm. So Appendix C's last section is NOT the blade tip: the
+    blade continues above 9.9330 in and the appendix simply stops
+    tabulating. Recorded here because a mesh built to the last tabulated
+    section would carry a tip gap five times too large.

@@ -155,27 +155,50 @@ export function bladeGeometry({
   stations = 3,
   points = 10, // per surface; a 18-vertex section shades smoothly at screen scale
   sweepTip = 0, // axial lean of the tip relative to the root, in span units
+  // A stator is a rotor's mirror image in the tangential direction: it
+  // takes the swirl out that the rotor put in. Mirroring the section (and
+  // the stagger with it) is what makes the alternating rows read as a
+  // compressor rather than as rotors that happen not to turn.
+  mirror = false,
+  // Optional per-station geometry, hub first: [{ x, chord, stagger, camber,
+  // thickness }], x measured from the root. When given, the root/tip
+  // interpolation above is ignored and each printed section is lofted as
+  // printed — this is how the HPC rows carry NASA's own Table XXII.
+  sections: given,
 }) {
   const positions = [];
   const uvs = [];
   const index = [];
   const sections = [];
-  for (let k = 0; k <= stations; k++) {
-    const s = k / stations;
-    const chord = chordRoot + (chordTip - chordRoot) * s;
-    const stagger = ((staggerRoot + (staggerTip - staggerRoot) * s) * Math.PI) / 180;
-    const camber = camberRoot + (camberTip - camberRoot) * s;
-    const section = airfoilSection(chord, thickness, camber, points);
+  const stationList = given
+    ? given
+    : Array.from({ length: stations + 1 }, (_, k) => {
+        const s = k / stations;
+        return {
+          x: span * s,
+          chord: chordRoot + (chordTip - chordRoot) * s,
+          stagger: staggerRoot + (staggerTip - staggerRoot) * s,
+          camber: camberRoot + (camberTip - camberRoot) * s,
+          thickness,
+          lean: sweepTip * span * s * s,
+        };
+      });
+  const sign = mirror ? -1 : 1;
+  for (const st of stationList) {
+    const section = airfoilSection(st.chord, st.thickness ?? thickness, st.camber, points);
+    const stagger = (sign * st.stagger * Math.PI) / 180;
     const cos = Math.cos(stagger);
     const sin = Math.sin(stagger);
-    const lean = sweepTip * span * s * s;
+    const lean = st.lean ?? 0;
     sections.push(
-      section.map(([a, t]) => {
-        const ac = a - chord * 0.4; // stack about 40 % chord
-        return [span * s, ac * cos - t * sin + lean, ac * sin + t * cos];
+      section.map(([a, t0]) => {
+        const t = sign * t0;
+        const ac = a - st.chord * 0.4; // stack about 40 % chord
+        return [st.x, ac * cos - t * sin + lean, ac * sin + t * cos];
       })
     );
   }
+  stations = sections.length - 1;
   const m = sections[0].length;
   // Indexed skin: one vertex per section point per station, shared between
   // the quads either side, so normals are smooth and memory is a fraction
@@ -208,6 +231,66 @@ export function bladeGeometry({
   g.setIndex(index);
   g.computeVertexNormals();
   return g;
+}
+
+/**
+ * A blade lofted from transcribed section coordinates, already in engine
+ * space: each section is a closed polygon of [r, y, rtheta] points (radius,
+ * axial station, tangential arc length), hub first. Used for the E³ LPT,
+ * whose thirty airfoil sections are printed in the report and transcribed
+ * in the project; nothing about these blades is drawn by hand. The
+ * geometry sits at its true radius and station, so a row is made by
+ * rotating copies about the axis rather than translating them.
+ */
+export function bladeFromCoords(sections) {
+  const positions = [];
+  const uvs = [];
+  const index = [];
+  const m = sections[0].length;
+  const n = sections.length;
+  sections.forEach((sec, k) => {
+    sec.forEach(([r, y, rt], i) => {
+      const phi = rt / r;
+      positions.push(Math.cos(phi) * r, y, -Math.sin(phi) * r);
+      uvs.push(k / (n - 1), i / m);
+    });
+  });
+  for (let k = 0; k < n - 1; k++) {
+    for (let i = 0; i < m; i++) {
+      const j = (i + 1) % m;
+      const a = k * m + i;
+      const b = (k + 1) * m + i;
+      const c = (k + 1) * m + j;
+      const d = k * m + j;
+      index.push(a, b, c, a, c, d);
+    }
+  }
+  const base = (k) => k * m;
+  for (let i = 1; i < m - 1; i++) {
+    index.push(base(0), base(0) + i + 1, base(0) + i);
+    index.push(base(n - 1), base(n - 1) + i, base(n - 1) + i + 1);
+  }
+  const g = new BufferGeometry();
+  g.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  g.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
+  g.setIndex(index);
+  g.computeVertexNormals();
+  return g;
+}
+
+/** A row of coordinate blades: rotated copies about the axis, merged. */
+export function bladeRowFromCoords(sections, count) {
+  const blade = bladeFromCoords(sections);
+  const parts = [];
+  for (let i = 0; i < count; i++) {
+    const g = blade.clone();
+    g.rotateY((i / count) * TAU);
+    parts.push(g);
+  }
+  const merged = mergeGeometries(parts, false);
+  blade.dispose();
+  parts.forEach((p) => p.dispose());
+  return merged;
 }
 
 /**

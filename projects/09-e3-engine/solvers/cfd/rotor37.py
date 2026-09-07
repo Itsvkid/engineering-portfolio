@@ -197,3 +197,125 @@ if __name__ == "__main__":
     print(f"      -> the published ratio implies a mean blade height of"
           f" {d['implied_mean_blade_height_in']:.3f} in against an LE span of"
           f" {d['span_in']:.3f}")
+
+
+# ---------------------------------------------------------- the 3-D blade
+
+def placed_section(s: Section, n=120):
+    """One section in engine coordinates, in inches.
+
+    The appendix gives each section on its own reference line: L along the
+    chord from the leading edge, H perpendicular to it, and GAMMA the angle
+    that chord line makes with the axial direction. L(sp), H(sp) locate the
+    stacking point, which is the one place the section touches the radial
+    stacking axis -- so every section is shifted to put it at the origin
+    before being staggered. Getting that wrong stacks the blade on its
+    leading edge and leans the whole thing over.
+
+        x_axial = (L - L_sp) cos g - (H - H_sp) sin g
+        y_tang  = (L - L_sp) sin g + (H - H_sp) cos g
+    """
+    g = math.radians(s.gamma_deg)
+    cg, sg = math.cos(g), math.sin(g)
+
+    def place(ls, hs):
+        out = []
+        for l, h in zip(ls, hs):
+            dl, dh = l - s.l_sp, h - s.h_sp
+            out.append((dl * cg - dh * sg, dl * sg + dh * cg))
+        return out
+
+    suction = place(s.l, s.hs)
+    pressure = place(s.l, s.hp)
+    return suction + list(reversed(pressure))[1:-1]
+
+
+def blade_solid(scale=IN):
+    """the lofted, capped, sewn blade -- Stage G's machinery, in metres"""
+    from geometry.blades import loft_capped, wrapped_wire
+    secs, _ = load()
+    wires = []
+    for s in secs:
+        pts = [(x * scale, y * scale) for x, y in placed_section(s)]
+        wires.append(wrapped_wire(s.radius * scale, pts))
+    return loft_capped(wires)
+
+
+def blade_report():
+    from OCP.BRepCheck import BRepCheck_Analyzer
+    secs, _ = load()
+    solid = blade_solid()
+    bb = solid.BoundingBox()
+    # trapezoidal volume from the placed section areas, as Stage G checks it
+    from mechanical.beam import polygon_properties
+    areas = [polygon_properties([(x * IN, y * IN) for x, y in placed_section(s)])["area"]
+             for s in secs]
+    radii = [s.radius * IN for s in secs]
+    trap = sum(0.5 * (a0 + a1) * (r1 - r0)
+               for (r0, a0), (r1, a1) in zip(zip(radii, areas), zip(radii[1:], areas[1:])))
+    n = 36
+    pitch_tip = 2 * math.pi * secs[-1].radius / n
+    pitch_hub = 2 * math.pi * secs[0].radius / n
+    return dict(
+        valid=BRepCheck_Analyzer(solid.wrapped).IsValid(),
+        volume_m3=solid.Volume(), trapezoid_m3=trap,
+        err_pct=(solid.Volume() / trap - 1) * 100,
+        axial_extent_m=bb.xmax - bb.xmin,
+        span_m=(secs[-1].radius - secs[0].radius) * IN,
+        blades=n,
+        solidity_tip=secs[-1].chord / pitch_tip, solidity_hub=secs[0].chord / pitch_hub,
+        pitch_deg=360.0 / n,
+        axial_chord_hub_in=secs[0].chord * math.cos(math.radians(secs[0].gamma_deg)),
+        axial_chord_tip_in=secs[-1].chord * math.cos(math.radians(secs[-1].gamma_deg)))
+
+
+def interference():
+    """the blade against its neighbour one pitch away -- at 65 deg stagger
+    and solidity 1.27 the passages overlap axially, so this is not a
+    formality"""
+    solid = blade_solid()
+    nxt = solid.rotate((0, 0, 0), (1, 0, 0), 360.0 / 36)
+    common = solid.intersect(nxt)
+    vol = 0.0 if common is None or not common.Solids() else common.Volume()
+    return dict(overlap_m3=vol, blade_m3=solid.Volume())
+
+
+def write_stl(path=None, tol=2.0e-5):
+    import cadquery as cq
+    from e3cycle.cycle import DATA
+    path = path or (DATA.parent / "cfd" / "rotor37" / "blade.stl")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    cq.exporters.export(cq.Workplane(obj=blade_solid()), str(path),
+                        tolerance=tol, angularTolerance=0.1)
+    return path
+
+
+# ------------------------------------------------------------- the annulus
+
+def flow_path():
+    d = yaml.safe_load((DATA / "methods" / "rotor37-blade-coordinates.yaml").read_text())
+    return d["flow_path"]
+
+
+def annulus_check():
+    """The flow-path table is datumed on the rotor-blade HUB leading edge,
+    so it can be checked against Appendix C without any model in between."""
+    fp = flow_path()
+    secs, _ = load()
+    inner = {round(x, 3): r for x, r in fp["inner"]}
+    outer = {round(x, 3): r for x, r in fp["outer"]}
+    hub_at_le, casing_at_le = inner[0.0], outer[0.0]
+    tip_section = secs[-1].radius
+    return dict(
+        hub_at_le_cm=hub_at_le, hub_at_le_in=hub_at_le / 2.54,
+        hub_section_in=secs[0].radius,
+        hub_err_in=abs(hub_at_le / 2.54 - secs[0].radius),
+        casing_at_le_cm=casing_at_le, casing_at_le_in=casing_at_le / 2.54,
+        last_section_in=tip_section,
+        gap_at_le_in=casing_at_le / 2.54 - tip_section,
+        gap_at_le_mm=(casing_at_le / 2.54 - tip_section) * 25.4,
+        running_clearance_mm=0.356,
+        hub_rise_cm=fp["inner"][-1][1] - hub_at_le,
+        casing_fall_cm=casing_at_le - fp["outer"][-1][1],
+        annulus_at_le_cm=casing_at_le - hub_at_le,
+        annulus_at_exit_cm=fp["outer"][-1][1] - fp["inner"][-1][1])

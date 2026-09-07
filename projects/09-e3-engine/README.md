@@ -132,7 +132,7 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 872 tests, plain interpreter
+python -m pytest tests/     # 878 tests, plain interpreter
 ./cfd/run_shocktube.sh      # Stage C4: the OpenFOAM validation case (needs colima + docker)
 python build.py             # every stage's tables, into build/  (90 s)
 python build.py --export    # ...and unit G1's 32 blade rows as STEP  (5 min)

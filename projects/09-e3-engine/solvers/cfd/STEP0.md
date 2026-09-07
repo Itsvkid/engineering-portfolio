@@ -252,3 +252,49 @@ NASA Rotor 37 blade, TP-1337 Appendix C: 12 sections
      9.7 mean, the largest step in the blade. Correcting it would be
      correcting printed source data, which this project does not do; the
      smoothness check carries it as a known outlier instead.
+
+### Unit C4-2, continued: the annulus
+
+The blade is not a flow domain. TP-1337's figure 1(a) prints the flow-path
+coordinates — inner and outer radius against axial distance — and its
+x-axis is datumed on the **rotor-blade hub leading edge**, which is what
+lets it be checked against Appendix C with no model in between.
+
+```
+   inner radius at x = 0   17.780 cm = 7.0000 in   (Appendix C's hub section: 7.0000)
+   outer radius at x = 0   25.400 cm = 10.0000 in
+   hub rises 1.651 cm through the machine; casing falls 1.651 cm
+   annulus 7.620 cm at the leading edge, 4.318 cm at the exit
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Hub radius at x = 0 vs Appendix C's hub section | **7.0000 in vs 7.0000 in** | ±0.01 in | pass |
+| Casing at x = 0 | 10.0000 in exactly | — | as printed |
+
+### Findings, continued
+
+133. **The flow path is datumed on the blade, and it lands exactly on it.**
+     Figure 1(a)'s inner radius at x = 0 is **17.780 cm, which is 7.0000
+     in** — Appendix C's hub section radius, to four decimal places. Two
+     tables, forty pages apart, one in centimetres and one in inches, and
+     the datum they share is a physical edge of the blade. Together with
+     the tip-speed check (finding 129) that is both ends of the blade tied
+     to independently transcribed numbers.
+134. **Appendix C does not reach the blade tip, and a mesh built as if it
+     did would carry a tip gap five times too large.** The casing at the
+     leading edge is 10.0000 in and the outermost tabulated section is at
+     **9.9330** — a gap of 0.0670 in, **1.70 mm**, against Rotor 37's
+     running tip clearance of about 0.36 mm. The appendix simply stops
+     tabulating below the tip. Any tip-clearance CFD built on the last
+     printed section would model a gap nearly five times the real one, and
+     tip-clearance flow is what sets this rotor's stall margin. **The blade
+     must be extrapolated to the casing less the clearance before it is
+     meshed**, and that is a modelling decision that has to be stated, not
+     absorbed.
+135. **The hub rises exactly as much as the casing falls: 1.651 cm each.**
+     The annulus closes from 7.620 cm at the leading edge to 4.318 at the
+     exit — a 43 % area contraction — and it is split symmetrically between
+     the two walls to four figures. On a stage designed in 1978 that is
+     unlikely to be coincidence; it is the mean radius being held while the
+     passage is squeezed.

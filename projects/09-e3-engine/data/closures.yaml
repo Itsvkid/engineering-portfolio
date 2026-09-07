@@ -82,12 +82,28 @@ closures:
     units: degrees
     state: met
 
-  - stage: C4
+  - stage: C4-1
+    what: the solver against an exact answer (Sod shock tube, star pressure)
+    band: 2.0
+    achieved: 0.02
+    units: percent
+    state: met
+    note: "OpenFOAM v2406 against the closed-form Riemann solution; the exact solver itself returns Sod's textbook p*/p_L = 0.30313"
+
+  - stage: C4-2
+    what: Rotor 37 blade geometry, 24 section-closure constraints
+    band: 0.0
+    achieved: 0.0
+    units: inches of closure error
+    state: met
+    note: "and the transcribed tip radius reproduces Table I's tip speed to -0.00 %"
+
+  - stage: C4-3
     what: CFD against the Rotor 37 validation case
     band: null
     achieved: null
     state: gated
-    gate: "no CFD solver installed: no OpenFOAM, no SU2, Docker daemon stopped. The case and its pass bands are written and tested."
+    gate: "the mesh and the run: 3D periodic sector with MRF, a back-pressure sweep for the 100 % speed line, and three grid levels for the GCI band. The solver is installed and validated (C4-1) and the blade is transcribed (C4-2); this is work, not a gate on anything external."
 
   - stage: D3
     what: total secondary air against Table XI's 16.1 % of W25

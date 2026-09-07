@@ -1,5 +1,7 @@
+import { HPC_SECTIONS, LPT_SECTIONS } from "./data/e3-sections";
 import {
   bladeRow,
+  bladeRowFromCoords,
   boltRing,
   hoop,
   lathe,
@@ -66,6 +68,19 @@ const HPC_TABLE_X = {
 
 const HPC_MATERIAL = (k) =>
   k < 6 ? "Ti-8Al-1Mo-1V (Table X, stages 1–6); the root-stress reproduction says Ti only to stage 4" : "Inco 718 (Table X, stages 7–10); stress reproduces as nickel from stage 5";
+
+/**
+ * Table XXII sections for one HPC row as loft stations: x from the first
+ * (hub) section's radius, chord, camber, stagger and thickness as printed.
+ */
+function printedSections(name) {
+  const secs = HPC_SECTIONS[name];
+  const r0 = secs[0][0];
+  return {
+    rHub: r0,
+    stations: secs.map(([r, chord, camber, stagger, tm]) => ({ x: r - r0, chord, camber, stagger, thickness: tm })),
+  };
+}
 
 function rowMid(row) {
   return {
@@ -202,7 +217,7 @@ const fanModule = [
     build: () =>
       merge([
         bladeRow(
-          { span: BOOSTER.rTip - BOOSTER.rHub - 0.005, chordRoot: 0.07, staggerRoot: -18, camberRoot: 24, thickness: 0.07 },
+          { span: BOOSTER.rTip - BOOSTER.rHub - 0.005, chordRoot: 0.07, staggerRoot: 18, camberRoot: 24, thickness: 0.07, mirror: true },
           BOOSTER.islandVanes,
           BOOSTER.rHub + 0.005,
           FS.islandVane,
@@ -245,7 +260,7 @@ const fanModule = [
     build: () =>
       merge([
         bladeRow(
-          { span: BOOSTER.rTip - BOOSTER.rHub - 0.01, chordRoot: 0.085, staggerRoot: -28, camberRoot: 36, thickness: 0.07, sweepTip: -0.15 },
+          { span: BOOSTER.rTip - BOOSTER.rHub - 0.01, chordRoot: 0.085, staggerRoot: 28, camberRoot: 36, thickness: 0.07, sweepTip: -0.15, mirror: true },
           BOOSTER.innerOgv,
           BOOSTER.rHub + 0.005,
           FS.innerOgv,
@@ -265,7 +280,7 @@ const fanModule = [
     r: 0.88,
     build: () =>
       bladeRow(
-        { span: 1.06 - 0.69, chordRoot: 0.17, chordTip: 0.15, staggerRoot: -14, staggerTip: -10, camberRoot: 32, camberTip: 28, thickness: 0.06, sweepTip: 0.05 },
+        { span: 1.06 - 0.69, chordRoot: 0.17, chordTip: 0.15, staggerRoot: 14, staggerTip: 10, camberRoot: 32, camberTip: 28, thickness: 0.06, sweepTip: 0.05, mirror: true },
         BOOSTER.bypassOgv,
         0.69,
         FS.bypassOgv,
@@ -298,23 +313,10 @@ for (let k = 0; k < 10; k++) {
     spool: "hp",
     y: m.y,
     r: (m.rHub + m.rTip) / 2,
-    build: () =>
-      bladeRow(
-        {
-          span,
-          chordRoot: HPC_TABLE_X.chordRoot[k] / 100,
-          chordTip: HPC_TABLE_X.chordTip[k] / 100,
-          staggerRoot: HPC_TABLE_X.staggerRoot[k],
-          staggerTip: HPC_TABLE_X.staggerTip[k],
-          camberRoot: HPC_TABLE_X.camberRoot[k],
-          camberTip: HPC_TABLE_X.camberTip[k],
-          thickness: 0.07,
-          stations: 5,
-        },
-        HPC_ROTOR_BLADES[k],
-        m.rHub + 0.002,
-        m.y
-      ),
+    build: () => {
+      const printed = printedSections(`R${k + 1}`);
+      return bladeRow({ sections: printed.stations, points: 10 }, HPC_ROTOR_BLADES[k], printed.rHub, m.y);
+    },
     text:
       k === 0
         ? "The first of ten HPC stages, and the biggest step: a transonic rotor doing a pressure ratio near 1.6 on its own. The blade is set at 23° at the root and 65° at the tip, straight from the report's Table X, which is why it looks twisted."
@@ -328,6 +330,7 @@ for (let k = 0; k < 10; k++) {
       f("Airfoil length", `${(span * 100).toFixed(1)} cm`, "HPC report Table XXI streamlines"),
       f("Stagger root → tip", `${HPC_TABLE_X.staggerRoot[k]}° → ${HPC_TABLE_X.staggerTip[k]}°`, "HPC report Table X p.65"),
       f("Camber root → tip", `${HPC_TABLE_X.camberRoot[k]}° → ${HPC_TABLE_X.camberTip[k]}°`, "HPC report Table X p.65"),
+      f("Section geometry", "all 12 printed sections lofted: chord, camber, stagger, thickness per section", "HPC report Table XXII pp.154–159"),
       f("Material", HPC_MATERIAL(k), "HPC report Table X p.65; PF-09 unit E1"),
       ...(k < 4 ? [f("Transonic", "yes (rotors 1–4)", "CR-168219 sec 5.2.1 p.52")] : []),
     ],
@@ -339,18 +342,10 @@ for (const name of statorNames) {
   const m = rowMid(row);
   const variable = HPC_VARIABLE_ROWS.includes(name);
   const idx = name === "IGV" ? 0 : Number(name.slice(1));
-  const chord = Math.max(0.022, (name === "IGV" ? 0.09 : HPC_TABLE_X.chordRoot[Math.min(9, idx)] / 100) * 0.95);
+  const printed = printedSections(name);
+  const chord = printed.stations[0].chord;
   const span = m.rTip - m.rHub - 0.004;
-  const spec = {
-    span,
-    chordRoot: chord,
-    staggerRoot: name === "IGV" ? -8 : -(18 + idx * 2),
-    staggerTip: name === "IGV" ? -4 : -(24 + idx * 2),
-    camberRoot: name === "IGV" ? 12 : 38,
-    camberTip: name === "IGV" ? 10 : 30,
-    thickness: 0.07,
-    stations: 4,
-  };
+  const spec = { sections: printed.stations, points: 10, mirror: true };
   hpcRows.push({
     id: `hpc-${name.toLowerCase()}`,
     tint: variable ? undefined : "stator",
@@ -360,10 +355,10 @@ for (const name of statorNames) {
     r: (m.rHub + m.rTip) / 2,
     // Variable rows are instanced so each vane can turn on its spindle.
     kind: variable ? "vsvRow" : undefined,
-    vsv: variable ? { count: HPC_STATOR_VANES[name], rHub: m.rHub + 0.002, y: m.y, spec, closedDeg: [38, 32, 26, 18, 12, 8][idx], rTip: m.rTip } : undefined,
+    vsv: variable ? { count: HPC_STATOR_VANES[name], rHub: printed.rHub, y: m.y, spec, closedDeg: [38, 32, 26, 18, 12, 8][idx], rTip: m.rTip } : undefined,
     build: () =>
       merge([
-        bladeRow(spec, HPC_STATOR_VANES[name], m.rHub + 0.002, m.y, 0.5),
+        bladeRow(spec, HPC_STATOR_VANES[name], printed.rHub, m.y, 0.5),
         ring(m.rHub - 0.014, m.rHub + 0.002, m.y - chord / 2, m.y + chord / 2),
       ]),
     text: variable
@@ -378,6 +373,7 @@ for (const name of statorNames) {
       f("Variable", variable ? "yes (FPS product: IGV + S1–S5; CR-168219 says IGV + S1–S4)" : "no", "HPC report sec 3.3 p.64; CR-168219 sec 5.2 p.45"),
       f("Material", "non-titanium, for titanium-fire prevention", "CR-168219 sec 5.2.2 p.55"),
       f("Vane height", `${(span * 100).toFixed(1)} cm`, "HPC report Table XXI streamlines"),
+      f("Section geometry", name === "IGV" ? "12 printed sections lofted; camber taken as 25 × CL0 (the table prints CL0)" : "all 12 printed sections lofted", "HPC report Table XXII pp.154–159"),
     ],
   });
 }
@@ -571,7 +567,7 @@ const hpt = [
     build: () =>
       merge([
         bladeRow(
-          { span: HT.vane1Exit.rTip - HT.vane1Exit.rHub - 0.004, chordRoot: 0.06, staggerRoot: -42, camberRoot: 72, thickness: 0.2, stations: 3 },
+          { span: HT.vane1Exit.rTip - HT.vane1Exit.rHub - 0.004, chordRoot: 0.06, staggerRoot: 42, camberRoot: 72, thickness: 0.2, stations: 3, mirror: true },
           HPT_VANES[0],
           HT.vane1Inlet.rHub + 0.002,
           HPT0 + 0.018,
@@ -622,7 +618,7 @@ const hpt = [
     build: () =>
       merge([
         bladeRow(
-          { span: HT.vane2Exit.rTip - HT.vane2Exit.rHub - 0.006, chordRoot: 0.065, staggerRoot: -40, camberRoot: 68, thickness: 0.18, stations: 3 },
+          { span: HT.vane2Exit.rTip - HT.vane2Exit.rHub - 0.006, chordRoot: 0.065, staggerRoot: 40, camberRoot: 68, thickness: 0.18, stations: 3, mirror: true },
           HPT_VANES[1],
           HT.blade1Exit.rHub - 0.004,
           HPT0 + 0.12,
@@ -730,7 +726,6 @@ for (let k = 1; k <= 5; k++) {
   const r = LPT_ROWS[`R${k}`];
   const sm = rowMid(s);
   const rm = rowMid(r);
-  const sChord = (s.TE.yHub - s.LE.yHub) * 0.95;
   const rChord = (r.TE.yHub - r.LE.yHub) * 0.95;
   lpt.push({
     id: `lpt-s${k}`,
@@ -741,12 +736,9 @@ for (let k = 1; k <= 5; k++) {
     r: (sm.rHub + sm.rTip) / 2,
     build: () =>
       merge([
-        bladeRow(
-          { span: sm.rTip - sm.rHub - 0.006, chordRoot: sChord, chordTip: sChord * 1.05, staggerRoot: -38, staggerTip: -30, camberRoot: 82, camberTip: 64, thickness: 0.11, stations: 4 },
-          LPT_VANES[k - 1],
-          sm.rHub + 0.002,
-          sm.y,
-          0.5
+        bladeRowFromCoords(
+          LPT_SECTIONS[`S${k}`].map((sec) => sec.map(([r, z, rt]) => [r, LPT0 + z, rt])),
+          LPT_VANES[k - 1]
         ),
         ring(sm.rHub - 0.014, sm.rHub + 0.002, s.LE.yHub, s.TE.yHub),
       ]),
@@ -758,6 +750,7 @@ for (let k = 1; k <= 5; k++) {
       f("Vane count", String(LPT_VANES[k - 1]), "LPT report Fig.6 p.12"),
       f("Material", k === 1 ? "René 125 (takes the HPT-exit hot streak); hollow" : k <= 3 ? "René 77, hollow" : "René 77, solid", "LPT report Table V p.76, Fig.80 p.124"),
       f("Vane height", `${((sm.rTip - sm.rHub) * 100).toFixed(1)} cm`, "from the 30 airfoil sections (lpt-flowpath.csv)"),
+      f("Section geometry", "lofted from the report's printed surface coordinates at 10, 50 and 90 % span", "LPT report appendix p.148"),
     ],
   });
   lpt.push({
@@ -770,11 +763,9 @@ for (let k = 1; k <= 5; k++) {
     r: (rm.rHub + rm.rTip) / 2,
     build: () =>
       merge([
-        bladeRow(
-          { span: rm.rTip - rm.rHub - 0.012, chordRoot: rChord, chordTip: rChord * 1.05, staggerRoot: 36, staggerTip: 30, camberRoot: 96, camberTip: 70, thickness: 0.1, stations: 4 },
-          LPT_BLADES[k - 1],
-          rm.rHub + 0.002,
-          rm.y
+        bladeRowFromCoords(
+          LPT_SECTIONS[`R${k}`].map((sec) => sec.map(([r, z, rt]) => [r, LPT0 + z, rt])),
+          LPT_BLADES[k - 1]
         ),
         tipShroud(rm.rTip - 0.01, rm.y, rChord * 0.9, 0.008),
       ]),
@@ -785,6 +776,7 @@ for (let k = 1; k <= 5; k++) {
     facts: [
       f("Blade count", String(LPT_BLADES[k - 1]), "LPT report Fig.52 p.83"),
       f("Blade height", `${((rm.rTip - rm.rHub) * 100).toFixed(1)} cm`, "from the airfoil sections"),
+      f("Section geometry", "lofted from the report's printed surface coordinates at 10, 50 and 90 % span", "LPT report appendix p.148"),
       f("Tip shroud", "integral, interlocked, two-tooth seals", "LPT report sec 4.2.1 p.82"),
       f("Material", "cast René 77, uncoated", "LPT report Table V p.76"),
       ...(k === 4 ? [f("Acoustic design", "vane-to-blade gap 1.4 chords, blade count raised for cutoff", "LPT report sec 4.1.2 p.78")] : []),
