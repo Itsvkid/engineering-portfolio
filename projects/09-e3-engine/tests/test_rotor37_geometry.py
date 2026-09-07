@@ -117,11 +117,16 @@ def test_the_transcription_records_how_it_was_made():
 # --- the blade solid and the annulus ---------------------------------------
 
 def test_the_blade_builds_as_a_valid_solid_matching_its_own_section_integral():
+    """The band is Stage G's +-2 %. The second assertion pins the value
+    actually achieved, and it moved from 0.02 % to 0.11 % when the sections
+    were resampled uniformly in L for the casing trim -- that changes both
+    the polygon areas and the loft slightly, so the agreement between them
+    shifts. Recorded rather than loosened silently."""
     from cfd.rotor37 import blade_report
     b = blade_report()
     assert b["valid"]
     assert abs(b["err_pct"]) < 2.0
-    assert abs(b["err_pct"]) < 0.1                 # in fact 0.02 %
+    assert abs(b["err_pct"]) < 0.2
 
 
 def test_no_blade_touches_its_neighbour_at_solidity_above_one():

@@ -106,6 +106,37 @@ def wrapped_wire(radius, pts):
     return cq.Workplane().polyline(p3).close().wire().val()
 
 
+CAP_TOLERANCES = (1.0e-4, 3.0e-4, 1.0e-3, 3.0e-3)
+
+
+def _cap(wire, tolerances=CAP_TOLERANCES):
+    """A face closing one end wire, at the tightest tolerance that works.
+
+    `makeNSidedSurface` is the only tool here for a non-planar wire -- the
+    end sections lie on cylinders, so `makeFromWires` refuses them -- and it
+    is fragile. It fails on perfectly valid closed wires with nothing but
+    "BRep_API: command not done", and whether it fails depends on where the
+    points happen to land rather than on how many there are: changing a
+    section's resampling, same edge count and same minimum segment, was
+    enough to turn a working cap into a failing one.
+
+    Its default tol3d of 1e-4 m is what fails. Loosening it one step to
+    3e-4 or 1e-3 succeeds, so the tolerances are tried in order and the
+    first that works is used. This is an END face -- the hub and tip ends of
+    the blade, buried in the hub wall or up against the casing -- not a flow
+    surface, and the volume check downstream will catch a cap that is
+    actually wrong."""
+    last = None
+    for tol in tolerances:
+        try:
+            return cq.Face.makeNSidedSurface(wire.Edges(), [], tol3d=tol)
+        except Exception as e:
+            last = e
+    raise RuntimeError(
+        f"cannot cap a {len(wire.Edges())}-edge end wire at any tolerance "
+        f"in {tolerances}: {last}")
+
+
 def loft_capped(wires):
     """ThruSections leaves non-planar ends open; cap them and sew"""
     lo = BRepOffsetAPI_ThruSections(False, True)      # shell, ruled
@@ -117,7 +148,7 @@ def loft_capped(wires):
     sew = BRepBuilderAPI_Sewing(SEW_TOL)
     sew.Add(lo.Shape())
     for w in (wires[0], wires[-1]):
-        sew.Add(cq.Face.makeNSidedSurface(w.Edges(), []).wrapped)
+        sew.Add(_cap(w).wrapped)
     sew.Perform()
     shells = cq.Shape.cast(sew.SewedShape()).Shells()
     if not shells or not shells[0].wrapped.Closed():
