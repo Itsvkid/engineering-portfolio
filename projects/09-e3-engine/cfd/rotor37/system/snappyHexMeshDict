@@ -9,7 +9,7 @@ castellatedMeshControls
     nCellsBetweenLevels 3;  maxLoadUnbalance 0.10;  resolveFeatureAngle 45;
     allowFreeStandingZoneFaces true;
     features ();
-    refinementSurfaces { blade { level (2 3); patchInfo { type wall; } } }
+    refinementSurfaces { blade { level (1 2); patchInfo { type wall; } } }
     refinementRegions {}
     locationInMesh (-0.02 0 0.215);
 }

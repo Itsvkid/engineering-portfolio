@@ -5,8 +5,17 @@ boundaryField
 {
     inlet   { type pressureInletVelocity; value uniform (150 0 0); }
     outlet  { type inletOutlet; inletValue uniform (0 0 0); value uniform (150 0 0); }
-    hub     { type noSlip; }
-    blade   { type noSlip; }
+    // The rotor has to actually turn. Under MRF the solution variable is
+    // the ABSOLUTE velocity, so a wall rotating with the frame needs
+    // U = omega x r on it -- `noSlip` gives a stationary blade, and the
+    // first run showed exactly that: outlet 278 K against an inlet 288 K,
+    // the flow expanding and cooling with no work put into it at all.
+    hub     { type rotatingWallVelocity; origin (0 0 0); axis (1 0 0);
+              omega 1799.9965; value uniform (0 0 0); }
+    blade   { type rotatingWallVelocity; origin (0 0 0); axis (1 0 0);
+              omega 1799.9965; value uniform (0 0 0); }
+    // the casing is stationary in the absolute frame, and is listed in
+    // MRFProperties' nonRotatingPatches to match
     casing  { type noSlip; }
     periodic_m { type cyclic; }
     periodic_p { type cyclic; }

@@ -1,7 +1,18 @@
 FoamFile{version 2.0; format ascii; class dictionary; object topoSetDict;}
+// The MRF zone is the ROTOR PASSAGE, not the whole domain.
+//
+// With the zone covering everything, the frame rotation applies at the
+// inlet patch too, giving the incoming flow a -omega*r tangential
+// component of about 400 m/s before the totalPressure condition is
+// evaluated. The result was a rotor that did no work at all: outlet static
+// temperature 257 K against a 288 K inlet, which is T0 = 288 throughout,
+// and a mass flow eleven times below design.
+//
+// The blade spans x = 0 to 0.0439 m (hub LE to hub TE). The zone is taken
+// a little either side of it and stops well short of both patches.
 actions
 (
     { name rotor; type cellSet; action new; source boxToCell;
-      box (-10 -10 -10) (10 10 10); }
+      box (-0.012 -1 -1) (0.056 1 1); }
     { name rotor; type cellZoneSet; action new; source setToCellZone; set rotor; }
 );

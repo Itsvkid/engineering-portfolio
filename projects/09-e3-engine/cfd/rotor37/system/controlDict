@@ -4,4 +4,37 @@ startFrom       startTime;  startTime 0;
 stopAt          endTime;    endTime 1000;
 deltaT          1;          writeControl timeStep;  writeInterval 200;
 purgeWrite 2;   writeFormat ascii; writePrecision 8; writeCompression off;
-timeFormat general; timePrecision 6; runTimeModifiable true;
+timeFormat general; timePrecision 6; runTimeModifiable false;   // a live re-read of this file killed a run
+OptimisationSwitches { fileHandler collated; }
+
+// The validation quantities: mass flow and area-averaged conditions at
+// each end. Only plain surfaceFieldValue functions -- no #includeEtc,
+// which does not resolve in this image and, because controlDict is
+// runTimeModifiable, kills a running solve when it fails to.
+functions
+{
+    massIn
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name inlet;  operation sum;  fields (phi);
+    }
+    massOut
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name outlet;  operation sum;  fields (phi);
+    }
+    condIn
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name inlet;  operation areaAverage;  fields (p T);
+    }
+    condOut
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name outlet;  operation areaAverage;  fields (p T);
+    }
+}

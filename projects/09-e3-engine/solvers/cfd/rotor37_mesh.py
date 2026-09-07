@@ -28,6 +28,12 @@ CM = 0.01
 X_IN_CM = -4.0
 X_OUT_CM = 10.64          # a printed flow-path station
 
+# The MRF zone's axial extent, in cm. The hub is split on it: inside, the
+# hub turns with the rotor; outside, it is a stationary duct wall. These
+# must match system/topoSetDict's box.
+MRF_X0_CM = -1.2
+MRF_X1_CM = 5.6
+
 
 def _rot(y, z, deg):
     a = math.radians(deg)
@@ -63,8 +69,15 @@ def block_mesh_dict(n_theta=40, n_radial=60, path=None):
             verts.append((x_cm * CM, y, z))
         return idx[key]
 
-    blocks, arcs, faces_in, faces_out, faces_hub, faces_cas, faces_p, faces_m = \
-        [], [], [], [], [], [], [], []
+    blocks, arcs, faces_in, faces_out, faces_cas, faces_p, faces_m = \
+        [], [], [], [], [], [], []
+    # The hub is split. Only the part inside the MRF zone turns with the
+    # rotor; upstream and downstream it is a stationary duct wall. Spinning
+    # the whole 14.6 cm hub at 1800 rad/s while the MRF zone covers only the
+    # 6.8 cm around the blade pumps swirl into the inlet duct with nothing
+    # to balance it, and the solution converges to a stalled rotor doing no
+    # work at all -- low residual, wrong answer.
+    faces_hub_rot, faces_hub_static = [], []
     seen_arcs = set()
     for i, x in enumerate(xs):
         rh, rc = hub_at(x), casing_at(x)
@@ -99,7 +112,11 @@ def block_mesh_dict(n_theta=40, n_radial=60, path=None):
             seen_arcs.add(key)
             y, z = _rot(0.0, rr * CM, 0.0)      # the arc midpoint, at theta = 0
             arcs.append((va, vb, (xx * CM, y, z)))
-        faces_hub.append((v[0], v[1], v[5], v[4]))
+        xm_block = 0.5 * (xa + xb)
+        if MRF_X0_CM <= xm_block <= MRF_X1_CM:
+            faces_hub_rot.append((v[0], v[1], v[5], v[4]))
+        else:
+            faces_hub_static.append((v[0], v[1], v[5], v[4]))
         faces_cas.append((v[3], v[7], v[6], v[2]))
         faces_m.append((v[0], v[3], v[2], v[1]))     # -half plane, local z-min
         faces_p.append((v[4], v[5], v[6], v[7]))     # +half plane, local z-max
@@ -123,7 +140,9 @@ def block_mesh_dict(n_theta=40, n_radial=60, path=None):
         out.append("    arc %d %d (%.9g %.9g %.9g)" % (va, vb, *mid))
     out += [");", "", "boundary", "("]
     for name, typ, fs in (("inlet", "patch", faces_in), ("outlet", "patch", faces_out),
-                          ("hub", "wall", faces_hub), ("casing", "wall", faces_cas)):
+                          ("hub_rotating", "wall", faces_hub_rot),
+                          ("hub_static", "wall", faces_hub_static),
+                          ("casing", "wall", faces_cas)):
         out += ["    %s" % name, "    {", "        type %s;" % typ,
                 "        faces", "        (", fl(fs), "        );", "    }"]
     for name, nb, fs in (("periodic_m", "periodic_p", faces_m),
@@ -146,6 +165,8 @@ def block_mesh_dict(n_theta=40, n_radial=60, path=None):
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         Path(path).write_text(text)
     return text, dict(vertices=len(verts), blocks=len(blocks),
+                      hub_rotating_blocks=len(faces_hub_rot),
+                      hub_static_blocks=len(faces_hub_static),
                       cells=sum(nx for _, nx in blocks) * n_radial * n_theta,
                       x_in_cm=X_IN_CM, x_out_cm=X_OUT_CM, sector_deg=SECTOR_DEG)
 
@@ -161,12 +182,43 @@ def write_blade_stl(path=None, tol=1.0e-5):
     return path, solid
 
 
+# The three grid levels the GCI 3 % band needs. They are declared here
+# rather than chosen later, so the refinement ratio is fixed before any of
+# them is run: n_theta and n_radial go up by 1.5 each step, which is the
+# r >= 1.3 that Roache's GCI wants.
+GRIDS = {
+    "coarse": dict(n_theta=26, n_radial=40, snappy=(1, 2)),
+    "medium": dict(n_theta=40, n_radial=60, snappy=(2, 3)),
+    "fine":   dict(n_theta=60, n_radial=90, snappy=(2, 4)),
+}
+
+
+def write_grid(level="medium", base=None):
+    """blockMeshDict and snappyHexMeshDict for one of the three levels"""
+    g = GRIDS[level]
+    base = Path(base or (Path(__file__).resolve().parents[2] / "cfd" / "rotor37"))
+    text, info = block_mesh_dict(n_theta=g["n_theta"], n_radial=g["n_radial"],
+                                 path=base / "system" / "blockMeshDict")
+    snap = (base / "system" / "snappyHexMeshDict")
+    if snap.exists():
+        t = snap.read_text()
+        import re
+        t = re.sub(r"level \(\d+ \d+\)", "level (%d %d)" % g["snappy"], t)
+        snap.write_text(t)
+    info["level"] = level
+    info["snappy_levels"] = g["snappy"]
+    return info
+
+
 if __name__ == "__main__":
+    import sys
+    level = sys.argv[1] if len(sys.argv) > 1 else "medium"
     base = Path(__file__).resolve().parents[2] / "cfd" / "rotor37"
-    text, info = block_mesh_dict(path=base / "system" / "blockMeshDict")
-    print("Stage C4 unit 3: the Rotor 37 sector mesh\n")
+    info = write_grid(level, base)
+    text = None
+    print(f"Stage C4 unit 3: the Rotor 37 sector mesh, level '{info['level']}'\n")
     for k, v in info.items():
-        print(f"   {k:<14}{v}")
+        print(f"   {k:<16}{v}")
     p, solid = write_blade_stl()
     print(f"\n   blade STL      {p.name}, {p.stat().st_size / 1e6:.1f} MB")
     print(f"   blade volume   {solid.Volume():.6e} m3")
