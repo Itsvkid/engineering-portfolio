@@ -61,7 +61,16 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     sweep 60°, lean 0–20°) and section stacking with the published
     pretwist and tilt. The LPT's Figs 9–18 surface Mach needs a
     blade-to-blade solver and is really C4.
-2. **C4 — GATED on a CFD solver.** The Rotor 37 validation case and its
+2. **C4 — the gate is lifted (2026-09-07) and unit C4-1 is closed.**
+    OpenFOAM v2406 runs natively on arm64 via `colima` +
+    `opencfd/openfoam-default:2406`; SU2 v8.5.0 runs under Rosetta 2 from
+    `~/.local/opt/su2-v8.5.0`. **The solver was validated on an exact
+    answer before anything published**: the Sod shock tube, where
+    OpenFOAM's star pressure is +0.02 % of closed form and the shock lands
+    within a fifth of a cell. Rotor 37 is next — its bands have been
+    written since 2026-09-06.
+   *(superseded note below, kept for the gate's history)*
+   **C4 — was GATED on a CFD solver.** The Rotor 37 validation case and its
     pass bands are written and tested
     (`data/methods/rotor37-validation-case.yaml`), so the target is ready.
     But no solver is installed: no OpenFOAM, no SU2, no Homebrew formula,

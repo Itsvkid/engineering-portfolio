@@ -662,9 +662,20 @@ only after the method is validated.
       internally consistent — the printed efficiencies follow from the
       printed ratios, and four scan-corrupted values are recorded null and
       recomputed rather than transcribed.
-      **GATE: no CFD solver is installed** — no OpenFOAM, no SU2, no
-      Homebrew formula, and Docker's daemon is stopped. Installing a
-      multi-gigabyte image is the user's decision, not this project's
+      **The gate is lifted, 2026-09-07.** OpenFOAM v2406 runs natively on
+      arm64 in `opencfd/openfoam-default:2406` under colima; SU2 v8.5.0
+      runs under Rosetta 2. See unit C4-1
+- [x] **The solver validated on an exact answer first** — **unit C4-1**,
+      `solvers/cfd/shocktube.py`, `cfd/run_shocktube.sh`. Rotor 37 is a
+      *published* answer with experimental scatter; before it comes one
+      that is **exact**. The Sod shock tube: OpenFOAM's star pressure is
+      30,320 Pa against a closed-form 30,313 — **+0.02 %** — the star
+      velocity +0.13 %, and the shock lands **within a fifth of a cell**
+      on a 100-cell mesh (finding 124). The exact solver has its own known
+      answer: Sod's textbook p*/p_L = **0.30313**, returned to five figures
+      (finding 125). And the L2 error is ordered the way discretisation
+      orders it — pressure 0.85 %, density 1.20 %, velocity 2.82 % — which
+      a coding error would not do (finding 126)
 - [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
       vs the mean-line and Table X/XXII
 - [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5
