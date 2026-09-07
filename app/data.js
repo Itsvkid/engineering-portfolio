@@ -75,6 +75,49 @@ export const skills = [
 
 export const projects = [
   {
+    title: "Turbofan Atlas \u2014 a High-Bypass Turbofan, Part by Part",
+    context: "Interactive 3D anatomy of the NASA/GE E\u00b3 \u2014 live on this site",
+    period: "Sep 2026",
+    stats: [
+      { value: "142", label: "Selectable parts, 12 systems" },
+      { value: "42 + 5 + 20", label: "Published flowpath stations drawn to scale" },
+      { value: "787k", label: "Triangles, built from tables in 0.25 s" },
+    ],
+    points: [
+      "Built an interactive anatomy of a high-bypass turbofan in the model-first pattern of the Human Atlas and OMF Atlas anatomy explorers: the model fills the page, every part is selectable, systems are layers, a separation control lays the assembly out, and three guided tours fly the camera part by part. There is no public segmented engine dataset, so all 142 parts are procedural, fitted to the NASA E\u00b3 reports' published dimensions \u2014 42 HPC hub and tip stations, five HPT stations, the LPT walls from thirty transcribed airfoil sections, and every row's blade and vane count.",
+      "Modelled all twelve systems a turbofan is taught as, not just the gas generator: fuel (pump, control, two manifolds, thirty duplex nozzles), FADEC and sensors, bleed and three clearance-control loops, oil (five bearings, two sumps), two igniters at their published 120\u00b0/240\u00b0 ports, variable stators that re-stagger from a slider, bleed doors, anti-icing, fire zones, vibration pickups, the 18-lobe mixer, frames, mounts and nine bolted flanges. Both spools turn at the published 1 : 3.6.",
+      "Tagged every fact on the page with its provenance \u2014 an E\u00b3 report page, or schematic, or assumed \u2014 and let the sources correct the model: the fact sheet showed thrust is taken at the fan frame through a whiffle tree rather than at the aft mount, that HPT vane 1 is cooled by compressor-delivery air rather than stage-7 bleed, and that the final engine's hot section used Ren\u00e9 N4 and thermal barrier coatings where the hardware reports say Ren\u00e9 150. Picking runs through a bounding-volume hierarchy so hovering 787k triangles costs nothing; the page builds its own geometry in a quarter of a second.",
+    ],
+    tech: ["Three.js", "React Three Fiber", "three-mesh-bvh", "Next.js", "NASA E\u00b3 reports (CR-168219 and companions)"],
+    link: {
+      href: "/turbofan",
+      label: "Open the atlas",
+    },
+    figures: [
+      {
+        src: "/figures/turbofan-atlas-cutaway-dark.png",
+        srcLight: "/figures/turbofan-atlas-cutaway.png",
+        alt: "Cutaway of the turbofan from the front quarter with all twelve systems visible around the core: fan, compressor, combustor and turbines in metal tones, fuel, oil, air, control, ignition and fire hardware in colour.",
+        short: "Cutaway, all systems",
+        caption: "The default view: a wedge cutaway through the nacelle and core, every system on. The fan, booster, ten HPC stages, combustor, two HPT and five LPT stages are at the E\u00b3's published radii; the externals are placed where the reports put them.",
+      },
+      {
+        src: "/figures/turbofan-atlas-fan-dark.png",
+        srcLight: "/figures/turbofan-atlas-fan.png",
+        alt: "The fan seen from the front with its thirty-two blades selected and highlighted in orange, the upper quadrant cut away to show the spinner and hub.",
+        short: "Fan, selected",
+        caption: "Thirty-two blades, 1.054 m tip radius, part-span shroud: the fan selected from the front. Selecting a part opens its facts \u2014 count, radius, tip speed, material \u2014 each with the report page it was transcribed from.",
+      },
+      {
+        src: "/figures/turbofan-atlas-exploded-dark.png",
+        srcLight: "/figures/turbofan-atlas-exploded.png",
+        alt: "The engine separated along its axis with the casings faded to a quarter opacity, the rotors, combustor and external units spread out as a parts inventory.",
+        short: "Separated",
+        caption: "The separation control spreads the assembly along the axis and lifts the externals off the core, the equivalent of an anatomy atlas's parts inventory, with the casings faded so the rotors read through them.",
+      },
+    ],
+  },
+  {
     title: "Installation Aerodynamics of Aero-Engine Nacelles",
     context: "Individual Research Project",
     period: "Ongoing — expected Sep 2026",

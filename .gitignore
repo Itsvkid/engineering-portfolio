@@ -42,3 +42,8 @@ CAD-Projects/
 
 # PF-09 reference PDFs: fetched by fetch-sources.sh, public domain, not committed
 projects/09-e3-engine/sources/
+
+# PF-09 Stage G: generated CAD and build logs. Both are reproducible with
+# `python build.py --export`, and the STEP set is 132 MB.
+projects/09-e3-engine/exports/
+projects/09-e3-engine/build/

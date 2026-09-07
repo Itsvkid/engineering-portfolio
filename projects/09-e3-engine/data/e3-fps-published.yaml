@@ -488,6 +488,18 @@ hpt:
   src: "CR-168219 sec 5.4 pp.65-81; HPT report CR-167955"
   stages: 2
   stages_src: "CR-168219 sec 5.4.1 p.65; HPT report sec 2.2.1 p.3"
+  # The final FPS is not the CR-167955 hardware turbine. Every cooling map
+  # and stress result in this project (hpt-cooling.yaml, hpt-mechanical.yaml,
+  # solvers/thermal, solvers/mechanical) is the René 150 hardware design;
+  # these are the changes CR-168219 made on top of it. Two documents, two
+  # turbines — say which one a number belongs to.
+  fps_material_changes:
+    src: "CR-168219 sec 3.1 p.10"
+    stage1_blade: {hardware: "DS René 150 + PVD NiCoCrAlY", fps: "René N4 single crystal + TBC"}
+    stage2_vane: {hardware: "DS René 150 airfoils, René 80 bands", fps: "René N4 + TBC"}
+    stage2_blade: {hardware: "DS René 150, serpentine cooled, 0.76 pct W25", fps: "DS eutectic, uncooled"}
+    tbc_added_to: [combustor, stage1_vane, stage1_blade, stage2_vane]
+    thrust_misprint: "p.139 prints 175.3 kN (39,000 lbf); 39,000 lbf is 173.5 kN as p.32 has it — misprint, not a rematch"
   loading: moderate
   cycle_match:
     src: "CR-168219 Table XVIII p.70 (final cycle)"

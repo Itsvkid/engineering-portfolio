@@ -49,7 +49,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+    // suppressHydrationWarning: the inline script below adds the `js` class
+    // and a stored data-theme to <html> before React hydrates, so the
+    // client's attributes legitimately differ from the server's. React 19
+    // reports that as a mismatch; this tells it the difference is intended.
+    <html
+      lang="en"
+      className={`${geist.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Arms the reveal animation's initial hidden state before first paint,
             and applies a stored manual theme override before paint so a

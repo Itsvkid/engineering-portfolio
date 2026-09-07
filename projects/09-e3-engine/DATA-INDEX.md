@@ -145,6 +145,9 @@ front-matter offset (given per report below) to get the PDF page.
 | **MIL-HDBK-5J room-temperature allowables** — `data/methods/mil-hdbk-5j-allowables.yaml`: Ti-6Al-4V die forging, Ti-8Al-1Mo-1V forging, Inconel 718 bar/forging, as printed in ksi and lb/in³ with SI computed. Elevated-temperature data is **figure-status and not digitised**; no substitute is nominated for the cast and PM alloys | **B** | transcribed; Stage F unit F1, `tests/test_materials.py` |
 | **Measured HPC blade density** — `solvers/materials/allowables.py`: the density of every one of the ten HPC rotor blades, from Table X's own airfoil weight and root area with Table XXII's section shapes. Titanium at stages 1–4, nickel at 5–10, **against a material column that prints the change at stage 7** — and at stages 5–6 the printed weight exceeds the heaviest possible titanium blade. Corrects E1's finding 74 | **D** | derived; Stage F unit F1 |
 | **Blade and module mass audit** — `solvers/materials/mass.py`: the C3 blading reconstruction against Table X's twenty printed airfoil areas (**−7.4 % mean, negative 20 of 20**) and ten printed airfoil weights (−9.8 % mean); airfoil as a fraction of whole blade from 66 % on the fan to 22 % at HPC stage 7; five module weights cross-checked between a component report and Table XXVI, worst 3.2 %. **No basic-engine total: it is gated** | **D** | derived; Stage F unit F2, `tests/test_mass.py` |
+| **Solid blade geometry** — `solvers/geometry/blades.py`: all 32 bladed rows as conformally wrapped, capped, sewn solids; every one topologically valid; CAD volume against Stage F2's integral to **0.94 % worst**; zero blade-to-blade interference on all 32. Exported as 35 STEP files (gitignored, 132 MB, rebuilt by `python build.py --export`) | **D** | derived; Stage G unit G1, `tests/test_geometry.py` |
+| **Closure scoreboard** — `data/closures.yaml`: all 20 *closes when* sentences with their band, the number the solvers produce today, and the gate on anything not met. 7 met, 10 half, 3 gated; 14 of 15 numeric closures inside their band | **B** | curated; Stage I unit I1, `tests/test_cross_discipline.py` |
+| **Cross-discipline consistency** — `solvers/verification/consistency.py`: T41, cooling flows, metal temperatures, masses and spool speeds as each stage reads them. T41 0.01 % between two documents, cooling flows 0.00 %, masses 0.94 %, spool speeds 1.3–1.6 % from four routes | **D** | derived; Stage I unit I1 |
 | **LPT stator and casing: inner seal supports (Figs 78–79); stages 2–5 nozzles — segments (Fig 80: 18/17/16/19/20), airfoil loads and margins (Fig 81), stage-2 hooks (Fig 82), tangential load stops (Table XVII); casing construction, bolts (132/120), end-flange stresses (Fig 87), containment (Fig 88); ACC manifold (§4.4.3)** — `data/lpt-design.yaml` | **T** | LPT report §4.3.1–4.4.3, pp.120–135 |
 | **LPT rotor structure: Table X blade LCF; Table XI flutter; tip shrouds (Figs 64–66); angel wings; retainers (Figs 68–69); stage-1 dovetail stress map (Fig 70) and Table XII life; disks — spacer arms (Fig 71), stage-1 disk stress and temperature (Fig 72), Table XIII bolts, Table XIV bolt selection, Table XV disk LCF; stator stage-1 nozzle assembly, Table XVI airfoil, hooks (Fig 77), support (Fig 75)** — `data/lpt-design.yaml` | **T** | LPT report §4.2.1–4.3.1, pp.96–119 |
 | **LPT blades: chords, lengths, aspect ratios, edge diameters; takeoff stresses per stage (CF, LE resultant, gas bending); rupture mission (7 points, 18,000 h); rupture and HCF results; stage-1 Campbell; materials; life basis; design cycle points and speeds; ACC payoff; start-transient temperatures** — `data/lpt-design.yaml` | **T** | LPT report §3.10, §4.1–4.2.1, Tables V–IX, Figs. 47–62, pp.72–95 |
@@ -184,7 +187,32 @@ front-matter offset (given per report below) to get the PDF page.
 | Materials — combustor, fan, compressor rotor by stage | **T** | CR-168219 §5.3 p.57, §5.1.2 p.45; HPC Table X |
 | Materials — HPT rotor and static | **L** | HPT report Figs. 51–52 pp.91–92 |
 | **Module masses** | **T** | CR-168219 Table XXVI p.140 |
+| **Engine mounts** — seven uniball links: four on the aft face of the fan frame (two vertical/side, two thrust at ±45° through a whiffle tree), three on the rear frame (lateral in the pylon, two vertical through the fan stream); thrust taken at the fan frame | **T** | CR-168219 §5.9.2 p.110, Figs. 44–45 pp.112–113; `data/atlas-facts.md` D12 |
+| **Bearing support stiffness and damper** — No.3 squirrel cage 52,540 kN/m, 5-sleeve squeeze-film damper 1.27 mm clearance, r 137.46 mm, length 27.94 mm; No.4 rotating cage on the LP shaft | **T** | CR-168219 §5.11.1 p.135, §5.11.2 p.137, Fig. 57 p.138; `data/atlas-facts.md` C4 |
+| **Parts count** — 1,536 blades, 1,750 vanes, 5 bearings, 2 frames, 2 sumps (CF6-50C 1,673 / 1,750 / 7 / 4 / 4) | **T** | CR-168219 Table IV p.16; reconciled row by row in `data/atlas-facts.md` B |
 | HPT assembly weight | **L** | HPT report §5.4 p.179 |
+
+## Systems — fuel, control, air, oil, ignition, variable geometry, anti-ice, fire, vibration, exhaust
+
+One document, **`data/atlas-facts.md`**, written 2026-09-07 for the Turbofan
+Atlas page (`app/turbofan/`): every component of the twelve systems with
+its location, function and provenance tag (`[E3: report, page]`,
+`[derived]`, `[schematic]`, `[textbook]`). It is the first page-cited pass
+through CR-168017 (controls) and through CR-168219 §5.7.4–5.7.5, §5.9.2–5.9.3
+and §5.10. The page's numbers are copied from it; change the sheet first.
+
+| Quantity | Status | Source |
+|---|---|---|
+| Fuel circuit — pump, control, fuel/oil cooler, MZSOV/PZRV, two manifolds, 30 duplex nozzles | **T** | CR-168219 §5.10.2 pp.125–128, Fig.52; CR-168301 §5.3.2 pp.74–80; `atlas-facts.md` D2 |
+| FADEC — hardware, redundancy, FICA, thrust-setting parameter, sensor list, starters | **T** | CR-168219 §5.10.1 pp.118–124, Figs.47–50; CR-168017 §5.2 p.37, §11.5–11.10; `atlas-facts.md` D3 |
+| Air system — stage-5 / stage-7 / CDP ports, inducer, three ACC loops, casing heating, pressure bulkhead | **T** | CR-168219 §5.2.1 p.52, §5.7.4 p.100, §5.10.4 p.131; CR-167955 §3–4; `atlas-facts.md` D4 |
+| Oil — tank on the outer fan case, pump pack, sumps, vent | **T** | CR-168219 §3.2 p.12, §5.7.2–5.7.5; `atlas-facts.md` D5 |
+| Ignition — 2 igniters at 120°/240°, crossfire tubes, rig exciter 2 J at 2 sparks/s | **T** | CR-168301 Figs.38–39, §5.3.2 p.73, p.275; `atlas-facts.md` D6 |
+| Variable geometry — VSV actuation, bushings, start bleed, thrust reverser | **T** | CR-168219 §5.10.3 p.128, §5.9.1 pp.105–110; HPC Table XVIII p.102; `atlas-facts.md` D7 |
+| Anti-icing hardware | **—** | only a bleed line item in CR-168017 §5.2 p.16; `[schematic]` on the page |
+| Fire detection / extinguishing | **—** (fire wall **T**) | CR-168219 §5.4.3 p.73, §5.7.4 p.100; CR-168211 Table VI p.163; `atlas-facts.md` D9 |
+| Vibration — FPS No.3 accelerometer, ICLS 13 accelerometer + 2 proximity + 3 strain-gauge stations | **T** | CR-168219 §5.11.2 p.137; CR-168211 Table XXIX p.546; `atlas-facts.md` D10 |
+| Oil quantities, fuel/oil pressures, flight exciter energy | **—** | not printed |
 
 ## Combustor sizing
 

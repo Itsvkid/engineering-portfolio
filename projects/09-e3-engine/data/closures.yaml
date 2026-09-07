@@ -1,0 +1,183 @@
+meta:
+  src: "WORK-PLAN.md's own *Closes when* sentences, and each solver's STEP0.md status line"
+  written: 2026-09-07
+  purpose: >
+    Stage I1's third bullet asks that every "closes when" tolerance be
+    re-checked after Stage G's geometry. This is that list, machine
+    readable, so the re-check is a test rather than a reading. `achieved`
+    is the number the solver produces now, not the number quoted when the
+    unit was written -- if a later stage moved something, the test fails.
+  state_values:
+    met: the closure sentence is satisfied
+    half: one half of a two-part closure is satisfied and the other is gated
+    gated: cannot be evaluated, and `gate` says on what
+  sign_convention: >
+    `achieved` and `band` are magnitudes of error, so a closure is met when
+    achieved <= band. Where the plan's band is not a number -- "inside the
+    digitising uncertainty" -- `band` is null and a `note` says why, and
+    the test requires that note rather than inventing a figure.
+
+closures:
+
+  - stage: B1
+    what: the mixer reproduces Table XXIII's sfc improvement
+    band: null
+    achieved: 0.7
+    units: points on the level
+    state: half
+    gate: "open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fig 39/40's mixing-plane area, which is Stage H."
+    note: "3.6 % at 85 % effectiveness against a separate-flow engine without the mixer's own 0.57 % loss"
+
+  - stage: B3
+    what: sfc at three ratings against Table XII
+    band: 1.5
+    achieved: 1.91
+    units: percent
+    state: half
+    gate: "two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on the standard day."
+    note: "max climb +0.46 %, max cruise +0.56 %"
+
+  - stage: B4
+    what: annulus by continuity at every dimensioned HPT station
+    band: null
+    achieved: 3.6
+    units: percent
+    state: met
+    note: >
+      The plan's band is "inside the digitising uncertainty", which is not
+      a number. The status line records it closed: HPT stage-1 and stage-2
+      exits -3.6 % and +0.2 % against Fig 3 at Table III's exit Mach
+      numbers, with the cycle-match tables closing by two routes each.
+
+  - stage: C1
+    what: LPT mean-line efficiency against 0.917
+    band: 2.0
+    achieved: 0.6
+    units: points
+    state: met
+    note: >
+      The band is the loss methods' own stated accuracy, +-2 points. This
+      unit CORRECTED the work plan, which had asked for 0.5 point: a
+      mean-line method that claims +-2 points for itself cannot be held to
+      0.5, and closing to 0.5 point is recorded as a C4 (CFD) claim.
+
+  - stage: C1
+    what: HPT mean-line efficiency against 0.9155 / 0.925 / 0.927
+    band: 2.0
+    achieved: 0.55
+    units: points
+    state: met
+
+  - stage: C1
+    what: HPC efficiency against 0.847
+    band: 2.0
+    achieved: 0.15
+    units: points
+    state: met
+
+  - stage: C2
+    what: stator-10 exit swirl
+    band: 2.0
+    achieved: 0.02
+    units: degrees
+    state: met
+
+  - stage: C4
+    what: CFD against the Rotor 37 validation case
+    band: null
+    achieved: null
+    state: gated
+    gate: "no CFD solver installed: no OpenFOAM, no SU2, Docker daemon stopped. The case and its pass bands are written and tested."
+
+  - stage: D3
+    what: total secondary air against Table XI's 16.1 % of W25
+    band: 0.5
+    achieved: 0.04
+    units: percent of W25
+    state: half
+    gate: "the closure also asks that every cavity keeps hot gas out; the stage-1 nozzle's two are done and no others"
+
+  - stage: D4
+    what: cruise clearance, two independent routes
+    band: 0.2
+    achieved: 0.04
+    units: percent of span
+    state: met
+
+  - stage: E1
+    what: Table X centrifugal stresses, all ten HPC stages
+    band: 10.0
+    achieved: 6.5
+    units: percent
+    state: half
+    gate: "the closure also asks HPT blade rupture life within a factor of 2; no creep data or Larson-Miller constants are sourced"
+
+  - stage: E2
+    what: the bore doubling for a small hole
+    band: 0.5
+    achieved: 0.0
+    units: percent
+    state: half
+    gate: "the closure also asks HPT disc peak effective stress within 10 % of Fig 64; the disc cross-sections were never digitised"
+
+  - stage: E3
+    what: blade first flex, the unshrouded booster
+    band: 15.0
+    achieved: 2.7
+    units: percent
+    state: half
+    gate: "E3's stated closure is the first three modes of every HPC stage within 5 % of Figs 33-42, which remain figure-status"
+
+  - stage: E4
+    what: no rotor critical inside the operating band
+    band: 0.0
+    achieved: 0.0
+    units: count inside the band
+    state: half
+    gate: "the closure also asks the thrust-bearing load against capacity; no bearing load or capacity is printed anywhere, and D's thrust balance is not done"
+
+  - stage: E5
+    what: every attachment with a printed allowable has margin
+    band: 0.0
+    achieved: 0.0
+    units: percent by which any attachment exceeds its allowable
+    state: half
+    gate: "HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no blade or dovetail block at all"
+
+  - stage: F1
+    what: every Stage E stress with a printed allowable, tabulated against it
+    band: 0.0
+    achieved: 0.0
+    units: percent by which any stress exceeds its allowable
+    state: half
+    gate: "allowables AT temperature; MIL-HDBK-5J prints elevated-temperature strength as figures, not tables"
+
+  - stage: F2
+    what: basic engine mass within 10 % of 3,473 kg
+    band: 10.0
+    achieved: null
+    units: percent
+    state: gated
+    gate: "disc profiles un-digitised, casings and frames figure-status, and the 320 kg of sumps and drives has no printed geometry"
+
+  - stage: G1
+    what: generated blade volume against Stage F2's integral
+    band: 2.0
+    achieved: 0.94
+    units: percent
+    state: half
+    gate: "the closure also asks the generated engine mass to match F2, whose own total is gated"
+
+  - stage: G1
+    what: blade-to-blade interference, all 32 rows
+    band: 0.0
+    achieved: 0.0
+    units: cubic metres of overlap
+    state: met
+
+  - stage: H
+    what: zero clashes through rotation, every bearing with its load
+    band: null
+    achieved: null
+    state: gated
+    gate: "no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt"

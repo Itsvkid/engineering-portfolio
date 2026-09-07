@@ -132,10 +132,20 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 816 tests, plain interpreter
+python -m pytest tests/     # 847 tests, plain interpreter
+python build.py             # every stage's tables, into build/  (90 s)
+python build.py --export    # ...and unit G1's 32 blade rows as STEP  (5 min)
+python build.py --list      # what would run, without running it
+
 python solvers/e3cycle/run.py   # Stage B: the three Table XII ratings, the mixer, sensitivities
 (cd solvers && python -m e3cycle.stations)   # B4: station table, annulus checks, the two figures
 ```
+
+`build.py` writes each solver module's output to `build/<module>.txt`, so a
+run can be diffed against the numbers quoted in the `STEP0.md` files. It
+deliberately produces no gated quantity — there is no basic-engine mass and
+no CFD in it, because both are blocked on transcription that has not been
+done.
 
 Where the work stands, and what comes next, is in
 [RESUME.md](RESUME.md).

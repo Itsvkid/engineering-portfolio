@@ -10,6 +10,7 @@ import {
 } from "./data";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
+import FeaturedAtlas from "./components/FeaturedAtlas";
 import Section from "./components/Section";
 import ProjectEntry from "./components/ProjectEntry";
 import CadGallery from "./components/CadGallery";
@@ -55,6 +56,7 @@ export default function Home() {
 
       <main id="top">
         <Hero profile={profile} />
+        <FeaturedAtlas />
 
         <Section index={num("projects")} title="Projects" id="projects">
           {projects.map((project, i) => (

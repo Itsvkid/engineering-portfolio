@@ -137,7 +137,26 @@ to 0.5 point is recorded as a C4 (CFD) claim.
     arithmetic rather than by evidence.
     Next in F: creep data per hot-section alloy and Larson–Miller
     constants, which is also what E1's remaining rupture-life item needs.
-6. Then G (geometry generation), H (hand CAD,
+6. **Stage G (geometry) — started.** `solvers/geometry/`, its own
+    `STEP0.md`, findings 113–117. **Unit G1 generates all 32 bladed rows
+    as valid solids** and the CAD volume matches Stage F2's integral of the
+    same sections to **0.94 %** — PF-06 extended with the conformal
+    cylindrical wrap, because PF-06's own validity condition fails at
+    chord/radius 0.49. Zero blade-to-blade interference on all 32.
+    `python build.py` runs all 29 solver modules in 90 s and writes each
+    one's table to `build/`; `--export` adds the STEP set. Discs, casings
+    and the nacelle are **gated on transcription, not on method**
+    (finding 117).
+7. **Stage I (verification) — I1 closed.** `solvers/verification/`, its
+    own `STEP0.md`, findings 118–123. Eight stages of independent reading
+    now have to agree, as tests: **T41 0.01 %** between the cycle and the
+    HPT report's cycle-match line, **cooling flows 0.00 %**, masses F2 vs
+    G1 0.94 %, and spool speeds from four documents to 1.6 % with the
+    ratio at 3.57 against the plan's 3.6. `data/closures.yaml` carries all
+    20 closures with their bands: **14 of 15 numeric ones inside**, one
+    pinned miss, and no closure open without a reason attached.
+    Next: I2 (sensitivity) and I3 (`FINDINGS.md` — the deliverable).
+8. Then H (hand CAD,
     gated on a working install), I (verification), J (publication).
 
 Carried, unresolved, and worth picking up in C3 or later: the LPT's rotor
