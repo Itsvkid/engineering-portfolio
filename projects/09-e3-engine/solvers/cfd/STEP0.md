@@ -328,3 +328,91 @@ lets it be checked against Appendix C with no model in between.
      the two walls to four figures. On a stage designed in 1978 that is
      unlikely to be coincidence; it is the mean radius being held while the
      passage is squeezed.
+
+---
+
+## Unit C4-3 — the mesh
+
+One blade passage of thirty-six: a 10° sector with rotationally cyclic
+sides.
+
+The background mesh is **body-fitted to the annulus**. The hub and casing
+are surfaces of revolution whose radii are printed against axial distance
+(TP-1337 fig. 1(a)), so a blockMesh whose radial extent follows them at
+every axial station needs no snapping on those two walls at all. That
+leaves snappyHexMesh one job — the blade — instead of three, which matters
+in a passage where the running tip clearance is **0.356 mm against a 74 mm
+span**.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Background mesh builds | blockMesh | **exit 0, checkMesh OK** | a body-fitted block mesh has no excuse for failing |
+| Background non-orthogonality | — | **< 30°** | it is a structured annular sector; anything worse means the axial stations are too coarse where the annulus turns |
+| Background skewness | — | **< 0.5** | same |
+| Snapped mesh builds | snappyHexMesh | **exit 0** | — |
+| Snapped non-orthogonality | — | **< 70°**, OpenFOAM's own default limit | past 70 the discretisation error stops being second order |
+| Highly skew faces | — | **< 0.01 % of faces** | a handful is normal where a snapped surface meets a background edge; a percent is a broken mesh |
+| **Mesh volume vs the analytic annulus** | π(r_c²−r_h²) integrated over x, ÷ 36, less the blade | **±5 %** | the sharpest check available on a mesh: it is the geometry, integrated two completely different ways |
+| Patches | inlet, outlet, hub, casing, two periodics, blade | **all seven** | — |
+
+---
+
+## Unit C4-3 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07
+
+```
+blockMesh          exit 0     196,800 cells, 207,583 points
+   max aspect ratio 2.97, non-orthogonality max 16.83 (avg 3.99),
+   max skewness 0.181                                    Mesh OK.
+
+snappyHexMesh      exit 0     455,606 cells, 1,486,738 faces, 4m16s
+   max aspect ratio 5.49, non-orthogonality max 64.85 (avg 12.50),
+   max skewness 5.60 -- 7 faces of 1,486,738 (0.0005 %)
+   patches: inlet outlet hub casing periodic_m periodic_p blade
+
+mesh volume 3.3696e-4 m3   analytic annulus sector 3.33e-4 m3   +1.2 %
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Background builds | exit 0, Mesh OK | exit 0 | pass |
+| Background non-orthogonality | **16.83°** | < 30° | pass |
+| Background skewness | **0.181** | < 0.5 | pass |
+| Snapped builds | exit 0 | exit 0 | pass |
+| Snapped non-orthogonality | 64.85° | < 70° | pass |
+| Highly skew faces | 7 of 1,486,738 = **0.0005 %** | < 0.01 % | pass |
+| Mesh volume vs analytic | **+1.2 %** | ±5 % | pass |
+| Patches | all seven | all seven | pass |
+
+### Findings
+
+137. **Body-fitting the annulus turned a three-surface snap into a
+     one-surface snap, and it shows in the numbers.** The hub and casing
+     come out of blockMesh exactly, with a background non-orthogonality of
+     **16.8° and skewness 0.18** — a structured mesh, not an approximated
+     one. After snapping the blade the worst non-orthogonality is 64.8°
+     and there are **7 highly skew faces in 1.49 million**. Snapping all
+     three surfaces would have put the mesh's worst cells exactly where
+     the tip clearance is, which is the one place this case cannot afford
+     them.
+138. **The mesh volume checks against the annulus integrated
+     analytically, to 1.2 %.** π(r_c² − r_h²) integrated along the printed
+     flow path, divided by 36 and less the blade, is 3.33 × 10⁻⁴ m³; the
+     mesh reports 3.3696 × 10⁻⁴. It is the sharpest check available on a
+     mesh — the same geometry arrived at two completely different ways,
+     one through a transcription and a CAD kernel, the other through an
+     integral — and it catches a wrong sector angle, a wrong datum or a
+     dropped section at once.
+139. **blockMesh said "patch → block consistency" when it meant "you
+     defined an edge twice".** Thirty blocks share their circumferential
+     edges with their neighbours, and emitting the arc for each block
+     emitted every shared edge twice. blockMesh rejects the whole topology
+     for that and reports it as a *patch* problem, which sent this unit
+     through two wrong fixes — a hex handedness that was already right,
+     and a face ordering that was already right — before the real cause
+     turned up by deleting the arcs and watching it pass. **The handedness
+     was worth checking anyway and was worth checking numerically**: the
+     sector's own rotation helper puts +θ at *negative* y, so the
+     right-handed vertex order is the opposite of the one the sign of the
+     angle suggests.
