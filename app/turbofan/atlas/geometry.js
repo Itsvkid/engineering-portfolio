@@ -119,7 +119,10 @@ function airfoilSection(chord, thicknessRatio, camberDeg, points = 14) {
     const s = i / points;
     // Cosine spacing: more points at the leading edge, where curvature lives.
     const x = 0.5 - 0.5 * Math.cos(Math.PI * s);
-    const yc = (Math.tan(camber / 2) * x * (1 - x)) * 2; // circular-arc camber line, normalised
+    // Parabolic camber line whose leading-edge slope is half the turning
+    // angle: y = tan(θ/2)·x(1−x), max camber tan(θ/2)/4. An earlier draft
+    // carried a stray factor of two, which bulged every turbine section.
+    const yc = Math.tan(camber / 2) * x * (1 - x);
     const yt =
       thicknessRatio *
       5 *
@@ -150,7 +153,7 @@ export function bladeGeometry({
   camberTip = camberRoot,
   thickness = 0.08,
   stations = 3,
-  points = 7, // per surface; 7 gives a 12-vertex section, enough at screen scale
+  points = 10, // per surface; a 18-vertex section shades smoothly at screen scale
   sweepTip = 0, // axial lean of the tip relative to the root, in span units
 }) {
   const positions = [];

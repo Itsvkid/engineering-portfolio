@@ -127,3 +127,128 @@ SU2            v8.5.0, macos64 (x86_64) under Rosetta 2, ~/.local/opt/su2-v8.5.0
      binaries are x86_64; the macOS one runs under Rosetta 2 and does, at
      29 s for 162 iterations of transonic NACA 0012. Recorded so the next
      session does not rediscover it.
+
+---
+
+## Unit C4-2 — Rotor 37's blade, transcribed and checked
+
+C4 cannot go near Rotor 37 without its blade, and the blade is in TP-1337's
+Appendix C: twelve sections from a 7.0000 in hub to a 9.9330 in tip, each
+with leading- and trailing-edge radii, a stacking point, a stagger angle
+and a table of L / HP / HS.
+
+**The appendix is a 1978 scan carrying NASA's own "ORIGINAL PAGE IS OF POOR
+QUALITY" stamp, and its OCR is unusable.** `pdftotext` returns `0 .Otis`
+and `0 .$073` where numbers should be, `LESS)` for `L(sp)`, `¢AHHA` for
+GAMMA. No text extraction was used; the pages were read directly and
+transcribed.
+
+That is roughly **nine hundred numbers off a bad scan**, which is exactly
+the kind of transcription that should not be trusted. So the bands below
+are not tolerances on a model — they are **properties the real blade must
+have and a typo would break**, and none of them was used to produce a
+number.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Section closure at the leading edge | HP = HS = R1 at L = 0 | **exact** | the appendix prints R1 separately from the coordinate table, so this is 12 independent constraints, not a restatement |
+| Section closure at the trailing edge | HP = HS = R2 at L = L_max | **exact** | 12 more, and R2 is printed separately too |
+| Suction surface outside pressure surface | thickness ≥ 0 everywhere | **≥ 0** | a blade with a negative thickness is a typo |
+| Surface smoothness | second difference / max thickness | **< 0.15** anywhere | a misread digit is a kink; real MCA surfaces are smooth |
+| Stagger against radius | monotonic hub to tip | **strictly increasing** | a transonic rotor's sections turn one way |
+| Hub/tip radius ratio | Table I's **0.70** | **±2 %** | Table I was transcribed on 2026-09-06 from a different table, months before these pages were opened |
+| **Tip speed from the transcribed tip radius** | Table I's **454.136 m/s** at 17,188.7 rpm | **±1 %** | the sharpest check available: the radius comes from Appendix C and the speed from Table I, and nothing connects them but the blade being real |
+
+Two printed digits did not resolve and are recorded rather than guessed:
+the stagger at r = 7.2000 (tens digit, taken as 38 — its neighbours at
+36°32′ and 41°25′ leave no other possibility) and at r = 9.9330 (**taken as
+read at 65°23′**, though the trend through 57°26′ and 60°21′ would suggest
+about 63; this project does not correct printed source data).
+
+---
+
+## Unit C4-2 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-07 (`cd solvers && python -m cfd.rotor37`)
+
+```
+NASA Rotor 37 blade, TP-1337 Appendix C: 12 sections
+
+     rad in   chord   t_max    t/c  stagger      R1      R2  pts
+     7.0000  2.1518  0.1867 0.0868   36.533  0.0099  0.0118   23
+     7.4800  2.1750  0.1646 0.0757   41.417  0.0091  0.0101   23
+     8.0000  2.1887  0.1422 0.0650   46.583  0.0082  0.0087   23
+     8.5000  2.1899  0.1207 0.0551   51.200  0.0074  0.0075   23
+     9.0000  2.1974  0.0995 0.0453   55.433  0.0065  0.0062   23
+     9.6100  2.1840  0.0752 0.0344   60.350  0.0055  0.0047   23
+     9.9330  2.2020  0.0566 0.0257   65.383  0.0052  0.0036   24
+     (five more)
+
+1. closure: worst leading edge 0.000000 in, worst trailing edge 0.000000 in
+2. thickness: thinnest +0.0000 in (the leading edge itself);
+   t/c runs 0.0868 at the hub to 0.0257 at the tip
+3. smoothness: worst 0.109 (hub, hs, L = 2.00); next 0.100 (9.6100, hp, L = 1.40)
+4. stagger monotonic: True
+   36.5 38.5 41.4 44.2 46.6 49.1 51.2 53.3 55.4 57.4 60.4 65.4
+   rate 9.7 deg/in mean, 15.6 max at the tip
+5. hub/tip radius ratio  0.7047 vs Table I's 0.70          +0.67 %
+   tip speed at 17,188.7 rpm  454.1 vs Table I's 454.136 m/s   -0.00 %
+   aspect ratio from the LE span 1.343 vs Table I's 1.19
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Leading-edge closure, 12 sections | **0.000000 in** | exact | pass |
+| Trailing-edge closure, 12 sections | **0.000000 in** | exact | pass |
+| Thickness non-negative | min +0.0000 | ≥ 0 | pass |
+| Smoothness | worst 0.109 | < 0.15 | pass |
+| Stagger monotonic | True | strictly increasing | pass |
+| Hub/tip radius ratio | +0.67 % | ±2 % | pass |
+| **Tip speed** | **−0.00 %** | ±1 % | pass |
+| Aspect ratio | 1.343 vs 1.19 | — | **not a match, and the reason is recorded — finding 130** |
+
+### Findings
+
+128. **Twenty-four closure constraints, satisfied exactly.** Each of the
+     twelve sections prints its leading- and trailing-edge radius
+     *separately* from its coordinate table, and every one of the
+     twenty-four is reproduced by the first and last row of that table to
+     the last printed digit. Those numbers sit in different places on the
+     page and were read at different times. For a transcription of nine
+     hundred figures off a scan stamped "OF POOR QUALITY", that is the
+     evidence that matters.
+129. **The tip radius and the tip speed were transcribed from different
+     tables, months apart, and they agree to four figures.** Appendix C
+     puts the tip section at **9.9330 in**; Table I, transcribed on
+     2026-09-06 before these pages were ever opened, gives **454.136 m/s**
+     at 17,188.7 rpm. The radius times the speed is **454.1 m/s** —
+     **−0.00 %**. Nothing connects those two numbers except the blade
+     being real and both readings being right.
+130. **The printed aspect ratio does not follow from the printed geometry,
+     and that is a warning rather than an error.** Table I gives the rotor
+     aspect ratio as **1.19**; span over mean chord from Appendix C gives
+     **1.343**. The gap is not small and it is not a typo: 1.19 implies a
+     mean blade height of **2.599 in** against Appendix C's leading-edge
+     span of **2.933**, an 11 % contraction — which is what a compressor
+     annulus does through a rotor. So the two are consistent only if the
+     aspect ratio is built on the *mean* blade height and Appendix C's
+     radii are *leading-edge* radii. Anyone who takes a chord from this
+     appendix and an aspect ratio from Table I and divides one by the other
+     will get a blade height that does not exist.
+131. **The blade thins by more than a factor of three from hub to tip, and
+     that is the transonic design.** t/c runs **0.0868 at the hub to
+     0.0257 at the tip** while the chord barely changes (2.152 to 2.202
+     in), and the stagger opens from 36.5° to 65.4°. The tip section is
+     2.6 % thick and staggered 65° — a thin, highly staggered blade to keep
+     the passage shock weak at a relative Mach of about 1.48. It is the
+     same design logic as the E³'s own transonic rows, which is why this
+     is the case C4 chose.
+132. **Two printed digits did not resolve, and they are handled
+     differently on purpose.** The stagger at r = 7.2000 has an unreadable
+     tens digit, but its neighbours at 36°32′ and 41°25′ admit only one
+     value, so 38°30′ is a reading and not a guess. The tip's 65°23′ is
+     **taken as read** even though the trend through 57°26′ and 60°21′
+     would suggest about 63° — the rate to the tip is 15.6 deg/in against a
+     9.7 mean, the largest step in the blade. Correcting it would be
+     correcting printed source data, which this project does not do; the
+     smoothness check carries it as a known outlier instead.

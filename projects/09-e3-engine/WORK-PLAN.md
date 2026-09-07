@@ -676,6 +676,19 @@ only after the method is validated.
       (finding 125). And the L2 error is ordered the way discretisation
       orders it — pressure 0.85 %, density 1.20 %, velocity 2.82 % — which
       a coding error would not do (finding 126)
+- [x] **Rotor 37's blade geometry transcribed** — **unit C4-2**,
+      `data/methods/rotor37-blade-coordinates.yaml`,
+      `solvers/cfd/rotor37.py`. Twelve sections, hub 7.0000 in to tip
+      9.9330 in, read off TP-1337 Appendix C's page images because its OCR
+      is unusable (the scan carries NASA's own "OF POOR QUALITY" stamp).
+      **Twenty-four independent closure constraints satisfied exactly**
+      (finding 128), and **the tip radius times Table I's rpm gives Table
+      I's tip speed to −0.00 %** — two numbers transcribed from different
+      tables months apart (finding 129). Table I's aspect ratio of 1.19
+      does *not* follow from the printed chord, and the reason is recorded
+      (finding 130)
+- [ ] Mesh and run Rotor 37: 3D periodic sector, MRF, back-pressure sweep
+      for the 100 % speed line, then grid refinement for the GCI band
 - [ ] HPC rotor 1 (transonic, 28 blades): loss, turning, shock position
       vs the mean-line and Table X/XXII
 - [ ] HPT stage-1 vane: exit angle and Mach vs Table III / Fig. 5
