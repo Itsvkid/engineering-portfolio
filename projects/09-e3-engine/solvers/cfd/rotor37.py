@@ -225,8 +225,30 @@ def placed_section(s: Section, n=120):
             out.append((dl * cg - dh * sg, dl * sg + dh * cg))
         return out
 
-    suction = place(s.l, s.hs)
-    pressure = place(s.l, s.hp)
+    # resample each surface along L before placing: the tip sections get
+    # clipped hard by the casing and a coarse section would leave too few
+    # points on the surviving stub to loft
+    def resample(ys):
+        out = []
+        for i in range(n + 1):
+            l = s.l[0] + (s.l[-1] - s.l[0]) * i / n
+            if l <= s.l[0]:
+                out.append((s.l[0], ys[0]))
+                continue
+            if l >= s.l[-1]:
+                out.append((s.l[-1], ys[-1]))
+                continue
+            for k in range(len(s.l) - 1):
+                if s.l[k] <= l <= s.l[k + 1]:
+                    t = (l - s.l[k]) / (s.l[k + 1] - s.l[k])
+                    out.append((l, ys[k] + t * (ys[k + 1] - ys[k])))
+                    break
+        return [p[0] for p in out], [p[1] for p in out]
+
+    ls, hss = resample(s.hs)
+    _, hps = resample(s.hp)
+    suction = place(ls, hss)
+    pressure = place(ls, hps)
     return suction + list(reversed(pressure))[1:-1]
 
 
@@ -442,7 +464,39 @@ def x_max_for_radius(r_in, clearance_mm=TIP_CLEARANCE_MM):
     return 0.5 * (lo + hi)
 
 
-def trimmed_sections(extra=14, clearance_mm=TIP_CLEARANCE_MM):
+def blade_tip_radius(clearance_mm=TIP_CLEARANCE_MM):
+    """Where the blade actually ends.
+
+    The blade's leading edge moves downstream as the radius grows, and the
+    casing falls as x grows, so the two curves meet. That crossing is the
+    blade's highest point -- not the casing at x = 0, which is where the
+    HUB leading edge is."""
+    secs, _ = load()
+    shift = sections_against_the_casing()[1]
+    a, b = secs[-2], secs[-1]
+
+    def le_x(r):
+        f = (r - a.radius) / (b.radius - a.radius)
+        xa = placed_section(a)[0][0] + shift
+        xb = placed_section(b)[0][0] + shift
+        return xa + f * (xb - xa)
+
+    dr = clearance_mm / 25.4
+    lo, hi = a.radius, b.radius + 0.2
+    for _ in range(80):
+        mid = 0.5 * (lo + hi)
+        if casing_at(le_x(mid) * 2.54) / 2.54 - dr > mid:
+            lo = mid
+        else:
+            hi = mid
+    r = 0.5 * (lo + hi)
+    return dict(r_tip_in=r, le_x_in=le_x(r),
+                casing_there_in=casing_at(le_x(r) * 2.54) / 2.54,
+                clearance_mm=clearance_mm,
+                above_last_printed_in=r - b.radius)
+
+
+def trimmed_sections(extra=26, clearance_mm=TIP_CLEARANCE_MM, min_points=12):
     """The blade as the casing leaves it.
 
     Appendix C tabulates sections at fixed radii for manufacture, and the
@@ -470,18 +524,20 @@ def trimmed_sections(extra=14, clearance_mm=TIP_CLEARANCE_MM):
                        gamma_deg=a.gamma_deg + f * (b.gamma_deg - a.gamma_deg),
                        l=ls, hp=hp, hs=hs)
 
-    r_top = casing_at(0.0) / 2.54 - clearance_mm / 25.4
+    r_top = blade_tip_radius(clearance_mm)["r_tip_in"]
     all_secs = list(secs[:-1])
+    # clustered toward the tip: the clipped chord shortens fastest there
     for i in range(1, extra + 1):
+        f = (i / extra) ** 0.65
         all_secs.append(interp_section(secs[-2].radius
-                                       + (r_top - secs[-2].radius) * i / extra))
+                                       + (r_top - secs[-2].radius) * f))
 
     out = []
     for sec in all_secs:
         pts = [(x + shift, y) for x, y in placed_section(sec)]
         xm = x_max_for_radius(sec.radius, clearance_mm)
         kept = [p for p in pts if p[0] <= xm]
-        if len(kept) < 8:
+        if len(kept) < min_points:
             continue
         out.append(dict(radius=sec.radius, x_max=xm, points=kept,
                         clipped=len(kept) < len(pts),

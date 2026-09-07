@@ -16,7 +16,7 @@ front-matter offset (given per report below) to get the PDF page.
 |---|---|---|
 | CR-168219 FPS final design | +14 | `e3-fps-final-design-CR-168219.pdf` |
 | HPC detail design | +9 | `e3-hp-compressor-detail-design.pdf` |
-| HPT hardware CR-167955 | +8 | `e3-hp-turbine-hardware-CR-167955.pdf` |
+| HPT hardware CR-167955 | +9 | `e3-hp-turbine-hardware-CR-167955.pdf` |
 | LPT hardware | +13 | `e3-lp-turbine-hardware.pdf` |
 | Fan hardware CR-165148 | +10 | `e3-fan-hardware-design-CR-165148.pdf` |
 | Combustor CR-168301 | +15 (design sections); +37 in the test section from about p.380 (plates) | `e3-combustor-hardware-design.pdf` |

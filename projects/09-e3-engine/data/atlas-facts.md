@@ -14,7 +14,7 @@ NASA Lewis under NAS3-20643, 1978–83. Every number carries one of three tags:
 
 Report short names and PDF offsets (printed page + offset = PDF page):
 CR-168219 FPS final design (+14) · HPC detail design NTRS 19850002690 (+9) ·
-HPT CR-167955 (+8) · LPT NTRS 19850002686 (+13) · fan CR-165148 (+10) ·
+HPT CR-167955 (+9) · LPT NTRS 19850002686 (+13) · fan CR-165148 (+10) ·
 combustor CR-168301 (+15) · ICLS CR-168211 (+25) · controls CR-168017.
 
 Where a report prints a number two ways and they disagree, both are given
