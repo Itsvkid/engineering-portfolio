@@ -791,12 +791,41 @@
   /* ── Small screens ────────────────────────────────────────────────── */
 
   @media (max-width: 860px) {
-    .atlas-stagetitle h1 {
-      font-size: 17px;
-    }
+    /* A phone has no margin to spare. The stage title, the view pills, the
+       zoom stack and the caption are all desktop affordances: the drawer
+       already names the selected part, pinch does what the zoom stack does,
+       and the caption's hint is not worth a line of a 390px screen. */
+    .atlas-stagetitle,
     .atlas-pills,
-    .atlas-zoom {
+    .atlas-zoom,
+    .atlas-caption {
       display: none;
+    }
+    /* The floating label is positioned at the part's own screen coordinate,
+       which on a narrow viewport is often off the edge, and the drawer names
+       the selection anyway. */
+    .atlas-label {
+      display: none;
+    }
+    .atlas-header {
+      height: 54px;
+      gap: 10px;
+      padding: 0 12px;
+    }
+    /* The wordmark is clipped by the search box at this width; the mark
+       alone still works as the way back to the portfolio. */
+    .atlas-brand-name,
+    .atlas-brand-sub {
+      display: none;
+    }
+    .atlas-dock {
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      gap: 8px;
+    }
+    .atlas-dockbar {
+      padding: 8px 10px;
     }
     .atlas-dockbar {
       flex-wrap: wrap;

@@ -39,7 +39,18 @@ export default function TurbineBackground() {
          same lines compete with the paragraph they cross. The desktop mask
          now falls off before the hero's text column instead of reaching
          across it, and the whole layer is lighter. */
-      className="pointer-events-none absolute inset-0 overflow-hidden opacity-30 md:opacity-45 [mask-image:radial-gradient(85%_130%_at_50%_40%,black_35%,transparent_92%)] md:[mask-image:radial-gradient(78%_105%_at_82%_40%,black_30%,transparent_88%)]"
+      /* The mask is tighter than it was, and the reason is the light ground.
+         On the old charcoal page the linework sat far enough below the body
+         text's contrast that the two could overlap; on a white sheet the
+         same lines compete with the paragraph they cross. The desktop mask
+         now falls off before the hero's text column instead of reaching
+         across it.
+
+         Mobile gets a much lower opacity rather than a cleverer mask. A
+         390px column has no margin to put a drawing in — wherever it goes it
+         is behind the text — so on a phone this drops to a watermark that
+         reads as texture, not as linework competing with the words. */
+      className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.13] md:opacity-45 [mask-image:radial-gradient(85%_130%_at_50%_40%,black_35%,transparent_92%)] md:[mask-image:radial-gradient(78%_105%_at_82%_40%,black_30%,transparent_88%)]"
     >
       <TurbineStage />
     </div>
