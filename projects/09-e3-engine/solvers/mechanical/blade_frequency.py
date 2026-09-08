@@ -240,37 +240,53 @@ def hpc_rotor_predictions():
     (titanium stages 1-4, nickel 5-10, which fell out of the stress data
     at the inertia weld). Recorded so that digitising Figs 33-42 is a
     one-line test rather than a fresh piece of work."""
-    from blading.sections import all_sections
-    rows = {}
-    for sec in all_sections():
-        if sec.kind != "rotor":
-            continue
-        rows.setdefault(sec.stage, []).append(sec)
     out = []
-    for stage in sorted(rows):
-        secs = sorted(rows[stage], key=lambda s: s.radius_m)
-        hub, tip = secs[0].radius_m, secs[-1].radius_m
-        length = tip - hub
-        ti = stage <= 4
-        m = BladeModel(f"HPC rotor {stage}", "Table XXII sections; E1's material split",
-                       length, hub, E_TI_6AL_4V if ti else E_NICKEL,
-                       RHO_TI_6AL_4V if ti else RHO_NICKEL,
-                       published_f1_Hz=float("nan"), pinned_at=None)
-        polys = []
-        for sc in secs:
-            built = section(sc.chord_m, sc.beta1, sc.beta2, sc.stagger,
-                            *_xxii_thickness(sc))
-            if built is None:
-                polys = None
-                break
-            polys.append((sc.radius_m - hub, closed_airfoil(built)))
-        if not polys:
+    for stage in hpc_rotor_stages():
+        m = hpc_rotor_model(stage)
+        if m is None:
             continue
-        _fill(m, polys)
-        out.append(dict(stage=stage, material="Ti-6Al-4V" if ti else "nickel",
-                        length_cm=length * 100, hub_over_length=hub / length,
+        out.append(dict(stage=stage, material="Ti-6Al-4V" if stage <= 4 else "nickel",
+                        length_cm=m.length_m * 100,
+                        hub_over_length=m.hub_radius_m / m.length_m,
                         modes=m.modes(False, 0.0, 3), stiff=m.modes(True, 0.0, 3)[0]))
     return out
+
+
+def hpc_rotor_stages():
+    from blading.sections import all_sections
+    return sorted({s.stage for s in all_sections() if s.kind == "rotor"})
+
+
+def hpc_rotor_model(stage):
+    """Build the beam model for one HPC rotor stage.
+
+    Factored out of `hpc_rotor_predictions` so that unit J2's Campbell
+    figure evaluates the SAME model across speed rather than keeping its
+    own copy of the material split and the section assembly. Two copies of
+    a rule are two chances for it to drift -- see unit J1 finding 159.
+
+    Returns None if any section fails to build."""
+    from blading.sections import all_sections
+    secs = sorted([s for s in all_sections()
+                   if s.kind == "rotor" and s.stage == stage],
+                  key=lambda s: s.radius_m)
+    if not secs:
+        return None
+    hub, tip = secs[0].radius_m, secs[-1].radius_m
+    ti = stage <= 4                       # E1's split, at the inertia weld
+    m = BladeModel(f"HPC rotor {stage}", "Table XXII sections; E1's material split",
+                   tip - hub, hub, E_TI_6AL_4V if ti else E_NICKEL,
+                   RHO_TI_6AL_4V if ti else RHO_NICKEL,
+                   published_f1_Hz=float("nan"), pinned_at=None)
+    polys = []
+    for sc in secs:
+        built = section(sc.chord_m, sc.beta1, sc.beta2, sc.stagger,
+                        *_xxii_thickness(sc))
+        if built is None:
+            return None
+        polys.append((sc.radius_m - hub, closed_airfoil(built)))
+    _fill(m, polys)
+    return m
 
 
 def _xxii_thickness(sc):

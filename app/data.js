@@ -4,10 +4,10 @@ export const profile = {
   // exact duplicate of the kicker the hero actually shows.
   kicker: "Design Engineer — Aerospace & Propulsion Hardware",
   tagline:
-    "Design engineer with an aerospace propulsion background. Detail and GA drawings with GD&T to ISO 1101, limits and fits to ISO 286, tolerance stack-up, sheet-metal flat patterns and DFM \u2014 from parametric CAD built in CATIA V5, CadQuery and pyOCC, with the geometry verified rather than assumed. Open to freelance parametric-CAD and simulation work alongside full-time design roles.",
-  location: "United Kingdom",
-  workAuth: "Sponsorship required",
-  availability: "Available Sep 2026",
+    "Design engineer with an aerospace propulsion background. Detail and GA drawings with GD&T to ISO 1101, limits and fits to ISO 286, tolerance stack-up, sheet-metal flat patterns and DFM \u2014 from parametric CAD written in CadQuery and pyOCC, with the geometry verified rather than assumed. Open to freelance parametric-CAD and simulation work alongside full-time design roles.",
+  location: "Coventry, United Kingdom",
+  workAuth: "UK Student visa \u2014 sponsorship may be required",
+  availability: "Available immediately",
   seeking: "Entry-level design engineering \u2014 aerospace / propulsion hardware",
   email: "kumarvsvinay@gmail.com",
   phone: "+44 7742 914241",
@@ -17,16 +17,6 @@ export const profile = {
 };
 
 export const skills = [
-  {
-    group: "Programming & Geometry",
-    items: [
-      "Python",
-      "Parametric geometry (iCST)",
-      "Geometry benchmarking vs. commercial CAD",
-      "Automated test suites (pytest)",
-      "MATLAB",
-    ],
-  },
   {
     group: "Mechanical Design",
     items: [
@@ -41,7 +31,7 @@ export const skills = [
   {
     group: "CAD",
     items: [
-      "CATIA V5",
+      "CATIA V5 (80 hrs certified)",
       "CadQuery",
       "pyOCC / OpenCASCADE",
       "ANSYS DesignModeler",
@@ -54,7 +44,7 @@ export const skills = [
       "Gas turbine performance",
       "Turbomachinery aerodynamics",
       "Combustion",
-      "Engine design",
+      "Gas turbine cycle analysis",
     ],
   },
   {
@@ -68,6 +58,16 @@ export const skills = [
     ],
   },
   {
+    group: "Programming",
+    items: [
+      "Python (NumPy, SciPy, Matplotlib)",
+      "Parametric geometry (iCST)",
+      "Automated test suites (pytest)",
+      "MATLAB",
+      "Git",
+    ],
+  },
+  {
     group: "Aerospace",
     items: ["Aircraft structures", "Non-destructive testing"],
   },
@@ -75,13 +75,66 @@ export const skills = [
 
 export const projects = [
   {
+    title: "Parametric CAD Generators and Drawing Pack",
+    context: "Personal project — programmatic mechanical design",
+    period: "Aug 2026",
+    stats: [
+      { value: "5", label: "CAD projects, complete" },
+      { value: "0.25%", label: "Flat-pattern volume error" },
+      { value: "249", label: "Tests" },
+    ],
+    points: [
+      "Wrote two CadQuery generators that size a design before they draw it: a flight-control actuator family across four aircraft classes, and an engine accessory gearbox family across five power ratings. Changing one input \u2014 bore, or shaft power \u2014 propagates through gear sizing, bearing selection, housing geometry and the bill of materials, whose masses come from the generated solids' own volumes rather than a separate estimate.",
+      "Sized the gearbox from the Lewis bending equation solved for module, then snapped that module up to a standard cutter size \u2014 so the safety factor is a consequence of the preferred-number list rather than a figure anyone chose. Tooth flanks are true involutes of the base circle; bearings are real SKF 60xx-series parts picked on shaft torque.",
+      "Took the actuator from geometry to a releasable drawing pack: four A4 sheets carrying ISO 286 limits and fits (\u2300\u200935\u2009H8 bore, \u2300\u200921\u2009f7 rod), ISO 1101 geometric tolerances on the features that decide function \u2014 cylindricity on the bore rather than roundness, total runout rather than concentricity, position at maximum material condition on clearance holes \u2014 a chosen datum scheme, surface finishes, and a five-contributor tolerance stack on installed length reported both worst-case and RSS. The tolerances are derived from the model, not typed onto it, and a test asserts the stack's nominal equals where the assembly actually puts the clevis.",
+      "Added a formed sheet-metal bracket, because a folded part is a different discipline from a machined one: the blank a shop cuts is shorter than the finished part's legs added together, by one bend deduction per fold. Bend allowance from a K-factor neutral axis, five design-for-manufacture rules \u2014 minimum bend radius, flange length, hole-to-bend distance, fastener edge distance \u2014 and a material trade with a real answer: 2024-T3 is twice as strong as 5052-H32 and cannot make the fold, because its minimum bend radius is 4T against 1T. Validated by conservation of volume: forming moves metal without creating it, so the blank and the formed solid agree to 0.25%, against 5.12% for a naively summed blank.",
+      "Then loaded that bracket and found it fails — 2 kg of avionics at a 9g crash factor, solved with CalculiX through FreeCAD headlessly. The result worth having was not the stress but the mesh study: refining from 173k to 333k nodes, deflection converged to 0.06% and bulk stress to 0.28%, while the peak stress climbed 12% and never settled. Its location says why — every peak node sat at z = 0.00 exactly, on the bore edge of a constrained hole, hopping between the two holes run to run. A fixed constraint is singular at its own boundary, so that 545 MPa peak is a boundary condition rather than a stress, and refining further would only make it larger. The converged answer is 196.7 MPa against a 193 MPa yield: the part is marginal, not catastrophic, and the difference between those two verdicts is the whole reason to refine a mesh more than once.",
+      "Then closed the loop: screened four ways of fixing the bracket by hand before modelling any of them, because ruling a candidate out with a section modulus costs seconds and building then solving it costs hours. The instructive result was the option that looked best. Folding the upright's free edges into flanges makes that leg 7.4\u00d7 stiffer \u2014 235 down to 32 MPa \u2014 and changes the bracket's margin by nothing at all, because both legs carry the same moment through the same section and the governing stress simply moves to the untouched base. It costs 14% more mass and fails at exactly the same load. Chose 2.0 mm gauge instead, the lightest arm that passes, and treated it as a drawing re-issue rather than an edit: the bend deduction changes, so the blank goes 101.52 to 100.97 mm and a shop cutting to the old sheet would make the wrong blank.",
+      "Solved the chosen redesign to confirm it: 126.1 MPa converged against a 193 MPa yield, a +53% margin where the original had \u22122%, and deflection halved from 4.83 to 2.46 mm. The peak still diverges in exactly the same place, which is the right answer \u2014 the singularity belongs to the constraint, not the part, so a thicker part should not cure it. Only the winner was solved, and that is defensible because the beam model reads 16% high at both gauges, agreeing to 0.2 of a point across a 25% thickness change; a test pins that calibration, because if it drifts the screen has stopped being safe.",
+      "Backed that solver result with closed-form beam theory sharing none of its code, which put the nominal at 235 MPa — also past yield, from a different direction — and surfaced what a single-cantilever idealisation misses: most of the tip movement is the base rotating, not the upright bending, because the base reacts the moment back to the bolts through the same 1.6 mm of material. A test pins the non-convergence itself, so if anyone later rounds that edge and the peak starts converging, the suite fails and the claim gets rewritten.",
+      "Sized a bleed-air duct from station 3 of my own turbofan cycle model \u2014 759.5 K at 12.5 bar \u2014 and routed it in pyOCC as a solid swept along a 3D spline, then measured true minimum distance to the structure around it. Two findings the arithmetic gave up rather than the drawing: the wall is governed by surviving a 2\u00d7 diameter bend, not by hoop stress, because bending thins the outside by 20%; and the clearance requirement is 10.5 mm because stainless at 760 K grows 7.6 mm over a metre before anything vibrates. The obvious short route fouled the casing outright, and it is kept in the repository beside the one that works.",
+      "Wrote a design-for-manufacture checker that reads a STEP file it did not create \u2014 wall thickness by firing rays through the solid, draft from face normals, hole aspect and internal corner radius from the cylinders that are holes rather than fillets. Run across every part in the repository it found seventeen failures on the gearbox housing as a casting, which that project's own README lists as a known omission: the checker recovered it from the geometry, having never read the README. Its ray-cast wall thickness also returns 3.00 mm on the actuator, exactly the wall_thickness constant its generator sets, by a path that shares no code.",
+      "Wrote 78 tests for the gearbox generator \u2014 the last of the five with none, and the one with the most defects already found, which is not a coincidence. They found another: both tooth profiles are drawn with a tooth centred on their own +X axis, so with an even gear the two solids overlapped by 424 mm\u00b3, 2.1% of the pinion, in every exported assembly. Every member of the family has an even gear. Fixed by phasing the gear half a tooth pitch, and the parity matters \u2014 an odd gear already presents a gap, so rotating it causes exactly the clash it avoids. Both directions are pinned by tests and the STEP files are regenerated.",
+      "Checked those tests by reintroducing the original involute sign error to confirm the suite goes red. It does, but through only one test of the three that look like they should catch it. Tooth thickness at the pitch circle is still correct with the sign mirrored, which is why the bug survived its first review; and BRepCheck_Analyzer validity still passes too, because at every tooth count this project ships the mirrored flanks stay inside their own sector and the solid is genuinely well-formed. Only checking that the tooth narrows from root to tip finds it. Verifying geometry is well-formed is a different question from verifying it is right.",
+      "Checked the geometry rather than assuming it, which is what found the interesting problems: the involute half-angle carried the wrong sign, giving hourglass teeth whose flanks crossed and a solid that failed BRepCheck_Analyzer and would not triangulate; the housing footprint was driven by bearing-boss diameter, so the 50 kW gear hung 84 mm outside its own casing; the actuator assembly stacked every part at the origin, sealing the rod and its rod-end inside the barrel; the clevis was too small to carry its own bolt holes clear of its pin bore; and every BOM mass was a hand-rolled formula, one of them wrong by 5.3\u00d7. All fixed, all covered by tests.",
+    ],
+    tech: ["Python", "CadQuery", "pyOCC", "GD&T", "ISO 286", "ISO 1101", "Sheet metal", "DFM", "FEA", "CalculiX", "STEP"],
+    link: {
+      href: "https://github.com/Itsvkid/CAD-Projects",
+      label: "View on GitHub",
+    },
+    figures: [
+      {
+        src: "/products/gearbox-assembly-dark.png",
+        srcLight: "/products/gearbox-assembly.png",
+        alt: "Shaded render of a single-stage accessory gearbox: a 90-tooth gear meshing with a 20-tooth pinion, both seated on bearing bosses that stand on a flanged aluminium housing with four corner mounting pads.",
+        short: "20 kW gearbox assembly",
+        caption: "The 20 kW narrow-body design \u2014 90 teeth against 20, a 4.5:1 reduction on a 110 mm centre distance. Rendered straight from the kernel's own tessellation of the exported solid, so what is drawn here is the geometry that ships in the STEP file, not a separate illustration of it.",
+      },
+      {
+        src: "/products/bracket-fea-convergence-dark.png",
+        srcLight: "/products/bracket-fea-convergence.png",
+        alt: "Two panels against node count on a log axis. Left, peak von Mises stress rising from 457 to 545 MPa and still climbing, with a flat 99th-percentile line at 197 MPa just above a dotted yield line at 193 MPa. Right, tip deflection flat at 4.83 mm against a dashed hand-calculation reference at 6.8 mm.",
+        short: "Bracket mesh convergence",
+        caption: "Two quantities from the same five solves. The 99th percentile settles to 0.28% and the deflection to 0.06%; the peak node climbs 12% and does not converge, because it sits on the edge of a fixed constraint, which is singular. Hollow markers are meshes too coarse to put two elements through a 1.6 mm wall \u2014 reported, and excluded from every conclusion.",
+      },
+      {
+        src: "/products/bracket-redesign-trade-dark.png",
+        srcLight: "/products/bracket-redesign-trade.png",
+        alt: "Margin of safety against mass for four bracket designs. Two hollow markers sit below the yield line at the same margin of \u221218%, joined by a dashed arrow labelled plus 14% mass, identical margin. Two filled markers sit above the line at higher mass.",
+        short: "Redesign trade study",
+        caption: "Four ways to fix a bracket that yields at 9g, screened by hand before any was modelled. The arm worth reading is the one that moves right without moving up: folding flanges up the upright makes that leg 7.4\u00d7 stiffer and leaves the part exactly as weak, because the base carries the same moment through the same section. Hollow markers fail.",
+      },
+    ],
+  },
+  {
     title: "Turbofan Atlas \u2014 a High-Bypass Turbofan, Part by Part",
     context: "Interactive 3D anatomy of the NASA/GE E\u00b3 \u2014 live on this site",
     period: "Sep 2026",
     stats: [
-      { value: "142", label: "Selectable parts, 12 systems" },
-      { value: "42 + 5 + 20", label: "Published flowpath stations drawn to scale" },
-      { value: "787k", label: "Triangles, built from tables in 0.25 s" },
+      { value: "12", label: "Engine systems, 142 selectable parts" },
+      { value: "67", label: "Published flowpath stations drawn to scale" },
+      { value: "0", label: "Numbers without a source or an assumed flag" },
     ],
     points: [
       "Built an interactive anatomy of a high-bypass turbofan in the model-first pattern of the Human Atlas and OMF Atlas anatomy explorers: the model fills the page, every part is selectable, systems are layers, a separation control lays the assembly out, and three guided tours fly the camera part by part. There is no public segmented engine dataset, so all 142 parts are procedural, fitted to the NASA E\u00b3 reports' published dimensions \u2014 42 HPC hub and tip stations, five HPT stations, the LPT walls from thirty transcribed airfoil sections, and every row's blade and vane count.",
@@ -125,9 +178,9 @@ export const projects = [
     ],
   },
   {
-    title: "Installation Aerodynamics of Aero-Engine Nacelles",
-    context: "Individual Research Project",
-    period: "Ongoing — expected Sep 2026",
+    title: "Nacelle Cowl Geometry and CFD Validation",
+    context: "Personal project \u2014 built on public NASA wind-tunnel data",
+    period: "Aug 2026",
     stats: [
       { value: "0.019%", label: "Geometry fit RMS error" },
       { value: "555", label: "Solver iterations to converge" },
@@ -174,49 +227,6 @@ export const projects = [
     ],
   },
   {
-    title: "Aircraft Flight Performance Calculator",
-    context: "Personal project — open source",
-    period: "Aug 2026",
-    stats: [
-      { value: "within 8%", label: "Ceiling vs. published" },
-      { value: "3", label: "Aircraft validated" },
-      { value: "63", label: "Tests" },
-    ],
-    points: [
-      "Built a tested Python package computing flight performance from first principles — ISO 2533 atmosphere, parabolic drag polar, Mach-dependent thrust lapse, climb rate, ceilings, Breguet range and payload-range.",
-      "Validated against published data for the 737-800, A320-200 and 777-300ER across a 4.5\u00d7 mass range. Service ceiling agrees within 8%; because manufacturers do not publish CD0 or Oswald efficiency, every result carries a band swept across the plausible range of both.",
-      "Added a compressibility (wave) drag term and documented what it did and didn't fix rather than tuning it to look complete: predicted max speed improved from Mach 0.98\u20131.09 to 0.91\u20130.98, but still sits above each aircraft's published MMO \u2014 a real, un-hidden gap in a simplified empirical correlation.",
-    ],
-    tech: ["Python", "NumPy", "SciPy", "Matplotlib", "pytest"],
-    link: {
-      href: "https://github.com/Itsvkid/flight-performance-calculator",
-      label: "View on GitHub",
-    },
-    figures: [
-      {
-        src: "/figures/flight-envelope-dark.png",
-        srcLight: "/figures/flight-envelope.png",
-        alt: "Flight envelope: altitude against true airspeed, bounded left by a low-speed limit and right by a thrust limit, the two closing on each other and meeting at 13.5 km.",
-        short: "Flight envelope",
-        caption: "Where level flight is possible. The left boundary is stall speed down low, but above about 12 km it becomes thrust-limited \u2014 the aircraft runs out of thrust before it runs out of wing. Both boundaries meet at the absolute ceiling.",
-      },
-      {
-        src: "/figures/thrust-curves-dark.png",
-        srcLight: "/figures/thrust-curves.png",
-        alt: "Thrust required and thrust available against true airspeed at 10 km, crossing at 273 m/s, with minimum drag at 197 m/s.",
-        short: "Thrust curves, 10 km",
-        caption: "Thrust required and available at 10 km. Their crossing sets maximum level speed; the minimum of the required curve is the minimum-drag speed, where induced and parasite drag are equal and L/D peaks at 17.2.",
-      },
-      {
-        src: "/figures/payload-range-dark.png",
-        srcLight: "/figures/payload-range.png",
-        alt: "Payload-range diagram: flat at 18 tonnes of payload out to 3717 km, then sloping to zero payload at 7519 km.",
-        short: "Payload-range",
-        caption: "Flat while the tanks still have room, then sloped once fuel is the binding constraint and every extra kilometre is bought by offloading payload.",
-      },
-    ],
-  },
-  {
     title: "Airfoil Panel Method, Validated Against XFoil",
     context: "Personal project — from-scratch aerodynamic solver",
     period: "Aug 2026",
@@ -238,55 +248,6 @@ export const projects = [
         alt: "Two panels comparing this project's panel method against XFLR5. Left, lift against angle of attack: the two solvers' curves nearly overlap for NACA 0012 and diverge above 8 degrees for NACA 4412. Right, drag on a logarithmic axis: this project's curves sit roughly a factor of 2.5 below XFLR5's and stay nearly flat while XFLR5's triple.",
         short: "Panel method vs. XFoil",
         caption: "Lift and drag against an independent solver, identical geometry into both. Lift agrees to 0.047 RMS on the symmetric section. Drag is plotted on a log axis on purpose \u2014 the gap is a factor of about 2.5, and on a linear axis two curves 0.007 apart would look like agreement.",
-      },
-    ],
-  },
-  {
-    title: "Parametric CAD Generators and Drawing Pack",
-    context: "Personal project — programmatic mechanical design",
-    period: "Aug 2026",
-    stats: [
-      { value: "5", label: "CAD projects, complete" },
-      { value: "0.25%", label: "Flat-pattern volume error" },
-      { value: "249", label: "Tests" },
-    ],
-    points: [
-      "Wrote two CadQuery generators that size a design before they draw it: a flight-control actuator family across four aircraft classes, and an engine accessory gearbox family across five power ratings. Changing one input \u2014 bore, or shaft power \u2014 propagates through gear sizing, bearing selection, housing geometry and the bill of materials, whose masses come from the generated solids' own volumes rather than a separate estimate.",
-      "Sized the gearbox from the Lewis bending equation solved for module, then snapped that module up to a standard cutter size \u2014 so the safety factor is a consequence of the preferred-number list rather than a figure anyone chose. Tooth flanks are true involutes of the base circle; bearings are real SKF 60xx-series parts picked on shaft torque.",
-      "Took the actuator from geometry to a releasable drawing pack: four A4 sheets carrying ISO 286 limits and fits (\u2300\u200935\u2009H8 bore, \u2300\u200921\u2009f7 rod), ISO 1101 geometric tolerances on the features that decide function \u2014 cylindricity on the bore rather than roundness, total runout rather than concentricity, position at maximum material condition on clearance holes \u2014 a chosen datum scheme, surface finishes, and a five-contributor tolerance stack on installed length reported both worst-case and RSS. The tolerances are derived from the model, not typed onto it, and a test asserts the stack's nominal equals where the assembly actually puts the clevis.",
-      "Added a formed sheet-metal bracket, because a folded part is a different discipline from a machined one: the blank a shop cuts is shorter than the finished part's legs added together, by one bend deduction per fold. Bend allowance from a K-factor neutral axis, five design-for-manufacture rules \u2014 minimum bend radius, flange length, hole-to-bend distance, fastener edge distance \u2014 and a material trade with a real answer: 2024-T3 is twice as strong as 5052-H32 and cannot make the fold, because its minimum bend radius is 4T against 1T. Validated by conservation of volume: forming moves metal without creating it, so the blank and the formed solid agree to 0.25%, against 5.12% for a naively summed blank.",
-      "Then loaded that bracket and found it fails — 2 kg of avionics at a 9g crash factor, solved with CalculiX through FreeCAD headlessly. The result worth having was not the stress but the mesh study: refining from 173k to 333k nodes, deflection converged to 0.06% and bulk stress to 0.28%, while the peak stress climbed 12% and never settled. Its location says why — every peak node sat at z = 0.00 exactly, on the bore edge of a constrained hole, hopping between the two holes run to run. A fixed constraint is singular at its own boundary, so that 545 MPa peak is a boundary condition rather than a stress, and refining further would only make it larger. The converged answer is 196.7 MPa against a 193 MPa yield: the part is marginal, not catastrophic, and the difference between those two verdicts is the whole reason to refine a mesh more than once.",
-      "Then closed the loop: screened four ways of fixing the bracket by hand before modelling any of them, because ruling a candidate out with a section modulus costs seconds and building then solving it costs hours. The instructive result was the option that looked best. Folding the upright's free edges into flanges makes that leg 7.4\u00d7 stiffer \u2014 235 down to 32 MPa \u2014 and changes the bracket's margin by nothing at all, because both legs carry the same moment through the same section and the governing stress simply moves to the untouched base. It costs 14% more mass and fails at exactly the same load. Chose 2.0 mm gauge instead, the lightest arm that passes, and treated it as a drawing re-issue rather than an edit: the bend deduction changes, so the blank goes 101.52 to 100.97 mm and a shop cutting to the old sheet would make the wrong blank.",
-      "Solved the chosen redesign to confirm it: 126.1 MPa converged against a 193 MPa yield, a +53% margin where the original had \u22122%, and deflection halved from 4.83 to 2.46 mm. The peak still diverges in exactly the same place, which is the right answer \u2014 the singularity belongs to the constraint, not the part, so a thicker part should not cure it. Only the winner was solved, and that is defensible because the beam model reads 16% high at both gauges, agreeing to 0.2 of a point across a 25% thickness change; a test pins that calibration, because if it drifts the screen has stopped being safe.",
-      "Backed that solver result with closed-form beam theory sharing none of its code, which put the nominal at 235 MPa — also past yield, from a different direction — and surfaced what a single-cantilever idealisation misses: most of the tip movement is the base rotating, not the upright bending, because the base reacts the moment back to the bolts through the same 1.6 mm of material. A test pins the non-convergence itself, so if anyone later rounds that edge and the peak starts converging, the suite fails and the claim gets rewritten.",
-      "Sized a bleed-air duct from station 3 of my own turbofan cycle model \u2014 759.5 K at 12.5 bar \u2014 and routed it in pyOCC as a solid swept along a 3D spline, then measured true minimum distance to the structure around it. Two findings the arithmetic gave up rather than the drawing: the wall is governed by surviving a 2\u00d7 diameter bend, not by hoop stress, because bending thins the outside by 20%; and the clearance requirement is 10.5 mm because stainless at 760 K grows 7.6 mm over a metre before anything vibrates. The obvious short route fouled the casing outright, and it is kept in the repository beside the one that works.",
-      "Wrote a design-for-manufacture checker that reads a STEP file it did not create \u2014 wall thickness by firing rays through the solid, draft from face normals, hole aspect and internal corner radius from the cylinders that are holes rather than fillets. Run across every part in the repository it found seventeen failures on the gearbox housing as a casting, which that project's own README lists as a known omission: the checker recovered it from the geometry, having never read the README. Its ray-cast wall thickness also returns 3.00 mm on the actuator, exactly the wall_thickness constant its generator sets, by a path that shares no code.",
-      "Wrote 78 tests for the gearbox generator \u2014 the last of the five with none, and the one with the most defects already found, which is not a coincidence. They found another: both tooth profiles are drawn with a tooth centred on their own +X axis, so with an even gear the two solids overlapped by 424 mm\u00b3, 2.1% of the pinion, in every exported assembly. Every member of the family has an even gear. Fixed by phasing the gear half a tooth pitch, and the parity matters \u2014 an odd gear already presents a gap, so rotating it causes exactly the clash it avoids. Both directions are pinned by tests and the STEP files are regenerated.",
-      "Checked those tests by reintroducing the original involute sign error to confirm the suite goes red. It does, but through only one test of the three that look like they should catch it. Tooth thickness at the pitch circle is still correct with the sign mirrored, which is why the bug survived its first review; and BRepCheck_Analyzer validity still passes too, because at every tooth count this project ships the mirrored flanks stay inside their own sector and the solid is genuinely well-formed. Only checking that the tooth narrows from root to tip finds it. Verifying geometry is well-formed is a different question from verifying it is right.",
-      "Checked the geometry rather than assuming it, which is what found the interesting problems: the involute half-angle carried the wrong sign, giving hourglass teeth whose flanks crossed and a solid that failed BRepCheck_Analyzer and would not triangulate; the housing footprint was driven by bearing-boss diameter, so the 50 kW gear hung 84 mm outside its own casing; the actuator assembly stacked every part at the origin, sealing the rod and its rod-end inside the barrel; the clevis was too small to carry its own bolt holes clear of its pin bore; and every BOM mass was a hand-rolled formula, one of them wrong by 5.3\u00d7. All fixed, all covered by tests.",
-    ],
-    tech: ["Python", "CadQuery", "pyOCC", "GD&T", "ISO 286", "ISO 1101", "Sheet metal", "DFM", "FEA", "CalculiX", "STEP"],
-    figures: [
-      {
-        src: "/products/gearbox-assembly-dark.png",
-        srcLight: "/products/gearbox-assembly.png",
-        alt: "Shaded render of a single-stage accessory gearbox: a 90-tooth gear meshing with a 20-tooth pinion, both seated on bearing bosses that stand on a flanged aluminium housing with four corner mounting pads.",
-        short: "20 kW gearbox assembly",
-        caption: "The 20 kW narrow-body design \u2014 90 teeth against 20, a 4.5:1 reduction on a 110 mm centre distance. Rendered straight from the kernel's own tessellation of the exported solid, so what is drawn here is the geometry that ships in the STEP file, not a separate illustration of it.",
-      },
-      {
-        src: "/products/bracket-fea-convergence-dark.png",
-        srcLight: "/products/bracket-fea-convergence.png",
-        alt: "Two panels against node count on a log axis. Left, peak von Mises stress rising from 457 to 545 MPa and still climbing, with a flat 99th-percentile line at 197 MPa just above a dotted yield line at 193 MPa. Right, tip deflection flat at 4.83 mm against a dashed hand-calculation reference at 6.8 mm.",
-        short: "Bracket mesh convergence",
-        caption: "Two quantities from the same five solves. The 99th percentile settles to 0.28% and the deflection to 0.06%; the peak node climbs 12% and does not converge, because it sits on the edge of a fixed constraint, which is singular. Hollow markers are meshes too coarse to put two elements through a 1.6 mm wall \u2014 reported, and excluded from every conclusion.",
-      },
-      {
-        src: "/products/bracket-redesign-trade-dark.png",
-        srcLight: "/products/bracket-redesign-trade.png",
-        alt: "Margin of safety against mass for four bracket designs. Two hollow markers sit below the yield line at the same margin of \u221218%, joined by a dashed arrow labelled plus 14% mass, identical margin. Two filled markers sit above the line at higher mass.",
-        short: "Redesign trade study",
-        caption: "Four ways to fix a bracket that yields at 9g, screened by hand before any was modelled. The arm worth reading is the one that moves right without moving up: folding flanges up the upright makes that leg 7.4\u00d7 stiffer and leaves the part exactly as weak, because the base carries the same moment through the same section. Hollow markers fail.",
       },
     ],
   },
@@ -330,6 +291,49 @@ export const projects = [
         alt: "Drag polar showing the classic parabolic bucket, symmetric about zero lift with minimum drag at zero lift.",
         short: "Drag polar",
         caption: "The parabolic bucket, minimum drag at zero lift where a symmetric section must have it. The polar is symmetric about Cl = 0 to five decimals in Cd \u2014 the section is symmetric, so the sweep carries its own check and passes it under real loading on both sides, not only at the trivial point.",
+      },
+    ],
+  },
+  {
+    title: "Aircraft Flight Performance Calculator",
+    context: "Personal project — open source",
+    period: "Aug 2026",
+    stats: [
+      { value: "within 8%", label: "Ceiling vs. published" },
+      { value: "3", label: "Aircraft validated" },
+      { value: "63", label: "Tests" },
+    ],
+    points: [
+      "Built a tested Python package computing flight performance from first principles — ISO 2533 atmosphere, parabolic drag polar, Mach-dependent thrust lapse, climb rate, ceilings, Breguet range and payload-range.",
+      "Validated against published data for the 737-800, A320-200 and 777-300ER across a 4.5\u00d7 mass range. Service ceiling agrees within 8%; because manufacturers do not publish CD0 or Oswald efficiency, every result carries a band swept across the plausible range of both.",
+      "Added a compressibility (wave) drag term and documented what it did and didn't fix rather than tuning it to look complete: predicted max speed improved from Mach 0.98\u20131.09 to 0.91\u20130.98, but still sits above each aircraft's published MMO \u2014 a real, un-hidden gap in a simplified empirical correlation.",
+    ],
+    tech: ["Python", "NumPy", "SciPy", "Matplotlib", "pytest"],
+    link: {
+      href: "https://github.com/Itsvkid/flight-performance-calculator",
+      label: "View on GitHub",
+    },
+    figures: [
+      {
+        src: "/figures/flight-envelope-dark.png",
+        srcLight: "/figures/flight-envelope.png",
+        alt: "Flight envelope: altitude against true airspeed, bounded left by a low-speed limit and right by a thrust limit, the two closing on each other and meeting at 13.5 km.",
+        short: "Flight envelope",
+        caption: "Where level flight is possible. The left boundary is stall speed down low, but above about 12 km it becomes thrust-limited \u2014 the aircraft runs out of thrust before it runs out of wing. Both boundaries meet at the absolute ceiling.",
+      },
+      {
+        src: "/figures/thrust-curves-dark.png",
+        srcLight: "/figures/thrust-curves.png",
+        alt: "Thrust required and thrust available against true airspeed at 10 km, crossing at 273 m/s, with minimum drag at 197 m/s.",
+        short: "Thrust curves, 10 km",
+        caption: "Thrust required and available at 10 km. Their crossing sets maximum level speed; the minimum of the required curve is the minimum-drag speed, where induced and parasite drag are equal and L/D peaks at 17.2.",
+      },
+      {
+        src: "/figures/payload-range-dark.png",
+        srcLight: "/figures/payload-range.png",
+        alt: "Payload-range diagram: flat at 18 tonnes of payload out to 3717 km, then sloping to zero payload at 7519 km.",
+        short: "Payload-range",
+        caption: "Flat while the tanks still have room, then sloped once fuel is the binding constraint and every extra kilometre is bought by offloading payload.",
       },
     ],
   },
@@ -617,12 +621,12 @@ export const education = [
       "Turbomachinery Aerodynamics",
       "Propulsion System Design",
     ],
-    note: "Installation aerodynamics of aero-engine nacelles (ongoing)",
+    note: "Research project, result pending assessment: installation aerodynamics of aero-engine nacelles",
   },
   {
     school: "KCG College of Technology, Anna University",
     location: "Chennai, India",
-    degree: "BEng Aeronautical Engineering — CGPA 7.37/10",
+    degree: "BEng Aeronautical Engineering — CGPA 7.37/10 (first class, Anna University scale)",
     period: "2021 — 2025",
     modules: [
       "Air Breathing Propulsion",

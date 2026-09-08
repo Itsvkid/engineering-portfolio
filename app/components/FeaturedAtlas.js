@@ -16,10 +16,12 @@ const poster = {
   alt: "Cutaway of a high-bypass turbofan seen from the front quarter: fan, booster, ten-stage compressor, double-annular combustor, two-stage HP and five-stage LP turbine, with fuel, oil, air, control, ignition and fire-detection hardware drawn around the core in colour.",
 };
 
+// Provenance, not effort. An earlier version led with part and triangle
+// counts, which read as a web-development statistic on a design portfolio.
 const stats = [
-  { value: "142", label: "selectable parts" },
-  { value: "12", label: "engine systems" },
-  { value: "1,536", label: "blades, every one counted" },
+  { value: "12", label: "engine systems, 142 parts" },
+  { value: "67", label: "published stations, to scale" },
+  { value: "0", label: "numbers without a source" },
 ];
 
 export default function FeaturedAtlas() {
@@ -41,10 +43,11 @@ export default function FeaturedAtlas() {
                 Turbofan Atlas
               </h2>
               <p className="t-body mt-3 text-fg1">
-                A high-bypass turbofan, part by part. The NASA/GE E³ engine drawn to its published dimensions and made selectable:
-                gas generator, fuel, control, air, oil, ignition, variable geometry, anti-icing, fire detection, vibration monitoring,
-                exhaust and structure. Both spools turn, the stators re-stagger, the casings fade, and every number on the page
-                carries the report page it came from.
+                A high-bypass turbofan, part by part, reconstructed from the NASA/GE E³ design reports. The flowpath is drawn to the
+                dimensions those reports publish, the compressor and turbine blades are lofted from their own printed section tables,
+                and all twelve systems are there: fuel, control, air, oil, ignition, variable geometry, anti-icing, fire detection,
+                vibration monitoring, exhaust and structure. Every number carries the page it came from, or is flagged as assumed.
+                The engine is NASA&rsquo;s, not mine. Reading it accurately is the work.
               </p>
               <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2">
                 <Link href="/turbofan" className="rounded-sm bg-accent px-4 py-2 font-mono text-[0.75rem] font-medium uppercase tracking-[0.06em] text-bg0 transition-colors duration-[var(--dur-fast)] hover:bg-accent-hover active:bg-accent-active">
