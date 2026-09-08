@@ -264,3 +264,22 @@ closures:
       app/turbofan/atlas/flowpath.js to place the engine identically
       (finding 159).
 
+  - stage: J2
+    what: the Campbell match renders every one of E3's 24 comparisons with its reading uncertainty, on a linear axis, published lines as read
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      J2's closure is about the FIGURE, not the model. E3's closure is a
+      separate, recorded miss (1 of 24) and J2 does not move it. What J2
+      adds is that the miss is measuring two things at once: on 11 of the
+      24 comparisons -- every first-flex mode among them -- the
+      transcription cannot resolve a 5 percent band at all, so the
+      comparison is unfalsifiable there (finding 160). Among the 13 that
+      can be judged, 1 passes. The over-prediction grows with mode number
+      on the four stages publishing all three: +19.5, +25.8, +37.8 percent.
+      And the published lines being drawn flat costs 3 of the 4 resonance
+      crossings in the operating range (finding 162, unresolved).
+

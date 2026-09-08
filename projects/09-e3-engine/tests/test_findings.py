@@ -53,9 +53,16 @@ def test_more_than_half_the_comparisons_land_within_ten_percent():
 
 def test_the_worst_disagreements_are_the_ones_the_findings_name():
     """the top of the ranking should be E3's beam-model bias and the
-    open questions, not something unaccounted for"""
+    open questions, not something unaccounted for.
+
+    J2 joined this set on 2026-09-08: the published Campbell lines are
+    drawn flat, this project's model gains 54 % on stage-1 first flex
+    across the speed range, and that is a genuine disagreement with a
+    number read off a figure like any other (finding 162). It is the same
+    beam model as E3's entries, seen from the speed axis instead of the
+    frequency axis."""
     top = ROWS[:10]
-    assert all(r.stage in ("E3", "E5", "E2", "C4") for r in top), \
+    assert all(r.stage in ("E3", "E5", "E2", "C4", "J2") for r in top), \
         [(r.stage, r.quantity) for r in top]
 
 

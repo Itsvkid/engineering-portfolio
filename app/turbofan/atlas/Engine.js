@@ -253,12 +253,12 @@ function Label({ part, theme }) {
  * wins. The frame goal is the part's bounding sphere, rotated into world,
  * seen from the camera's current direction so the fly-to feels continuous.
  */
-function CameraDriver({ preset, frameRequest, built, controlsRef, reduced }) {
+function CameraDriver({ preset, frameRequest, dolly, built, controlsRef, reduced }) {
   const { camera, invalidate, size } = useThree();
   const portrait = size.width < size.height;
   const tween = useRef(null);
   // -1 so the first preset is applied on mount (a portrait viewport needs its lift).
-  const seen = useRef({ preset: -1, frame: -1 });
+  const seen = useRef({ preset: -1, frame: -1, dolly: dolly?.n ?? -1 });
 
   const start = (position, target) => {
     const controls = controlsRef.current;
@@ -327,6 +327,17 @@ function CameraDriver({ preset, frameRequest, built, controlsRef, reduced }) {
     start(centre.clone().addScaledVector(dir, dist), centre);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frameRequest]);
+
+  useEffect(() => {
+    if (!dolly || dolly.n === seen.current.dolly) return;
+    seen.current.dolly = dolly.n;
+    const controls = controlsRef.current;
+    if (!controls) return;
+    const offset = new Vector3().subVectors(camera.position, controls.target);
+    const next = Math.min(controls.maxDistance, Math.max(controls.minDistance, offset.length() * dolly.factor));
+    start(controls.target.clone().addScaledVector(offset.normalize(), next), controls.target.clone());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dolly]);
 
   useFrame((_, dt) => {
     const tw = tween.current;
@@ -419,11 +430,10 @@ function Scene({ state, dispatch, theme, palette }) {
 
   return (
     <>
-      <color attach="background" args={[palette.background]} />
-      <hemisphereLight args={[palette.skyLight, palette.groundLight, 0.7]} />
-      <directionalLight position={[4, 8, 6]} intensity={1.3} />
-      <directionalLight position={[-6, 3, -5]} intensity={0.5} />
-      <directionalLight position={[2, -5, 2]} intensity={0.3} />
+      <hemisphereLight args={[palette.skyLight, palette.groundLight, 0.55]} />
+      <directionalLight position={[4, 8, 6]} intensity={1.5} />
+      <directionalLight position={[-6, 3, -5]} intensity={0.45} />
+      <directionalLight position={[2, -5, 2]} intensity={0.25} />
       <StudioEnvironment />
 
       <group rotation={[0, 0, -Math.PI / 2]} onPointerMissed={() => dispatch({ type: "select", id: null })}>
@@ -442,7 +452,7 @@ function Scene({ state, dispatch, theme, palette }) {
         target={CAMERA_PRESETS.iso.target}
       />
       <Lens />
-      <CameraDriver preset={state.cameraPreset} frameRequest={state.frameRequest} built={built} controlsRef={controlsRef} reduced={!state.motion} />
+      <CameraDriver preset={state.cameraPreset} frameRequest={state.frameRequest} dolly={state.dolly} built={built} controlsRef={controlsRef} reduced={!state.motion} />
     </>
   );
 }
@@ -454,10 +464,13 @@ export default function Engine({ state, dispatch, theme, palette }) {
       camera={{ position: CAMERA_PRESETS.iso.position, fov: 32, near: 0.05, far: 60 }}
       dpr={[1, 1.75]}
       frameloop={live ? "always" : "demand"}
-      gl={{ antialias: true, localClippingEnabled: true, powerPreference: "high-performance" }}
+      gl={{ antialias: true, alpha: true, localClippingEnabled: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
         gl.localClippingEnabled = true;
-        gl.setClearColor(new Color(palette.background));
+        // Transparent: the stage's radial gradient is drawn in CSS behind the
+        // canvas, which gives the model a soft studio ground no flat clear
+        // colour can, and keeps the two in step when the theme changes.
+        gl.setClearColor(new Color(0x000000), 0);
       }}
       // No filmic tone mapping: it compresses the mid-tones and made the
       // whole engine read as dim. Declared here rather than set on the

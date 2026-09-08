@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from functools import lru_cache
 
 import numpy as np
 import yaml
@@ -257,8 +258,13 @@ def hpc_rotor_stages():
     return sorted({s.stage for s in all_sections() if s.kind == "rotor"})
 
 
+@lru_cache(maxsize=None)
 def hpc_rotor_model(stage):
     """Build the beam model for one HPC rotor stage.
+
+    Cached: unit J2 evaluates every stage across nine speeds and three
+    modes, and rebuilding the sections each time made the figure take
+    minutes. The model is a pure function of the stage number.
 
     Factored out of `hpc_rotor_predictions` so that unit J2's Campbell
     figure evaluates the SAME model across speed rather than keeping its

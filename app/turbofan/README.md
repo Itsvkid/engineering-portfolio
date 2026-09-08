@@ -89,10 +89,41 @@ Link parameters: `part=`, `camera=iso|front|side|top|aft`, `cam=x,y,z&at=x,y,z`,
 `frame=1`, `cut=0`, `sep=0..1`, `shell=0.1..1`, `systems=a,b`, `tour=air|fuel|structure`,
 `theme=dark|light`, `ui=0`.
 
-Design rules: the site's Instrument Grade spec (`docs/DESIGN_SPEC.md`); the
-atlas CSS stays inside `@layer components` so Tailwind utilities win; the
-Canvas is declared `flat` (R3F re-applies filmic tone mapping on re-render
-otherwise, and the engine goes dim).
+## Design language
+
+The atlas does **not** use the site's Instrument Grade treatment. That spec
+suits an editorial page; on a tool it read as cramped, dim and amateur. The
+chrome follows [OMF Atlas](https://omfatlas.xera.ac) instead: a light studio
+stage with a soft radial falloff, white panels floating over it on a blur,
+one calm accent, soft radii, generous spacing, and small sentence-case type
+rather than uppercase mono.
+
+What is taken from OMF Atlas and what is not:
+
+- **Taken:** the light stage and its radial gradient, translucent panels on
+  `backdrop-filter`, the segmented view-pill control, the vertical zoom
+  stack, the live-dot stage caption, alpha borders rather than solid lines,
+  and 7–11 px radii.
+- **Not taken:** their layout. OMF Atlas puts a sidebar and an inspector
+  either side of a head, which is roughly square. An engine is long and thin,
+  so the chrome stays on the bottom edge and the stage keeps full width.
+- **Kept from the portfolio:** the orange accent, so the page still belongs
+  to the site it is reached from.
+
+Mechanics worth knowing:
+
+- The site's tokens (`--bg0`, `--fg0`, `--line`, `--accent`) are redefined
+  inside `.atlas` rather than replaced, so Tailwind utilities already in the
+  JSX pick up the atlas palette with no churn.
+- Light is the tuned default here even though the site is dark-first. Both
+  themes are supported and the toggle works.
+- The canvas is **transparent**; the stage gradient is CSS behind it.
+- The model palette is *deeper* in light than in dark, which is the opposite
+  of the instinct: a pale metal on a light stage has no contrast and the
+  engine washes out.
+- The Canvas is declared `flat` (R3F re-applies filmic tone mapping on
+  re-render otherwise, and the engine goes dim).
+- The atlas CSS stays inside `@layer components` so Tailwind utilities win.
 
 ## Publishing
 

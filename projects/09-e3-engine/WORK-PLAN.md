@@ -1210,7 +1210,9 @@ pointed at with its load stated.
       — J1 done: `solvers/publication/meridional.py`, true aspect, the one
       known join (HPT exit → LPT datum) at its measured 6.85 cm and both
       unpublished offsets drawn as labelled gaps. Findings 155–158.
-      Campbell match and render still open.
+      J2 done: `solvers/publication/campbell.py`, two figures — the 24
+      comparisons with their reading uncertainty, and ten Campbell
+      diagrams. Findings 160–162. Render still open.
 - [ ] Drawing pack: GA with stations; one detail per module
 - [ ] Rotating cutaway on the site via the `TurbineStage` spool pattern;
       static glTF to the Autodesk viewer

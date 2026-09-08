@@ -197,6 +197,15 @@ def _open_questions():
         "Rotor 37 mass flow, converged solve", "C4", 5.17, 20.188,
         "TP-1337 Table I design flow", "unresolved", finding=141))
 
+    # the published Campbell lines do not rise with speed; the model says
+    # stage-1 first flex gains 54 % across the range (unit J2, finding 162)
+    from publication.campbell import predicted_curve, RPM_DETERIORATED
+    lo, hi = predicted_curve(1, 0, [0.0, RPM_DETERIORATED])
+    out.append(Disagreement(
+        "HPC stage-1 1F rise, rest to max speed", "J2", hi / lo, 1.0,
+        "HPC Figs 33-42, mode lines drawn flat across the speed range",
+        "unresolved", units="ratio", finding=162))
+
     # two published lengths for the same duct, 10 % apart (unit J1)
     td = yaml.safe_load((DATA / "engine-flowpath.yaml").read_text())["transition_duct"]
     out.append(Disagreement(

@@ -5,6 +5,7 @@ import { ASSUMED_OFFSETS } from "./flowpath";
 import { PARTS_BY_SYSTEM, PART_BY_ID, provenanceOf, searchParts } from "./parts";
 import { PRESETS, SYSTEMS, SYSTEM_BY_ID, TAGS } from "./systems";
 import { TOURS, TOUR_BY_ID } from "./tours";
+import { IconPause, IconPlay, IconSearch } from "./icons";
 
 /** The studio's panels: chips, systems, inspector, controls, tour, search, about. */
 
@@ -58,7 +59,7 @@ export function SystemsPanel({ state, dispatch, palette }) {
             </button>
           ))}
         </div>
-        <p className="mt-3 text-[0.8125rem] text-fg2">
+        <p className="atlas-lede">
           Click a system to read about it and list its parts. The checkbox shows or hides its layer; the chips in the bar below do the same.
         </p>
       </div>
@@ -104,8 +105,8 @@ export function Inspector({ state, dispatch, part, palette }) {
     <div className="atlas-drawer-grid">
       <div className="atlas-col">
         <span className="atlas-kicker">Turbofan anatomy</span>
-        <h1 className="mt-1 text-base font-semibold text-fg0">A high-bypass turbofan, part by part</h1>
-        <p className="mt-2 text-[0.8125rem] leading-relaxed">
+        <h1 className="atlas-title">A high-bypass turbofan, part by part</h1>
+        <p className="atlas-lede">
           Click any part to read what it is and what it does. Every number carries its source: an E³ report page, or a note that the
           geometry is schematic. Or let a tour walk you through.
         </p>
@@ -146,8 +147,8 @@ function SystemInspector({ id, dispatch, palette }) {
             System {String(sys.n).padStart(2, "0")} · {sys.short}
           </span>
         </div>
-        <h2 className="mt-1 text-base font-semibold text-fg0">{sys.name}</h2>
-        <p className="mt-2 text-[0.8125rem] leading-relaxed">{sys.blurb}</p>
+        <h2 className="atlas-title">{sys.name}</h2>
+        <p className="atlas-lede">{sys.blurb}</p>
         <div className="mt-3 flex flex-wrap gap-1">
           <button type="button" className="atlas-btn" onClick={() => dispatch({ type: "preset", systems: [id] })}>
             Show only this
@@ -190,7 +191,7 @@ function PartInspector({ part, state, dispatch, palette }) {
           <Tag tag={provenanceOf(part)} />
         </div>
         {part.spool && <p className="atlas-kicker mt-1">Rotates with the {part.spool === "lp" ? "LP" : "HP"} spool</p>}
-        <p className="mt-2 text-[0.8125rem] leading-relaxed text-fg1">{part.text}</p>
+        <p className="atlas-lede">{part.text}</p>
         <div className="mt-3 flex flex-wrap gap-1">
           <button type="button" className="atlas-btn" aria-pressed={isolated} onClick={() => dispatch({ type: "isolate", id: isolated ? null : part.id })}>
             {isolated ? "Show all" : "Isolate"}
@@ -232,9 +233,11 @@ function PartInspector({ part, state, dispatch, palette }) {
 function Slider({ label, value, min = 0, max = 1, step = 0.01, format, onChange }) {
   return (
     <label className="atlas-slider">
-      <span className="atlas-kicker">{label}</span>
+      <span className="atlas-slider-head">
+        <span>{label}</span>
+        <output>{format ? format(value) : `${Math.round(value * 100)} %`}</output>
+      </span>
       <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} />
-      <output>{format ? format(value) : `${Math.round(value * 100)} %`}</output>
     </label>
   );
 }
@@ -291,8 +294,8 @@ export function TourPanel({ state, dispatch, part }) {
       <div className="atlas-drawer-grid">
         <div className="atlas-col">
           <span className="atlas-kicker">Guided tours</span>
-          <h2 className="mt-1 text-base font-semibold text-fg0">Let the engine explain itself</h2>
-          <p className="mt-2 text-[0.8125rem] leading-relaxed">
+          <h2 className="atlas-title">Let the engine explain itself</h2>
+          <p className="atlas-lede">
             Each tour steps through the parts in order, flying the camera to each. Press play to let it run, or use the arrow keys.
           </p>
         </div>
@@ -301,7 +304,7 @@ export function TourPanel({ state, dispatch, part }) {
             <button key={t.id} type="button" className="atlas-row items-start" onClick={() => dispatch({ type: "tourStart", id: t.id, playing: true })}>
               <span className="flex-1">
                 <span className="block text-fg0">{t.name}</span>
-                <span className="block text-[0.8125rem] text-fg2">
+                <span className="block text-[11.5px] text-fg2">
                   {t.blurb} · {t.steps.length} stops
                 </span>
               </span>
@@ -321,8 +324,8 @@ export function TourPanel({ state, dispatch, part }) {
         <span className="atlas-kicker">
           {tour.name} · {state.tour.step + 1} / {tour.steps.length}
         </span>
-        <h2 className="mt-1 text-base font-semibold text-fg0">{stepPart.name}</h2>
-        <p className="mt-2 text-[0.9375rem] leading-relaxed text-fg1">{step.text}</p>
+        <h2 className="atlas-title">{stepPart.name}</h2>
+        <p className="atlas-lede">{step.text}</p>
       </div>
       <div className="atlas-col atlas-tour-controls">
         <div className="flex flex-wrap gap-1">
@@ -330,6 +333,7 @@ export function TourPanel({ state, dispatch, part }) {
             ← Back
           </button>
           <button type="button" className="atlas-btn" aria-pressed={state.tour.playing} onClick={() => dispatch({ type: "tourPlay", playing: !state.tour.playing })}>
+            {state.tour.playing ? <IconPause /> : <IconPlay />}
             {state.tour.playing ? "Pause" : "Play"}
           </button>
           <button type="button" className="atlas-btn" disabled={last} onClick={() => dispatch({ type: "tourStep", delta: 1 })}>
@@ -370,12 +374,13 @@ export function SearchBox({ dispatch, inputRef }) {
     return () => document.removeEventListener("pointerdown", onDown);
   }, []);
   return (
-    <div ref={box} className="relative w-full max-w-md">
-      <input
+    <div ref={box} className="relative w-full">
+      <div className="atlas-search">
+        <IconSearch />
+        <input
         ref={inputRef}
         type="search"
-        className="atlas-search"
-        placeholder="Search parts, systems, numbers…  /"
+        placeholder="Search parts, systems, numbers"
         value={q}
         onChange={(e) => {
           setQ(e.target.value);
@@ -394,9 +399,11 @@ export function SearchBox({ dispatch, inputRef }) {
           }
         }}
         aria-label="Search parts"
-      />
+        />
+        <kbd>/</kbd>
+      </div>
       {open && q && (
-        <div className="atlas-panel top-full left-0 right-0 mt-1 max-h-80 z-30">
+        <div className="atlas-panel atlas-results">
           <div className="atlas-scroll p-1">
             {results.length === 0 && <p className="px-3 py-2 text-fg2">No part matches “{q}”.</p>}
             {results.map((p) => (

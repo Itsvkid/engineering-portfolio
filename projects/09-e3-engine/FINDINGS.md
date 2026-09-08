@@ -11,7 +11,7 @@ makes them. The prose is written by hand.
 
 ## 1. Every disagreement with a published number, ranked
 
-**99 comparisons** against numbers printed in the NASA reports.
+**100 comparisons** against numbers printed in the NASA reports.
 Each is something a solver computed and a report states, with no
 intermediate fitting.
 
@@ -20,9 +20,9 @@ intermediate fitting.
 | Within 1 % | 12 |
 | Within 5 % | 38 |
 | Within 10 % | 56 |
-| Worse than 20 % | 21 |
-| Median absolute error | **6.70 %** |
-| **Unresolved** | **6** |
+| Worse than 20 % | 22 |
+| Median absolute error | **7.30 %** |
+| **Unresolved** | **7** |
 
 Unresolved means exactly that: a disagreement with no cause yet. Five
 of ninety-eight is the honest count, and they are listed in section 3.
@@ -34,6 +34,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | +79.1 | E5 | LPT Fig 70 disk_C stress concentration | LPT Fig 70 | **UNRESOLVED** (finding 100) |
 | +78.7 | E3 | HPC rotor 2 3F frequency | HPC Fig 34 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | -74.4 | C4 | Rotor 37 mass flow, converged solve | TP-1337 Table I design flow | **UNRESOLVED** (finding 141) |
+| +54.3 | J2 | HPC stage-1 1F rise, rest to max speed | HPC Figs 33-42, mode lines drawn flat across the speed range | **UNRESOLVED** (finding 162) |
 | +54.0 | E3 | HPC stage-1 first flex at 14,000 rpm | HPC Fig 33, read flat across the speed range | **UNRESOLVED** (finding 145) |
 | +50.8 | E3 | HPC rotor 3 1F frequency | HPC Fig 35 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +47.3 | E3 | HPC rotor 1 3F frequency | HPC Fig 33 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
@@ -135,7 +136,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-13 met, 10 half met, 3 gated, of 26.
+14 met, 10 half met, 3 gated, of 27.
 18 of 20 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -169,6 +170,7 @@ blocks it. None is open without a reason attached.
 | I3 | FINDINGS.md written -- every disagreement ranked, with a cause or unresolved | 0 | 0 | met |
 | I2 | one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 | 0.02 | met |
 | J1 | the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | — | met |
+| J2 | the Campbell match renders every one of E3's 24 comparisons with its reading uncertainty, on a linear axis, published lines as read | — | — | met |
 
 ### The two recorded misses
 
@@ -185,6 +187,7 @@ much as questions the reports have not answered.
 
 - **LPT Fig 70 disk_C stress concentration** (E5) — 2.86547 against 1.6, +79.1 %. Source: LPT Fig 70.
 - **Rotor 37 mass flow, converged solve** (C4) — 5.17 against 20.188, -74.4 %. Source: TP-1337 Table I design flow.
+- **HPC stage-1 1F rise, rest to max speed** (J2) — 1.54314 against 1, +54.3 %. Source: HPC Figs 33-42, mode lines drawn flat across the speed range.
 - **HPC stage-1 first flex at 14,000 rpm** (E3) — 539 against 350, +54.0 %. Source: HPC Fig 33, read flat across the speed range.
 - **LPT Fig 70 disk_D stress concentration** (E5) — 0.990331 against 1.6, -38.1 %. Source: LPT Fig 70.
 - **HPT stage-1 disc bore stress, Fig 64 vs Fig 55** (E2) — 1034 against 779, +32.7 %. Source: CR-167955 Figs 55 and 64.
@@ -252,7 +255,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-156 findings, in the `STEP0.md` that owns each one.
+159 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -418,4 +421,7 @@ would break every reference in the commit history.
 | 157 | publication | Two published lengths for the transition duct disagree by 10 %. |
 | 158 | publication | The fan module has no publishable meridional contour. Three |
 | 159 | publication | The plot nearly published a second, contradictory axial layout of |
+| 160 | publication | On eleven of the twenty-four comparisons, E3's closure band is |
+| 161 | publication | The figure was briefly plotting a quantity the closure does not |
+| 162 | publication | The published lines are drawn flat, and that is not a cosmetic |
 

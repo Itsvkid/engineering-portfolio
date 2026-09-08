@@ -3,8 +3,8 @@
 import "./atlas.css";
 import Link from "next/link";
 import { useEffect, useMemo, useReducer, useRef, useState, useSyncExternalStore } from "react";
-import ThemeToggle from "../../components/ThemeToggle";
 import { applyTheme, getEffectiveTheme, subscribeToTheme } from "../../lib/theme";
+import { IconCutaway, IconEngine, IconFit, IconInfo, IconMinus, IconMoon, IconPlus, IconRotate, IconSun } from "./icons";
 import Engine from "./Engine";
 import { AboutDialog, Controls, Inspector, SearchBox, SystemChips, SystemsPanel, TourPanel } from "./panels";
 import { PART_BY_ID } from "./parts";
@@ -157,6 +157,8 @@ function reducer(state, action) {
       return { ...state, frameRequest: { part: action.part, n: (state.frameRequest?.n ?? 0) + 1 } };
     case "camera":
       return { ...state, cameraPreset: { id: action.id, n: state.cameraPreset.n + 1 } };
+    case "dolly":
+      return { ...state, dolly: { factor: action.factor, n: (state.dolly?.n ?? 0) + 1 } };
     case "set":
       return { ...state, [action.key]: action.value };
     case "drawer":
@@ -185,24 +187,20 @@ function usePalette(theme) {
   return useMemo(() => {
     const p = Object.fromEntries(SYSTEMS.map((s) => [s.id, s.color[theme]]));
     const dark = theme === "dark";
-    // Rotating hardware: the LP spool a shade cooler than the HP spool, the
-    // combustor a terracotta between them, static rows neutral. Same
-    // reasoning as the site's line-art turbine: two shafts should be told
-    // apart at a glance, and the hot section should read as hot.
-    // Bright, light metals: titanium-white for the LP spool, warm gold for
-    // the HP spool, a hot terracotta for the combustor, pale steel for the
-    // static rows, and light casings. The first palette was toned down to
-    // match the site's charcoal and read as a dim engine; this one is what a
-    // cutaway in a manufacturer's brochure looks like.
-    p.lp = dark ? "#d8d2c6" : "#cfc8ba";
-    p.hp = dark ? "#e0b76e" : "#d9ab5a";
-    p.combustor = dark ? "#e07b52" : "#d76f44";
-    p.stator = dark ? "#b9b3a6" : "#aaa397";
-    p.structure = dark ? "#b4ada0" : "#bcb5a8";
-    p.exhaust = dark ? "#b1a6c9" : "#a89bc4";
-    p.background = dark ? "#1b1815" : "#f2eee6";
-    p.skyLight = "#ffffff";
-    p.groundLight = dark ? "#8a8378" : "#cfc8bb";
+    // Rotating hardware told apart by tint: the LP spool cool steel, the HP
+    // spool warm gold, the combustor a hot terracotta between them, static
+    // rows a neutral grey, casings a cool light grey.
+    //
+    // The light theme's values are deeper than the dark theme's, which is the
+    // opposite of the instinct. On a light studio stage a pale metal has
+    // almost no contrast against the ground and the whole engine washes out;
+    // on a dark stage the same metal needs to be light to read at all.
+    p.lp = dark ? "#d8d2c6" : "#a4adb6";
+    p.hp = dark ? "#e0b76e" : "#c08b3c";
+    p.combustor = dark ? "#e07b52" : "#bf5227";
+    p.stator = dark ? "#b9b3a6" : "#8a949e";
+    p.structure = dark ? "#b4ada0" : "#b3bbc3";
+    p.exhaust = dark ? "#b1a6c9" : "#9184b4";
     return p;
   }, [theme]);
 }
@@ -305,6 +303,10 @@ export default function Atlas() {
   }, [about, state, reducedMotion]);
 
   const drawerLabel = { systems: "Systems", part: part ? "Part" : state.selectedSystem ? "System" : "Info", controls: "Controls", tour: "Tour" };
+  const selectedSystemName = state.selectedSystem ? SYSTEMS.find((x) => x.id === state.selectedSystem)?.name : null;
+  const stageName = part ? part.name : selectedSystemName ?? "High-bypass turbofan";
+  const crumb = part ? SYSTEMS.find((x) => x.id === part.system)?.name : "NASA/GE Energy Efficient Engine";
+  const dark = theme === "dark";
 
   return (
     <div className="atlas">
@@ -314,53 +316,108 @@ export default function Atlas() {
 
       {state.chrome && (
         <>
-      {/* Top bar */}
-      <header className="atlas-panel atlas-top flex-row items-center gap-2 px-3 py-2 sm:gap-3">
-        <Link href="/" className="atlas-kicker whitespace-nowrap hover:text-fg0">
-          ← Vinaykumar V.
-        </Link>
-        <span className="hidden text-fg0 font-medium tracking-tight sm:inline whitespace-nowrap">Turbofan Atlas</span>
-        <span className="atlas-tag tag-e3 hidden lg:inline">E³ FPS · to scale where published</span>
-        <div className="flex flex-1 justify-center min-w-0">
-          <SearchBox dispatch={dispatch} inputRef={searchRef} />
-        </div>
-        <button type="button" className="atlas-btn" onClick={() => setAbout(true)}>
-          About
-        </button>
-        <ThemeToggle />
-      </header>
+          <header className="atlas-header">
+            <Link href="/" className="atlas-brand" aria-label="Back to the portfolio">
+              <span className="atlas-brand-mark">
+                <IconEngine />
+              </span>
+              <span className="min-w-0">
+                <span className="atlas-brand-name">Turbofan Atlas</span>
+                <span className="atlas-brand-sub">Vinaykumar Venkateshkumar</span>
+              </span>
+            </Link>
 
-      {/* Bottom dock: drawer above, bar below */}
-      <div className="atlas-dock">
-        {state.drawer && (
-          <section className="atlas-panel atlas-drawer" aria-label={drawerLabel[state.drawer]}>
-            {state.drawer === "systems" && <SystemsPanel state={state} dispatch={dispatch} palette={palette} />}
-            {state.drawer === "part" && <Inspector state={state} dispatch={dispatch} part={part} palette={palette} />}
-            {state.drawer === "controls" && <Controls state={state} dispatch={dispatch} reducedMotion={reducedMotion} />}
-            {state.drawer === "tour" && <TourPanel state={state} dispatch={dispatch} part={part} />}
-          </section>
-        )}
-        <div className="atlas-panel atlas-dockbar">
-          <nav className="atlas-tabs" aria-label="Panels">
-            {DRAWERS.map((id) => (
-              <button key={id} type="button" className="atlas-btn" aria-pressed={state.drawer === id} onClick={() => dispatch({ type: "drawer", id })}>
-                {drawerLabel[id]}
+            <div className="relative mx-auto w-full max-w-md min-w-0">
+              <SearchBox dispatch={dispatch} inputRef={searchRef} />
+            </div>
+
+            <div className="flex flex-none items-center gap-2">
+              <button type="button" className="atlas-btn" onClick={() => setAbout(true)}>
+                <IconInfo />
+                <span className="hidden sm:inline">About</span>
+              </button>
+              <button
+                type="button"
+                className="atlas-btn atlas-icon-btn"
+                aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
+                onClick={() => applyTheme(dark ? "light" : "dark")}
+              >
+                {dark ? <IconSun /> : <IconMoon />}
+              </button>
+            </div>
+          </header>
+
+          <div className="atlas-stagetitle">
+            <span className="atlas-crumb">{crumb}</span>
+            <h1>{stageName}</h1>
+          </div>
+
+          <div className="atlas-pills" role="group" aria-label="Camera">
+            {["iso", "front", "side", "top", "aft"].map((id) => (
+              <button key={id} type="button" aria-pressed={state.cameraPreset.id === id} onClick={() => dispatch({ type: "camera", id })}>
+                {id}
               </button>
             ))}
-          </nav>
-          <SystemChips state={state} dispatch={dispatch} palette={palette} />
-          <div className="atlas-quick">
-            <button type="button" className="atlas-btn" aria-pressed={state.cutaway} onClick={() => dispatch({ type: "set", key: "cutaway", value: !state.cutaway })} title="C">
-              Cutaway
+          </div>
+
+          <div className="atlas-zoom">
+            <button type="button" aria-label="Zoom in" onClick={() => dispatch({ type: "dolly", factor: 0.8 })}>
+              <IconPlus />
             </button>
-            <button type="button" className="atlas-btn" aria-pressed={state.motion} disabled={reducedMotion} onClick={() => dispatch({ type: "set", key: "motion", value: !state.motion })} title="M">
-              Rotate
+            <button type="button" aria-label="Zoom out" onClick={() => dispatch({ type: "dolly", factor: 1.25 })}>
+              <IconMinus />
+            </button>
+            <button type="button" aria-label="Fit the whole engine" onClick={() => dispatch({ type: "camera", id: "iso" })}>
+              <IconFit />
             </button>
           </div>
-        </div>
-      </div>
 
-      {about && <AboutDialog onClose={() => setAbout(false)} />}
+          <p className="atlas-caption" style={{ bottom: state.drawer ? "calc(min(40vh, 22rem) + 96px)" : "84px" }}>
+            <span className="atlas-live" />
+            {state.motion && state.throttle > 0
+              ? `Turning at ${Math.round(3539 * state.throttle).toLocaleString()} rpm on the LP spool, 1 : 3.6 to the HP`
+              : "Drag to orbit, scroll to zoom, click any part to read it"}
+          </p>
+
+          <div className="atlas-dock">
+            {state.drawer && (
+              <section className="atlas-panel atlas-drawer" aria-label={drawerLabel[state.drawer]}>
+                {state.drawer === "systems" && <SystemsPanel state={state} dispatch={dispatch} palette={palette} />}
+                {state.drawer === "part" && <Inspector state={state} dispatch={dispatch} part={part} palette={palette} />}
+                {state.drawer === "controls" && <Controls state={state} dispatch={dispatch} reducedMotion={reducedMotion} />}
+                {state.drawer === "tour" && <TourPanel state={state} dispatch={dispatch} part={part} />}
+              </section>
+            )}
+            <div className="atlas-panel atlas-dockbar">
+              <nav className="atlas-tabs" aria-label="Panels">
+                {DRAWERS.map((id) => (
+                  <button key={id} type="button" aria-pressed={state.drawer === id} onClick={() => dispatch({ type: "drawer", id })}>
+                    {drawerLabel[id]}
+                  </button>
+                ))}
+              </nav>
+              <SystemChips state={state} dispatch={dispatch} palette={palette} />
+              <div className="atlas-quick">
+                <button type="button" className="atlas-btn" aria-pressed={state.cutaway} onClick={() => dispatch({ type: "set", key: "cutaway", value: !state.cutaway })} title="Cutaway (C)">
+                  <IconCutaway />
+                  <span className="hidden md:inline">Cutaway</span>
+                </button>
+                <button
+                  type="button"
+                  className="atlas-btn"
+                  aria-pressed={state.motion}
+                  disabled={reducedMotion}
+                  onClick={() => dispatch({ type: "set", key: "motion", value: !state.motion })}
+                  title="Rotate (M)"
+                >
+                  <IconRotate />
+                  <span className="hidden md:inline">Rotate</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {about && <AboutDialog onClose={() => setAbout(false)} />}
         </>
       )}
     </div>
