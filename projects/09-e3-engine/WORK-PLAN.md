@@ -1175,8 +1175,17 @@ pointed at with its load stated.
       (finding 122)
 
 ## I2 · Sensitivity · 6 h
-- [ ] Which assumptions move the sfc, the metal temperature and the disc
-      stress most — one-at-a-time, tabulated
+- [x] Which assumptions move the sfc, the metal temperature and the disc
+      stress most — **unit I2**, `solvers/verification/sensitivity.py`.
+      One-at-a-time elasticities, tabulated, with every input labelled
+      *published*, *measured* or *handbook*. **The nozzle coefficient
+      dominates the cycle at −2.455** — eight times the HP turbine's
+      leverage and forty times the compressor's (finding 151). **The
+      compressor's efficiency barely moves sfc (−0.059)** because the flat
+      rating cancels it (finding 152). **Handbook exposure is 0 % on sfc
+      and metal temperature, 21 % on disc stress** and that is nearly all
+      density (finding 153). Six elasticities have exact analytic values
+      and the machine returns all six (finding 154)
 
 ## I3 · `FINDINGS.md` · 8 h
 - [x] Every disagreement with a published number, ranked by size, with a
@@ -1248,7 +1257,7 @@ modelling problem; all of them are figures nobody has digitised.
 | F | F1 materials · F2 mass | ◧ ◧ |
 | G | geometry | ◧ |
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
-| I | I1 consistency · I2 sensitivity · I3 findings | ▣ ⬜ ▣ |
+| I | I1 consistency · I2 sensitivity · I3 findings | ▣ ▣ ▣ |
 | J | publication | ⬜ |
 
 **`data/closures.yaml` is the authority, not this table.** It carries every

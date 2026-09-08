@@ -134,8 +134,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-11 met, 10 half met, 3 gated, of 24.
-17 of 19 numeric closures sit inside their own band.
+12 met, 10 half met, 3 gated, of 25.
+18 of 20 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -166,6 +166,7 @@ blocks it. None is open without a reason attached.
 | G1 | blade-to-blade interference, all 32 rows | 0 | 0 | met |
 | H | zero clashes through rotation, every bearing with its load | — | — | gated |
 | I3 | FINDINGS.md written -- every disagreement ranked, with a cause or unresolved | 0 | 0 | met |
+| I2 | one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 | 0.02 | met |
 
 ### The two recorded misses
 
@@ -248,7 +249,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-147 findings, in the `STEP0.md` that owns each one.
+151 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -405,4 +406,8 @@ would break every reference in the commit history.
 | 148 | verification | Five disagreements have no cause, and saying so is the point. The |
 | 149 | verification | The model matches the design, not the test, and the ICLS numbers |
 | 150 | verification | Three numbered findings do not exist, and the gap is left open. |
+| 151 | verification | The nozzle coefficient is the most powerful number in the cycle, and |
+| 152 | verification | The compressor's efficiency barely moves the fuel burn, and the |
+| 153 | verification | Only the disc stress leans on a constant nobody measured, and only |
+| 154 | verification | Six elasticities have exact analytic values and the machine returns |
 

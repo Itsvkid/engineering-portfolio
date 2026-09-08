@@ -244,3 +244,111 @@ is the deliverable.**
      the inner OGV and section stacking — which were handed to a parallel
      session and never landed. Renumbering would break every reference in
      the commit history, so the gap stays and `FINDINGS.md` says why.
+
+---
+
+## Unit I2 — sensitivity
+
+I2's bullet: *which assumptions move the sfc, the metal temperature and the
+disc stress most — one-at-a-time, tabulated.*
+
+Every number here rests on inputs of three kinds: values **published** in
+the reports, values **measured** from them, and a few **handbook**
+constants that are nobody's measurement. The third kind is the one worth
+worrying about, and the only way to know how much is to move each one and
+watch.
+
+Each input is raised by **1 % of its own value**, so the results are
+elasticities — d(ln output)/d(ln input). An elasticity of 1 means a 1 %
+error in that input is a 1 % error in the answer.
+
+**The step-0 validation is that several of these have exact analytic
+answers**, and a sensitivity machine that cannot reproduce them is not
+worth running on the ones that do not:
+
+| Check | Known answer | Band | Why it is exact |
+|---|---|---|---|
+| Combustor efficiency → sfc | **−1** | ±0.02 | sfc is fuel flow over thrust and fuel flow goes as 1/η_comb |
+| Density → disc bore stress | **+1** | ±0.01 | σ = (3+ν)/4 · ρω²[…] is linear in ρ |
+| Rotor speed → disc bore stress | **+2** | ±0.01 | σ goes as ω² |
+| Rim radius → disc bore stress | **+2** | ±0.02 | σ goes as b², the a² term being small at a/b = 0.15 |
+| Gas + coolant temperature → metal temperature | **sum to +1** | ±0.01 | T_m is a weighted average of the two and of nothing else |
+| h_g and H_c → metal temperature | **equal and opposite** | ±0.01 | only their ratio enters the wall balance |
+| Handbook share of each answer | — | reported, not bounded | the point of the unit |
+
+---
+
+## Unit I2 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-08 (`cd solvers && python -m verification.sensitivity`)
+
+```
+sfc at max cruise                        elasticity
+   nozzle_coefficient                       -2.455   published
+   combustor_efficiency                     -1.017   published
+   hpt_efficiency                           -0.327   published
+   lpt_efficiency                           -0.302   published
+   fan_bypass_efficiency                    -0.253   published
+   compressor_efficiency                    -0.059   published
+   mixer_effectiveness                      -0.042   published
+   (seven more, all below 0.02)
+
+HPT stage-1 blade metal temperature
+   gas temperature                          +0.717   published
+   coolant temperature                      +0.283   published
+   internal conductance H_c (fitted)        -0.180   measured
+   gas-side coefficient h_g (Fig 23)        +0.179   published
+
+HPT disc bore stress
+   rim radius                               +2.010   measured
+   rotor speed                              +2.010   published
+   density (Rene 95, handbook)              +1.000   handbook
+   Poisson's ratio (handbook)               +0.086   handbook
+
+handbook share:  sfc 0.0 %   metal temperature 0.0 %   disc stress 21.3 %
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Combustor efficiency → sfc | **−1.017** | −1 ±0.02 | pass |
+| Density → disc stress | **+1.000** | +1 ±0.01 | pass |
+| Rotor speed → disc stress | **+2.010** | +2 ±0.01 | pass |
+| Rim radius → disc stress | **+2.010** | +2 ±0.02 | pass |
+| Gas + coolant → metal temperature | **0.717 + 0.283 = 1.000** | 1 ±0.01 | pass |
+| h_g and H_c | **+0.179 / −0.180** | equal, opposite ±0.01 | pass |
+
+### Findings
+
+151. **The nozzle coefficient is the most powerful number in the cycle, and
+     it is not an efficiency.** Its elasticity on sfc is **−2.455**: a 1 %
+     error in a discharge coefficient of 0.996 is a **2.5 %** error in
+     specific fuel consumption — eight times the leverage of the HP
+     turbine's efficiency and forty times the compressor's. It is published
+     (CR-168219 Table XI) so the project is not exposed by it, but it means
+     the cycle's accuracy is bounded by one coefficient that gets a single
+     line in the source and no discussion at all.
+152. **The compressor's efficiency barely moves the fuel burn, and the
+     reason is the flat rating.** Its elasticity is **−0.059**, against
+     −0.327 for the HP turbine. That looks wrong until you notice what the
+     cycle solves: the fuel-air ratio is bisected until T41 matches Table
+     XII's. A *less* efficient compressor delivers hotter air to the
+     combustor, which then needs *less* fuel to reach the same T41, and the
+     two effects very nearly cancel. On a fixed-turbine-temperature cycle,
+     compressor efficiency buys thrust and stall margin far more than it
+     buys sfc — which is exactly why the E³ spent its compressor effort on
+     pressure ratio and clearance rather than on peak efficiency.
+153. **Only the disc stress leans on a constant nobody measured, and only
+     to 21 %.** The sfc and the metal temperature rest **entirely** on
+     published values and one fitted conductance; their handbook exposure
+     is zero. The disc bore stress is 21.3 % handbook — but that share is
+     almost all density, which for a wrought nickel alloy is known to
+     better than 1 %, and Poisson's ratio contributes an elasticity of
+     0.086, so being wrong about it by 10 % moves the answer by under 1 %.
+     **The project's exposure to its own assumptions is small and it is
+     concentrated where it does least damage.**
+154. **Six elasticities have exact analytic values and the machine returns
+     all six.** Combustor efficiency −1, density +1, speed +2, radius +2,
+     the two metal temperatures summing to exactly 1.000, and h_g and H_c
+     equal and opposite to three figures. That is the step-0 validation:
+     a sensitivity study that cannot reproduce the derivatives you can do
+     by hand has no business reporting the ones you cannot.
