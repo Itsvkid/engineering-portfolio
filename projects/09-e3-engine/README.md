@@ -132,7 +132,7 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 886 tests, plain interpreter
+python -m pytest tests/     # 894 tests, plain interpreter
 ./cfd/run_shocktube.sh      # Stage C4: the OpenFOAM validation case (needs colima + docker)
 python build.py             # every stage's tables, into build/  (90 s)
 python build.py --export    # ...and unit G1's 32 blade rows as STEP  (5 min)
@@ -147,6 +147,10 @@ run can be diffed against the numbers quoted in the `STEP0.md` files. It
 deliberately produces no gated quantity — there is no basic-engine mass and
 no CFD in it, because both are blocked on transcription that has not been
 done.
+
+**[FINDINGS.md](FINDINGS.md) is the deliverable** — every disagreement with a
+published number, ranked, with a cause or "unresolved". Regenerate it with
+`python tools/build_findings.py`.
 
 Where the work stands, and what comes next, is in
 [RESUME.md](RESUME.md).

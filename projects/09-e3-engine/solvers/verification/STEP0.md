@@ -161,3 +161,86 @@ path is** and that no solver reads a value its own source does not carry.
      place in the E³ reports where a *statistical* combination is shown
      term by term, and it is worth knowing it is arithmetically sound
      before Stage D's metal temperatures are leaned on.
+
+---
+
+## Unit I3 — `FINDINGS.md`. The deliverable.
+
+The work plan's I3: *every disagreement with a published number, ranked by
+size, with a cause or "unresolved"; every place the E³ design and the E³ as
+tested differ, and which the model matches.* **Closes when: written. This
+is the deliverable.**
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Every disagreement harvested | not a hand-picked list | **generated from the solvers** | a hand-written list contains the disagreements someone remembered; this one re-ranks itself when the code changes |
+| `unresolved` used honestly | — | **more than zero, fewer than 20 %** | zero would mean the causes were invented; a large fraction would mean the work had not been done |
+| Every entry carries a source | — | **all of them** | a disagreement without the page it disagrees with is an opinion |
+| The document is current | — | **regenerating changes nothing** | a stale deliverable is worse than none |
+
+---
+
+## Unit I3 after the run — nothing above was edited; what follows was added
+
+### Results, 2026-09-08 (`python tools/build_findings.py`)
+
+```
+98 ranked disagreements across 9 stages
+   within 1 %     12
+   within 5 %     38
+   within 10 %    56
+   worse than 20 % 21
+   median |error|  6.70 %
+   unresolved       5
+
+142 numbered findings indexed; numbers 55-57 unused and recorded as such
+23 closures: 10 met, 10 half, 3 gated; 16 of 18 numeric ones inside band
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Harvested, not hand-picked | 98 from 9 harvesters | generated | pass |
+| `unresolved` used | **5 of 98, 5.1 %** | >0 and <20 % | pass |
+| Sources on every entry | all 98 | all | pass |
+| Document current | regeneration is a no-op | no change | pass |
+
+### Findings
+
+146. **The median disagreement with a published number is 6.7 %, over
+     ninety-eight comparisons.** Twelve land inside 1 %, thirty-eight
+     inside 5, fifty-six inside 10, and twenty-one are worse than 20. That
+     is the project in one number, and it is worth having because no single
+     stage's closure says it: each stage compares itself against its own
+     band, and only a ranking across all of them shows what the whole thing
+     is worth.
+147. **Twenty of the twenty-one worst disagreements are the same bug.** The
+     top of the ranking is almost entirely E3's blade frequencies — the
+     clamped-beam bias, which over-predicts by 16 % on first flex and by
+     44 % on third. One modelling limit, named in finding 143, accounts for
+     most of the project's worst numbers. Everything else in the ranking is
+     an order of magnitude better behaved.
+148. **Five disagreements have no cause, and saying so is the point.** The
+     Fig. 55 / Fig. 64 disc bore stress, which differs by 33 % between a
+     thin-shell and a detailed FE model in the same report; LPT Fig. 70's
+     printed Kt, which reproduces on both blade sections and neither disc
+     section; the HPC Campbell lines, drawn flat with speed where the model
+     says stage 1 should rise 54 % by redline; and Rotor 37's solve, which
+     collapses to a quarter of design flow. **Five of ninety-eight is the
+     honest count.** A list with none would mean the causes were being
+     invented to fill the column.
+149. **The model matches the design, not the test, and the ICLS numbers
+     show by how much.** The engine as run burned **2.5 % more fuel than
+     its own prediction**, and CR-168211 accounts for every part of that in
+     six items that sum to exactly 2.5 — the exhaust system and overboard
+     leakage 1.0, the LPT's missing efficiency point 0.9, the inlet 0.2.
+     This project is built to the FPS *design*, so Stage B closing sfc to
+     +0.46 and +0.56 % against Table XII is the right kind of agreement,
+     and the ICLS's 2.5 % is not a target it should be trying to hit. The
+     same shows in the compressor: C1 closes the design HPC at 0.8455
+     against a design 0.847, where the ICLS measured **0.856** at its own
+     build clearances.
+150. **Three numbered findings do not exist, and the gap is left open.**
+     55, 56 and 57 were reserved for C3 units 16 and 17 — the booster rows,
+     the inner OGV and section stacking — which were handed to a parallel
+     session and never landed. Renumbering would break every reference in
+     the commit history, so the gap stays and `FINDINGS.md` says why.
