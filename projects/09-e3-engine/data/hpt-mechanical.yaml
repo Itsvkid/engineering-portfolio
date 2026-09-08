@@ -969,3 +969,42 @@ report_end:
     eta: shaft power over the ideal power of W41 expanding from P4 to P42
     stations: {25: core compressor inlet, 3: compressor exit, 40: combustor exit, 41: HPT rotor-1 inlet, 49: LPT rotor-1 inlet}
   end_date_stamp: "Jan 9, 1985 (handwritten)"
+
+stage1_disk_stress_fig64:
+  src: "CR-167955 Figure 64 p.115, 'Stage 1 Disk Stress/Life' -- effective stresses in MPa (ksi), 40 seconds into accel"
+  transcribed: 2026-09-08
+  how: >
+    Read off the page image. This figure was recorded as figure-status in
+    Stage A and gated E2's peak-stress closure; it is legible and is
+    transcribed here. Two views: the whole disc on the right, and a
+    magnified dovetail/post detail on the left.
+  condition: "40 seconds into accel"
+  material: "Rene 95"
+  units: MPa
+  whole_disk:
+    upper_web: 593
+    rim_right: 848
+    arm_junction: 572
+    forward_arm_peak: 1138
+    lower_web: 996
+    lower_left: 572
+    lower_right: 489
+    bore: 1034
+  bore_lcf: ">36,000 cycles"
+  dovetail_detail:
+    post_upper: 676
+    post_lower: 676
+    peak: 1103
+    fillet: 931
+    average_bearing: -931
+  dovetail_lcf: "36,000 cycles at the 1103 MPa point"
+  peak_effective_MPa: 1138
+  peak_location: forward arm
+  as_printed_inconsistency: >
+    Figure 64 gives the stage-1 disk BORE at 1034 MPa at 40 s. Figure 55,
+    transcribed earlier into rotor_effective_stress, gives the same
+    location at the same instant as 779 MPa -- a difference of 33 %. The
+    two are different models: Fig 55 is CLASS/MASS (thin-shell) and Fig 64
+    is the FINITE/AFINE detailed model of the disk alone. Recorded as read;
+    which of the two a comparison should use is unit E2's problem, not the
+    transcription's.

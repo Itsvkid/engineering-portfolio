@@ -149,8 +149,23 @@ closures:
     band: 15.0
     achieved: 2.7
     units: percent
+    state: met
+    note: "the case the beam should get right, and does"
+
+  - stage: E3
+    what: first three modes of every HPC stage against Figs 33-42
+    band: 5.0
+    achieved: 21.4
+    units: percent, mean over 24 comparisons
     state: half
-    gate: "E3's stated closure is the first three modes of every HPC stage within 5 % of Figs 33-42, which remain figure-status"
+    gate: >
+      Figs 33-42 were transcribed on 2026-09-08 and the closure is now
+      EVALUATED rather than gated -- and it fails: 1 of 24 comparisons
+      inside the band, mean +21.4 %, first flex +15.8 % and over-predicted
+      on nine stages of ten. The cause is the one finding 84 already named:
+      a clamped beam is the stiffest root a blade can have and a dovetail
+      is not a clamp. Closing this needs a root-flexibility model or an FE
+      blade, not a better beam. Findings 143-145.
 
   - stage: E4
     what: no rotor critical inside the operating band

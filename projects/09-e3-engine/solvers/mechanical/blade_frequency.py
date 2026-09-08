@@ -412,6 +412,23 @@ if __name__ == "__main__":
               f"{r['hub_over_length']:>6.2f}{m[0]:>9.0f}{m[1]:>9.0f}{m[2]:>9.0f}"
               f"{r['stiff']:>10.0f}")
 
+    print(f"\n4b. E3's stated closure, no longer gated: the first three flexural")
+    print(f"    modes of every HPC stage against Figs 33-42\n")
+    print(f"   {'st':>3}{'fig':>5}{'1F pred':>9}{'1F pub':>8}{'err %':>8}"
+          f"{'2F pred':>9}{'2F pub':>8}{'err %':>8}{'3F pred':>9}{'3F pub':>8}{'err %':>8}")
+    for r in hpc_campbell_comparison():
+        cells = []
+        for m in r["modes"]:
+            cells += [f"{m['predicted']:>9.0f}",
+                      f"{m['published']:>8.0f}" if m["published"] else f"{'-':>8}",
+                      f"{m['err_pct']:>8.1f}" if m["err_pct"] is not None else f"{'-':>8}"]
+        print(f"   {r['stage']:>3}{r['figure']:>5}" + "".join(cells))
+    cs = hpc_campbell_summary()
+    print(f"\n   {cs['within_5pct']} of {cs['comparisons']} comparisons within E3's 5 % band")
+    print(f"   mean error {cs['mean']:+.1f} %, worst {cs['worst']:+.1f} %")
+    print(f"   first flex alone: mean {cs['first_flex_mean']:+.1f} %, worst"
+          f" {cs['first_flex_worst']:+.1f} %, all over-predicted: {cs['all_positive']}")
+
     print(f"\n5. The one HPC frequency that WAS transcribed: the stage-9 and")
     print(f"   stage-10 vanes (Figs 55-56 of the 10A rig report)")
     print(f"\n   {'vane':>6}{'L cm':>7}{'cantilever kHz':>20}{'built-in kHz':>18}"
@@ -427,3 +444,44 @@ if __name__ == "__main__":
     print("   radius and S = 1.193 + 1.571 (R/L) as the hub grows, so a stubby")
     print("   blade on a big drum stiffens several times more than the textbook")
     print("   case -- see beam.py's validation.")
+
+
+# ------------------------------------------- E3's closure, no longer gated
+
+def hpc_campbell_comparison():
+    """Stage E3's stated closure: the first three modes of every HPC stage
+    within 5 % of the published Campbell lines.
+
+    Those ten diagrams (HPC report Figs 33-42) were figure-status until
+    2026-09-08 and are now transcribed in `data/hpc-rotor-campbell.yaml`.
+    This is the comparison the closure asks for -- run for the first time,
+    against predictions that were made and recorded before the diagrams
+    were read (finding 88)."""
+    pub = yaml.safe_load((DATA / "hpc-rotor-campbell.yaml").read_text())
+    by_stage = {s["stage"]: s for s in pub["stages"]}
+    out = []
+    for r in hpc_rotor_predictions():
+        m = by_stage[r["stage"]]["modes"]
+        # the beam gives flexural modes only; compare like with like
+        want = [m.get("first_flex"), m.get("second_flex"), m.get("third_flex")]
+        got = r["modes"]
+        rows = []
+        for i, (g, w) in enumerate(zip(got, want), start=1):
+            rows.append(dict(mode=f"{i}F", predicted=g, published=w,
+                             err_pct=None if w is None else (g / w - 1) * 100))
+        out.append(dict(stage=r["stage"], material=r["material"],
+                        figure=by_stage[r["stage"]]["figure"], modes=rows,
+                        first_torsion_published=m.get("first_torsion")))
+    return out
+
+
+def hpc_campbell_summary():
+    rows = hpc_campbell_comparison()
+    errs = [m["err_pct"] for r in rows for m in r["modes"] if m["err_pct"] is not None]
+    first = [m["err_pct"] for r in rows for m in r["modes"]
+             if m["mode"] == "1F" and m["err_pct"] is not None]
+    return dict(comparisons=len(errs), within_5pct=sum(1 for e in errs if abs(e) <= 5),
+                mean=sum(errs) / len(errs), worst=max(errs, key=abs),
+                first_flex_mean=sum(first) / len(first),
+                first_flex_worst=max(first, key=abs),
+                all_positive=all(e > 0 for e in first))

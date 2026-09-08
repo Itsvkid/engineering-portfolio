@@ -176,3 +176,60 @@ def test_e3s_stated_closure_is_gated_not_claimed():
     assert "figure-status" in status and "33-54" in status
     for r in hpc_rotor_predictions():
         assert "published" not in r             # nothing to compare against
+
+
+# --- E3's closure, no longer gated -----------------------------------------
+
+def test_all_ten_campbell_diagrams_are_transcribed():
+    """the gate that stood since Stage A"""
+    import yaml
+    data = pathlib.Path(__file__).resolve().parents[1] / "data"
+    d = yaml.safe_load((data / "hpc-rotor-campbell.yaml").read_text())
+    assert len(d["stages"]) == 10
+    assert [s["figure"] for s in d["stages"]] == list(range(33, 43))
+    for s in d["stages"]:
+        assert s["modes"]["first_flex"] > 0
+        assert s["modes"]["first_torsion"] > s["modes"]["first_flex"]
+    assert "reading_uncertainty" in d["meta"]
+
+
+def test_the_first_flex_frequency_rises_monotonically_with_stage():
+    """short stiff rear blades ring higher; a transcription slip would break it"""
+    import yaml
+    data = pathlib.Path(__file__).resolve().parents[1] / "data"
+    d = yaml.safe_load((data / "hpc-rotor-campbell.yaml").read_text())
+    f = [s["modes"]["first_flex"] for s in d["stages"]]
+    assert f == sorted(f)
+    assert f[-1] / f[0] > 8
+
+
+def test_e3s_closure_is_evaluated_and_fails():
+    """finding 143 -- 1 of 24 inside a 5 % band. The band was written
+    before the model existed and the predictions before the diagrams were
+    read; neither was moved."""
+    from mechanical.blade_frequency import hpc_campbell_summary
+    s = hpc_campbell_summary()
+    assert s["comparisons"] == 24
+    assert s["within_5pct"] <= 2
+    assert s["mean"] > 15.0
+
+
+def test_the_bias_is_a_bias_not_scatter():
+    """finding 143 -- first flex over-predicted on nine stages of ten"""
+    from mechanical.blade_frequency import hpc_campbell_comparison
+    first = [m["err_pct"] for r in hpc_campbell_comparison()
+             for m in r["modes"] if m["mode"] == "1F"]
+    assert len(first) == 10
+    assert sum(1 for e in first if e > 0) >= 9
+    assert 10 < sum(first) / len(first) < 25
+
+
+def test_the_error_grows_with_mode_number():
+    """finding 144 -- a soft root removes more from a high mode than a low
+    one; a material or area error would scale every mode alike"""
+    from mechanical.blade_frequency import hpc_campbell_comparison
+    rows = hpc_campbell_comparison()
+    by = {n: [m["err_pct"] for r in rows for m in r["modes"]
+              if m["mode"] == n and m["err_pct"] is not None] for n in ("1F", "2F", "3F")}
+    mean = {k: sum(v) / len(v) for k, v in by.items()}
+    assert mean["1F"] < mean["2F"] < mean["3F"]

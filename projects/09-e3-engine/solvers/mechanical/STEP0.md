@@ -788,3 +788,78 @@ stress area is the standard 3/8-24 UNF value, 0.7854(d − 0.9743/n)².
      Different alloys, different limiting instants, and both sized to
      their own requirement rather than to each other. The weak-link order
      is a statement about *margin*, not about stress.
+
+---
+
+## Unit E3 continued — the closure, evaluated at last
+
+**The gate is lifted.** HPC report Figures 33–42, the ten rotor Campbell
+diagrams, were recorded as *"remain figure-status (A3)"* and were the sole
+thing standing between unit E3 and its stated closure. They are legible.
+They are now transcribed in `data/hpc-rotor-campbell.yaml` — read off the
+page images, with the reading uncertainty stated (±0.05 kHz on a 0–6 kHz
+axis up to ±0.25 on a 0–26, which is 2–14 % on a first-flex frequency and
+is itself comparable to the closure band).
+
+The predictions this is compared against were **made and recorded on
+2026-09-07, before the diagrams were opened** (finding 88). Nothing was
+adjusted after reading them.
+
+### Results, 2026-09-08
+
+```
+ st  fig  1F pred  1F pub   err%  2F pred  2F pub   err%  3F pred  3F pub   err%
+  1   33      405     350   15.6     1322     950   39.1     3020    2050   47.3
+  2   34      426     350   21.8     1825    1400   30.4     4468    2500   78.7
+  3   35      905     600   50.8     2878    2950   -2.4     6998    5750   21.7
+  4   36      895    1000  -10.5     4040    4600  -12.2    10306       -      -
+  5   37     1171    1000   17.1     5276    4350   21.3    13472   10500   28.3
+  6   38     1502    1400    7.3     7026    6150   14.2    18161       -      -
+  7   39     2704    2300   17.6    11010    8900   23.7    28462       -      -
+  8   40     2813    2400   17.2    13606   11900   14.3    35599       -      -
+  9   41     3090    2850    8.4    15420   11900   29.6    40724       -      -
+ 10   42     4048    3600   12.5    19158   15600   22.8    50295       -      -
+
+  1 of 24 comparisons within E3's 5 % band
+  mean +21.4 %, worst +78.7 %
+  first flex alone: mean +15.8 %, worst +50.8 %
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| First three modes, every HPC stage | **1 of 24** inside | ±5 % | **E3's closure is NOT met — finding 143** |
+| First flex only | mean +15.8 %, 9 of 10 over-predicted | — | a systematic bias, not scatter |
+
+### Findings
+
+143. **E3's closure fails, and it fails in the direction and by the amount
+     the LPT blade already warned it would.** One comparison of twenty-four
+     lands inside the 5 % band; the mean error is **+21.4 %** and first
+     flex alone is **+15.8 %, over-predicted on nine stages of ten**. That
+     is not scatter — it is a bias, and it is the same bias finding 84
+     recorded when the pinned-tip LPT blade read 45 % high: **a clamped
+     beam is the stiffest root a blade can have, and a dovetail in a slot
+     is not a clamp.** The band was written before the model existed and
+     the predictions before the diagrams were read; neither was moved. A
+     clamped Euler–Bernoulli beam reproduces a compressor blade's first
+     flex to about 16 %, not to 5, and this is the measurement that says
+     so.
+144. **The error grows with mode number, which is what a root flexibility
+     does.** First flex +15.8 % on average, second flex +20 %, third flex
+     +44 % on the four stages that print one. A soft root removes more from
+     a high mode than a low one, because the higher modes put more of their
+     strain energy near the fixing. If the discrepancy were a material
+     property or a section-area error it would scale every mode alike; it
+     does not.
+145. **The published Campbell lines are flat with speed, and the model says
+     they should rise by half.** Every one of the ten diagrams draws its
+     mode lines horizontally, drooping slightly on stages 7–10. Unit E3's
+     own Southwell analysis (finding 85) gives S ≈ 1.19 + 1.571(R/L), which
+     for stage 1 at R/L = 1.22 is S ≈ 3.1 — enough to take first flex from
+     350 Hz to about **539 Hz by 14,000 rpm, a 54 % rise that would be
+     unmissable on these axes.** It is not there. The droop on the rear
+     stages is explicable — they run at 480–655 °C and the modulus falls —
+     but stage 1 sits at 113 °C with nothing to offset stiffening. Recorded
+     as read and as an open question: either these diagrams plot something
+     other than the rotating frequency, or centrifugal stiffening is far
+     weaker on a dovetailed compressor blade than beam theory says.

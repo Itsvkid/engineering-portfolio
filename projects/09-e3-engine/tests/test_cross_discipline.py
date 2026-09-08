@@ -137,12 +137,19 @@ def test_the_spool_ratio_matches_the_assumption_stage_h_was_going_to_use():
 # --- every closure re-checked ---------------------------------------------
 
 def test_every_numeric_closure_is_inside_its_band_or_a_recorded_miss():
-    """finding 122 -- Stage I1's third bullet, made a test"""
+    """finding 122 -- Stage I1's third bullet, made a test.
+
+    Two misses now. B3's takeoff sfc has been a pinned xfail since Stage B.
+    E3 joined it on 2026-09-08 when transcribing HPC Figs 33-42 lifted the
+    gate on its closure and let it be *evaluated* for the first time -- at
+    which point it failed, 1 of 24 inside a 5 % band (finding 143). A miss
+    that can be measured is worth more than a gate that cannot, so this
+    test wants both to be present and explained, not absent."""
     misses = SUMMARY["misses"]
-    assert len(misses) == 1
-    assert misses[0]["stage"] == "B3"
-    assert misses[0]["state"] == "half"
-    assert "gate" in misses[0]
+    assert {m["stage"] for m in misses} == {"B3", "E3"}
+    for m in misses:
+        assert m["state"] == "half"
+        assert m.get("gate"), f"{m['stage']} misses its band without an explanation"
 
 
 def test_the_scoreboard_covers_every_stage_that_has_a_closure():

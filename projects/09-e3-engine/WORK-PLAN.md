@@ -914,11 +914,16 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       shroud-pinned one — right for the lowest in-phase mode (finding 83).
       **The stage-9 and stage-10 HPC vanes both bracket correctly and agree
       on the same 0.62–0.66 restraint fraction** (finding 87)
-- [ ] **Campbell diagrams vs HPC report Figs. 33–42** — ten published
-      diagrams to match, with the stage-3 root-thickening for 4/rev as the
-      test. **GATED**: `hpc-mechanical.yaml` records Figs 33–54 as
-      "remain figure-status (A3)". The ten predictions are made and
-      recorded (finding 88) so the gate is a comparison, not a rebuild
+- [x] **Campbell diagrams vs HPC report Figs. 33–42** — **the gate is
+      lifted, 2026-09-08.** All ten diagrams transcribed into
+      `data/hpc-rotor-campbell.yaml`, and **E3's closure is evaluated for
+      the first time**. It **fails**: 1 of 24 comparisons inside the 5 %
+      band, mean +21.4 %, first flex +15.8 % and over-predicted on nine
+      stages of ten (finding 143). The bias grows with mode number, which
+      is what a soft root does (finding 144). The predictions were recorded
+      on 2026-09-07 before the diagrams were opened and neither they nor
+      the band were moved. Closing it needs a root-flexibility model or an
+      FE blade, not a better beam
 - [ ] Vane Campbell vs Figs. 46–56
 - [ ] LPT stage 1 coupled blade–disc (LPT report Fig. 63); tip-shroud and
       angel-wing effects
@@ -927,8 +932,9 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] HCF margin by Goodman on top of the E1 mean stress
 
 *Closes when:* first three modes of every HPC stage within **5 %** of the
-published Campbell lines. **Gated 2026-09-07** on transcribing HPC Figs
-33–42; recorded as finding 88 rather than skipped. What could be tested
+published Campbell lines. **Evaluated 2026-09-08 and NOT met**: 1 of 24
+inside the band, mean +21.4 %. The gate was transcription and it is lifted;
+what remains is a modelling limit, named and measured (findings 143–145). What could be tested
 was: the booster closes at −2.7 %, the fan and both HPC vanes bracket
 correctly, and two misses are recorded rather than tuned — the pinned-tip
 LPT blade reads 45 % high with the rigid clamp named as the cause

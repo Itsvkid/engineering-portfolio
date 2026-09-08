@@ -1,0 +1,92 @@
+meta:
+  src: "HPC detail-design report Figures 33-42, pp.67-76 -- 'Compressor Rotor Stage N Blade Campbell Diagram', one per rotor stage"
+  transcribed: 2026-09-08
+  how: >
+    Read off the page images. These ten diagrams were recorded in
+    hpc-mechanical.yaml as "remain figure-status (A3)" and were the sole
+    gate on Stage E3's closure. They are legible. Frequencies are read at
+    the zero-speed intercept of each labelled mode line, in kHz as the
+    axis prints them, and converted to Hz here.
+  reading_uncertainty: >
+    The mode lines are drawn as thin horizontal curves against a 0-6, 0-12,
+    0-22 or 0-26 kHz axis depending on the stage. Reading precision is
+    about half a minor division: +-0.05 kHz on the 0-6 axis, +-0.1 on
+    0-12, +-0.25 on 0-22 and 0-26. That is 2-14 % on a first-flex
+    frequency and is stated because it is comparable to the closure band.
+  speed_dependence: >
+    The lines are drawn flat or gently drooping across the whole speed
+    range, not rising. On stages 7-10 they visibly droop. Recorded as read;
+    see unit E3's finding on what that means against centrifugal
+    stiffening.
+  rig_note: "the diagrams carry: RIG BLADE MATL. IS Ti 6-4, CORE BLADE MATL. WILL BE Ti 8-1-1"
+  observed_points: "circles are 1-6 rig test, squares 1-10 (or 1-10A) rig test"
+
+units: Hz
+stages:
+  - stage: 1
+    figure: 33
+    axis_max_kHz: 6
+    modes: {first_flex: 350, second_flex: 950, first_torsion: 1400,
+            third_flex: 2050, two_stripe: 2250, torsion: 2700,
+            flex: 3350, three_stripe: 4200}
+    per_rev_lines: [2, 3, 4, 6, 8, 18, 26, 50]
+  - stage: 2
+    figure: 34
+    axis_max_kHz: 6
+    modes: {first_flex: 350, second_flex: 1400, first_torsion: 1650,
+            third_flex: 2500, two_stripe: 3150, flex: 3750, flex_2: 4850}
+    per_rev_lines: [2, 3, 4, 6, 18, 32, 50, 68]
+  - stage: 3
+    figure: 35
+    axis_max_kHz: 12
+    modes: {first_flex: 600, first_torsion: 1850, first_torsion_2: 2050,
+            second_flex: 2950, second_torsion: 4400, two_stripe: 5350,
+            third_flex: 5750, three_stripe: 10200}
+    per_rev_lines: [4, 14, 18, 32, 50, 68, 82]
+  - stage: 4
+    figure: 36
+    axis_max_kHz: 12
+    modes: {first_flex: 1000, first_torsion: 2600, first_torsion_2: 3300,
+            second_flex: 4600, second_torsion: 6500, two_stripe: 8000,
+            flex: 9400, torsion: 11200}
+    per_rev_lines: [10, 14, 68, 82, 92]
+  - stage: 5
+    figure: 37
+    axis_max_kHz: 12
+    modes: {first_flex: 1000, first_torsion: 3150, second_flex: 4350,
+            second_torsion: 7450, two_stripe: 8400, third_flex: 10500}
+    per_rev_lines: [6, 10, 18, 82, 92, 110]
+  - stage: 6
+    figure: 38
+    axis_max_kHz: 12
+    modes: {first_flex: 1400, first_torsion: 3750, second_flex: 6150,
+            second_torsion: 9350, two_stripe: 10900}
+    per_rev_lines: [6, 10, 18, 92, 110, 120]
+  - stage: 7
+    figure: 39
+    axis_max_kHz: 22
+    modes: {first_flex: 2300, first_torsion: 5350, second_flex: 8900,
+            two_stripe: 11200, torsion: 12100, panel: 17800,
+            flex: 20100, three_stripe: 20500}
+    per_rev_lines: [10, 110, 112, 120]
+  - stage: 8
+    figure: 40
+    axis_max_kHz: 22
+    modes: {first_flex: 2400, first_torsion: 5300, two_stripe: 9600,
+            second_flex: 11900, torsion: 12400, flex: 19300,
+            flex_2: 20100, three_stripe: 20800}
+    per_rev_lines: [10, 104, 112, 120]
+  - stage: 9
+    figure: 41
+    axis_max_kHz: 22
+    modes: {first_flex: 2850, first_torsion: 5850, two_stripe: 10400,
+            second_flex: 11900, torsion: 13700, panel: 21200,
+            three_stripe: 21800}
+    per_rev_lines: [10, 14, 104, 112, 118]
+  - stage: 10
+    figure: 42
+    axis_max_kHz: 26
+    modes: {first_flex: 3600, first_torsion: 6750, two_stripe: 13200,
+            second_flex: 15600, torsion: 16600, panel: 24600,
+            three_stripe: 25300, panel_2: 25700}
+    per_rev_lines: [14, 22, 104, 118, 140]
