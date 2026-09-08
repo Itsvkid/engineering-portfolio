@@ -91,3 +91,25 @@ whole_engine_stitching:
   known_offsets: [HPT exit plane to LPT sections (the LPT datum), HPT Fig 3 within itself]
   unknown_offsets: [fan stacking axis to HPC IGV, HPC OGV exit to HPT vane-1 inlet]
   plan: Stage H sets the two unknown offsets from the bearing spans and frame positions of CR-168219 with a stated uncertainty, and records them here with their source
+  assumed_offsets:
+    src: >
+      Placed by the bearing spans and frame positions of CR-168219's whole-engine
+      cross-section, with the allowable range from atlas-facts.md A7. NOT PUBLISHED --
+      these are the only two axial numbers in this project that no table gives, and
+      every artefact that draws the whole engine must use these same two, so that two
+      pictures of one engine cannot disagree. First recorded here 2026-09-08,
+      back-sourced from app/turbofan/atlas/flowpath.js, which had carried them since
+      2026-09-07 without a home in data/.
+    status: assumed
+    fan_sa_to_hpc_r1_le:
+      value_cm: 142.0
+      range_cm: [110.0, 150.0]
+      note: fan rotor stacking axis (fan report Fig 15 datum) to HPC rotor-1 LE hub (HPC report z = 0)
+    hpc_ogv_te_to_hpt_vane1:
+      value_cm: 48.0
+      range_cm: [45.0, 55.0]
+      note: >
+        HPC OGV trailing edge to HPT stage-1 vane inlet, spanning the diffuser and the
+        double-annular combustor. The combustor's own axial coordinates are undimensioned
+        in Figs 1, 22 and 79, which is why this cannot be built up from its parts.
+    consumers: [app/turbofan/atlas/flowpath.js (HPC0, HPT0), solvers/publication/meridional.py (unit J1)]

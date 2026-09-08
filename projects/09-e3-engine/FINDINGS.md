@@ -11,7 +11,7 @@ makes them. The prose is written by hand.
 
 ## 1. Every disagreement with a published number, ranked
 
-**98 comparisons** against numbers printed in the NASA reports.
+**99 comparisons** against numbers printed in the NASA reports.
 Each is something a solver computed and a report states, with no
 intermediate fitting.
 
@@ -22,7 +22,7 @@ intermediate fitting.
 | Within 10 % | 56 |
 | Worse than 20 % | 21 |
 | Median absolute error | **6.70 %** |
-| **Unresolved** | **5** |
+| **Unresolved** | **6** |
 
 Unresolved means exactly that: a disagreement with no cause yet. Five
 of ninety-eight is the honest count, and they are listed in section 3.
@@ -73,6 +73,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | -10.7 | F2 | HPC rotor 2 airfoil mass | HPC Table X | inherits the section-area bias of finding 109 almost exactly (finding 109) |
 | -10.5 | F2 | HPC rotor 4 root section area | HPC Table X | the double-circular-arc and quarter-sine construction has no leading- or trailing-edge radius, so a built section is thinner than the real one; 20 of 20 comparisons are negative (finding 109) |
 | -10.5 | E3 | HPC rotor 4 1F frequency | HPC Fig 36 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
+| -10.1 | J1 | HPT-to-LPT transition duct length | CR-168219 sec 5.5 printed length vs the LPT section coordinates | **UNRESOLVED** (finding 157) |
 | +8.6 | F1 | HPC rotor 8 blade density | MIL-HDBK-5J handbook density | the reconstruction's own area accuracy; the two candidates are a factor of two apart so the identification is never in doubt (finding 104) |
 | +8.4 | E3 | HPC rotor 9 1F frequency | HPC Fig 41 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | -8.1 | F2 | HPC rotor 1 tip section area | HPC Table X | the double-circular-arc and quarter-sine construction has no leading- or trailing-edge radius, so a built section is thinner than the real one; 20 of 20 comparisons are negative (finding 109) |
@@ -134,7 +135,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-12 met, 10 half met, 3 gated, of 25.
+13 met, 10 half met, 3 gated, of 26.
 18 of 20 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -167,6 +168,7 @@ blocks it. None is open without a reason attached.
 | H | zero clashes through rotation, every bearing with its load | — | — | gated |
 | I3 | FINDINGS.md written -- every disagreement ranked, with a cause or unresolved | 0 | 0 | met |
 | I2 | one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 | 0.02 | met |
+| J1 | the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | — | met |
 
 ### The two recorded misses
 
@@ -186,6 +188,7 @@ much as questions the reports have not answered.
 - **HPC stage-1 first flex at 14,000 rpm** (E3) — 539 against 350, +54.0 %. Source: HPC Fig 33, read flat across the speed range.
 - **LPT Fig 70 disk_D stress concentration** (E5) — 0.990331 against 1.6, -38.1 %. Source: LPT Fig 70.
 - **HPT stage-1 disc bore stress, Fig 64 vs Fig 55** (E2) — 1034 against 779, +32.7 %. Source: CR-167955 Figs 55 and 64.
+- **HPT-to-LPT transition duct length** (J1) — 6.85 against 7.62, -10.1 %. Source: CR-168219 sec 5.5 printed length vs the LPT section coordinates.
 
 ---
 
@@ -249,7 +252,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-151 findings, in the `STEP0.md` that owns each one.
+156 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -410,4 +413,9 @@ would break every reference in the commit history.
 | 152 | verification | The compressor's efficiency barely moves the fuel burn, and the |
 | 153 | verification | Only the disc stress leans on a constant nobody measured, and only |
 | 154 | verification | Six elasticities have exact analytic values and the machine returns |
+| 155 | publication | The first render put the entire fan off the page. ylim was set |
+| 156 | publication | The first render deleted the transition duct. The LPT flowpath |
+| 157 | publication | Two published lengths for the transition duct disagree by 10 %. |
+| 158 | publication | The fan module has no publishable meridional contour. Three |
+| 159 | publication | The plot nearly published a second, contradictory axial layout of |
 

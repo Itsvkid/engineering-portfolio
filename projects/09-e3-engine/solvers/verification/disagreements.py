@@ -196,6 +196,14 @@ def _open_questions():
     out.append(Disagreement(
         "Rotor 37 mass flow, converged solve", "C4", 5.17, 20.188,
         "TP-1337 Table I design flow", "unresolved", finding=141))
+
+    # two published lengths for the same duct, 10 % apart (unit J1)
+    td = yaml.safe_load((DATA / "engine-flowpath.yaml").read_text())["transition_duct"]
+    out.append(Disagreement(
+        "HPT-to-LPT transition duct length", "J1",
+        td["from_sections_cm"], td["axial_length_cm"],
+        "CR-168219 sec 5.5 printed length vs the LPT section coordinates",
+        "unresolved", units="cm", finding=157))
     return out
 
 

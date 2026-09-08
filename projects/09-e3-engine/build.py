@@ -48,6 +48,9 @@ STAGES = [
                        "mechanical.attachments"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades"]),
+    ("I  verification", ["verification.consistency", "verification.sensitivity",
+                         "verification.disagreements"]),
+    ("J  publication", ["publication.meridional"]),
 ]
 GEOMETRY = {"geometry.blades"}
 

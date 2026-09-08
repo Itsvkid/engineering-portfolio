@@ -157,8 +157,9 @@ def test_build_py_lists_every_stage_and_every_runnable_module():
     p = subprocess.run([sys.executable, "build.py", "--list"], cwd=ROOT,
                        capture_output=True, text=True)
     assert p.returncode == 0
-    assert "30 modules" in p.stdout
-    for stage in ("B  cycle", "C1 mean-line", "D  thermal", "F  materials", "G  geometry"):
+    assert "34 modules" in p.stdout
+    for stage in ("B  cycle", "C1 mean-line", "D  thermal", "F  materials",
+                  "G  geometry", "I  verification", "J  publication"):
         assert stage in p.stdout
 
 

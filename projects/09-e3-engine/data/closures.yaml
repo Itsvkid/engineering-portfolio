@@ -244,3 +244,23 @@ closures:
       density +1, speed +2, radius +2, the two metal temperatures summing
       to 1, and the two heat-transfer coefficients equal and opposite. The
       machine returns all six, worst departure 0.017 on the combustor.
+
+  - stage: J1
+    what: the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      The band for a drawing is a list, not a percentage -- STEP0 unit J1's
+      six rows, each one a test in tests/test_meridional.py. All six hold:
+      the fan tip at 105.4 cm is inside the axes, the aspect is equal, the
+      fan draws radii and no invented wall, the transition duct is at its
+      measured 6.85 cm, every radius traces to a table or a dimensioned
+      drawing, and the two unpublished offsets are drawn at the values
+      engine-flowpath.yaml records as ASSUMED, each labelled with the range
+      it is allowed. A cross-artefact test requires the figure and
+      app/turbofan/atlas/flowpath.js to place the engine identically
+      (finding 159).
+
