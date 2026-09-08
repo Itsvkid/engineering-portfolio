@@ -1,23 +1,35 @@
 @import "tailwindcss";
 
 /* ── Scheme tokens ──────────────────────────────────────────────────────────
-   Dark is the design target; light flips purely on prefers-color-scheme.
-   All text/background pairs verified ≥ 4.5:1 (see docs/DESIGN_SPEC.md §3.1). */
+   Light is the design target. It used to be dark: a warm charcoal ground
+   with test-flight orange, which read well as an editorial page but made
+   the drawing furniture (crop marks, ruler edge, title block, turbine
+   linework) sit in the murk instead of reading as a drawing. On a light
+   sheet that same linework reads as what it is.
+
+   The palette is the same cool neutral family the Turbofan Atlas uses, so
+   the two halves of the site are visibly one product. `--line` is an alpha
+   so a rule sits correctly on white panels and on the page ground alike.
+   All text/background pairs meet 4.5:1. */
 
 :root {
-  color-scheme: dark;
-  --bg0: #1b1815; /* page background — warm charcoal, not pitch black */
-  --bg1: #242019; /* raised surface: inputs, nav fill, card panels */
-  --line: #39332b; /* all rules and borders */
-  --fg0: #f1ece4; /* headings, primary text */
-  --fg1: #b8afa2; /* body, secondary text */
-  --fg2: #8c8377; /* faint: meta, footer, placeholders */
-  --accent: #ff6d3b; /* test-flight orange */
-  --accent-hover: #ff8a5e;
-  --accent-active: #f05a26;
+  color-scheme: light;
+  --bg0: #f3f5f7; /* page ground — the sheet */
+  --bg1: #ffffff; /* raised surface: panels, inputs, nav fill */
+  --line: #1825361f; /* all rules and borders */
+  --line-strong: #18253633;
+  --fg0: #1e242b; /* headings, primary text */
+  --fg1: #46535e; /* body, secondary text */
+  --fg2: #77848f; /* faint: meta, footer, placeholders */
+  --accent: #c2410c; /* test-flight orange, held to AA on white */
+  --accent-hover: #9a3412;
+  --accent-active: #7c2d12;
+  --accent-soft: #fff1e9;
+  --shadow: 0 2px 10px #1e293b0f, 0 1px 2px #1e293b0a;
+  --shadow-lift: 0 6px 24px #1e293b14, 0 2px 6px #1e293b0d;
 
-  --radius-sm: 6px; /* buttons, inputs, nav pill */
-  --radius-md: 8px; /* image frames, gallery tiles, entry cards */
+  --radius-sm: 7px; /* buttons, inputs, nav pill */
+  --radius-md: 11px; /* image frames, gallery tiles, entry panels */
 
   --dur-fast: 120ms;
   --dur-base: 200ms;
@@ -29,40 +41,50 @@
 }
 
 /* The manual toggle (ThemeToggle) stamps data-theme="light"/"dark" on <html>
-   once a visitor picks explicitly; :not([data-theme="dark"]) lets the system
-   query keep driving everything until they do. See DESIGN_SPEC.md §10. */
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    color-scheme: light;
-    --bg0: #f2eee6; /* soft warm greige, not pure white */
-    --bg1: #e8e1d4;
-    --line: #d9d0c0;
-    --fg0: #221e18;
-    --fg1: #4f473c;
-    --fg2: #6e6558;
-    --accent: #b23d0e;
-    --accent-hover: #9e3208;
-    --accent-active: #8a2b06;
+   once a visitor picks explicitly; :not([data-theme="light"]) lets the system
+   query keep driving everything until they do. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg0: #15191e;
+    --bg1: #1e242b;
+    --line: #ffffff1f;
+    --line-strong: #ffffff33;
+    --fg0: #f2f5f7;
+    --fg1: #c2ccd4;
+    --fg2: #8b98a4;
+    --accent: #ff8a4c;
+    --accent-hover: #ffa06b;
+    --accent-active: #f2762f;
+    --accent-soft: #ff8a4c1f;
+    --shadow: 0 2px 10px #0006, 0 1px 2px #0004;
+    --shadow-lift: 0 6px 24px #0007, 0 2px 6px #0005;
   }
 }
 
-:root[data-theme="light"] {
-  color-scheme: light;
-  --bg0: #f2eee6;
-  --bg1: #e8e1d4;
-  --line: #d9d0c0;
-  --fg0: #221e18;
-  --fg1: #4f473c;
-  --fg2: #6e6558;
-  --accent: #b23d0e;
-  --accent-hover: #9e3208;
-  --accent-active: #8a2b06;
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg0: #15191e;
+  --bg1: #1e242b;
+  --line: #ffffff1f;
+  --line-strong: #ffffff33;
+  --fg0: #f2f5f7;
+  --fg1: #c2ccd4;
+  --fg2: #8b98a4;
+  --accent: #ff8a4c;
+  --accent-hover: #ffa06b;
+  --accent-active: #f2762f;
+  --accent-soft: #ff8a4c1f;
+  --shadow: 0 2px 10px #0006, 0 1px 2px #0004;
+  --shadow-lift: 0 6px 24px #0007, 0 2px 6px #0005;
 }
 
 @theme {
   --color-bg0: var(--bg0);
   --color-bg1: var(--bg1);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent-soft: var(--accent-soft);
   --color-fg0: var(--fg0);
   --color-fg1: var(--fg1);
   --color-fg2: var(--fg2);
@@ -169,6 +191,78 @@
     font-weight: 400;
   }
 
+  /* ── Drafting furniture ───────────────────────────────────────────────
+     The one place the CAD background is allowed into the content: three
+     borrowed drawing conventions, used structurally rather than as
+     decoration. Anything more would be costume. */
+
+  /* A raised sheet. Panels are white on the page ground with a soft lift,
+     not flat fills with a hard border. */
+  .panel {
+    background: var(--bg1);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow);
+  }
+
+  /* The balloon an assembly drawing puts on a part to key it to the parts
+     list. Here it carries the section number, with the leader line a real
+     balloon trails toward what it points at. */
+  .balloon {
+    display: inline-grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  .balloon-leader {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .balloon-leader {
+      display: block;
+      height: 1px;
+      width: 1.25rem;
+      background: var(--accent);
+      opacity: 0.45;
+    }
+  }
+
+  /* Dimension-line ends. A drawing's dimension line is capped at both ends
+     by a short extension tick; the section rules borrow that so a divider
+     reads as measured rather than merely drawn. */
+  .rule-dim {
+    position: relative;
+  }
+
+  .rule-dim::before,
+  .rule-dim::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    width: 1px;
+    height: 7px;
+    background: var(--line-strong);
+  }
+
+  .rule-dim::before {
+    left: 0;
+  }
+
+  .rule-dim::after {
+    right: 0;
+  }
+
   /* Text link: 1px rule that warms to accent on hover. */
   .link {
     text-decoration: underline;
@@ -187,30 +281,29 @@
 /* ── Figure theme swap ──────────────────────────────────────────────────────
    A raster figure cannot recolour itself, so a light and a dark render are
    both shipped and one is shown. This mirrors the scheme logic at the top of
-   this file exactly — dark is the default, light is the media query — rather
-   than using Tailwind's `dark:` variant, which keys off the opposite
-   condition. Matching the site's own rule means a figure can never disagree
-   with the palette around it. */
+   this file exactly — light is the default, dark is the media query — rather
+   than using Tailwind's `dark:` variant. Matching the site's own rule means
+   a figure can never disagree with the palette around it. */
 
-.fig-light {
+.fig-dark {
   display: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .fig-dark {
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig-light {
     display: none;
   }
 
-  :root:not([data-theme="dark"]) .fig-light {
+  :root:not([data-theme="light"]) .fig-dark {
     display: block;
   }
 }
 
-:root[data-theme="light"] .fig-dark {
+:root[data-theme="dark"] .fig-light {
   display: none;
 }
 
-:root[data-theme="light"] .fig-light {
+:root[data-theme="dark"] .fig-dark {
   display: block;
 }
 

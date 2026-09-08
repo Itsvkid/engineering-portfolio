@@ -7,6 +7,41 @@ Site: single-page portfolio at vinaykumar.is-a.dev. Stack stays: Next.js 16 App 
 
 ---
 
+> **Superseded in part, 2026-09-08 — read this first.**
+>
+> Sections 1 and 3 below describe the original direction: dark-first, warm
+> charcoal, "Instrument Grade". The site is now **light-first** on a cool
+> neutral palette shared with the Turbofan Atlas, so the two halves read as
+> one product. Dark is still fully supported and the toggle still works;
+> it is the alternative rather than the target.
+>
+> Why it changed: the dark ground buried the page's own drawing furniture.
+> The crop marks, ruler edge, reference dimension, title block and turbine
+> linework are the clearest signal that this is a CAD geometry engineer's
+> site, and on a charcoal ground they read as murk. On a light sheet the
+> same linework reads as a drawing.
+>
+> What survives unchanged: one accent spent sparingly, typography as the
+> layout, rules and whitespace rather than boxes, motion as punctuation,
+> and every content decision in section 5.
+>
+> Three drafting conventions were added to the content layer, used
+> structurally rather than as decoration, and they are the whole of the
+> "geometry" brief:
+>
+> - `.balloon` — section numbers set in the circled callout an assembly
+>   drawing uses to key a part to its parts list, with a leader line.
+> - `.rule-dim` — section dividers capped with extension ticks, the way a
+>   dimension line is.
+> - `.panel` — white surfaces lifted off the sheet, replacing flat fills
+>   with hard borders.
+>
+> Token values live in `app/globals.css`; the atlas has its own scoped set
+> in `app/turbofan/atlas/atlas.css` and `app/turbofan/README.md` explains
+> that page's language.
+
+---
+
 ## 1. Design direction
 
 **Concept: "Instrument Grade."** The site should read like a flight-test instrument: dark, monochrome, typographically precise, with a single test-flight orange accent — the color painted on experimental aircraft so the important thing is unmissable. The owner's black-and-white studio portrait already belongs to this world; the design is built around it. Five principles govern every decision:

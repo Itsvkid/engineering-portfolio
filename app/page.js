@@ -62,7 +62,7 @@ export default function Home() {
           {projects.map((project, i) => (
             <div
               key={project.title}
-              className="rounded-md border border-line bg-bg1 p-6 not-first:mt-6 sm:p-8"
+              className="panel p-6 not-first:mt-8 sm:p-8"
             >
               <ProjectEntry
                 project={project}
@@ -85,7 +85,7 @@ export default function Home() {
           {experience.map((entry) => (
             <div
               key={entry.org}
-              className="rounded-md border border-line bg-bg1 p-6 not-first:mt-6 sm:p-8"
+              className="panel p-6 not-first:mt-8 sm:p-8"
             >
               <ExperienceEntry entry={entry} />
             </div>
@@ -96,7 +96,7 @@ export default function Home() {
           {education.map((entry) => (
             <div
               key={entry.school}
-              className="rounded-md border border-line bg-bg1 p-6 not-first:mt-6 sm:p-8"
+              className="panel p-6 not-first:mt-8 sm:p-8"
             >
               <EducationEntry entry={entry} />
             </div>

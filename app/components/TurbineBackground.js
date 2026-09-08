@@ -33,7 +33,13 @@ export default function TurbineBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 md:opacity-55 [mask-image:radial-gradient(85%_130%_at_50%_40%,black_55%,transparent_100%)] md:[mask-image:radial-gradient(120%_100%_at_78%_38%,black_55%,transparent_100%)]"
+      /* The mask is tighter than it was, and the reason is the light ground.
+         On the old charcoal page the linework sat far enough below the body
+         text's contrast that the two could overlap; on a white sheet the
+         same lines compete with the paragraph they cross. The desktop mask
+         now falls off before the hero's text column instead of reaching
+         across it, and the whole layer is lighter. */
+      className="pointer-events-none absolute inset-0 overflow-hidden opacity-30 md:opacity-45 [mask-image:radial-gradient(85%_130%_at_50%_40%,black_35%,transparent_92%)] md:[mask-image:radial-gradient(78%_105%_at_82%_40%,black_30%,transparent_88%)]"
     >
       <TurbineStage />
     </div>
