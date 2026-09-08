@@ -1229,8 +1229,8 @@ rotor Campbell diagrams Figs 33–42 (E3's closure), the HPC blade and
 dovetail data of §3.2.3 (E5's first item), the casing, liner and dome
 flowpaths (G), and the combustor liner hole areas (D2). None of those is a
 modelling problem; all of them are figures nobody has digitised.
-| B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ▣ ▣ ▣ ▣ |
-| C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ▣ ▣ ◧ ⬜ |
+| B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ◧ ▣ ◧ ▣ |
+| C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ▣ ▣ ◧ ◧ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ◧ ◧ ◧ ▣ |
 | E | E1 blades · E2 discs · E3 vibration · E4 shafts/bearings · E5 attachments | ◧ ◧ ◧ ◧ ◧ |
 | F | F1 materials · F2 mass | ◧ ◧ |
@@ -1238,6 +1238,13 @@ modelling problem; all of them are figures nobody has digitised.
 | H | H1 gates · H2 structure · H3 sumps · H4 assembly | ⬜ ⬜ ⬜ ⬜ |
 | I | I1 consistency · I2 sensitivity · I3 findings | ▣ ⬜ ⬜ |
 | J | publication | ⬜ |
+
+**`data/closures.yaml` is the authority, not this table.** It carries every
+*closes when* sentence with its band and the number the solvers produce
+today, and `tests/test_cross_discipline.py` enforces it. This table is a
+summary and has been wrong twice — B1 and B3 were marked complete when the
+scoreboard already recorded them as half, and C4 was left blank after three
+of its four units had closed. Read the scoreboard; treat this as an index.
 
 ▣ means the stage's own *closes when* sentence is met, ◧ that part of it
 is. **D3 is ◧ and not ▣**: its total lands at 16.14 % against a 16.1 %
