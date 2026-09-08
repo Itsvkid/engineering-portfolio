@@ -1,248 +1,128 @@
-% Vinaykumar Venkateshkumar — CV
+% Vinaykumar Venkateshkumar - one-page UK CV
+% Target: gas turbine design engineer, graduate entry (engine externals lane)
 %
-% Target: graduate design engineer, aerospace/propulsion hardware.
+% SOURCE OF TRUTH: ../knowledge/00-facts.md.  Do not add a claim here that is
+% not in that file - add it there first, then rebuild.
 %
-% Build:  tectonic -X compile cv.tex --outdir .
-%
-% Tectonic is installed on this machine and fetches what it needs, so the
-% PDF is built here rather than on Overleaf. See README.md.
-%
-% Only stock packages are used, so this compiles on any TeX Live without
-% a custom class file. Keep this source in version control and treat the
-% PDF as a build artefact -- the previous CV existed only as a binary
-% nobody could diff.
+% Build:
+%   tectonic -X compile Vinaykumar_Venkateshkumar_CV_UK.tex --outdir .
+%   pdftotext -layout Vinaykumar_Venkateshkumar_CV_UK.pdf Vinaykumar_Venkateshkumar_CV_UK.txt
 
 \documentclass[10pt,a4paper]{article}
+
+% ---- The one switch -------------------------------------------------------
+% Flip to \graduatevisatrue the day the Graduate visa is granted, and rebuild
+% BOTH documents.  Never hand-edit the wording; that is how cv.tex, the site
+% and the part-time resume came to disagree.  See ../knowledge/00-facts.md.
+\newif\ifgraduatevisa
+\graduatevisafalse
+% ---------------------------------------------------------------------------
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[margin=1.45cm]{geometry}
+% exact 9.5pt: article only accepts 10/11/12pt and silently ignores anything else
+\usepackage[fontsize=9.5pt]{fontsize}
+\usepackage[margin=1.15cm]{geometry}
 \usepackage{enumitem}
 \usepackage{titlesec}
-\usepackage{tabularx}
 \usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
+\usepackage{array}
 
+\linespread{0.97}\selectfont
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 
-% Small-caps section heading with a rule under it, matching the previous
-% layout.
 \titleformat{\section}
-  {\normalsize\scshape}{}{0pt}{}[\vspace{-0.55em}\rule{\textwidth}{0.4pt}]
-\titlespacing{\section}{0pt}{0.72em}{0.3em}
+  {\normalsize\bfseries\scshape}{}{0pt}{}[\vspace{-0.62em}\rule{\textwidth}{0.5pt}]
+\titlespacing{\section}{0pt}{0.30em}{0.10em}
 
-\setlist[itemize]{leftmargin=1.1em, itemsep=0.14em, topsep=0.14em,
+\setlist[itemize]{leftmargin=1.0em, itemsep=0.03em, topsep=0.0em,
                   parsep=0pt, label=\textbullet}
 
-% Skills row: bold label in a fixed column, content flowing in the rest.
-\newcommand{\skillrow}[2]{\textbf{#1} & #2 \\[0.28em]}
+\newcommand{\sep}{\quad\textperiodcentered\quad}
+% Project heading: title, then the discipline tag, then a right-flush date
+\newcommand{\project}[3]{%
+  \vspace{0.12em}\textbf{#1} --- \textit{#2}\hfill \textit{#3}\\[0.1em]}
+\newcommand{\edu}[4]{\textbf{#1}\hfill #2\\ \textit{#3}\hfill \textit{#4}\\}
+% one-line variant: title, org+place, dates
+\newcommand{\oneline}[3]{\textbf{#1} --- {#2}\hfill \textit{#3}\\}
 
-% Heading line with something flush left and something flush right.
-\newcommand{\headed}[2]{\textbf{#1}\hfill #2\\}
-\newcommand{\subheaded}[2]{\textit{#1}\hfill \textit{#2}\\}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 
 \begin{document}
 
-% ── Header ────────────────────────────────────────────────────────────
-\begin{minipage}[t]{0.62\textwidth}
-  {\LARGE\bfseries Vinaykumar Venkateshkumar}\\[0.35em]
-  \href{https://linkedin.com/in/vinaykumar-venkateshkumar}%
-       {linkedin.com/in/vinaykumar-venkateshkumar}\\
-  \href{https://github.com/Itsvkid}{github.com/Itsvkid} \quad\textperiodcentered\quad
-  \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}\\
-  Cranfield, United Kingdom
-\end{minipage}%
-\begin{minipage}[t]{0.38\textwidth}
-  \raggedleft
-  \vspace{0.9em}
-  \href{mailto:kumarvsvinay@gmail.com}{kumarvsvinay@gmail.com}\\
-  +44 7742 914241\\
-  Work authorisation: sponsorship required\\
-  Available: September 2026
-\end{minipage}
+% ---- Header ---------------------------------------------------------------
+{\LARGE\bfseries Vinaykumar Venkateshkumar}\\[0.18em]
+{\small Coventry, United Kingdom \sep
+\href{mailto:kumarvsvinay@gmail.com}{kumarvsvinay@gmail.com} \sep
++44 7742 914241\\
+\href{https://linkedin.com/in/vinaykumar-venkateshkumar}{linkedin.com/in/vinaykumar-venkateshkumar} \sep
+\href{https://github.com/Itsvkid}{github.com/Itsvkid} \sep
+\href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}\\
+\ifgraduatevisa
+  Right to work in the UK without sponsorship (Graduate visa) \sep Available immediately
+\else
+  UK Student visa, coursework complete \sep Available immediately \sep Sponsorship may be required
+\fi}
 
-\vspace{0.7em}
-\textit{Design engineer with an aerospace propulsion background. Produces
-release-ready mechanical design work --- dimensioned detail and general
-arrangement drawings with geometric tolerancing to ISO~1101, limits and
-fits to ISO~286, tolerance stack-up, sheet-metal flat patterns and
-design-for-manufacture checks --- from parametric CAD models built in
-CATIA~V5, CadQuery and pyOCC, and sizes them against load cases with
-finite-element analysis. Verifies geometry rather than assuming it, and
-treats a simulation result as a claim to be tested rather than an answer.
-MSc Thermal Power and Propulsion at Cranfield. Seeking an entry-level
-design engineering role in aerospace or propulsion hardware.}
+\vspace{0.35em}
 
-% ── Skills ────────────────────────────────────────────────────────────
+% ---- Profile --------------------------------------------------------------
+\section{Profile}
+Graduate design engineer for the engine externals and secondary-systems lane. Produces release-ready
+mechanical design from parametric CAD --- detail and GA drawings with geometric tolerancing to ISO 1101,
+limits and fits to ISO 286, tolerance stack-up, sheet-metal flat patterns, DFM --- and sizes it against load
+cases by FEA. Verifies geometry rather than assuming it, and treats a simulation result as a claim to be tested.
+
+% ---- Skills ---------------------------------------------------------------
 \section{Technical Skills}
-\begin{tabularx}{\textwidth}{@{}p{4.3cm}X@{}}
-\skillrow{Mechanical Design}{Geometric tolerancing (ISO 1101), limits and
-  fits (ISO 286), tolerance stack-up (worst-case and RSS), design for
-  manufacture, sheet-metal forming (bend allowance, flat patterns),
-  detail and GA drawings, BOM generation}
-\skillrow{CAD}{CATIA V5 (proficient), CadQuery, pyOCC / Open CASCADE,
-  ANSYS DesignModeler, STEP and DXF interchange, parametric geometry
-  (iCST)}
-\skillrow{Structural Analysis}{Finite-element analysis (CalculiX, gmsh,
-  FreeCAD FEM), static load cases, mesh convergence studies, identifying
-  stress singularities, hand calculation as an independent check}
-\skillrow{CFD \& Simulation}{ANSYS Fluent, ANSYS ICEM CFD / Meshing,
-  OpenFOAM, $k$-$\varepsilon$ / $k$-$\omega$ turbulence modelling,
-  grid-independence studies}
-\skillrow{Programming}{Python (NumPy, SciPy, Matplotlib, pytest), MATLAB,
-  Git, automated test suites}
-\skillrow{Engineering Domains}{Gas turbine performance, propulsion,
-  turbomachinery aerodynamics, thermodynamics, aircraft structures,
-  non-destructive testing}
-\end{tabularx}
+{\small
+\begin{tabular}{@{}L{2.6cm}L{15.1cm}@{}}
+\textbf{Mech. Design} & Geometric tolerancing (ISO 1101), limits and fits (ISO 286), tolerance stack-up (worst case and RSS), design for manufacture, sheet-metal forming (K-factor, bend allowance, flat patterns), detail and GA drawings\\[0.12em]
+\textbf{CAD} & CATIA V5 (proficient, 80 hrs certified), CadQuery, pyOCC / Open CASCADE, ANSYS DesignModeler, STEP and DXF interchange, parametric geometry (iCST)\\[0.12em]
+\textbf{Analysis} & FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence, stress-singularity identification, hand calculation as an independent check. CFD (ANSYS Fluent, ICEM, OpenFOAM): $k$-$\omega$ SST, grid independence. Python (NumPy, SciPy, pytest), MATLAB, Git\\[0.1em]
+\textbf{Domains} & Gas turbine performance, turbomachinery aerodynamics, thermodynamics, aircraft structures, non-destructive testing\\
+\end{tabular}}
 
-% ── Projects ──────────────────────────────────────────────────────────
-\section{Design Projects}
+% ---- Design projects ------------------------------------------------------
+\section{Selected Projects}
+
+\project{Parametric Actuator and Accessory-Gearbox Generators, with Drawing Pack}{mechanical design, GD\&T}{2026}
 \begin{itemize}
-\item \textbf{Parametric Actuator and Gearbox Generators with Drawing
-  Pack} --- \textbf{(Mechanical design, GD\&T, CadQuery)}:
-  Wrote two parametric generators that size a design before drawing it: a
-  hydraulic flight-control actuator family across four aircraft classes,
-  and an engine accessory gearbox across five power ratings (5--50~kW),
-  with involute gear geometry, Lewis bending-stress module sizing and
-  SKF 60xx bearing selection. Produced a four-sheet A4 drawing pack ---
-  three detail drawings and a ballooned assembly GA --- carrying ISO~286
-  fits (\O{}35~H8 bore, \O{}21~f7 rod), ISO~1101
-  geometric tolerances, a chosen datum scheme, surface finishes, a parts
-  list and a five-contributor tolerance stack (390~mm nominal, worst case
-  $\pm$0.90, RSS $\pm$0.44). Verification found six real defects, including
-  a housing that did not enclose its own gear, and meshing teeth that
-  physically intersected by 424~mm$^3$ in every exported assembly because
-  the two gears were never phased --- fixed by offsetting one by half a
-  tooth pitch, which is parity-dependent and wrong to apply to an odd gear.
-  Checked the test suite by reintroducing a known sign error: it is caught
-  only by testing that the tooth narrows toward its tip, while pitch-circle
-  thickness and solid-validity checks both still pass. 132 automated tests.
-  \textit{Tech: Python, CadQuery, OpenCASCADE, ISO 286, ISO 1101, STEP}
-
-\item \textbf{Formed Sheet-Metal Equipment Bracket} ---
-  \textbf{(Sheet-metal design, DFM)}:
-  Parametric formed bracket with its flat pattern derived from a
-  K-factor neutral axis, not assumed --- 101.52~mm blank against 105.00~mm
-  of summed outside legs. Validated by conservation of volume: the formed
-  solid and the flat blank agree to 0.25\%, against 5.12\% for a naively
-  summed blank --- a bound tightened from 2\% after the looser one was
-  found to be hiding two missing holes. Five design-for-manufacture rules (minimum bend radius,
-  flange length, hole-to-bend distance, fastener edge distance, minimum
-  hole diameter) with a material trade that has a real answer: 2024-T3 is
-  twice as strong as 5052-H32 and cannot make the fold, needing 4T
-  minimum bend radius against 1T. Detail drawing with bend table; STEP
-  and DXF export. \textit{Tech: Python, CadQuery, sheet-metal forming, DFM}
-
-\item \textbf{Structural Sizing and Redesign of That Bracket} ---
-  \textbf{(FEA, mesh convergence, design trade study)}:
-  Sized the bracket against a 9g equipment crash load in CalculiX, driven
-  headlessly through FreeCAD. Ran a five-density mesh convergence study
-  rather than a single solve, which is what made the result usable:
-  deflection converged to 0.06\% and bulk stress to 0.28\%, while peak
-  stress climbed 12\% and never settled --- a singularity at the edge of a
-  fixed constraint, so the 545~MPa headline is a boundary condition rather
-  than a stress. The converged 196.7~MPa against a 193~MPa yield condemns
-  the part marginally, not by the 2.8$\times$ a single mesh reports.
-  Screened four fixes analytically before modelling any: stiffening flanges
-  up the upright make that leg 7.4$\times$ stronger and change the margin by
-  nothing, because both legs carry the same moment through the same section
-  and the governing stress moves to the untouched base. Selected 2.0~mm
-  gauge, solved it to confirm (126.1~MPa, $+$53\% margin, deflection
-  halved), and re-issued the drawing --- the bend deduction changes with
-  gauge, so a shop cutting the old blank would make the wrong part.
-  Cross-checked against closed-form beam theory sharing no code, which
-  reads 16\% conservative at both gauges to within 0.2 of a point.
-  66 automated tests.
-  \textit{Tech: CalculiX, gmsh, FreeCAD FEM, Python, CadQuery}
+\item Sized before drawn --- a flight-control actuator family across four aircraft classes and an accessory gearbox across five power ratings (5--50\,kW), with involute gear geometry, Lewis bending-stress sizing and SKF 60xx bearings --- then issued as a four-sheet A4 pack: three details and a ballooned GA carrying ISO 286 fits (35\,H8 bore, 21\,f7 rod), ISO 1101 tolerances, a datum scheme and a five-contributor stack on 390\,mm nominal (worst case $\pm$0.90, RSS $\pm$0.44).
+\item Verification found six real defects, including meshing teeth intersecting by 424\,mm\textsuperscript{3} in every exported assembly because the gears were never phased. The test suite was then checked against itself with a reintroduced sign error, which only the tooth-taper test catches. 132 automated tests.
 \end{itemize}
 
-\section{Propulsion and Analysis Projects}
+\project{Formed Sheet-Metal Equipment Bracket, Sized and Redesigned}{sheet metal, DFM, FEA}{2026}
 \begin{itemize}
-\item \textbf{Installation Aerodynamics of Aero-Engine Nacelles} ---
-  \textbf{Cranfield Individual Research Project (Parametric CAD, CFD)}:
-  Fitted a Class-Shape Transformation curve directly to NASA TM 110300's
-  published NACA 1-85-100 cowl ordinates, reproducing them to 0.019\% RMS
-  of maximum radius. Built and converged a compressible RANS OpenFOAM
-  case (rhoSimpleFoam, $k$-$\omega$ SST) at Mach 0.79, meshed with
-  snappyHexMesh at 108,904 cells, and compared surface pressure against
-  the same report's wind-tunnel data --- RMS $C_p$ error 0.65 over 17
-  matched stations, reported including where the model misses the
-  leading-edge suction peak.
-  \textit{Tech: pyOCC, Open CASCADE, iCST, OpenFOAM, Python (Ongoing,
-  expected Sep 2026)}
-
-\item \textbf{Twin-Spool Turbofan Cycle Model} ---
-  \textbf{(Gas turbine performance)}:
-  Station-by-station separate-exhaust cycle solver with every turbine
-  pressure ratio matched to the power its own spool demands rather than
-  assumed. 57.67~kN net thrust, 46.7\% thermal efficiency at the
-  reference design point, validated against the closed-form ideal-Brayton
-  limit to within 0.01\%. 82 tests.
-  \textit{Tech: Python, Matplotlib, pytest, MATLAB/Simulink cross-check}
-
-\item \textbf{Investigation of Controlled Jets for Enhanced Mixing Rates}
-  --- \textbf{BEng Final Year Project, team of 3 (CFD, experimental
-  validation)}: Investigated passive flow-control tab geometries (Delta
-  Tandem Tab, M Delta Tandem Tab) for jet mixing using ANSYS Fluent
-  across Mach 0.6--1.0, with grid-independence studies to 3.4M+ nodes,
-  validated against experimental shadowgraph imaging. Achieved 64--76\%
-  core-length reduction against an uncontrolled baseline at Mach 0.8 with
-  no significant thrust penalty.
-  \textit{Tech: ANSYS Fluent, ANSYS DesignModeler, ANSYS ICEM CFD (Mar 2025)}
+\item Flat pattern from a K-factor neutral axis rather than assumed (101.52\,mm blank against 105.00\,mm of summed legs), validated by conservation of volume to 0.25\% against 5.12\% for a naive blank. Five DFM rules, and a material trade with a real answer: 2024-T3 is twice as strong as 5052-H32 and cannot make the fold --- 4T minimum bend radius against 1T.
+\item Sized against a 9g crash load in CalculiX, where a five-density convergence study made the result usable: peak stress climbed 12\% and never settled --- a singularity at a fixed constraint, so the 545\,MPa headline is a boundary condition, not a stress. The converged 196.7\,MPa against 193\,MPa yield condemns the part marginally, not by 2.8$\times$. Four fixes were screened analytically first --- stiffening the upright makes that leg 7.4$\times$ stiffer, margin unchanged --- before 2.0\,mm gauge (126.1\,MPa, +53\%) and a re-issued drawing. 66 tests.
 \end{itemize}
 
-\vspace{0.2em}
-\textit{Further work at \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}:
-airfoil panel method written from scratch and cross-checked against
-XFoil (lift agreeing to 0.047 RMS), flight-performance calculator
-validated against three aircraft, OpenFOAM NACA 0012 study (GCI 6.4\%),
-parametric wing and compressor blade-row generators.}
+\project{Nacelle Cowl Geometry and CFD Validation}{personal project, public data}{2026}
+CST curve fitted to NASA TM 110300's published NACA 1-85-100 cowl ordinates to 0.019\% RMS of max radius; a compressible RANS OpenFOAM case ($k$-$\omega$ SST, 108{,}904 cells) at Mach 0.79 matched to the report's wind-tunnel pressures to RMS $C_p$ 0.65 over 17 stations, including where it misses the suction peak. \textit{Separately: a Cranfield research project on nacelle installation aerodynamics, industrial context --- result pending, confidential.}
 
-% ── Education ─────────────────────────────────────────────────────────
+\project{Twin-Spool Cycle Model, and the NASA/GE E\textsuperscript{3} Engine}{gas turbine performance}{2026}
+Separate-exhaust station solver with every turbine pressure ratio matched to the power its own spool demands rather than assumed: 57.67\,kN net thrust, 46.7\% thermal efficiency, within 0.01\% of the ideal-Brayton limit (82 tests). Separately, the E\textsuperscript{3}'s published architecture, cycle, compressor blading and HPT flowpath transcribed with a page citation on every value, held by 37 tests forcing independent routes to agree.
+
+\project{Controlled Jets for Enhanced Mixing Rates}{BEng final-year project, team of 3}{Mar 2025}
+Passive flow-control tabs in ANSYS Fluent across Mach 0.6--1.0, grid independence to 3.4M+ nodes, validated against experimental shadowgraph imaging: 64--76\% core-length reduction against an uncontrolled baseline at Mach 0.8, no significant thrust penalty. \textit{Further work at \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}} --- bleed-air duct clearance study, airfoil panel method cross-checked against XFoil (0.047 RMS), parametric wing and blade-row generators.
+
+% ---- Education ------------------------------------------------------------
 \section{Education}
-\headed{Cranfield University}{Cranfield, UK}
-\subheaded{MSc Thermal Power and Propulsion}{Oct 2025 -- Sep 2026}
-\textit{Modules:} Gas Turbine Performance, Combustion, Turbomachinery
-Aerodynamics, Propulsion System Design\\
-\textit{Research project (ongoing):} Installation aerodynamics of
-aero-engine nacelles
+\oneline{Postgraduate Coursework, Thermal Power and Propulsion}{Cranfield University, Cranfield, UK}{Oct 2025 -- Sep 2026}
+{\small Gas Turbine Performance \sep Combustion \sep Turbomachinery Aerodynamics \sep Propulsion System Design}\\[0.1em]
+\oneline{BEng Aeronautical Engineering --- CGPA 7.37/10 (first class)}{KCG College of Technology, Chennai, India}{2021 -- 2025}
+{\small \textit{Certifications:} CATIA V5 (Proficient), CADD Centre, 80 hrs, 2024 \sep MATLAB Essential Training, LinkedIn Learning, 2024 \sep IELTS Academic 6.5, UKVI B2, Jan 2025}
 
-\vspace{0.45em}
-\headed{KCG College of Technology, Anna University}{Chennai, India}
-\subheaded{BEng Aeronautical Engineering --- CGPA 7.37/10}{2021 -- 2025}
-\textit{Courses:} Air Breathing Propulsion, Rocket Propulsion, Aero
-Engineering Thermodynamics, Aerodynamics I \& II, Computational Fluid
-Dynamics, Aircraft Structures I \& II, Finite Element Methods, Wind
-Tunnel Techniques, Non-Destructive Testing, Aircraft Design
-
-% ── Experience ────────────────────────────────────────────────────────
+% ---- Experience -----------------------------------------------------------
 \section{Experience}
-\headed{AI Engineering Services Limited (AIESL) --- Boeing 737 MRO Base}%
-       {Thiruvananthapuram, India}
-\subheaded{Engineering Intern, Aircraft Maintenance}{Mar 2025 -- Apr 2025}
-\begin{itemize}
-\item Rotational internship across Component Overhaul, Material and
-  Production Planning, and Stores at a 737 base-maintenance facility
-  servicing Air India Express.
-\item Documented wheel and brake overhaul procedures to specification
-  (torque 158~lb-ft, tyre pressure 205~$\pm$~5~psi) and Eddy Current
-  Testing for non-destructive flaw detection.
-\item Used AMOS and RAMCO systems to track parts issuance, stock levels
-  and task-card compliance.
-\end{itemize}
-
-% ── Certifications ────────────────────────────────────────────────────
-\section{Certifications and Achievements}
-\begin{itemize}
-\item CATIA V5 (Proficient) --- CADD Centre Training Services, 80 hrs --- 2024
-\item IELTS Academic --- Overall Band 6.5 (L 7.0, R 6.5, W 6.5, S 5.5);
-  UKVI B2 --- Jan 2025
-\item MATLAB Essential Training --- LinkedIn Learning --- 2024
-\item Machine Learning with Python; Deep Learning with TensorFlow ---
-  IBM / Cognitive Class --- 2024
-\end{itemize}
+\oneline{Engineering Intern, Aircraft Maintenance}{AIESL --- Boeing 737 MRO base, India}{Mar -- Apr 2025}
+{\small Rotation across Component Overhaul, Production Planning and Stores servicing Air India Express. Documented wheel/brake overhaul to specification (torque 158\,lb-ft, tyre pressure 205\,$\pm$\,5\,psi) and Eddy Current Testing; tracked parts in AMOS and RAMCO.}
+% NOTE: this document is built to fill exactly one page. Adding a line here
+% pushes the last two lines of Experience onto a second page - cut something
+% else first, or the CV silently becomes a two-pager with three lines on it.
 
 \end{document}
