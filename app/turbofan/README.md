@@ -128,11 +128,16 @@ Mechanics worth knowing:
 ## Publishing
 
 Commit, `git push` (Vercel deploys `main` to vinaykumar.is-a.dev), then
-`./sync-public.sh --push` for the public mirror. The sync script copies the
-**working tree** of tracked files but not untracked ones: commit before
-anyone syncs, or the mirror's CI fails on a half state. Vercel's bot
-mitigation challenges the custom domain after a burst of headless loads; it
-clears by itself.
+`./sync-public.sh --push` for the public mirror.
+
+The sync publishes **HEAD**, not the working tree, so the mirror always
+equals a commit. It used to copy working-tree files with `git ls-files`,
+which skipped files that were not yet added while publishing the edits that
+imported them; the mirror twice received source that could not compile. If
+the tree is dirty the script now says so and names what it is leaving out.
+
+Vercel's bot mitigation challenges the custom domain after a burst of
+headless loads; it clears by itself.
 
 ## Future tasks, in order of value
 
