@@ -285,8 +285,23 @@ function CameraDriver({ preset, frameRequest, dolly, built, controlsRef, reduced
     seen.current.preset = preset.n;
     const c = preset.id === "custom" ? preset : (CAMERA_PRESETS[preset.id] ?? CAMERA_PRESETS.iso);
     const target = new Vector3(...c.target);
-    if (portrait) target.y -= 1.6; // keep the engine above the phone's drawer
-    start(new Vector3(...c.position), target);
+    const position = new Vector3(...c.position);
+    if (portrait) {
+      // A portrait viewport is the hard case for a long, thin subject.
+      // Horizontal field of view is the vertical one narrowed by the aspect
+      // ratio, so on a 390x844 screen the engine runs off both ends however
+      // wide the lens is. Widening the lens alone (see Lens) is not enough:
+      // the camera has to come back as well, by roughly the amount the
+      // aspect ratio has stolen. Capped so it never retreats absurdly far.
+      const aspect = size.width / size.height;
+      const pull = Math.min(2.6, Math.max(1, 0.86 / Math.max(aspect, 0.2)));
+      position.sub(target).multiplyScalar(pull).add(target);
+      // And a little lift, so the engine sits above the dock rather than
+      // centred behind it.
+      target.y -= 0.18;
+      position.y -= 0.18;
+    }
+    start(position, target);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preset]);
 
