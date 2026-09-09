@@ -173,6 +173,37 @@ new GLTFLoader().parse(ab, '', (gltf) => {
     assert got["ratio"] == pytest.approx(3.583, abs=0.002)
 
 
+def test_the_model_is_measured_before_its_rows_are_re_parented():
+    """the silent failure: adding a child to another group REMOVES it from
+    root, so a Box3 taken after the split is taken from an empty object.
+    three.js then reports an inverted box, a centre of (0, 0, 0) and an
+    infinite bounding sphere -- so the X-centring quietly did nothing, and
+    a camera fitted to that sphere goes to infinity and renders a blank
+    canvas. Nothing about it looks wrong in the source; only the order is."""
+    src = (SITE / "app/components/EngineCutaway.js")
+    if not src.exists():
+        pytest.skip("site checkout not present")
+    t = src.read_text()
+    measured = t.index("new Box3().setFromObject(root)")
+    split = t.index("made.static).add(child)")
+    assert measured < split, \
+        "the bounding box must be taken while root still holds the rows"
+
+
+def test_the_camera_is_fitted_to_the_canvas_rather_than_fixed():
+    """a fixed camera distance is right for exactly one canvas size. The
+    other models in this viewer use drei's <Bounds fit observe>; a turning
+    model cannot, because Bounds would re-fit every frame, so the same job
+    is done once per resize against a rotation-invariant sphere."""
+    src = (SITE / "app/components/EngineCutaway.js")
+    if not src.exists():
+        pytest.skip("site checkout not present")
+    t = src.read_text()
+    assert "FitToView" in t
+    assert "size.width / size.height" in t      # it reads the aspect
+    assert "Math.sin(Math.min(vHalf, hHalf))" in t   # fits the tighter one
+
+
 def test_the_site_registers_the_model_with_the_spool_flag():
     data = (SITE / "app/data.js")
     if not data.exists():

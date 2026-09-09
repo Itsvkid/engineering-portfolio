@@ -1,8 +1,8 @@
 "use client";
 
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Box3, Group, MathUtils, Vector3 } from "three";
 
 /**
@@ -32,6 +32,63 @@ import { Box3, Group, MathUtils, Vector3 } from "three";
 /** Slow the real rpm to something an eye can read, keeping the ratio exact. */
 const DEMO_RPM_SCALE = 1 / 900;
 
+/** World scale of the whole assembly, shared by the fit below. */
+const MODEL_SCALE = 0.55;
+
+/** How much empty frame to leave around the model, as a multiplier. */
+const FIT_MARGIN = 1.12;
+
+/**
+ * The camera direction, from the framing ModelStage used to open with:
+ * position [0, 1.4, 4.6], normalised. The fit below moves the camera along
+ * this line, so the three-quarter view is preserved and only the distance
+ * changes.
+ */
+const VIEW_DIR = new Vector3(0, 1.4, 4.6).normalize();
+
+/**
+ * Frame the model to whatever canvas it was given.
+ *
+ * Every other model in this viewer sits inside drei's `<Bounds fit observe>`,
+ * which re-fits on resize. A turning model cannot use it: Bounds would
+ * re-fit continuously and the engine would breathe in and out as it span.
+ * So the same job is done here, once per resize, and against the bounding
+ * SPHERE rather than the box. A sphere is invariant under the rotation, so
+ * a distance that fits at one angle fits at every angle and nothing is ever
+ * clipped mid-turn.
+ *
+ * Without this the camera sat at a fixed 4.8 units whatever the canvas was.
+ * That is close enough on a desktop card and much too far on a phone, where
+ * the gallery canvas is about 340 by 212 and the engine came out around 130
+ * pixels wide — a row of blades roughly two pixels apart.
+ */
+function FitToView({ radius }) {
+  const size = useThree((s) => s.size);
+  const set = useThree((s) => s.set);
+  const get = useThree((s) => s.get);
+
+  useEffect(() => {
+    if (!radius || !size.width || !size.height) return;
+    const cam = get().camera;
+    const vHalf = MathUtils.degToRad(cam.fov) / 2;
+    const hHalf = Math.atan(Math.tan(vHalf) * (size.width / size.height));
+    // Fit whichever direction is tighter: on a wide canvas that is the
+    // vertical, on a tall one the horizontal.
+    const dist = (radius * FIT_MARGIN) / Math.sin(Math.min(vHalf, hHalf));
+    if (Math.abs(cam.position.length() - dist) < 0.01) return;
+    // Replace rather than mutate — the store hands out a fresh camera and
+    // R3F re-renders with it. Same reason as the atlas page's Lens().
+    const next = cam.clone();
+    next.position.copy(VIEW_DIR).multiplyScalar(dist);
+    next.lookAt(0, 0, 0);
+    next.updateProjectionMatrix();
+    set({ camera: next });
+    get().invalidate();
+  }, [radius, size, set, get]);
+
+  return null;
+}
+
 export default function Blading({ src, spinning }) {
   const { scene } = useGLTF(src);
   const lp = useRef();
@@ -40,26 +97,43 @@ export default function Blading({ src, spinning }) {
   // Split the scene into three groups once, by the spool each row declares.
   // Cloning is deliberate: useGLTF caches the parsed scene, and re-parenting
   // the cached one would corrupt it for any other mounted viewer.
-  const { groups, rate, shiftX } = useMemo(() => {
+  const { groups, rate, shiftX, radius } = useMemo(() => {
     const root = scene.clone(true);
-    const made = { lp: new Group(), hp: new Group(), static: new Group() };
-    for (const child of [...root.children]) {
-      const spool = child.userData?.spool ?? "static";
-      (made[spool] ?? made.static).add(child);
-    }
+
+    // Measure BEFORE the rows are re-parented. Adding a child to another
+    // group removes it from root, so a box taken after the loop is taken
+    // from an empty object: three.js then reports an inverted box whose
+    // centre is the origin and whose bounding sphere is infinite. The
+    // centring below silently did nothing for exactly that reason.
+    const box = new Box3().setFromObject(root);
 
     // Centre in X ONLY. The rows are already built about the engine axis
     // (y = z = 0) and rotate about it; the cutaway removes a 75° wedge, so
     // the bounding box is deliberately NOT symmetric in y and z. Centring
     // on that box would push each spool off the axis and make it wobble.
     // X is safe because rotation about X does not move X.
-    const box = new Box3().setFromObject(root);
     const centre = box.getCenter(new Vector3());
+
+    // What the camera has to fit. Radially the model reaches the largest
+    // of its four y/z bounds; axially it reaches half its length from the
+    // centred axis. Combining them gives a sphere about the point the
+    // camera looks at, which is invariant as the engine turns.
+    const half = box.getSize(new Vector3()).x / 2;
+    const spun = Math.hypot(half, Math.max(
+      Math.abs(box.max.y), Math.abs(box.min.y),
+      Math.abs(box.max.z), Math.abs(box.min.z)));
+
+    const made = { lp: new Group(), hp: new Group(), static: new Group() };
+    for (const child of [...root.children]) {
+      const spool = child.userData?.spool ?? "static";
+      (made[spool] ?? made.static).add(child);
+    }
 
     const k = scene.userData?.kinematics ?? {};
     return {
       groups: made,
       shiftX: -centre.x,
+      radius: spun * MODEL_SCALE,
       rate: {
         lp: ((k.rpm_lp ?? 3528.9) / 60) * 2 * Math.PI * DEMO_RPM_SCALE,
         hp: ((k.rpm_hp ?? 12645) / 60) * 2 * Math.PI * DEMO_RPM_SCALE,
@@ -75,24 +149,27 @@ export default function Blading({ src, spinning }) {
   });
 
   return (
-    <group
-      // Lay the engine's long axis across the viewport and tip it into a
-      // three-quarter view, the angle a manufacturer's cutaway uses.
-      rotation={[0, MathUtils.degToRad(-24), MathUtils.degToRad(10)]}
-      scale={0.55}
-    >
-      {/* Each spool is a wrapper group whose rotation.x is animated. The
-          rotation lives on the wrapper rather than on the loaded objects,
-          so nothing in the cached glTF is ever mutated. */}
-      <group ref={lp} position={[shiftX, 0, 0]}>
-        <primitive object={groups.lp} />
+    <>
+      <FitToView radius={radius} />
+      <group
+        // Lay the engine's long axis across the viewport and tip it into a
+        // three-quarter view, the angle a manufacturer's cutaway uses.
+        rotation={[0, MathUtils.degToRad(-24), MathUtils.degToRad(10)]}
+        scale={MODEL_SCALE}
+      >
+        {/* Each spool is a wrapper group whose rotation.x is animated. The
+            rotation lives on the wrapper rather than on the loaded objects,
+            so nothing in the cached glTF is ever mutated. */}
+        <group ref={lp} position={[shiftX, 0, 0]}>
+          <primitive object={groups.lp} />
+        </group>
+        <group ref={hp} position={[shiftX, 0, 0]}>
+          <primitive object={groups.hp} />
+        </group>
+        <group position={[shiftX, 0, 0]}>
+          <primitive object={groups.static} />
+        </group>
       </group>
-      <group ref={hp} position={[shiftX, 0, 0]}>
-        <primitive object={groups.hp} />
-      </group>
-      <group position={[shiftX, 0, 0]}>
-        <primitive object={groups.static} />
-      </group>
-    </group>
+    </>
   );
 }
