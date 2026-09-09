@@ -50,7 +50,8 @@ STAGES = [
     ("G  geometry", ["geometry.blades"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
                          "verification.disagreements"]),
-    ("J  publication", ["publication.meridional", "publication.campbell"]),
+    ("J  publication", ["publication.meridional", "publication.campbell",
+                        "publication.render"]),
 ]
 GEOMETRY = {"geometry.blades"}
 

@@ -181,7 +181,17 @@ class Row:
                                                  zip(self.radii[1:], self.areas[1:])))
 
     def solid(self):
-        return loft_capped([wrapped_wire(r, s) for r, s in zip(self.radii, self.sections)])
+        """The lofted blade. Memoised on the instance: unit J3 asks every row
+        for its solid five or six times over (volume fidelity, the envelope,
+        containment, the glTF, the preview) and the loft is the expensive
+        part. `rotate` and `translate` return copies, so a shared base is
+        safe -- but OCC caches its TRIANGULATION on the shape, so anything
+        tessellating at a chosen tolerance must clear it first. See
+        `publication.render.tessellate`."""
+        if getattr(self, "_solid", None) is None:
+            self._solid = loft_capped([wrapped_wire(r, s)
+                                       for r, s in zip(self.radii, self.sections)])
+        return self._solid
 
     def pitch_rad(self):
         return 2 * math.pi / self.count

@@ -1214,8 +1214,13 @@ pointed at with its load stated.
       comparisons with their reading uncertainty, and ten Campbell
       diagrams. Findings 160–162. Render still open.
 - [ ] Drawing pack: GA with stations; one detail per module
-- [ ] Rotating cutaway on the site via the `TurbineStage` spool pattern;
+- [~] Rotating cutaway on the site via the `TurbineStage` spool pattern;
       static glTF to the Autodesk viewer
+      — J3 done for the **glTF half**: `exports/e3-blading.glb`, 4.7 MB,
+      all 32 rows and 2,890 blades on J1's axis, 32 meshes instanced by
+      2,307 nodes. Findings 163–165. The site cutaway is deliberately NOT
+      done here — `app/turbofan/` already renders the E³ procedurally and
+      a second three.js page would duplicate it.
 - [ ] Update `projects/README.md`
 - [ ] The post: validation-led, NASA credited, the gap stated
 

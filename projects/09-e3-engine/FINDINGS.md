@@ -136,8 +136,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-14 met, 10 half met, 3 gated, of 27.
-18 of 20 numeric closures sit inside their own band.
+15 met, 10 half met, 3 gated, of 28.
+19 of 21 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -171,6 +171,7 @@ blocks it. None is open without a reason attached.
 | I2 | one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 | 0.02 | met |
 | J1 | the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | — | met |
 | J2 | the Campbell match renders every one of E3's 24 comparisons with its reading uncertainty, on a linear axis, published lines as read | — | — | met |
+| J3 | the glTF carries all 32 rows and 2890 blades, each row's mesh within 1 percent of its solid by volume, placed on J1's axis | 0.374 | 1 | met |
 
 ### The two recorded misses
 
@@ -255,7 +256,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-159 findings, in the `STEP0.md` that owns each one.
+162 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -424,4 +425,7 @@ would break every reference in the commit history.
 | 160 | publication | On eleven of the twenty-four comparisons, E3's closure band is |
 | 161 | publication | The figure was briefly plotting a quantity the closure does not |
 | 162 | publication | The published lines are drawn flat, and that is not a cosmetic |
+| 163 | publication | The lofted tip caps stand proud of their own sections, worst on the |
+| 164 | publication | The render has no tip clearance, and the amount by which it misses |
+| 165 | publication | The render has an HPT with walls and no blades. J1 draws the HPT |
 

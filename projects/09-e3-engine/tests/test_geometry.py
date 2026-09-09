@@ -157,10 +157,18 @@ def test_build_py_lists_every_stage_and_every_runnable_module():
     p = subprocess.run([sys.executable, "build.py", "--list"], cwd=ROOT,
                        capture_output=True, text=True)
     assert p.returncode == 0
-    assert "35 modules" in p.stdout
-    for stage in ("B  cycle", "C1 mean-line", "D  thermal", "F  materials",
-                  "G  geometry", "I  verification", "J  publication"):
+    # derived, not hardcoded: this assertion has broken three times for the
+    # only reason a module was added, which is not what it is checking
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("_build", ROOT / "build.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    n = sum(len(mods) for _, mods in mod.STAGES)
+    assert f"{n} modules" in p.stdout
+    for stage, mods in mod.STAGES:
         assert stage in p.stdout
+        for m in mods:
+            assert m in p.stdout
 
 
 def test_build_py_produces_no_gated_number():
