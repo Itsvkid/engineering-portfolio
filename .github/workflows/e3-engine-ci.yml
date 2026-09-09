@@ -35,14 +35,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # The whole suite runs here, not a hand-picked subset. Only two files
-      # need the geometry kernel -- tests/test_geometry.py (Stage G1's
-      # lofted rows) and tests/test_render.py (Stage J3's glTF) -- and both
-      # call pytest.importorskip("cadquery"), so they skip themselves on a
-      # runner where it has no wheel. Naming the pyOCC-free files in a list
-      # here, the way projects 06 and 07 do, means the list goes stale the
-      # first time a test file is added; letting the two files declare their
-      # own dependency does not.
+      # The whole suite runs here, not a hand-picked subset. Three places
+      # need the geometry kernel and each declares that itself, so none has
+      # to be named in a list here: tests/test_geometry.py (Stage G1's
+      # lofted rows) and tests/test_render.py (Stage J3's glTF) call
+      # pytest.importorskip("cadquery") for the whole file, and
+      # tests/test_rotor37_geometry.py marks the four of its twenty-two
+      # tests that build a solid, because the other eighteen read the
+      # transcribed sections and must still run. Naming the pyOCC-free
+      # files in a list here, the way projects 06 and 07 do, means the list
+      # goes stale the first time a test file is added; letting the files
+      # declare their own dependency does not. The comment above said "two
+      # files" and was wrong, which is how the first green run was missed.
 
       # scipy is not optional: solvers/mechanical/beam.py imports
       # scipy.linalg.eigh to solve the beam eigenproblem, and it is not

@@ -4,6 +4,7 @@
 Nine hundred numbers were read off a 1978 scan NASA itself stamped "OF POOR
 QUALITY". These are the properties a real blade must have and a typo would
 break -- none was used to produce a number."""
+import importlib.util
 import pathlib
 import sys
 
@@ -13,6 +14,17 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "solvers"))
 from cfd.rotor37 import (  # noqa: E402
     against_the_design_point, closure_check, load, smoothness_check,
     stagger_check, thickness_check,
+)
+
+# Eighteen of the twenty-two tests below read the transcribed sections and
+# need nothing but numpy. Four build the blade as a solid, which needs the
+# geometry kernel, and that has no wheel on the CI runner. They say so here:
+# the file declares its own dependency, the same contract test_geometry.py
+# and test_render.py keep, rather than being named in a list inside the
+# workflow that goes stale the first time a test moves.
+needs_kernel = pytest.mark.skipif(
+    importlib.util.find_spec("cadquery") is None,
+    reason="builds a solid; needs the geometry kernel (cadquery / OCP)",
 )
 
 SECS, META = load()
@@ -116,6 +128,7 @@ def test_the_transcription_records_how_it_was_made():
 
 # --- the blade solid and the annulus ---------------------------------------
 
+@needs_kernel
 def test_the_blade_builds_as_a_valid_solid_matching_its_own_section_integral():
     """The band is Stage G's +-2 %. The second assertion pins the value
     actually achieved, and it moved from 0.02 % to 0.11 % when the sections
@@ -129,6 +142,7 @@ def test_the_blade_builds_as_a_valid_solid_matching_its_own_section_integral():
     assert abs(b["err_pct"]) < 0.2
 
 
+@needs_kernel
 def test_no_blade_touches_its_neighbour_at_solidity_above_one():
     """at 65 deg stagger and solidity 1.27 the passages overlap axially,
     so this is not a formality"""
@@ -139,6 +153,7 @@ def test_no_blade_touches_its_neighbour_at_solidity_above_one():
     assert b["pitch_deg"] == 10.0
 
 
+@needs_kernel
 def test_the_axial_chord_shortens_from_hub_to_tip_as_the_stagger_opens():
     from cfd.rotor37 import blade_report
     b = blade_report()
@@ -184,6 +199,7 @@ def test_the_blade_is_trimmed_by_the_casing_from_the_trailing_corner():
     assert min(fracs) < 0.30
 
 
+@needs_kernel
 def test_the_trimmed_blade_is_a_valid_solid_and_smaller():
     from cfd.rotor37 import blade_solid, trimmed_solid
     from OCP.BRepCheck import BRepCheck_Analyzer
