@@ -856,8 +856,13 @@ within 0.04 % of span, five times inside the band.
       (finding 74). Table X's stresses are at the **deteriorated-engine
       13,948 rpm**, not the 12,303 aero design point; using the latter
       reads every stage 22 % low (finding 75)
-- [ ] Gas bending from the C1 loads; tilt to cancel; compare Table X
+- [x] Gas bending from the C1 loads; tilt to cancel; compare Table X
       `max_root_stress`
+      — E8 done against **LPT Table VIII** instead, which prints the whole
+      decomposition where Table X prints only a maximum and a centrifugal
+      part. Worst 17.7 % on five stages against a 25 % band, **met**; the
+      tilt inequality holds on all five, mean 51 % cancelled.
+      Findings 176–177.
 - [ ] **FEA in CalculiX** on HPC rotor 1, HPT blade 1, LPT blade 1: mesh
       convergence as CAD-05 did it; peaks on constraints disbelieved
 - [ ] HPT blade creep: Larson–Miller with the D1 metal temperatures;
@@ -927,8 +932,13 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] Vane Campbell vs Figs. 46–56
 - [ ] LPT stage 1 coupled blade–disc (LPT report Fig. 63); tip-shroud and
       angel-wing effects
-- [ ] Flutter screen: reduced frequency per row; flexural and torsional
+- [x] Flutter screen: reduced frequency per row; flexural and torsional
       stability plots vs HPC Figs. 43–44
+      — E7 done against **LPT Table XI** instead: Figs 43–44 are not
+      transcribed, but Table XI prints a flutter safety factor for all
+      five LPT stages in both modes. Closure NOT met on the stated
+      definition (24.4 % vs 15 %), monotone, cause hypothesised.
+      Torsion not modelled. Findings 173–175.
 - [ ] HCF margin by Goodman on top of the E1 mean stress
 
 *Closes when:* first three modes of every HPC stage within **5 %** of the

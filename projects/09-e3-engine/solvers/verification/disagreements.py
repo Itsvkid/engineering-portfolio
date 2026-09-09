@@ -206,6 +206,15 @@ def _open_questions():
         "HPC Figs 33-42, mode lines drawn flat across the speed range",
         "unresolved", units="ratio", finding=162))
 
+    # the five LPT flutter safety factors do not imply one allowable (E7)
+    from mechanical.flutter import recovered_allowable
+    r = recovered_allowable()
+    out.append(Disagreement(
+        "LPT flutter allowable, stage 5 vs stage 1", "E7",
+        r["rows"][4]["implied_allowable"], r["rows"][0]["implied_allowable"],
+        "LPT Table XI safety factors, which should imply one allowable",
+        "unresolved", units="index", finding=174))
+
     # two published lengths for the same duct, 10 % apart (unit J1)
     td = yaml.safe_load((DATA / "engine-flowpath.yaml").read_text())["transition_duct"]
     out.append(Disagreement(

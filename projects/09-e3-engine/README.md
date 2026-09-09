@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **892 test functions**, **169 numbered findings**, **32 closures** — 19 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **922 test functions**, **174 numbered findings**, **34 closures** — 20 met, 11 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -18,7 +18,7 @@ NASA measured, and the gap is published.**
 | **B** | cycle — three Table XII ratings, the mixer, the station table | 1 met, 2 half |
 | **C** | aero — mean-line, through-flow, blading, CFD validation | 6 met, **1 gated** |
 | **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half |
-| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 1 met, 5 half |
+| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 2 met, 6 half |
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
@@ -63,6 +63,8 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J5** — the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | met |
 | **J6** — every headline claim in the post is bound to the value the code produces | — | met |
 | **J7** — the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 vs 2.0 percent of row volume, web variant | met |
+| **E7** — the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 vs 15.0 percent departure from the mean implied allowable | half |
+| **E8** — uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 vs 25.0 percent | met |
 
 ### Figures
 
@@ -73,7 +75,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 
 ### Outstanding
 
-13 closures are not met. None is open without a reason attached:
+14 closures are not met. None is open without a reason attached:
 
 - **B1** (half) — the mixer reproduces Table XXIII's sfc improvement. open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fi
 - **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
@@ -88,6 +90,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 - **F2** (gated) — basic engine mass within 10 % of 3,473 kg. disc profiles un-digitised, casings and frames figure-status, and the 320 kg of sumps and drives has no printed geometry
 - **G1** (half) — generated blade volume against Stage F2's integral. the closure also asks the generated engine mass to match F2, whose own total is gated
 - **H** (gated) — zero clashes through rotation, every bearing with its load. no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt
+- **E7** (half) — the five LPT flutter safety factors imply one allowable index, and the five agree. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 fro
 
 The four gaps that are **transcription, not modelling**: the HPT disc profile has no absolute radial scale (blocks E2's peak stress and burst margin, and F2's disc masses); the HPC §3.2.3 dovetails (E5); the casing, liner and dome flowpaths (G); and the combustor liner hole areas (D2). None is a hard problem — they are figures nobody has digitised.
 

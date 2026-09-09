@@ -45,7 +45,7 @@ STAGES = [
                     "thermal.combustor"]),
     ("E  mechanical", ["mechanical.blade_stress", "mechanical.disc",
                        "mechanical.blade_frequency", "mechanical.rotordynamics",
-                       "mechanical.attachments"]),
+                       "mechanical.attachments", "mechanical.flutter", "mechanical.gas_bending"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",

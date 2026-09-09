@@ -368,3 +368,44 @@ closures:
       2 mm and a 2 percent band; the archival file stays at 0.6 mm and 1.
       Co-rotation is declared inside the file as a modelling decision, not
       a published fact.
+
+  - stage: E7
+    what: the five LPT flutter safety factors imply one allowable index, and the five agree
+    band: 15.0
+    achieved: 24.4
+    units: percent departure from the mean implied allowable
+    state: half
+    gate: >
+      NOT MET on the definition STEP0 named before the run (rotor relative
+      exit velocity): the five implied allowables spread 1.61x, worst
+      24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back,
+      which points at the model rather than the data -- the beam's
+      first-flex frequencies fall 6.1x across the five stages where Table XI
+      implies about 3.8, and the beam pins the tip shroud without its mass
+      (findings 173-175). On the INLET reading of Table XI's ambiguous
+      "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5
+      departs 33 percent; reported, not adopted.
+    note: >
+      Torsion is not modelled: the beam gives flexural modes only. Table XI's
+      torsional column is carried as published data and compared with
+      nothing.
+
+  - stage: E8
+    what: uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections
+    band: 25.0
+    achieved: 17.7
+    units: percent
+    state: met
+    gate: null
+    note: >
+      LPT Table VIII rather than HPC Table X, because Table VIII prints the
+      whole decomposition -- centrifugal, uncorrected gas bending, and the
+      leading-edge resultant -- where Table X gives only a maximum and a
+      centrifugal part. Errors -3.8, -8.3, -9.8, +7.0, +17.7 percent: both
+      signs, so scatter rather than a missing term. The report's own
+      sentence about the stacking tilt is checked as an inequality and holds
+      on all five stages, cancelling 51 percent of the bending on average;
+      the tilt angle itself is not printed anywhere and is not reproduced.
+      The first run was 43-62 percent low until Euler's identity caught a
+      counter-swirl sign convention (finding 176).
+

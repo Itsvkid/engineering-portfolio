@@ -863,3 +863,206 @@ adjusted after reading them.
      as read and as an open question: either these diagrams plot something
      other than the rotating frequency, or centrifugal stiffening is far
      weaker on a dovetailed compressor blade than beam theory says.
+
+---
+
+## Unit E7 — the flutter screen
+
+The plan's Stage E3 line: *Flutter screen: reduced frequency per row;
+flexural and torsional stability plots vs HPC Figs. 43-44.*
+
+Figures 43-44 are not transcribed. What **is** transcribed is better for a
+check: **LPT report Table XI** prints a flutter safety factor for every one
+of the five LPT rotor stages, in both flexural and torsional modes, and
+states the index it is built on --
+
+> relative flow velocity / (half blade chord x blade natural frequency)
+
+-- with the safety factor being *maximum allowable index / calculated
+index*, required to be at least 1.
+
+### The problem with checking it, and the way round
+
+**The allowable is not printed.** Only the ratio is. So the index cannot
+be compared against a published number directly.
+
+It can be compared **across stages**. If every stage is judged against one
+allowable, then for each stage
+
+    SF_published x I_computed = allowable = constant
+
+so the five products must agree with each other, and the value they agree
+on is the allowable this project can then report as recovered rather than
+read. That is the check.
+
+**Why this survives the E3 bias.** Unit E3's beam over-predicts blade
+frequencies, badly (1 of 24 within 5 %). A frequency that is wrong by a
+constant factor k gives an index wrong by 1/k, and the product above is
+then `allowable/k` for *every* stage -- still constant. **The constancy
+test is blind to a uniform bias and sensitive only to a stage-to-stage
+one**, which is exactly the part of the model this can honestly examine.
+What it cannot do is recover the allowable's absolute value, and the
+result below says so.
+
+| Check | Band | Basis |
+|---|---|---|
+| The five implied allowables agree | **±15 %** about their mean | generous, because the beam is a beam; tight enough that a stage-to-stage error of the size E3 found on the HPC would show |
+| Relative velocity | rotor relative **exit** velocity, `cx3 / cos β3` | straight off the C1 velocity triangle, no thermodynamics in the path |
+| Half chord | mean of root and tip chord, halved | Table XI's own definition; the aspect-ratio note says the report works at the pitch |
+| Torsion | **not modelled** | the beam gives flexural modes only. A torsional index needs GJ and a polar inertia this project has not built. Recorded, not approximated |
+
+**Closes when** the five implied allowables agree inside ±15 %, and the
+recovered allowable is reported with the caveat that its absolute value
+carries the beam model's bias.
+
+### Result — E7
+
+| | |
+|---|---|
+| Definition used | rotor relative **exit** velocity, as STEP0 named before the run |
+| Implied allowable index | **51.3** (median 52.1) |
+| Worst departure | **24.4 %** against a 15 % band — **NOT MET** |
+| Spread across five stages | 1.61× |
+| Departure shape | **monotone**, 39.7 → 63.8 front to back |
+| Torsion | not modelled; Table XI's column carried as published data |
+
+### Findings
+
+173. **Table XI does not say where the relative velocity is taken, and the
+     two readings do not agree.** The index is *relative flow velocity /
+     (half chord × natural frequency)*, and a turbine rotor has two
+     relative velocities. STEP0 chose the **exit** before the run — the
+     natural reading for a turbine rotor, and the larger of the two. On
+     that reading the five implied allowables spread 1.61× and the worst
+     departs 24.4 %: the closure fails. On the **inlet** reading, stages 1
+     to 4 agree to **4.2 %** about an allowable index of 27.9 — well
+     inside the band — and stage 5 alone departs **+33.3 %**.
+
+     The inlet reading is reported and **not adopted**. Changing a
+     definition after the run because the other one fits is the precise
+     move this project exists not to make, and the closure stands as
+     evaluated. What the two readings say together is worth more than
+     either: the index is reproducible on four of five stages under one
+     plausible reading of an ambiguous sentence, and **stage 5 is the odd
+     stage under both**. Settling which station the report meant needs
+     Table XI's own working, which is not printed.
+
+174. **The miss is monotone, which says the model and not the data.** The
+     implied allowable climbs stage by stage — 39.7, 46.4, 52.1, 54.4,
+     63.8 — rather than scattering about a mean. Since the product is
+     `allowable = SF × velocity / (half chord × f)`, a monotone rise means
+     the model's frequencies **fall too fast from front to back**: the
+     first-flex frequencies drop 2974 → 490 Hz across the five stages,
+     a ratio of 6.1, where Table XI's safety factors imply about 3.8.
+     The blades carry integral cast tip shrouds with two-tooth seals, and
+     the beam models the shroud as a **pin** — no mass, no rotary inertia,
+     no torsional restraint. A shroud's mass matters more on the long aft
+     blades than the short front ones, which is the right shape for this
+     error. That is a hypothesis with a named mechanism, not a cause;
+     testing it needs a shroud mass this project has not transcribed.
+
+175. **The constancy test is blind to unit E3's bias by construction, and
+     that is why it is worth running.** A frequency wrong by a constant
+     factor k makes every index wrong by 1/k and every implied allowable
+     `allowable/k` — so the five still agree, and the *agreement* survives
+     a model known to over-predict by about 20 %. What does not survive is
+     the absolute value: the recovered allowable index of 51.3 carries the
+     bias in full and is reported with that caveat attached to it in the
+     code. This is the first closure in the project whose test was chosen
+     specifically to be insensitive to a known error, and it is worth
+     naming as a pattern: **when a model has a uniform bias, look for the
+     quantity the bias cancels out of.**
+
+---
+
+## Unit E8 — gas bending
+
+The plan's Stage E1 line: *Gas bending from the C1 loads; tilt to cancel;
+compare Table X `max_root_stress`.*
+
+Table X gives the HPC's maximum root stress and its centrifugal part, and
+nothing between them. **LPT Table VIII is the better target** and prints
+the whole decomposition per stage:
+
+* centrifugal, at pitch and at root
+* **uncorrected gas bending at the root** — explicitly *before* the
+  stacking tilt
+* the leading-edge **resultant**, at pitch and root, which is what the
+  blade actually sees
+
+and its own note says why the first exceeds the third: *"'Uncorrected' gas
+bending is before the stacking tilt that cancels it against centrifugal
+bending."* That sentence is the whole design idea in one line, and it is
+checkable.
+
+### Method
+
+Gas load per blade from the C1 mean-line, nothing else:
+
+* tangential force `F_θ = ṁ_blade (c_θ2 − c_θ3)`
+* axial force `F_x = ṁ_blade (c_x2 − c_x3) + (p_s2 − p_s3) A_ann / N`
+* both applied at mid-span, giving a root moment `F · L / 2`
+* resolved onto the **principal axes of the root section**, which come
+  from the transcribed coordinates via `polygon_properties`, and the
+  bending stress taken as `M/Z` on each with `Z = I / c` to the furthest
+  fibre
+
+### The band, and why it is wide
+
+| Check | Band | Basis |
+|---|---|---|
+| Uncorrected gas bending at root, all five stages | **±25 %** | a mean-line load with a mid-span resultant against a real blade with a spanwise load distribution, a twisted stacking line and a shrouded tip. 25 % is the honest scatter of that method, and it is stated before the run rather than after it |
+| The published resultant is below the uncorrected bending | **every stage** | not a tolerance but a sign check on the report's own sentence: if the tilt cancels bending, the resultant must be smaller |
+| Direction | gas bending opposes centrifugal bending at the root | the mechanism the tilt exploits |
+
+**Closes when** the uncorrected root gas bending reproduces within 25 % on
+all five stages, and the published resultant is below the published
+uncorrected value on every stage.
+
+**Not attempted:** the tilt angle that does the cancelling. Table X's own
+transcription note records that tilt is *"omitted: stages 8–10 print as
+percentage LMI rather than radians"*, and the LPT table does not print it
+at all. The cancellation is checked as an inequality, not reproduced.
+
+### Result — E8
+
+| | |
+|---|---|
+| Uncorrected root gas bending, five LPT stages | worst **17.7 %** against a 25 % band — **MET** |
+| Errors | −3.8, −8.3, −9.8, +7.0, +17.7 % — **both signs**, so scatter rather than a missing term |
+| The tilt cancels | **holds on all five**, mean **51 %** cancelled |
+| Tilt angle | not reproduced; the reports do not print it |
+
+### Findings
+
+176. **The stage exit is counter-swirled, and the swirl change is a sum.**
+     The first run under-predicted gas bending by 43–62 % on the four
+     front stages and only 8.6 % on the fifth. The cause was a sign: the
+     mean-line stores `alpha3` as a **magnitude**, the LPT stages exit with
+     counter-swirl, and so the swirl change across the rotor is
+     `c_θ2 + c_θ3` and not the difference. Taking the difference
+     under-states the load by a factor of 1.4 to 3.8 — largest at the
+     front, smallest at stage 5, which is exactly the shape the error had.
+
+     What found it was **Euler's own identity**: `Δh = U · Δc_θ` is not a
+     model, so the swirl change taken from the stored angles must reproduce
+     the enthalpy drop the mean-line had already solved for. It did not,
+     by a factor of three. The sum convention reproduces it to **3.7 % on
+     the worst stage**, and `euler_check()` is now a test. The mean-line
+     was never wrong; the way this unit read it was. **A convention is
+     worth checking against a conservation law before it is trusted, and
+     the check costs four lines.**
+
+177. **The stacking tilt cancels about half the gas bending, on every
+     stage.** LPT Table VIII prints uncorrected gas bending and the
+     leading-edge resultant separately, and its note explains the gap:
+     tilt cancels bending against centrifugal bending. Checked as an
+     inequality rather than a tolerance — the resultant must sit below the
+     uncorrected value — it **holds on all five stages**, cancelling 39 %
+     to 61 % with a mean of 51 %. The tilt angle itself is not reproduced:
+     Table X's own transcription note records tilt as *omitted, stages
+     8–10 print as percentage LMI rather than radians*, and the LPT table
+     never prints it. **A design intent stated in one sentence of prose,
+     confirmed as an inequality across five stages** — which is as far as
+     the published data allows anyone to take it.
+

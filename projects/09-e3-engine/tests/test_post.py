@@ -107,21 +107,21 @@ def test_the_beam_bias_share_is_not_overstated():
     from verification.disagreements import collect
     rows = collect()
     n = sum(1 for r in rows[:21] if r.stage == "E3")
-    assert n == 16, n
-    claim("sixteen of the worst twenty-one")
+    assert n == 15, n
+    claim("fifteen of the worst twenty-one")
     assert "twenty of the project's twenty-one worst" not in POST
 
 
 def test_the_overall_disagreement_statistics_match():
     from verification.disagreements import collect, summary
     s = summary(collect())
-    assert s["total"] == 100
+    assert s["total"] == 101
     assert s["median"] == pytest.approx(7.3, abs=0.05)
     assert (s["within_1"], s["within_5"], s["within_10"]) == (12, 38, 56)
-    assert s["unresolved"] == 7
-    claim("**100 comparisons, median absolute error 7.3 %.**")
+    assert s["unresolved"] == 8
+    claim("**101 comparisons, median absolute error 7.3 %.**")
     claim("Twelve\ninside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %")
-    claim("Seven carry the")
+    claim("Eight carry the")
 
 
 # --- the gap -------------------------------------------------------------
@@ -144,17 +144,19 @@ def test_the_three_gap_sheets_are_the_three_in_the_code():
 def test_the_closure_scoreboard_matches():
     import collections
     by = collections.Counter(c["state"] for c in CLOSURES)
-    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (32, 19, 10, 3)
-    claim("32 closures — 19 met,\n10 half, 3 gated.")
+    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (34, 20, 11, 3)
+    claim("34 closures — 20 met,\n11 half, 3 gated.")
 
 
-def test_the_findings_count_matches():
-    """exact, unlike the test count: findings are appended deliberately and
-    one at a time, so the number is a claim rather than a side effect"""
+def test_the_post_states_a_findings_floor_that_is_true():
+    """A floor, like the test count. Findings were exact while they arrived
+    one at a time; once units are being closed in sequence they move as a
+    side effect of routine work, which finding 170's own rule says belongs
+    as a bound rather than an exact figure in prose."""
     from build_findings import findings_index
     n = len(findings_index())
-    assert n == 169, n
-    claim(f"{n} numbered findings")
+    assert n >= 170, n
+    claim("Over 170 numbered findings")
 
 
 def test_the_post_states_a_test_count_floor_that_is_true():

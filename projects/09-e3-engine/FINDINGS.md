@@ -11,7 +11,7 @@ makes them. The prose is written by hand.
 
 ## 1. Every disagreement with a published number, ranked
 
-**100 comparisons** against numbers printed in the NASA reports.
+**101 comparisons** against numbers printed in the NASA reports.
 Each is something a solver computed and a report states, with no
 intermediate fitting.
 
@@ -20,9 +20,9 @@ intermediate fitting.
 | Within 1 % | 12 |
 | Within 5 % | 38 |
 | Within 10 % | 56 |
-| Worse than 20 % | 22 |
+| Worse than 20 % | 23 |
 | Median absolute error | **7.30 %** |
-| **Unresolved** | **7** |
+| **Unresolved** | **8** |
 
 Unresolved means exactly that: a disagreement with no cause yet. Five
 of ninety-eight is the honest count, and they are listed in section 3.
@@ -34,6 +34,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | +79.1 | E5 | LPT Fig 70 disk_C stress concentration | LPT Fig 70 | **UNRESOLVED** (finding 100) |
 | +78.7 | E3 | HPC rotor 2 3F frequency | HPC Fig 34 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | -74.4 | C4 | Rotor 37 mass flow, converged solve | TP-1337 Table I design flow | **UNRESOLVED** (finding 141) |
+| +60.8 | E7 | LPT flutter allowable, stage 5 vs stage 1 | LPT Table XI safety factors, which should imply one allowable | **UNRESOLVED** (finding 174) |
 | +54.3 | J2 | HPC stage-1 1F rise, rest to max speed | HPC Figs 33-42, mode lines drawn flat across the speed range | **UNRESOLVED** (finding 162) |
 | +54.0 | E3 | HPC stage-1 first flex at 14,000 rpm | HPC Fig 33, read flat across the speed range | **UNRESOLVED** (finding 145) |
 | +50.8 | E3 | HPC rotor 3 1F frequency | HPC Fig 35 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
@@ -136,8 +137,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-19 met, 10 half met, 3 gated, of 32.
-20 of 22 numeric closures sit inside their own band.
+20 met, 11 half met, 3 gated, of 34.
+21 of 24 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -176,11 +177,15 @@ blocks it. None is open without a reason attached.
 | J5 | the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | — | met |
 | J6 | every headline claim in the post is bound to the value the code produces | — | — | met |
 | J7 | the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 | 2 | met |
+| E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
+| E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 
 ### The two recorded misses
 
 - **B3 — sfc at three ratings against Table XII**: 1.91 against a band of 1.5. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on the standard day.
 - **E3 — first three modes of every HPC stage against Figs 33-42**: 21.4 against a band of 5. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-predicted on nine stages of ten. The cause is the one finding 84 already named: a clamped beam is the stiffest root a blade can have and a dovetail is not a clamp. Closing this needs a root-flexibility model or an FE blade, not a better beam. Findings 143-145.
+
+- **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back, which points at the model rather than the data -- the beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8, and the beam pins the tip shroud without its mass (findings 173-175). On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted.
 
 
 ---
@@ -192,6 +197,7 @@ much as questions the reports have not answered.
 
 - **LPT Fig 70 disk_C stress concentration** (E5) — 2.86547 against 1.6, +79.1 %. Source: LPT Fig 70.
 - **Rotor 37 mass flow, converged solve** (C4) — 5.17 against 20.188, -74.4 %. Source: TP-1337 Table I design flow.
+- **LPT flutter allowable, stage 5 vs stage 1** (E7) — 63.7728 against 39.6592, +60.8 %. Source: LPT Table XI safety factors, which should imply one allowable.
 - **HPC stage-1 1F rise, rest to max speed** (J2) — 1.54314 against 1, +54.3 %. Source: HPC Figs 33-42, mode lines drawn flat across the speed range.
 - **HPC stage-1 first flex at 14,000 rpm** (E3) — 539 against 350, +54.0 %. Source: HPC Fig 33, read flat across the speed range.
 - **LPT Fig 70 disk_D stress concentration** (E5) — 0.990331 against 1.6, -38.1 %. Source: LPT Fig 70.
@@ -260,7 +266,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-169 findings, in the `STEP0.md` that owns each one.
+174 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -439,4 +445,9 @@ would break every reference in the commit history.
 | 170 | publication | A post that states its own test count cannot be tested without |
 | 171 | publication | A cutaway must not be centred on its own bounding box. The first |
 | 172 | publication | three.js does not surface asset.extras. The exporter wrote the |
+| 173 | mechanical | Table XI does not say where the relative velocity is taken, and the |
+| 174 | mechanical | The miss is monotone, which says the model and not the data. The |
+| 175 | mechanical | The constancy test is blind to unit E3's bias by construction, and |
+| 176 | mechanical | The stage exit is counter-swirled, and the swirl change is a sum. |
+| 177 | mechanical | The stacking tilt cancels about half the gas bending, on every |
 

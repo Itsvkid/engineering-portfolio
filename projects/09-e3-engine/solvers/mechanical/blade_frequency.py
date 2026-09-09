@@ -135,17 +135,31 @@ def _fill(model, sections):
 
 def lpt_stage1():
     """from the transcribed coordinates -- no shape factor anywhere"""
+    return lpt_rotor(1)
+
+
+@lru_cache(maxsize=None)
+def lpt_rotor(stage):
+    """Any of the five LPT rotors, from its own transcribed sections.
+
+    Generalised out of `lpt_stage1` for unit E7's flutter screen, which
+    needs a first-flex frequency for every stage and not only the one the
+    report plots. Stage 1 keeps its published Campbell frequencies; the
+    other four have none printed, so they carry NaN and the caller must
+    not compare them against a number that does not exist."""
     d = _lpt()
     rb = d["rotor_blades"]
-    length = rb["blade_length_cm"][0] * CM
-    cam = d["stage1_blade_campbell"]["natural_frequencies_Hz"]["first_flex"]
+    i = stage - 1
+    length = rb["blade_length_cm"][i] * CM
+    cam = (d["stage1_blade_campbell"]["natural_frequencies_Hz"]["first_flex"]
+           if stage == 1 else None)
 
     spans, radii, polys = [10, 50, 90], [], []
     for sp in spans:
-        pts = load_section("R1", sp)
+        pts = load_section(f"R{stage}", sp)
         poly = [(z * IN, t * IN) for z, t in closed_airfoil(pts)]
         rs = []
-        with open(DATA / "lpt-airfoils" / f"R1_{sp}.csv") as f:
+        with open(DATA / "lpt-airfoils" / f"R{stage}_{sp}.csv") as f:
             for line in f:
                 if line.startswith(("#", "surface")):
                     continue
@@ -157,9 +171,13 @@ def lpt_stage1():
     # radius linearly to get the hub, which is where the beam is clamped
     slope = (radii[2] - radii[0]) / 0.8
     hub = radii[0] - 0.1 * slope
-    m = BladeModel("LPT stage 1", "CR-168289 Fig 62 (pinned tip), appendix coordinates",
+    m = BladeModel(f"LPT stage {stage}",
+                   "CR-168289 Fig 62 (pinned tip), appendix coordinates"
+                   if stage == 1 else "CR-168289 appendix coordinates",
                    length, hub, E_RENE77, RHO_RENE77,
-                   cam["at_0_rpm"], (4000, cam["at_4000_rpm"]), pinned_at=1.0)
+                   cam["at_0_rpm"] if cam else float("nan"),
+                   (4000, cam["at_4000_rpm"]) if cam else None,
+                   pinned_at=1.0)
     return _fill(m, [(f * length, poly) for f, poly in zip((0.10, 0.50, 0.90), polys)])
 
 

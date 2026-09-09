@@ -54,7 +54,7 @@ disagreements, and each closure's tolerance was written in a `STEP0.md`
 > a 0–6 kHz axis reads to ±14 %. My model is wrong there, and the reference
 > could never have proved it either way.
 >
-> 100 comparisons, median absolute error 7.3 %. 7 have no explanation and
+> 101 comparisons, median absolute error 7.3 %. 8 have no explanation and
 > say so.
 >
 > The part I'd defend hardest is the last drawing sheet. Three of the six
@@ -150,7 +150,7 @@ clamped root over-predicts, and the over-prediction grows with mode number
 — median +19.5 %, +25.8 % and +37.8 % for the first, second and third
 flexural modes on the stages that publish all three. That is a named
 modelling limit, and it accounts for most of the project's worst numbers —
-sixteen of the worst twenty-one.
+fifteen of the worst twenty-one.
 
 Then the finding I did not go looking for. The Campbell diagrams are read
 off page images, and their transcription records its own precision: half a
@@ -162,8 +162,8 @@ The reference could not have shown it either way. The published closure —
 "1 of 24" — turns out to be two different results added together, and the
 figure now marks the two groups differently.
 
-Across everything: **100 comparisons, median absolute error 7.3 %.** Twelve
-inside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %. Seven carry the
+Across everything: **101 comparisons, median absolute error 7.3 %.** Twelve
+inside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %. Eight carry the
 word *unresolved*, which is a legitimate entry — zero would have meant
 inventing causes to fill a column.
 
@@ -202,8 +202,8 @@ use had no single home.
 Nine of ten stages: cycle, mean-line and through-flow aero, blading,
 cooling and secondary air, blade and disc mechanical, materials and mass,
 32 blade rows lofted from the validated sections, cross-discipline
-verification, and publication. **Over 850 test functions. 32 closures — 19 met,
-10 half, 3 gated. 169 numbered findings.**
+verification, and publication. **Over 850 test functions. 34 closures — 20 met,
+11 half, 3 gated. Over 170 numbered findings.**
 
 The tenth stage is hand CAD and needs a person at a GUI. One CFD case, a
 transonic compressor rotor, converges to a stalled branch at 26 % of design

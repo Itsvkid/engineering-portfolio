@@ -60,9 +60,13 @@ def test_the_worst_disagreements_are_the_ones_the_findings_name():
     across the speed range, and that is a genuine disagreement with a
     number read off a figure like any other (finding 162). It is the same
     beam model as E3's entries, seen from the speed axis instead of the
-    frequency axis."""
+    frequency axis.
+
+    E7 joined on 2026-09-09 for the same underlying reason: the LPT flutter
+    allowable implied by stage 5 against stage 1 differs because the beam's
+    frequencies fall too fast from front to back (finding 174)."""
     top = ROWS[:10]
-    assert all(r.stage in ("E3", "E5", "E2", "C4", "J2") for r in top), \
+    assert all(r.stage in ("E3", "E5", "E2", "C4", "J2", "E7") for r in top), \
         [(r.stage, r.quantity) for r in top]
 
 
