@@ -43,6 +43,43 @@ real output of the project; the code exists to produce and check them.
 5. `./sync-public.sh --push` mirrors publicly; it excludes `.claude/`,
    `CLAUDE.md`, the vault, `resume/` and `cv/`.
 
+### What is left, triaged
+
+Fifty-six plan items are unticked. They are not fifty-six pieces of work
+waiting on effort — the great majority are waiting on something that is
+not effort, and the split is worth knowing before planning anything.
+
+| | Items | What they need |
+|---|---|---|
+| **Hand CAD** (all of Stage H) | 13 | **A person at a GUI.** Nothing here can be done by writing code |
+| **Un-digitised figures** (A3 and everything it gates) | ~16 | Someone to measure figures: disc profiles, HPT Fig 78, Figs 46–56, 61, 63, the combustor, the mixer and nozzle. Each is marked **GATED** in the plan with what it blocks |
+| **Elevated-temperature properties** | 4 | MIL-HDBK-5J prints them as figures, not tables. Blocks creep, LCF, and the Goodman HCF margin — a Goodman diagram at room temperature for a 655 °C blade is not a result |
+| **CFD** | 5 | C4-4's Rotor 37 solve, which is characterised and unsolved, plus four cases downstream of it |
+| **FEA** | 3 | CalculiX is not installed. Meaningful FEA also needs meshing, boundary conditions and a convergence study — a stage, not a task |
+| **Genuinely open to code, now** | ~5 | see below |
+| **Deferred by design** | 1 | B's component maps, deferred to Stage C in the plan itself |
+
+**The ~5 that are open to code**, in the order they are worth doing:
+
+1. **Booster and inner-OGV sweep and lean.** The angles are published
+   (60° aft, lean 0° at the OD to 20° at the ID); what is missing is that
+   `wrapped_wire` stacks sections on a radial line. A geometry extension,
+   not a transcription gap.
+2. **HPC stall margin and the VSV schedule effect.** The stagewise
+   diffusion factors, losses and de Haller numbers are done in C1 unit 5;
+   stall margin is the off-design part and needs a compressor map.
+3. **The bolted-joint and inertia-weld rotor structure of the HPC** —
+   partly reachable from Table XVII's flange data.
+4. **D's thrust balance** — needs HPT Figs 95–96 read first, so really an
+   A3 item wearing a D coat.
+5. **Emissions against Tables XVI–XVII** — a correlation from AGARD
+   CP-422; the combustor volume it wants is undimensioned, so any answer
+   would carry that uncertainty.
+
+**The honest summary:** the modelling this project set out to do is done.
+What remains is transcription, a CAD seat, two toolchains, and one
+unsolved CFD case.
+
 ### The next three things to do
 
 1. **Finish C4-4, the Rotor 37 solve — there is a bug to find.** The mesh

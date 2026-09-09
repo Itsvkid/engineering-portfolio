@@ -601,7 +601,13 @@ Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
       aft-loaded (55 %)** (finding 43). Thickness by the quarter-sine
       distribution CR-165148 §II.A documents for this engine. Stacking on
       the stacking axis with pretwist and tilt is still to do
-- [ ] HPC stators from Table XXI section data; vane counts
+- [x] HPC stators from Table XXI section data; vane counts
+      — already satisfied and ticked 2026-09-09 on inspection: 120 stator
+      sections across all ten stages in `blading.sections`, vane counts
+      transcribed in `hpc-blade-sections.yaml`, all ten rows lofted to
+      STEP by G1, and `test_hpc_blade_sections_geometry.py` holds them to
+      circular-arc camber. The work was done inside C3 and G1 without the
+      line being crossed off.
 - [x] HPT vanes and blades — **unit 14**, and Fig 6 was **not needed**.
       Table IV's aspect ratio *is* height over throat, and Fig 3 gives the
       annulus heights, so the throat follows from two printed numbers:
@@ -638,7 +644,14 @@ Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
       rule was used instead. Scope: Fig 3 publishes the profile only from
       the OD to the island at 78 % of the flow, so the inner span is left
       to the booster rather than extrapolated
-- [ ] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
+- [~] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
+      — **half done**: the booster rotor is built and lofted by G1, but on a
+      RADIAL stacking line. The inner OGV is not built at all. Both halves
+      of what is missing are the same thing: `wrapped_wire` stacks sections
+      on a radial line, and sweep (60° aft) and lean (0° at OD to 20° at
+      ID) need each section offset axially and circumferentially. That is a
+      geometry extension, not a transcription gap — the angles are
+      published in `fan-design.yaml.inner_ogv_airfoil`.
 - [x] Throat area per row from the sections — **unit 12**. Nothing about
       the throat is transcribed; it comes out of seven printed numbers per
       section. **The transonic rotors 1–4 land at 4.0 % above choking
