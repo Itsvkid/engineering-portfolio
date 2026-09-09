@@ -333,3 +333,20 @@ closures:
       reason printed. Three sheets exist to state a gap -- combustor, HPT,
       fan (finding 167).
 
+  - stage: J6
+    what: every headline claim in the post is bound to the value the code produces
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      POST.md, tested by tests/test_post.py. It caught a stale claim on its
+      first run: the post said the beam-model bias accounted for twenty of
+      the twenty-one worst numbers, true at 98 comparisons in unit I3 and
+      sixteen of twenty-one by the time the post was written (finding 169).
+      The post states a FLOOR for the test count rather than an exact figure,
+      because adding the tests that check the post moves it (finding 170);
+      the findings count stays exact, because findings are appended
+      deliberately.
+

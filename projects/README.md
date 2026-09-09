@@ -18,15 +18,16 @@ Environment setup and versions: [SETUP.md](SETUP.md).
 | 06 | [Parametric blade row](06-blade-row/) | pyOCC (`pyocc_env`) | Free-vortex rotor + stator twist laws, two-row stage assembly, Carter's-rule deviation correction, GA drawing, STEP/glTF, 96 tests | **v1** |
 | 07 | [Parametric nacelle](07-nacelle/) | pyOCC (`pyocc_env`) | CST cowl + internal duct as a hollow shell, fit-recovery demo, OpenFOAM case fitted to NASA wind-tunnel data (written, not run), STEP/glTF, 71 tests | **v1** |
 | 08 | [Turbofan cycle model](08-cycle-model/) | Python | Twin-spool separate-exhaust cycle solved station by station, closed-form ideal-cycle validation, spool power balance, C-D nozzle and part-throttle options, 82 tests | **v1** |
-| 09 | [E³ engine, rebuilt from its design report](09-e3-engine/) | Python + hand CAD | Whole twin-spool turbofan: cycle validated against NASA's published design point, annulus computed from that cycle and overlaid on NASA's own cross-sections, blade rows generated, structure and bearings modelled, sectioned cutaway | **Planned** |
+| 09 | [E³ engine, rebuilt from its design reports](09-e3-engine/) | Python + pyOCC | Whole twin-spool turbofan from public-domain NASA reports: cycle, mean-line and through-flow aero, cooling and secondary air, blade and disc mechanical, materials and mass, 32 lofted blade rows, cross-discipline verification, and a drawing pack. **843 test functions, 30 closures, [165 numbered findings](09-e3-engine/FINDINGS.md)** — every disagreement with a published number ranked, with a cause or the word *unresolved* | **v1** — nine of ten stages; H (hand CAD) needs a human at a GUI |
 
 Update the status column as each moves through `Not started → In progress →
 Complete`. Each project's own README carries its work log.
 
-**`v1` is not the same as `Complete`.** Projects 06–08 are built, tested and
+**`v1` is not the same as `Complete`.** Projects 06–09 are built, tested and
 exportable, and each one's README carries an *Outstanding* section naming what
 a v2 would add — real off-design compressor and turbine maps for 08, the
-unexecuted OpenFOAM run for 07. Say "v1" in an interview and then say what is
+unexecuted OpenFOAM run for 07, the hand-CAD assembly and the Rotor 37 solve
+for 09. Say "v1" in an interview and then say what is
 missing; it reads better than "complete" does.
 
 ## Suggested order
@@ -62,6 +63,13 @@ from, which is why the three read as one piece of work rather than three.
 E³ design point, then drives 06's blade rows and 07's cowl off the validated
 cycle to assemble one complete engine. Three separate CV lines become one.
 
+09 also inverts the usual direction. 01–08 build something and then look for
+a reference to check it against; 09 starts from fourteen NASA reports that
+already contain the answers, states each tolerance **before** the run, and
+publishes the misses. Its deliverable is not the engine — it is
+[FINDINGS.md](09-e3-engine/FINDINGS.md), the list of everywhere the model and
+the published number disagree.
+
 Chained projects are worth more than isolated ones. Say so explicitly in each
 README and on LinkedIn.
 
@@ -82,7 +90,9 @@ referenced from `cadModels` in `app/data.js`. See `docs/CAD_VIEWER.md` and the
 READMEs in those two folders for the field formats.
 
 **LinkedIn** — one or two figures plus what the result actually shows. A number
-with a comparison beats a screenshot of a contour plot.
+with a comparison beats a screenshot of a contour plot. 09's post is drafted in
+[`09-e3-engine/POST.md`](09-e3-engine/POST.md); it leads with the validation,
+credits NASA by report number, and states the gap rather than the render.
 
 ## A rule worth keeping
 

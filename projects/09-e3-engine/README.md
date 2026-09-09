@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **859 test functions**, **165 numbered findings**, **30 closures** — 17 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **878 test functions**, **167 numbered findings**, **31 closures** — 18 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -23,7 +23,7 @@ NASA measured, and the gap is published.**
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 2 met |
-| **J** | publication — meridional plot, Campbell match, glTF | 5 met |
+| **J** | publication — meridional plot, Campbell match, glTF | 6 met |
 
 ### Validation
 
@@ -61,6 +61,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J3** — the glTF carries all 32 rows and 2890 blades, each row's mesh within 1 percent of its solid by volume, placed on J1's axis | 0.374 vs 1.0 percent of row volume | met |
 | **J4** — the README's numbers are generated from the code and a test fails if they drift | — | met |
 | **J5** — the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | met |
+| **J6** — every headline claim in the post is bound to the value the code produces | — | met |
 
 ### Figures
 

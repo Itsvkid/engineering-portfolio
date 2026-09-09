@@ -136,7 +136,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-17 met, 10 half met, 3 gated, of 30.
+18 met, 10 half met, 3 gated, of 31.
 19 of 21 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -174,6 +174,7 @@ blocks it. None is open without a reason attached.
 | J3 | the glTF carries all 32 rows and 2890 blades, each row's mesh within 1 percent of its solid by volume, placed on J1's axis | 0.374 | 1 | met |
 | J4 | the README's numbers are generated from the code and a test fails if they drift | — | — | met |
 | J5 | the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | — | met |
+| J6 | every headline claim in the post is bound to the value the code produces | — | — | met |
 
 ### The two recorded misses
 
@@ -258,7 +259,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-165 findings, in the `STEP0.md` that owns each one.
+167 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -433,4 +434,6 @@ would break every reference in the commit history.
 | 166 | publication | Four of the engine's ten gas-path stations can be placed; six |
 | 167 | publication | Three of the six sheets exist to say that something cannot be |
 | 168 | publication | A README claimed "37 tests" for months, and no test could fail. |
+| 169 | publication | The post drafted a claim that had been true and had stopped being |
+| 170 | publication | A post that states its own test count cannot be tested without |
 

@@ -170,6 +170,31 @@ position no report gives — as tests, not by inspection.
 
 ---
 
+## Unit J6 — the post
+
+*The post: validation-led, NASA credited, the gap stated.* The plan's last
+Stage J bullet, and the most public thing this project produces.
+
+A post is also the least likely artefact to be re-checked. Unit J4 found a
+README that had carried "37 tests" for months (finding 168); a post
+carrying a stale number is the same failure with a wider audience and no
+way to correct it after the fact.
+
+| Check | Requirement | Why |
+|---|---|---|
+| Every headline number is bound to the code | each claim asserted as a substring of `POST.md` against the value the solvers produce | a number in prose has no test unless one is written |
+| Validation leads | the agreements appear before the pictures | the plan's own word, *validation-led* |
+| The misses are in the post, not only the repo | takeoff sfc, the Campbell closure, the unresolved seven | a post that reports only agreements is advertising |
+| NASA is credited by report and contract | CR-168219, NAS3-20643, NASA Lewis, General Electric, TP-1337 | it is their engine and their data |
+| Non-affiliation is stated, errors owned | in the footer | |
+| The gap is stated | what the public record does not contain, and the unfinished work | the plan's own words |
+
+**Closes when** every headline claim in the post is asserted against the
+value the code produces, and the post names its misses and its unfinished
+work — as tests, not by inspection.
+
+---
+
 ---
 
 ## Result — J1
@@ -450,3 +475,27 @@ HPC, combustor, HPT, LPT.
      `tools/build_findings.py` has with `FINDINGS.md`. The test that now
      forbids a bare test count in the hand-written prose is the one that
      would have caught it.
+
+169. **The post drafted a claim that had been true and had stopped being
+     true.** It said the beam-model bias accounts for *"twenty of the
+     project's twenty-one worst numbers"* — copied from unit I3, where it
+     was correct against 98 ranked comparisons on 2026-09-08. By the time
+     the post was written the ranking held 100 comparisons and the figure
+     was **sixteen of twenty-one**: units J1 and J2 had each contributed an
+     entry, and the Rotor 37 flow, an LPT stress concentration and the HPT
+     bore disagreement had risen into that band. Nothing was wrong when it
+     was written and nothing broke; a true sentence simply aged out from
+     underneath. Caught by `tests/test_post.py`, which was written for
+     exactly this and found it on its first run. The claim is corrected and
+     the test now pins the number.
+
+170. **A post that states its own test count cannot be tested without
+     changing it.** The first draft printed an exact figure, and adding the
+     tests that check the post moved it. The count is a side effect of
+     writing tests, not a claim anyone reasons from, so the post states a
+     **floor** — "over 850 test functions" — and the test asserts the floor
+     holds. The findings count is kept exact by contrast, because findings
+     are appended one at a time and deliberately: that number *is* a claim.
+     The general rule this settles for the project: a number that moves as
+     a side effect of routine work belongs in a generated block or as a
+     bound, never as an exact figure in prose.

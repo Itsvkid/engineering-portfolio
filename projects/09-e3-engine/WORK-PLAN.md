@@ -1227,8 +1227,10 @@ pointed at with its load stated.
       2,307 nodes. Findings 163–165. The site cutaway is deliberately NOT
       done here — `app/turbofan/` already renders the E³ procedurally and
       a second three.js page would duplicate it.
-- [ ] Update `projects/README.md`
-- [ ] The post: validation-led, NASA credited, the gap stated
+- [x] Update `projects/README.md` — 09 moved from *Planned* to **v1**, with the deliverable named
+- [x] The post: validation-led, NASA credited, the gap stated
+      — J6 done: `POST.md`, short and long versions, every headline claim
+      bound to the code by `tests/test_post.py`. Findings 169–170.
 
 ---
 
