@@ -1,12 +1,23 @@
 name: E3 engine CI
 
+# The workflow watches itself as well as the project. Without that line a
+# change to this file cannot trigger the job it defines, so a broken CI
+# cannot be verified by fixing it — which is exactly what happened when
+# scipy was added below and nothing re-ran. workflow_dispatch is here for
+# the same reason: a way to prove the runner is green without inventing a
+# change to the project.
 on:
   push:
     branches: [main]
-    paths: ["projects/09-e3-engine/**"]
+    paths:
+      - "projects/09-e3-engine/**"
+      - ".github/workflows/e3-engine-ci.yml"
   pull_request:
     branches: [main]
-    paths: ["projects/09-e3-engine/**"]
+    paths:
+      - "projects/09-e3-engine/**"
+      - ".github/workflows/e3-engine-ci.yml"
+  workflow_dispatch:
 
 jobs:
   test:
