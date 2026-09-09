@@ -8,9 +8,90 @@ to a public-domain NASA report; every analysis method is validated on a NASA
 test case before it touches the engine; every result is compared with what
 NASA measured, and the gap is published.**
 
-**Status:** foundation. Sources on disk, the architecture and the
-stage-level data transcribed and held by 37 tests. Work plan in
-[WORK-PLAN.md](WORK-PLAN.md) — ten stages, ~510 hours — sources in
+<!-- BEGIN GENERATED: tools/build_readme.py -->
+
+**Status:** nine of ten stages built. **859 test functions**, **165 numbered findings**, **30 closures** — 17 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+
+| Stage | | State |
+|---|---|---|
+| **A** | sources and transcription — data/*.yaml, every value with a src: | transcribed; four figure gaps remain |
+| **B** | cycle — three Table XII ratings, the mixer, the station table | 1 met, 2 half |
+| **C** | aero — mean-line, through-flow, blading, CFD validation | 6 met, **1 gated** |
+| **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half |
+| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 1 met, 5 half |
+| **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
+| **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
+| **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
+| **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 2 met |
+| **J** | publication — meridional plot, Campbell match, glTF | 5 met |
+
+### Validation
+
+Every solver states its tolerance in a `STEP0.md` **before** the run, and the tolerance is never edited afterwards. `data/closures.yaml` holds all of them with today's number, so the scoreboard below is read from the code rather than remembered.
+
+| Closure | Achieved vs band | |
+|---|---|---|
+| **B1** — the mixer reproduces Table XXIII's sfc improvement | — | half |
+| **B3** — sfc at three ratings against Table XII | 1.91 vs 1.5 percent | half |
+| **B4** — annulus by continuity at every dimensioned HPT station | — | met |
+| **C1** — LPT mean-line efficiency against 0.917 | 0.6 vs 2.0 points | met |
+| **C1** — HPT mean-line efficiency against 0.9155 / 0.925 / 0.927 | 0.55 vs 2.0 points | met |
+| **C1** — HPC efficiency against 0.847 | 0.15 vs 2.0 points | met |
+| **C2** — stator-10 exit swirl | 0.02 vs 2.0 degrees | met |
+| **C4-1** — the solver against an exact answer (Sod shock tube, star pressure) | 0.02 vs 2.0 percent | met |
+| **C4-2** — Rotor 37 blade geometry, 24 section-closure constraints | 0.0 vs 0.0 inches of closure error | met |
+| **C4-3** — CFD against the Rotor 37 validation case | — | **gated** |
+| **D3** — total secondary air against Table XI's 16.1 % of W25 | 0.04 vs 0.5 percent of W25 | half |
+| **D4** — cruise clearance, two independent routes | 0.04 vs 0.2 percent of span | met |
+| **E1** — Table X centrifugal stresses, all ten HPC stages | 6.5 vs 10.0 percent | half |
+| **E2** — the bore doubling for a small hole | 0.0 vs 0.5 percent | half |
+| **E3** — blade first flex, the unshrouded booster | 2.7 vs 15.0 percent | met |
+| **E3** — first three modes of every HPC stage against Figs 33-42 | 21.4 vs 5.0 percent, mean over 24 comparisons | half |
+| **E4** — no rotor critical inside the operating band | 0.0 vs 0.0 count inside the band | half |
+| **E5** — every attachment with a printed allowable has margin | 0.0 vs 0.0 percent by which any attachment exceeds its allowable | half |
+| **F1** — every Stage E stress with a printed allowable, tabulated against it | 0.0 vs 0.0 percent by which any stress exceeds its allowable | half |
+| **F2** — basic engine mass within 10 % of 3,473 kg | — | **gated** |
+| **G1** — generated blade volume against Stage F2's integral | 0.94 vs 2.0 percent | half |
+| **G1** — blade-to-blade interference, all 32 rows | 0.0 vs 0.0 cubic metres of overlap | met |
+| **H** — zero clashes through rotation, every bearing with its load | — | **gated** |
+| **I3** — FINDINGS.md written -- every disagreement ranked, with a cause or unresolved | 0.0 vs 0.0 sections of the closure not written | met |
+| **I2** — one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 vs 0.02 worst departure from an exact analytic elasticity | met |
+| **J1** — the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | met |
+| **J2** — the Campbell match renders every one of E3's 24 comparisons with its reading uncertainty, on a linear axis, published lines as read | — | met |
+| **J3** — the glTF carries all 32 rows and 2890 blades, each row's mesh within 1 percent of its solid by volume, placed on J1's axis | 0.374 vs 1.0 percent of row volume | met |
+| **J4** — the README's numbers are generated from the code and a test fails if they drift | — | met |
+| **J5** — the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | met |
+
+### Figures
+
+- [`blading-meridional.png`](solvers/publication/figures/blading-meridional.png)
+- [`campbell-match.png`](solvers/publication/figures/campbell-match.png)
+- [`campbell-stages.png`](solvers/publication/figures/campbell-stages.png)
+- [`meridional.png`](solvers/publication/figures/meridional.png)
+
+### Outstanding
+
+13 closures are not met. None is open without a reason attached:
+
+- **B1** (half) — the mixer reproduces Table XXIII's sfc improvement. open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fi
+- **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
+- **C4-3** (gated) — CFD against the Rotor 37 validation case. The mesh is built and checked (C4-3) and the case runs, but it collapses onto a stalled branch at 26 % of design flow and 13 % of design work, repeatably, near iteration 700. Three MRF fault
+- **D3** (half) — total secondary air against Table XI's 16.1 % of W25. the closure also asks that every cavity keeps hot gas out; the stage-1 nozzle's two are done and no others
+- **E1** (half) — Table X centrifugal stresses, all ten HPC stages. the closure also asks HPT blade rupture life within a factor of 2; no creep data or Larson-Miller constants are sourced
+- **E2** (half) — the bore doubling for a small hole. the closure also asks HPT disc peak effective stress within 10 % of Fig 64; the disc cross-sections were never digitised
+- **E3** (half) — first three modes of every HPC stage against Figs 33-42. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-p
+- **E4** (half) — no rotor critical inside the operating band. the closure also asks the thrust-bearing load against capacity; no bearing load or capacity is printed anywhere, and D's thrust balance is not done
+- **E5** (half) — every attachment with a printed allowable has margin. HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no blade or dovetail block at all
+- **F1** (half) — every Stage E stress with a printed allowable, tabulated against it. allowables AT temperature; MIL-HDBK-5J prints elevated-temperature strength as figures, not tables
+- **F2** (gated) — basic engine mass within 10 % of 3,473 kg. disc profiles un-digitised, casings and frames figure-status, and the 320 kg of sumps and drives has no printed geometry
+- **G1** (half) — generated blade volume against Stage F2's integral. the closure also asks the generated engine mass to match F2, whose own total is gated
+- **H** (gated) — zero clashes through rotation, every bearing with its load. no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt
+
+The four gaps that are **transcription, not modelling**: the HPT disc profile has no absolute radial scale (blocks E2's peak stress and burst margin, and F2's disc masses); the HPC §3.2.3 dovetails (E5); the casing, liner and dome flowpaths (G); and the combustor liner hole areas (D2). None is a hard problem — they are figures nobody has digitised.
+
+<!-- END GENERATED -->
+
+Work plan in [WORK-PLAN.md](WORK-PLAN.md) — ten stages — sources in
 [REFERENCES.md](REFERENCES.md), what is transcribed in
 [DATA-INDEX.md](DATA-INDEX.md), how every solver is built in
 [METHOD.md](METHOD.md), the data itself in
@@ -132,11 +213,13 @@ Seven projects become one engine.
 ```bash
 ./fetch-sources.sh          # 41 documents, all public domain, ~720 MB
 ./fetch-sources.sh --check  # what is present
-python -m pytest tests/     # 904 tests, plain interpreter
+python -m pytest tests/     # the full suite; two files skip without cadquery
 ./cfd/run_shocktube.sh      # Stage C4: the OpenFOAM validation case (needs colima + docker)
-python build.py             # every stage's tables, into build/  (90 s)
+python build.py             # every stage's tables and figures, into build/
 python build.py --export    # ...and unit G1's 32 blade rows as STEP  (5 min)
 python build.py --list      # what would run, without running it
+python tools/build_findings.py   # regenerate FINDINGS.md, the deliverable
+python tools/build_readme.py     # regenerate this README's status block
 
 python solvers/e3cycle/run.py   # Stage B: the three Table XII ratings, the mixer, sensitivities
 (cd solvers && python -m e3cycle.stations)   # B4: station table, annulus checks, the two figures
@@ -155,9 +238,9 @@ published number, ranked, with a cause or "unresolved". Regenerate it with
 Where the work stands, and what comes next, is in
 [RESUME.md](RESUME.md).
 
-Stage B's cycle solver is `solvers/e3cycle/`; its `STEP0.md` states every
-band before the run and records the two misses and three findings after it.
-`build.py`, the discipline loop, arrives with Stage C.
+Every solver directory carries a `STEP0.md` that states its tolerance and
+its validation case **before** the run, and records the misses and findings
+after it. Those files are the project: `solvers/*/STEP0.md`.
 
 ---
 

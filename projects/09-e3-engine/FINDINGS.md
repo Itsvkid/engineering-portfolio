@@ -136,7 +136,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-15 met, 10 half met, 3 gated, of 28.
+17 met, 10 half met, 3 gated, of 30.
 19 of 21 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -172,6 +172,8 @@ blocks it. None is open without a reason attached.
 | J1 | the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | — | met |
 | J2 | the Campbell match renders every one of E3's 24 comparisons with its reading uncertainty, on a linear axis, published lines as read | — | — | met |
 | J3 | the glTF carries all 32 rows and 2890 blades, each row's mesh within 1 percent of its solid by volume, placed on J1's axis | 0.374 | 1 | met |
+| J4 | the README's numbers are generated from the code and a test fails if they drift | — | — | met |
+| J5 | the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | — | met |
 
 ### The two recorded misses
 
@@ -256,7 +258,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-162 findings, in the `STEP0.md` that owns each one.
+165 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -428,4 +430,7 @@ would break every reference in the commit history.
 | 163 | publication | The lofted tip caps stand proud of their own sections, worst on the |
 | 164 | publication | The render has no tip clearance, and the amount by which it misses |
 | 165 | publication | The render has an HPT with walls and no blades. J1 draws the HPT |
+| 166 | publication | Four of the engine's ten gas-path stations can be placed; six |
+| 167 | publication | Three of the six sheets exist to say that something cannot be |
+| 168 | publication | A README claimed "37 tests" for months, and no test could fail. |
 

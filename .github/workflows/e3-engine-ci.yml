@@ -1,0 +1,41 @@
+name: E3 engine CI
+
+on:
+  push:
+    branches: [main]
+    paths: ["projects/09-e3-engine/**"]
+  pull_request:
+    branches: [main]
+    paths: ["projects/09-e3-engine/**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/09-e3-engine
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # The whole suite runs here, not a hand-picked subset. Only two files
+      # need the geometry kernel -- tests/test_geometry.py (Stage G1's
+      # lofted rows) and tests/test_render.py (Stage J3's glTF) -- and both
+      # call pytest.importorskip("cadquery"), so they skip themselves on a
+      # runner where it has no wheel. Naming the pyOCC-free files in a list
+      # here, the way projects 06 and 07 do, means the list goes stale the
+      # first time a test file is added; letting the two files declare their
+      # own dependency does not.
+      - run: pip install pytest numpy pyyaml matplotlib
+      - run: python -m pytest -q
+
+      # The deliverables regenerate from the solvers, and a stale one is
+      # worse than none. tests/test_findings.py already fails if
+      # FINDINGS.md drifts; this proves the whole build still runs.
+      - run: python build.py --list

@@ -9,6 +9,12 @@ import numpy as np
 import pytest
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "solvers"))
+# the lofted rows come from Stage G1, which needs the geometry kernel. CI
+# runs on a plain runner where cadquery has no wheel, so this file skips
+# itself there rather than being named in a list that goes stale --
+# test_geometry.py does the same.
+pytest.importorskip("cadquery")
+
 from publication.render import (  # noqa: E402
     CUTAWAY_FROM_DEG, CUTAWAY_TO_DEG, SPOOL_COLOUR, axial_stations,
     blade_angles, blade_envelope, build_gltf, cap_overshoot, containment,
@@ -17,7 +23,34 @@ from publication.render import (  # noqa: E402
 )
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-GLTF, BLOB, STATS = build_gltf()
+
+# Built once, on first use -- NOT at import. Assembling the glTF lofts and
+# tessellates 32 rows and takes about three minutes, and at module level
+# that cost lands on `pytest --collect-only`, which tools/build_readme.py
+# shells out to for its test count. Collection should be cheap.
+_BUILT = None
+
+
+def built():
+    global _BUILT
+    if _BUILT is None:
+        _BUILT = build_gltf()
+    return _BUILT
+
+
+@pytest.fixture(scope="module")
+def gltf():
+    return built()[0]
+
+
+@pytest.fixture(scope="module")
+def blob():
+    return built()[1]
+
+
+@pytest.fixture(scope="module")
+def stats():
+    return built()[2]
 
 
 # --- the mesh is the solid: the step-0 band -------------------------------
@@ -49,28 +82,28 @@ def test_normals_are_unit_length():
 
 # --- every row, every blade ----------------------------------------------
 
-def test_all_thirty_two_rows_and_all_blades_are_accounted_for():
-    assert len(STATS) == 32
-    assert sum(s["count"] for s in STATS) == 2890
+def test_all_thirty_two_rows_and_all_blades_are_accounted_for(stats):
+    assert len(stats) == 32
+    assert sum(s["count"] for s in stats) == 2890
     from geometry.blades import all_rows
     by = {r.name: r.count for r in all_rows()}
-    for s in STATS:
+    for s in stats:
         assert s["count"] == by[s["row"]]
 
 
-def test_one_mesh_per_row_and_one_node_per_drawn_blade():
+def test_one_mesh_per_row_and_one_node_per_drawn_blade(gltf, stats):
     """the whole reason the file is deliverable"""
-    assert len(GLTF["meshes"]) == 32
-    drawn = sum(s["drawn"] for s in STATS)
-    assert len(GLTF["nodes"]) == drawn + 32          # blades plus row nodes
-    assert len(GLTF["scenes"][0]["nodes"]) == 32
+    assert len(gltf["meshes"]) == 32
+    drawn = sum(s["drawn"] for s in stats)
+    assert len(gltf["nodes"]) == drawn + 32          # blades plus row nodes
+    assert len(gltf["scenes"][0]["nodes"]) == 32
 
 
-def test_instancing_actually_saves_the_file():
+def test_instancing_actually_saves_the_file(gltf, stats):
     """32 meshes for 2275 drawn blades -- without instancing this is 70x"""
-    drawn = sum(s["drawn"] for s in STATS)
+    drawn = sum(s["drawn"] for s in stats)
     assert drawn > 2000
-    assert len(GLTF["meshes"]) * 50 < drawn
+    assert len(gltf["meshes"]) * 50 < drawn
 
 
 # --- the cutaway removes blades, never clips them -------------------------
@@ -86,9 +119,9 @@ def test_the_cutaway_omits_whole_blades():
             assert not (CUTAWAY_FROM_DEG <= a < CUTAWAY_TO_DEG)
 
 
-def test_the_cutaway_removes_roughly_its_own_wedge():
+def test_the_cutaway_removes_roughly_its_own_wedge(stats):
     frac = (CUTAWAY_TO_DEG - CUTAWAY_FROM_DEG) / 360.0
-    drawn = sum(s["drawn"] for s in STATS)
+    drawn = sum(s["drawn"] for s in stats)
     assert drawn / 2890 == pytest.approx(1 - frac, abs=0.02)
 
 
@@ -173,9 +206,9 @@ def test_the_overshoot_stays_inside_the_volume_band():
     assert fan["overshoot_mm"] / (fan["section_tip_m"] * 1000) * 100 < 0.3
 
 
-def test_there_are_no_hpt_rows_and_that_is_a_source_gap():
+def test_there_are_no_hpt_rows_and_that_is_a_source_gap(stats):
     """finding 165"""
-    assert not any(s["row"].startswith("hpt-") for s in STATS)
+    assert not any(s["row"].startswith("hpt-") for s in stats)
 
 
 # --- the container ---------------------------------------------------------
@@ -203,24 +236,24 @@ def test_the_file_is_small_enough_to_be_a_deliverable():
     assert p.stat().st_size / 1e6 < 12.0
 
 
-def test_every_accessor_is_consistent_with_its_buffer_view():
+def test_every_accessor_is_consistent_with_its_buffer_view(gltf, blob):
     SIZE = {5126: 4, 5125: 4}
     COMP = {"VEC3": 3, "SCALAR": 1}
-    for a in GLTF["accessors"]:
-        bv = GLTF["bufferViews"][a["bufferView"]]
+    for a in gltf["accessors"]:
+        bv = gltf["bufferViews"][a["bufferView"]]
         need = a["count"] * COMP[a["type"]] * SIZE[a["componentType"]]
         assert need <= bv["byteLength"]
-        assert bv["byteOffset"] + bv["byteLength"] <= len(BLOB)
+        assert bv["byteOffset"] + bv["byteLength"] <= len(blob)
 
 
-def test_materials_carry_one_colour_per_spool():
-    assert len(GLTF["materials"]) == 3
-    assert {m["name"] for m in GLTF["materials"]} == set(SPOOL_COLOUR)
+def test_materials_carry_one_colour_per_spool(gltf):
+    assert len(gltf["materials"]) == 3
+    assert {m["name"] for m in gltf["materials"]} == set(SPOOL_COLOUR)
 
 
-def test_the_assumption_travels_inside_the_file():
+def test_the_assumption_travels_inside_the_file(gltf):
     """a 3D file outlives the page that explains it"""
-    ex = GLTF["asset"]["extras"]
+    ex = gltf["asset"]["extras"]
     for k in ("fan_sa_to_hpc_r1_le", "hpc_ogv_te_to_hpt_vane1"):
         assert ex["assumed_offsets"][k]["value_cm"] > 0
         assert len(ex["assumed_offsets"][k]["allowable_cm"]) == 2

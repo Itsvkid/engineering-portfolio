@@ -126,6 +126,50 @@ PF-09, and it is the half the Autodesk viewer needs.
 
 ---
 
+## Unit J4 — the README, generated where it carries numbers
+
+The plan's first Stage J bullet: *README to the house pattern; `build.py`;
+full suite in the root runner.*
+
+The README claimed **"37 tests"** and *"`build.py`, the discipline loop,
+arrives with Stage C"* long after there were nine stages and eight hundred
+test functions. That is not a typo to correct once — it is the failure mode
+a hand-maintained count has, and this project's whole argument is that
+claims get checked. So the status, the closure scoreboard, the figure list
+and the outstanding work are **generated** from `data/closures.yaml` and
+the tree by `tools/build_readme.py`, between two markers, and
+`tests/test_readme.py` fails if the block has drifted. The prose stays
+hand-written.
+
+**Closes when** the generated block reproduces exactly on a regenerate,
+every closure appears with its state, every gated one says why, and no
+test count survives in the hand-written half — as tests, not by
+inspection.
+
+## Unit J5 — the drawing pack
+
+*Drawing pack: GA with stations; one detail per module.*
+
+A general arrangement is not a plot with a border round it. What makes it a
+drawing is that **every dimension on it is answerable**: it comes from a
+table or a dimensioned figure, or it is marked as not.
+
+| Check | Requirement | Why |
+|---|---|---|
+| Every dimension has a source | each callout traceable to `data/*.yaml` | the project's rule 1, applied to a sheet |
+| Assumed dimensions look assumed | drawn in the drafting convention for a reference dimension — **parenthesised** — and listed in the title block | a reader must not measure an assumption off a drawing and quote it |
+| Stations are placed, not decorative | the nine gas-path stations at their axial positions on J1's axis, or absent | a station number floating above a flowpath is a label, not a datum |
+| A station whose position is unknown is absent | not guessed to make the sheet look complete | stations 1, 2, 13 and 8 have no published axial position |
+| One sheet per module | fan and booster, HPC, combustor, HPT, LPT | the plan's own bullet |
+| A module with no geometry gets a sheet saying so | the combustor | an empty sheet with the reason is a result; a missing sheet is a silence |
+| Title block | source, datum, units, the assumed offsets, the date | a sheet leaves the repository and must carry its own provenance |
+
+**Closes when** the pack renders a GA and one sheet per module, every
+assumed dimension parenthesised and listed, and no station drawn at a
+position no report gives — as tests, not by inspection.
+
+---
+
 ---
 
 ## Result — J1
@@ -193,6 +237,30 @@ Instancing is what makes it a deliverable: `cadquery`'s assembly exporter
 writes one mesh per solid and produced **27.6 MB for a single row**, which
 is about 1.4 GB for the engine. One mesh per row referenced by 2,275 nodes
 is 4.7 MB — a factor of 300.
+
+---
+
+## Result — J4 and J5
+
+**J4.** `tools/build_readme.py` regenerates the README's status block —
+status line, stage table, the full closure scoreboard, the figure list and
+the outstanding work — from `data/closures.yaml` and the tree.
+`tests/test_readme.py` fails if it has drifted. The CI workflow
+`.github/workflows/e3-engine-ci.yml` runs **the whole suite**, not a
+hand-picked list: the only two files needing the geometry kernel declare it
+with `pytest.importorskip("cadquery")` and skip themselves on a plain
+runner.
+
+**J5.** `figures/e3-drawing-pack.pdf`, six A3 sheets: GA, fan and booster,
+HPC, combustor, HPT, LPT.
+
+| | |
+|---|---|
+| Dimensions | 9, each with a source — 5 published, 2 derived, **2 assumed** |
+| Assumed dimensions | parenthesised on the sheet and listed in every title block |
+| Stations placed | **4 of 10** |
+| Stations not drawn | 6, each with the reason printed on the GA |
+| Sheets that state a gap | 3 — combustor, HPT, fan |
 
 ---
 
@@ -346,3 +414,39 @@ is 4.7 MB — a factor of 300.
      undimensioned in Figs 1, 22 and 79. **Two of the engine's five
      bladed modules cannot be drawn from the public record**, and the
      picture says so.
+
+166. **Four of the engine's ten gas-path stations can be placed; six
+     cannot.** Building the general arrangement forced the question nothing
+     else had: *where, in centimetres from a datum, is station 2?* Stations
+     25 and 3 fall out of the HPC flowpath and are published. Stations 4
+     and 45 are placeable only because unit J1 assumed the HPC-to-HPT
+     offset, so they are drawn parenthesised — **a station number can
+     inherit an assumption, and on this drawing two of the four do.** The
+     other six have no published axial position at all: 1 and 2 are
+     upstream of the fan stacking axis by an unstated amount, 13 is a
+     stream rather than a plane, 21's booster station was never printed,
+     and 5 and 8 sit aft of an 18-lobe mixer that is nowhere dimensioned.
+     They are left off the sheet. A station drawn at a guessed position is
+     worse than a station missing, because the number beside it looks
+     measured.
+
+167. **Three of the six sheets exist to say that something cannot be
+     drawn.** The combustor sheet is deliberately empty — double annular,
+     60 cups, 30 nozzles are published, and not one axial coordinate. The
+     HPT sheet has five dimensioned stations and no airfoil, because the
+     blade and vane coordinates were never printed. The fan sheet has three
+     radial bars and no wall, for the reason in finding 158. Half the
+     drawing pack is a record of what the public domain does not contain,
+     and that is the honest proportion rather than a failure of the pack.
+
+168. **A README claimed "37 tests" for months, and no test could fail.**
+     The count was written when it was true and then rotted through nine
+     stages and eight hundred test functions; the same paragraph said
+     `build.py` "arrives with Stage C" long after it ran ten stages. The
+     project asserts every published number against its source, and had
+     never once done so for the numbers in its own front page. Fixed by
+     generating the block that carries numbers and testing it for
+     staleness — `tools/build_readme.py`, the same arrangement
+     `tools/build_findings.py` has with `FINDINGS.md`. The test that now
+     forbids a bare test count in the hand-written prose is the one that
+     would have caught it.
