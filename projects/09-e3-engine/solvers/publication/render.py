@@ -45,6 +45,18 @@ EXPORTDIR = Path(__file__).resolve().parents[2] / "exports"
 TESS_TOL_M = 0.0006
 TESS_ANGLE_RAD = 0.25
 
+#: The web variant is a DIFFERENT artefact with its own, looser band. 2 mm
+#: halves the triangle count to about 65,000 and costs 1.35 % on the worst
+#: row's volume, against 0.37 % for the archival file. Both bands are
+#: declared; neither is the other's tolerance quietly relaxed.
+WEB_TOL_M = 0.002
+WEB_BAND_PCT = 2.0
+
+#: Spool speeds at max climb, from unit I1's four-route reconciliation.
+#: The site cutaway turns the two spools at this ratio.
+RPM_LP = 3528.9
+RPM_HP = 12645.0
+
 #: The cutaway. Blades whose angular station falls inside this wedge are
 #: LEFT OUT ENTIRELY -- never clipped. A clipped blade draws a shape the
 #: engine does not have.
@@ -286,6 +298,18 @@ def _pad(b, n=4, fill=b"\x00"):
     return b + fill * ((n - len(b) % n) % n)
 
 
+def _kinematics():
+    """How the two spools turn, for any viewer that animates the file."""
+    return dict(
+        rpm_lp=RPM_LP, rpm_hp=RPM_HP, ratio=round(RPM_HP / RPM_LP, 4),
+        co_rotating=True,
+        note=("Each row node carries extras.spool: lp, hp or static. "
+              "Co-rotation at this ratio is a MODELLING DECISION recorded "
+              "2026-09-03, not a published fact about the engine -- the "
+              "reports read do not state the relative rotation direction. "
+              "It turns; it does not run."))
+
+
 def build_gltf(rows=None, cutaway=True, tol=TESS_TOL_M):
     """One mesh per row, one node per blade. Returns (json dict, bin blob)."""
     placed = place_rows(rows)
@@ -313,7 +337,15 @@ def build_gltf(rows=None, cutaway=True, tol=TESS_TOL_M):
         P, T, N = tessellate_row(row, tol)
         v_view = add_view(P.tobytes(), 34962)
         n_view = add_view(N.tobytes(), 34962)
-        i_view = add_view(T.astype(np.uint32).ravel().tobytes(), 34963)
+        # uint16 where the row's vertex count allows it -- lossless, and it
+        # halves the index data. Every row qualifies at both tolerances this
+        # project uses: the largest is 10,886 vertices at the archival
+        # 0.6 mm and 5,846 at the web variant's 2 mm, against a uint16
+        # ceiling of 65,536. The uint32 branch stays for a denser
+        # tessellation than either.
+        small = len(P) < 65536
+        idx = T.astype(np.uint16 if small else np.uint32).ravel()
+        i_view = add_view(idx.tobytes(), 34963)
         pos = len(accessors)
         accessors.append(dict(bufferView=v_view, componentType=5126,
                               count=len(P), type="VEC3",
@@ -321,7 +353,8 @@ def build_gltf(rows=None, cutaway=True, tol=TESS_TOL_M):
                               max=P.max(axis=0).tolist()))
         accessors.append(dict(bufferView=n_view, componentType=5126,
                               count=len(N), type="VEC3"))
-        accessors.append(dict(bufferView=i_view, componentType=5125,
+        accessors.append(dict(bufferView=i_view,
+                              componentType=5123 if small else 5125,
                               count=int(T.size), type="SCALAR"))
         meshes.append(dict(name=row.name, primitives=[dict(
             attributes=dict(POSITION=pos, NORMAL=pos + 1),
@@ -337,7 +370,9 @@ def build_gltf(rows=None, cutaway=True, tol=TESS_TOL_M):
             nodes.append(dict(mesh=mesh_i, rotation=[math.sin(h), 0.0, 0.0,
                                                      math.cos(h)]))
         nodes.append(dict(name=row.name, children=children,
-                          translation=[entry["x_m"], 0.0, 0.0]))
+                          translation=[entry["x_m"], 0.0, 0.0],
+                          extras=dict(spool=row.spool, blades=row.count,
+                                      drawn=len(angles))))
         stats.append(dict(row=row.name, spool=row.spool, count=row.count,
                           drawn=len(angles), triangles=len(T),
                           x_m=entry["x_m"], basis=entry["basis"]))
@@ -359,11 +394,18 @@ def build_gltf(rows=None, cutaway=True, tol=TESS_TOL_M):
                     k: dict(value_cm=off[k]["value_cm"],
                             allowable_cm=off[k]["range_cm"])
                     for k in ("fan_sa_to_hpc_r1_le", "hpc_ogv_te_to_hpt_vane1")},
+                kinematics=_kinematics(),
                 assumed_offsets_note=(
                     "These two axial offsets are NOT published. Every artefact "
                     "in this project reads them from "
                     "data/engine-flowpath.yaml; see unit J1 finding 159."))),
-        scene=0, scenes=[dict(nodes=roots)], nodes=nodes, meshes=meshes,
+        scene=0,
+        # kinematics is repeated on the SCENE as well as in asset.extras:
+        # three.js's GLTFLoader copies node and scene extras into userData
+        # but not the asset block, so a viewer that reads only the runtime
+        # object graph would otherwise never see it.
+        scenes=[dict(nodes=roots, extras=dict(kinematics=_kinematics()))],
+        nodes=nodes, meshes=meshes,
         accessors=accessors, bufferViews=buffer_views, materials=materials,
         buffers=[dict(byteLength=len(blob))])
     return gltf, bytes(blob), stats
@@ -456,6 +498,25 @@ def plot_blading(path=None, tol=TESS_TOL_M):
     fig.savefig(path, dpi=150)
     plt.close(fig)
     return path
+
+
+def write_web_glb(path=None, tol=WEB_TOL_M):
+    """The site variant: coarser, smaller, and held to its own stated band.
+
+    The archival file is tessellated to 1 % of each row's volume. This one
+    is 2 mm and 2 %, which halves the triangles for a page that has to
+    download it. Writing it as a separate artefact with a separate band is
+    the point -- the alternative is quietly loosening the archival
+    tolerance and shipping one file that meets neither claim."""
+    return write_glb(path, cutaway=True, tol=tol)
+
+
+def web_fidelity(tol=WEB_TOL_M):
+    """Does the site variant hold ITS band?"""
+    v = volume_fidelity(tol=tol)
+    return dict(rows=len(v), worst_pct=max(abs(r["err_pct"]) for r in v),
+                band_pct=WEB_BAND_PCT, triangles=sum(r["triangles"] for r in v),
+                inside=all(abs(r["err_pct"]) <= WEB_BAND_PCT for r in v))
 
 
 def summary():

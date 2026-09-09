@@ -202,8 +202,8 @@ use had no single home.
 Nine of ten stages: cycle, mean-line and through-flow aero, blading,
 cooling and secondary air, blade and disc mechanical, materials and mass,
 32 blade rows lofted from the validated sections, cross-discipline
-verification, and publication. **Over 850 test functions. 31 closures — 18 met,
-10 half, 3 gated. 167 numbered findings.**
+verification, and publication. **Over 850 test functions. 32 closures — 19 met,
+10 half, 3 gated. 169 numbered findings.**
 
 The tenth stage is hand CAD and needs a person at a GUI. One CFD case, a
 transonic compressor rotor, converges to a stalled branch at 26 % of design

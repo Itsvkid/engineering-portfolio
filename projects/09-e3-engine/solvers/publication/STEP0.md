@@ -195,6 +195,34 @@ work — as tests, not by inspection.
 
 ---
 
+## Unit J7 — the rotating cutaway on the site
+
+*Rotating cutaway on the site via the `TurbineStage` spool pattern.* The
+second half of the plan's render bullet, left open by unit J3 and now
+built.
+
+`TurbineStage.js` is the site's background: a stylised twin-spool engine
+drawn as line art, two independent rotating groups at their own speeds.
+The **pattern** is what this unit reuses — the geometry is J3's, lofted
+from the published sections.
+
+### What the page must not decide for itself
+
+| Check | Requirement | Why |
+|---|---|---|
+| The spool split comes from the file | every row node carries `extras.spool` | the page must read the engine's architecture, not pattern-match on row names |
+| The speeds come from the file | `extras.kinematics` on the **scene**, not only `asset.extras` | three.js copies node and scene extras into `userData` and not the asset block; a viewer reading the object graph would otherwise never see them |
+| The ratio is unit I1's | LP : HP from the four-route reconciliation | a made-up ratio would look identical and mean nothing |
+| Rotation direction is a decision, not a claim | `co_rotating` labelled a modelling decision in the file itself | the reports read do not state it |
+| The web file is its own artefact | its own tolerance and its own band, both declared | the alternative is loosening the archival tolerance and shipping one file that meets neither claim |
+| Nothing recentres off the rotation axis | X only | the 75° cutaway makes the geometry deliberately non-axisymmetric |
+
+**Closes when** the page turns both spools at the ratio the file carries,
+having taken the spool of every row and both speeds from the glTF — as
+tests, not by inspection — and the web variant holds its own stated band.
+
+---
+
 ---
 
 ## Result — J1
@@ -286,6 +314,25 @@ HPC, combustor, HPT, LPT.
 | Stations placed | **4 of 10** |
 | Stations not drawn | 6, each with the reason printed on the GA |
 | Sheets that state a gap | 3 — combustor, HPT, fan |
+
+---
+
+## Result — J7
+
+`public/models/e3-blading.glb`, **2.84 MB**, and
+`app/components/EngineCutaway.js`.
+
+| | |
+|---|---|
+| Web variant | 2 mm deflection, **65,430** triangles, worst volume error **1.35 %** against a **2 %** band |
+| Archival variant | unchanged at 0.6 mm and **0.37 %** against 1 % |
+| Rows tagged | 32 — **lp 7, hp 10, static 15** |
+| Speeds in the file | LP 3,528.9 / HP 12,645 rpm, ratio **3.583** |
+| Verified through three.js | scene `userData.kinematics`, 32 children, split as above |
+
+Index size came down twice: **uint16 indices** where a row has fewer than
+65,536 vertices — every row does, the largest being 5,846 — took the web
+file from 3.24 MB to 2.84 MB, losslessly.
 
 ---
 
@@ -499,3 +546,26 @@ HPC, combustor, HPT, LPT.
      The general rule this settles for the project: a number that moves as
      a side effect of routine work belongs in a generated block or as a
      bound, never as an exact figure in prose.
+
+171. **A cutaway must not be centred on its own bounding box.** The first
+     draft centred each spool group on the centroid of the loaded scene, in
+     all three axes, which is the ordinary way to frame a model. It is
+     wrong here for a reason the cutaway itself creates: **removing a 75°
+     wedge makes the geometry deliberately non-axisymmetric**, so the
+     bounding-box centre is off the engine axis in y and z, and each spool
+     would have turned about a line 5–10 cm to one side of the axis it runs
+     on — a visible wobble, on a model whose whole point is that the
+     geometry is right. Only X is safe to centre, because rotation about X
+     does not move X. Caught by reading the code back rather than by a
+     test, and now held by one.
+
+172. **three.js does not surface `asset.extras`.** The exporter wrote the
+     spool speeds into the glTF's `asset.extras`, which is where a file's
+     own description belongs, and the page read `scene.userData` — where
+     `GLTFLoader` puts **node and scene** extras and nothing else. The
+     component had a fallback default, so it would have spun at plausible
+     speeds while silently ignoring the file it was supposed to be reading:
+     the failure would have been invisible. Fixed by writing the
+     kinematics block on the scene as well, and the test loads the real
+     `GLTFLoader` in Node to check the assumption against the library
+     rather than against the specification.

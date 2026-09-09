@@ -1220,13 +1220,14 @@ pointed at with its load stated.
       — J5 done: `figures/e3-drawing-pack.pdf`, six A3 sheets. 4 of 10
       stations placeable, 2 of those inheriting J1's assumed offset;
       three sheets state a gap. Findings 166–167.
-- [~] Rotating cutaway on the site via the `TurbineStage` spool pattern;
+- [x] Rotating cutaway on the site via the `TurbineStage` spool pattern;
       static glTF to the Autodesk viewer
-      — J3 done for the **glTF half**: `exports/e3-blading.glb`, 4.7 MB,
-      all 32 rows and 2,890 blades on J1's axis, 32 meshes instanced by
-      2,307 nodes. Findings 163–165. The site cutaway is deliberately NOT
-      done here — `app/turbofan/` already renders the E³ procedurally and
-      a second three.js page would duplicate it.
+      — J3: `exports/e3-blading.glb`, all 32 rows and 2,890 blades on J1's
+      axis, 32 meshes instanced by 2,307 nodes. Findings 163–165.
+      — J7: the site cutaway, `app/components/EngineCutaway.js` +
+      `public/models/e3-blading.glb` (2.84 MB). Both spools turn at the
+      ratio the file carries; the page reads the spool of every row and
+      both speeds from the glTF. Findings 171–172.
 - [x] Update `projects/README.md` — 09 moved from *Planned* to **v1**, with the deliverable named
 - [x] The post: validation-led, NASA credited, the gap stated
       — J6 done: `POST.md`, short and long versions, every headline claim

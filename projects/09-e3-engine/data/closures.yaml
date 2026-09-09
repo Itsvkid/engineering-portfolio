@@ -350,3 +350,21 @@ closures:
       the findings count stays exact, because findings are appended
       deliberately.
 
+  - stage: J7
+    what: the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file
+    band: 2.0
+    achieved: 1.35
+    units: percent of row volume, web variant
+    state: met
+    gate: null
+    note: >
+      app/components/EngineCutaway.js and public/models/e3-blading.glb.
+      The page decides nothing: every row node carries extras.spool (lp 7,
+      hp 10, static 15) and the scene carries extras.kinematics with unit
+      I1's reconciled LP:HP ratio of 3.583. Verified by loading the file
+      through the real three.js GLTFLoader in Node, not against the
+      specification -- which is how finding 172 was caught, three.js not
+      surfacing asset.extras. The web variant is a separate artefact at
+      2 mm and a 2 percent band; the archival file stays at 0.6 mm and 1.
+      Co-rotation is declared inside the file as a modelling decision, not
+      a published fact.

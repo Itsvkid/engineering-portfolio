@@ -237,13 +237,41 @@ def test_the_file_is_small_enough_to_be_a_deliverable():
 
 
 def test_every_accessor_is_consistent_with_its_buffer_view(gltf, blob):
-    SIZE = {5126: 4, 5125: 4}
+    # 5123 is UNSIGNED_SHORT, two bytes. It appeared when the writer began
+    # narrowing indices per row, and this map knew only the four-byte types,
+    # so the test raised KeyError instead of failing an assertion -- a test
+    # that cannot express the file's own vocabulary does not check it.
+    SIZE = {5126: 4, 5125: 4, 5123: 2}
     COMP = {"VEC3": 3, "SCALAR": 1}
     for a in gltf["accessors"]:
         bv = gltf["bufferViews"][a["bufferView"]]
         need = a["count"] * COMP[a["type"]] * SIZE[a["componentType"]]
         assert need <= bv["byteLength"]
         assert bv["byteOffset"] + bv["byteLength"] <= len(blob)
+
+
+def test_indices_narrow_to_uint16_exactly_when_the_row_allows_it(gltf):
+    """the narrowing is lossless or it is corruption: uint16 addresses
+    65,536 vertices, so a row may use it only if it has fewer than that.
+
+    Unit J7 covers the spools and the web variant; this stays here because
+    it is about the container, and it rides the fixture already built."""
+    for mesh in gltf["meshes"]:
+        prim = mesh["primitives"][0]
+        idx = gltf["accessors"][prim["indices"]]
+        verts = gltf["accessors"][prim["attributes"]["POSITION"]]["count"]
+        assert idx["componentType"] == (5123 if verts < 65536 else 5125), (
+            mesh["name"], verts, idx["componentType"])
+    # Every row qualifies, which is why the saving is worth having. The
+    # bound is the uint16 ceiling, not a number measured once: the first
+    # draft asserted "under 6,000", which was the largest row at the WEB
+    # tolerance and not at this one -- the archival file's largest is
+    # 10,886. Same conclusion, wrong evidence.
+    biggest = max(gltf["accessors"][m["primitives"][0]["attributes"]
+                                    ["POSITION"]]["count"]
+                  for m in gltf["meshes"])
+    assert biggest < 65536, biggest
+    assert biggest == 10886, biggest        # pinned: archival tolerance
 
 
 def test_materials_carry_one_colour_per_spool(gltf):

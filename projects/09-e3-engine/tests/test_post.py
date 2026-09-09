@@ -144,8 +144,8 @@ def test_the_three_gap_sheets_are_the_three_in_the_code():
 def test_the_closure_scoreboard_matches():
     import collections
     by = collections.Counter(c["state"] for c in CLOSURES)
-    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (31, 18, 10, 3)
-    claim("31 closures — 18 met,\n10 half, 3 gated.")
+    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (32, 19, 10, 3)
+    claim("32 closures — 19 met,\n10 half, 3 gated.")
 
 
 def test_the_findings_count_matches():
@@ -153,7 +153,7 @@ def test_the_findings_count_matches():
     one at a time, so the number is a claim rather than a side effect"""
     from build_findings import findings_index
     n = len(findings_index())
-    assert n == 167, n
+    assert n == 169, n
     claim(f"{n} numbered findings")
 
 

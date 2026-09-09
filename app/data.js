@@ -568,6 +568,17 @@ export const products = [
 
 export const cadModels = [
   {
+    title: "E\u00b3 blading",
+    src: "/models/e3-blading.glb",
+    // `spools` turns the LP and HP groups independently, at the ratio the
+    // file itself carries. Only this model has it.
+    spools: true,
+    format:
+      "Lofted in CadQuery / OpenCASCADE from the section coordinates NASA and GE published, exported to glTF by projects/09-e3-engine",
+    description:
+      "The Energy Efficient Engine's blading \u2014 32 rows, 2,890 blades, a 75\u00b0 wedge removed so the core is visible. Every section is transcribed from the NASA contractor reports, and each row sits on the published annulus wall to within 0.8 mm. The two spools turn at their own speeds, 1 : 3.57, the ratio four independent routes through four documents agree on. It turns; it does not run \u2014 the reports do not state the relative rotation direction, so co-rotation here is a stated modelling choice.",
+  },
+  {
     title: "Parametric wing",
     src: "/models/wing.glb",
     format: "Generated in pyOCC / OpenCASCADE, exported STEP and tessellated to glTF",

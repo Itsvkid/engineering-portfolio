@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **878 test functions**, **167 numbered findings**, **31 closures** — 18 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **892 test functions**, **169 numbered findings**, **32 closures** — 19 met, 10 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -23,7 +23,7 @@ NASA measured, and the gap is published.**
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 2 met |
-| **J** | publication — meridional plot, Campbell match, glTF | 6 met |
+| **J** | publication — meridional plot, Campbell match, glTF | 7 met |
 
 ### Validation
 
@@ -62,6 +62,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J4** — the README's numbers are generated from the code and a test fails if they drift | — | met |
 | **J5** — the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | met |
 | **J6** — every headline claim in the post is bound to the value the code produces | — | met |
+| **J7** — the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 vs 2.0 percent of row volume, web variant | met |
 
 ### Figures
 

@@ -56,6 +56,7 @@ export default function CadViewer({ models, label = "CAD viewer" }) {
         title={model.title}
         description={model.description}
         autoRotate={false}
+        spools={model.spools ?? false}
       />
 
       <p className="t-body-sm mt-2 text-fg2">

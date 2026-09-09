@@ -4,6 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { Bounds, Grid, OrbitControls, useGLTF } from "@react-three/drei";
 import { Suspense, useSyncExternalStore } from "react";
 
+import Blading from "./EngineCutaway";
+
 /**
  * The heavy half of the model viewer — three.js, R3F and drei all land in this
  * chunk, which is why nothing here is imported until ModelViewer decides the
@@ -34,7 +36,7 @@ function subscribeToMotion(onChange) {
   return () => query.removeEventListener("change", onChange);
 }
 
-export default function ModelStage({ src, autoRotate }) {
+export default function ModelStage({ src, autoRotate, spools = false }) {
   // matchMedia is an external store, so read it as one — this also picks up a
   // visitor changing the OS setting while the page is open.
   const reduced = useSyncExternalStore(
@@ -45,13 +47,14 @@ export default function ModelStage({ src, autoRotate }) {
 
   return (
     <Canvas
-      camera={{ position: [3, 2, 4], fov: 40 }}
+      camera={spools ? { position: [0, 1.4, 4.6], fov: 38 }
+                     : { position: [3, 2, 4], fov: 40 }}
       // Cap the pixel ratio: a retina canvas at devicePixelRatio 3 renders 9x
       // the fragments for no visible gain on a part this size.
       dpr={[1, 2]}
       // Only redraw when something actually changes — an idle viewer costs
       // zero GPU, which matters on a page a visitor may leave open.
-      frameloop={autoRotate && !reduced ? "always" : "demand"}
+      frameloop={(autoRotate || spools) && !reduced ? "always" : "demand"}
       gl={{ antialias: true }}
     >
       <color attach="background" args={["#101316"]} />
@@ -61,9 +64,15 @@ export default function ModelStage({ src, autoRotate }) {
       <directionalLight position={[-6, 3, -4]} intensity={0.7} />
 
       <Suspense fallback={null}>
-        <Bounds fit clip observe margin={1.1}>
-          <Model src={src} />
-        </Bounds>
+        {spools ? (
+          // A spooled model turns about its own axis, so Bounds must not
+          // re-fit it every frame — it is framed by the camera instead.
+          <Blading src={src} spinning={!reduced} />
+        ) : (
+          <Bounds fit clip observe margin={1.1}>
+            <Model src={src} />
+          </Bounds>
+        )}
       </Suspense>
 
       <Grid
@@ -88,7 +97,9 @@ export default function ModelStage({ src, autoRotate }) {
         enableDamping={false}
         minDistance={1.5}
         maxDistance={12}
-        autoRotate={autoRotate && !reduced}
+        // A spooled model is already moving; orbiting the camera as well
+        // makes the rotation impossible to read.
+        autoRotate={autoRotate && !spools && !reduced}
         autoRotateSpeed={0.6}
       />
     </Canvas>

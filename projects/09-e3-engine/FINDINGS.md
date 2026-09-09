@@ -136,8 +136,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-18 met, 10 half met, 3 gated, of 31.
-19 of 21 numeric closures sit inside their own band.
+19 met, 10 half met, 3 gated, of 32.
+20 of 22 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -175,6 +175,7 @@ blocks it. None is open without a reason attached.
 | J4 | the README's numbers are generated from the code and a test fails if they drift | — | — | met |
 | J5 | the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | — | met |
 | J6 | every headline claim in the post is bound to the value the code produces | — | — | met |
+| J7 | the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 | 2 | met |
 
 ### The two recorded misses
 
@@ -259,7 +260,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-167 findings, in the `STEP0.md` that owns each one.
+169 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -436,4 +437,6 @@ would break every reference in the commit history.
 | 168 | publication | A README claimed "37 tests" for months, and no test could fail. |
 | 169 | publication | The post drafted a claim that had been true and had stopped being |
 | 170 | publication | A post that states its own test count cannot be tested without |
+| 171 | publication | A cutaway must not be centred on its own bounding box. The first |
+| 172 | publication | three.js does not surface asset.extras. The exporter wrote the |
 

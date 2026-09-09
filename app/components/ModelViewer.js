@@ -42,7 +42,13 @@ class StageBoundary extends Component {
   }
 }
 
-export default function ModelViewer({ src, title, description, autoRotate = false }) {
+export default function ModelViewer({
+  src,
+  title,
+  description,
+  autoRotate = false,
+  spools = false,
+}) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
 
@@ -76,7 +82,7 @@ export default function ModelViewer({ src, title, description, autoRotate = fals
       >
         {inView ? (
           <StageBoundary>
-            <ModelStage src={src} autoRotate={autoRotate} />
+            <ModelStage src={src} autoRotate={autoRotate} spools={spools} />
           </StageBoundary>
         ) : (
           <Notice>{title}</Notice>
