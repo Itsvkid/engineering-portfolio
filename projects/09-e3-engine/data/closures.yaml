@@ -293,7 +293,7 @@ closures:
     note: >
       32 of 32 rows inside the 1 percent band, worst 0.374, median 0.094.
       All 20 HPC rows sit inside the published annulus to 0.8 mm, which is
-      G1's solids and J1's walls agreeing for the first time. 4.7 MB for
+      G1's solids and J1's walls agreeing for the first time. 3.96 MB for
       2275 drawn blades, because 32 meshes are instanced by 2307 nodes --
       cadquery's own assembly exporter writes a mesh per solid and needs
       27.6 MB for one row. Two limits recorded rather than hidden: the tip
