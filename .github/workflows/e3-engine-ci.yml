@@ -32,7 +32,15 @@ jobs:
       # here, the way projects 06 and 07 do, means the list goes stale the
       # first time a test file is added; letting the two files declare their
       # own dependency does not.
-      - run: pip install pytest numpy pyyaml matplotlib
+
+      # scipy is not optional: solvers/mechanical/beam.py imports
+      # scipy.linalg.eigh to solve the beam eigenproblem, and it is not
+      # guarded, so leaving it out failed collection on three files
+      # (test_blade_frequency, test_campbell, test_findings) rather than
+      # failing one assertion. PIL is deliberately absent — the only thing
+      # that imports it is tools/read_hpt_fig5.py, a one-off digitiser that
+      # no test or build step calls.
+      - run: pip install pytest numpy scipy pyyaml matplotlib
       - run: python -m pytest -q
 
       # The deliverables regenerate from the solvers, and a stale one is
