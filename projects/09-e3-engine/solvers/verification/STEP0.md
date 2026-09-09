@@ -352,3 +352,89 @@ handbook share:  sfc 0.0 %   metal temperature 0.0 %   disc stress 21.3 %
      equal and opposite to three figures. That is the step-0 validation:
      a sensitivity study that cannot reproduce the derivatives you can do
      by hand has no business reporting the ones you cannot.
+
+---
+
+## Unit I4 — the digitising uncertainty register
+
+Stage A3's last line: *State a digitising uncertainty per figure from pixel
+size and line weight.*
+
+Unit J2 showed why it matters, and showed it the expensive way. Stage E3's
+closure asks for blade frequencies within 5 % of the published Campbell
+diagrams and gets 1 of 24. But `hpc-rotor-campbell.yaml` records its own
+reading precision — half a minor division — and applied per point that is
+**±14 % on a 350 Hz line drawn on a 0–6 kHz axis**. Eleven of the
+twenty-four comparisons cannot resolve a 5 % band at all. The closure was
+never falsifiable on those points, in either direction, and nothing said so
+until a figure was drawn (finding 160).
+
+That question — *can this comparison resolve its own band?* — should not
+have to wait for someone to plot it. This unit asks it of every closure in
+the project at once.
+
+### What this unit does and does not do
+
+**Does not:** state an uncertainty for all 125 figure citations in `data/`.
+That needs each figure measured, and it is honest to say it has not been
+done rather than to generate a plausible number per figure.
+
+**Does:** build the register from the uncertainties the data files
+**actually record**, pair each with the closures that lean on it, and
+compute whether the band is coarser or finer than the reading. And count,
+explicitly, how many figure-derived comparisons carry **no** recorded
+uncertainty — because that count is the real state of Stage A3's last line
+and it belongs in the open.
+
+| Check | Requirement | Why |
+|---|---|---|
+| Every recorded uncertainty is in the register | from `data/`, not restated here | one source of numbers, applied to uncertainties |
+| Each is paired with the closures it governs | by the figure it comes from | an uncertainty nobody's closure uses is inert |
+| Resolvability is computed, not judged | band vs reading, per comparison | finding 160, generalised |
+| The unstated ones are counted | figure citations with no recorded uncertainty | the honest measure of how far A3's last line has got |
+| Nothing is invented | a figure with no recorded uncertainty gets `None`, never an estimate | a plausible uncertainty is worse than a missing one, because it looks measured |
+
+**Closes when** every recorded reading uncertainty appears in the register
+with the closures it governs and a resolvability verdict, and the count of
+figure-derived values with no stated uncertainty is reported rather than
+filled in.
+
+### Result — I4
+
+| | |
+|---|---|
+| Recorded reading uncertainties | **5** |
+| Distinct figure citations in `data/` | **263**, across 14 files |
+| Citations in a file that records one | 37 — **14 %**, on the generous count |
+| Closures governed by a recorded uncertainty | B4, C1, E3, J1, J5 |
+| Comparisons that can resolve their own band | E3: **13 of 24**; first flex **0 of 10** |
+
+### Findings
+
+178. **Stage A3's last line is 14 % done, on the generous count.** The
+     plan asks for a digitising uncertainty per figure. `data/` cites
+     **263 distinct figures** across fourteen files and records **five**
+     reading uncertainties. Counting a citation as covered when its *file*
+     records one — which is generous, since one uncertainty rarely governs
+     every figure in a file — gives 37 of 263. The true per-figure figure
+     is lower.
+
+     This is not a new gap; it is an old gap **measured**. It had been
+     carried as an unticked line in a work plan, which is a different thing
+     from a number. Unit J2 showed what it costs when it bites: eleven of
+     E3's twenty-four comparisons cannot resolve the 5 % band they are
+     judged against, and **every one of the ten first-flex modes** is in
+     that group.
+
+179. **Four of the five recorded uncertainties are prose, and are left as
+     prose.** Only `hpc-rotor-campbell.yaml` records something a machine
+     can apply per point — half a minor division, per axis, in kHz. The
+     others read *"±0.01 on ratios, ±0.005 on Mach and loss, ±0.3° on
+     swirl"*, *"±5 kJ/kg"*, *"±0.3 cm"*. Those are usable by a person and
+     not by a resolvability test, and turning them into per-point numbers
+     would mean deciding which quantity in a closure each clause governs —
+     a decision the source did not make. The register carries them as
+     written and computes a verdict only where one can honestly be
+     computed. **A register that quantified all five would be more useful
+     and less true.**
+

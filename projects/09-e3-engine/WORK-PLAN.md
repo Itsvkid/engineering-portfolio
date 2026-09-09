@@ -259,7 +259,12 @@ independent cross-check.
 - [ ] Whole engine — CR-168219 Fig. 1 is a 4-inch unlabelled cutaway; the two
       stitching offsets (fan axis → HPC IGV, HPC OGV → HPT vane 1) are recorded
       as open in `engine-flowpath.yaml` for Stage H to set from bearing spans
-- [ ] State a digitising uncertainty per figure from pixel size and line weight
+- [~] State a digitising uncertainty per figure from pixel size and line weight
+      — I4 built the **register** of the five that are recorded, with the
+      closures each governs and a resolvability verdict where one can be
+      computed. Coverage measured at **14 % of 263 figure citations**, on
+      the generous count. The remaining 86 % needs the figures measured
+      and no number is invented for them. Findings 178–179.
 
 *Closes when:* one `flowpath.stations` list runs fan face to nozzle with hub
 and tip at every row LE/TE, and the HPT segment agrees with the dimensioned

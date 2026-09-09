@@ -137,7 +137,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-20 met, 11 half met, 3 gated, of 34.
+21 met, 11 half met, 3 gated, of 35.
 21 of 24 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -179,6 +179,7 @@ blocks it. None is open without a reason attached.
 | J7 | the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 | 2 | met |
 | E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
+| I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
 
 ### The two recorded misses
 
@@ -266,7 +267,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-174 findings, in the `STEP0.md` that owns each one.
+176 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -450,4 +451,6 @@ would break every reference in the commit history.
 | 175 | mechanical | The constancy test is blind to unit E3's bias by construction, and |
 | 176 | mechanical | The stage exit is counter-swirled, and the swirl change is a sum. |
 | 177 | mechanical | The stacking tilt cancels about half the gas bending, on every |
+| 178 | verification | Stage A3's last line is 14 % done, on the generous count. The |
+| 179 | verification | Four of the five recorded uncertainties are prose, and are left as |
 

@@ -49,7 +49,8 @@ STAGES = [
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
-                         "verification.disagreements"]),
+                         "verification.disagreements",
+                         "verification.digitising"]),
     ("J  publication", ["publication.meridional", "publication.campbell",
                         "publication.render", "publication.drawings"]),
 ]

@@ -409,3 +409,21 @@ closures:
       The first run was 43-62 percent low until Euler's identity caught a
       counter-swirl sign convention (finding 176).
 
+  - stage: I4
+    what: every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      5 recorded reading uncertainties against 263 distinct figure citations
+      across 14 data files -- 14 percent coverage on the generous count, which
+      is Stage A3's last line measured rather than described (finding 178).
+      Only one of the five is numeric per point, and the other four are left
+      as the prose their files record rather than being quantified into
+      something that would look measured (finding 179). The one that can be
+      computed reproduces finding 160: 13 of E3's 24 comparisons can resolve
+      the 5 percent band they are judged against, and 0 of the 10 first-flex
+      modes can.
+

@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **922 test functions**, **174 numbered findings**, **34 closures** — 20 met, 11 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **935 test functions**, **176 numbered findings**, **35 closures** — 21 met, 11 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -22,7 +22,7 @@ NASA measured, and the gap is published.**
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
-| **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 2 met |
+| **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 3 met |
 | **J** | publication — meridional plot, Campbell match, glTF | 7 met |
 
 ### Validation
@@ -65,6 +65,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J7** — the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 vs 2.0 percent of row volume, web variant | met |
 | **E7** — the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 vs 15.0 percent departure from the mean implied allowable | half |
 | **E8** — uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 vs 25.0 percent | met |
+| **I4** — every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | met |
 
 ### Figures
 
