@@ -916,7 +916,13 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 - [ ] **FEA** on HPT stage-1 disc; compare with HPT report Figs. 61–64;
       interstage seal disc Fig. 65 — **gated on the profile**
 - [ ] LCF at bore and slot (Fig. 61 gives concentration and life)
-- [ ] The bolted-joint and inertia-weld rotor structure of the HPC
+- [x] The bolted-joint and inertia-weld rotor structure of the HPC
+      — E9. The rotor has **two** kinds of joint, welds plural and one
+      bolt joint, and no position is published for either, so the result
+      is joint torque as a **function of position**: 3.10 kN·m aft of
+      stage 1 to 28.67 aft of stage 10. The open stage-4/stage-7 material
+      question is worth a factor of **1.67** in that torque.
+      Findings 188–190.
 
 *Closes when:* HPT disc peak effective stress within 10 % of Fig. 64, and
 the bore doubling for a small hole is demonstrated on the model.

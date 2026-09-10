@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **976 test functions**, **184 numbered findings**, **37 closures** — 22 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **992 test functions**, **187 numbered findings**, **38 closures** — 23 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -18,7 +18,7 @@ NASA measured, and the gap is published.**
 | **B** | cycle — three Table XII ratings, the mixer, the station table | 1 met, 2 half |
 | **C** | aero — mean-line, through-flow, blading, CFD validation | 7 met, **1 gated** |
 | **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half |
-| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 2 met, 6 half |
+| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 3 met, 6 half |
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 2 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
@@ -68,6 +68,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **I4** — every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | met |
 | **G2** — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 vs 2.0 percent of vane volume | half |
 | **C5** — the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | met |
+| **E9** — the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | met |
 
 ### Figures
 

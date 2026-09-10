@@ -1066,3 +1066,109 @@ at all. The cancellation is checked as an inequality, not reproduced.
      confirmed as an inequality across five stages** — which is as far as
      the published data allows anyone to take it.
 
+---
+
+## Unit E9 — the HPC rotor: the inertia welds and the single bolt joint
+
+Stage E2's line: *the bolted-joint and inertia-weld rotor structure of the
+HPC.*
+
+Two neighbouring items are already done and are **not** this one. E5's
+`casing_bolting` checks Table XVII's three *casing* flanges against their
+printed criterion — that is the static structure. E4's
+`bolted_joint_margin` inverts the *HPT* inducer-disk joint. Neither
+touches the HPC rotor.
+
+### Reading the sentence carefully
+
+`e3-fps-published.yaml` carries one line on it:
+
+> inertia-welded forward and aft sections joined by a single bolt joint;
+> bore cooled by fan discharge air
+
+That describes **two different kinds of joint, in different places**:
+
+* **inertia welds**, plural and internal — the standard construction is
+  individual stage discs friction-welded into a drum;
+* **one bolt joint**, singular — where the forward drum meets the aft one.
+
+Conflating them is easy and has already cost this project once: unit E1's
+finding 74 read a *material* crossover as the weld position and had to be
+withdrawn as circular. A material change happens at a **weld**, disc to
+disc, and the sentence gives no position for either kind of joint.
+
+### What can be computed
+
+The HPT drives the rotor from the aft end and each stage takes its share
+going forward, so **a joint sitting after stage *n* transmits only the
+torque the stages ahead of it absorb**. Figure 14's per-stage temperature
+rise is that work split, printed. The torque through the joint is
+therefore a computable fraction of the HP spool torque for any position —
+and the position is what is unknown, so the result is a curve rather than
+a number.
+
+| Check | Band | Basis |
+|---|---|---|
+| The work split sums to Fig 14's own total | **±0.05 °C** | 493.5 °C printed against the ten printed stages |
+| Torque through the joint is a strict fraction of HP spool torque | **0 < f < 1**, monotone in position | a joint cannot carry more than the shaft delivers |
+| At the aft end the fraction reaches 1 | **exactly** | the last joint before the turbine carries everything |
+| The HPC joint's demand against the HPT joint's | **less than 1** at every position | the HPT joint carries the whole HP torque; every HPC joint carries part of it |
+
+**Closes when** the work split reproduces Fig 14's total, the torque
+fraction is monotone and bounded, and the HPC joint's demand is shown
+below the HPT joint's at every candidate position.
+
+**Not attempted:** the weld position, the bolt count, the bolt size, the
+bolt-circle radius, the axial load. None is published for this rotor, and
+the unit reports the demand as a function of position rather than
+inventing a position to report a number at.
+
+### Result — E9
+
+| | |
+|---|---|
+| Work split against Fig 14's printed total | **0.000 °C** |
+| Torque fraction through a joint | monotone **0.108 → 1.000**, aft of stages 1 to 10 |
+| At the aftmost position | **exactly 1.000** of HP torque |
+| Every forward joint against the HPT joint | **below 1** at all nine |
+| At takeoff, HP torque | 28.67 kN·m |
+
+**Closure: met.** All four checks hold.
+
+### Findings
+
+188. **The rotor has two kinds of joint, and only one of them is
+     singular.** The FPS report's single line — *inertia-welded forward
+     and aft sections joined by a single bolt joint* — describes **welds,
+     plural and internal**, and **one bolt joint** between the two drums.
+     The standard construction it implies is stage discs friction-welded
+     into a drum, drums bolted together. That distinction matters because
+     **a material change happens at a weld, disc to disc, and not at the
+     bolt joint**, and conflating the two is what unit E1's finding 74 did
+     before it was withdrawn as circular. No position is published for
+     either kind.
+
+189. **The torque a rotor joint carries is a computable function of where
+     it sits, and the position is the unknown — so the answer is a curve.**
+     The HPT drives from the aft end and each stage takes its share going
+     forward, so a joint aft of stage *n* transmits only what stages 1..*n*
+     absorb. Figure 14's per-stage temperature rise is that split, printed,
+     and it sums to its own total to **0.000 °C**. The torque runs
+     **3.10 kN·m** aft of stage 1 to **28.67** aft of stage 10, the latter
+     being the whole HP torque at takeoff by construction. Every forward
+     position is below the HPT inducer-disk joint's demand, which is the
+     bound it has to satisfy. Reporting the curve rather than picking a
+     position is the honest form here: nothing published fixes the
+     position, and a single number would have implied one.
+
+190. **The unresolved material question is worth a factor of 1.67 in joint
+     torque.** Unit F1 measured a titanium-to-nickel density crossover
+     between stages 4 and 5 from Table X's own weight column; Table X's
+     material column prints the change at stage 7; F1 flagged the
+     disagreement rather than resolving it. A joint aft of stage 4 carries
+     **12.11 kN·m — 42 %** of HP torque; aft of stage 7, **20.24 kN·m —
+     71 %**. That is what the open question costs structurally, and it is
+     the first time this project has put a number on the consequence of
+     that disagreement rather than only on the disagreement. It is an
+     argument for neither station.
+

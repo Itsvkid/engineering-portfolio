@@ -144,8 +144,8 @@ def test_the_three_gap_sheets_are_the_three_in_the_code():
 def test_the_closure_scoreboard_matches():
     import collections
     by = collections.Counter(c["state"] for c in CLOSURES)
-    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (37, 22, 12, 3)
-    claim("37 closures — 22 met,\n12 half, 3 gated.")
+    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (38, 23, 12, 3)
+    claim("38 closures — 23 met,\n12 half, 3 gated.")
 
 
 def test_the_post_states_a_findings_floor_that_is_true():
@@ -155,8 +155,8 @@ def test_the_post_states_a_findings_floor_that_is_true():
     as a bound rather than an exact figure in prose."""
     from build_findings import findings_index
     n = len(findings_index())
-    assert n >= 180, n
-    claim("Over 180 numbered findings")
+    assert n >= 185, n
+    claim("Over 185 numbered findings")
 
 
 def test_the_post_states_a_test_count_floor_that_is_true():

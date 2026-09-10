@@ -137,7 +137,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-22 met, 12 half met, 3 gated, of 37.
+23 met, 12 half met, 3 gated, of 38.
 21 of 25 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -182,6 +182,7 @@ blocks it. None is open without a reason attached.
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
 | G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 | 2 | half |
 | C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
+| E9 | the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | — | met |
 
 ### The two recorded misses
 
@@ -271,7 +272,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-184 findings, in the `STEP0.md` that owns each one.
+187 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -465,4 +466,7 @@ would break every reference in the commit history.
 | 185 | meanline | A stage-stacking march that cannot return its own design point is |
 | 186 | meanline | Corrected flow falls far faster than speed, and assuming otherwise |
 | 187 | meanline | The VSVs widen the window in which the published loading order |
+| 188 | mechanical | The rotor has two kinds of joint, and only one of them is |
+| 189 | mechanical | The torque a rotor joint carries is a computable function of where |
+| 190 | mechanical | The unresolved material question is worth a factor of 1.67 in joint |
 

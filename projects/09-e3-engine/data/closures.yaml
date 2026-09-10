@@ -469,3 +469,22 @@ closures:
       IS REPORTED: no stall line for this compressor is published, and neither
       is a VSV schedule.
 
+  - stage: E9
+    what: the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      The work split closes on Fig 14's own printed total to 0.000 C, the
+      torque fraction is monotone from 0.108 aft of stage 1 to exactly 1.000
+      aft of stage 10, and every forward position sits below the HPT
+      inducer-disk joint's demand. The rotor has TWO kinds of joint -- welds
+      plural and internal, one bolt joint between drums -- and no position is
+      published for either (finding 188), so the result is a curve rather
+      than a number (finding 189). The unresolved stage-4 vs stage-7 material
+      question is worth a factor of 1.67 in joint torque (finding 190).
+      Not attempted: weld positions, bolt count, bolt size, bolt-circle
+      radius, axial load. None is published.
+
