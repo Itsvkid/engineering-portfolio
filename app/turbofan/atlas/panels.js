@@ -88,8 +88,18 @@ export function SystemsPanel({ state, dispatch, palette }) {
 
 const HEADLINE = [
   ["Engine", "NASA/GE E³ Flight Propulsion System, 1983"],
+  // The architecture row exists because the silhouette misleads people who
+  // know modern engines. A GE90 or a Trent is separate-flow: the fan cowl
+  // stops a third of the way back and the core nozzle sticks out behind, and
+  // that shape has become the visual shorthand for "high bypass". The E³ is
+  // long-duct mixed-flow, so it is a tube from inlet to nozzle — which reads
+  // as an older, lower-bypass engine to an eye trained on the other kind.
+  // Every fact needed to correct that impression was already on the page,
+  // and all of it was two clicks inside the exhaust system.
+  ["Architecture", "long-duct, mixed-flow — one nozzle for both streams"],
   ["Takeoff thrust", "173.5 kN"],
   ["Bypass ratio", "6.7 (max climb), 7.0 (takeoff)"],
+  ["Nacelle", "2.489 m maximum diameter, 1.590 m of inlet ahead of the fan"],
   ["Overall pressure ratio", "38.4 (max climb)"],
   ["Fan diameter", "2.108 m, 32 blades"],
   ["Spools", "LP 3,539 rpm · HP 12,645 rpm at max climb"],
