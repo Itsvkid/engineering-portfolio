@@ -515,3 +515,87 @@ and the ramp is not the answer.**
      no difference: the ramped run collapsed at iteration 709 at the same
      mass flow as the unramped ones. Recorded because a negative result on
      an obvious hypothesis saves the next attempt from repeating it.
+
+---
+
+## Unit C4-4, continued — 2026-09-10: the field, at last, and one hypothesis killed
+
+STEP0's four next steps were written on 2026-09-08. Steps 1 and 2 are now
+done, step 3 is attempted and inconclusive, and the run they produced
+**rules out the explanation everything had been converging on.**
+
+### Result
+
+| | |
+|---|---|
+| Step 1, inspect the field | **done** — the profiles are in `data/rotor37-stalled-field.yaml` |
+| Step 2, cyclic carries flux | **done** — `sum(periodic_m) of phi = 0.996` at iteration 124. The periodics work |
+| Step 3, y+ on the blade | **attempted, inconclusive** — the `yPlus` field did not survive into the written time directory and `postProcess` recomputed it as zero on every wall. Not answered; not claimed either way |
+| Step 4, SRF / rotating frame | not attempted |
+| Tip gap, measured | **0.515 mm** against 0.356 intended — 1.45×, 0.70 % of span |
+| Constant back pressure at 105 kPa | **collapses anyway**, between iterations 1000 and 1200 |
+
+### Findings
+
+194. **The stalled machine is neither blocked at the inlet nor doing no
+     work — it is reversed at the tip.** The question step 1 existed to
+     answer is settled. At the inlet plane, four centimetres upstream of
+     the blade, the inner **87 % of the span flows forward at 83 to 98
+     m/s** and the outer 13 % is reversed, with a minimum axial velocity of
+     **−165 m/s**, swirl of **−486 m/s** and a temperature of **597 K**.
+     Just ahead of the blade the reversal begins at 84 % of span and the
+     swirl reaches **−608 m/s** — against a tip blade speed of about −453.
+     **The tip fluid is moving faster than the blade, in the blade's own
+     direction, and rotor-worked gas at 597 K is being driven back out of
+     the machine along the casing and past the inlet plane.** Five runs of
+     integrated quantities could not have found that; one traverse did.
+
+195. **It collapses at constant back pressure too, which kills the
+     throttling explanation.** Finding 142 recorded that a ramp did not
+     help. The obvious remaining reading was that 150 kPa was simply past
+     this model's stall point, so the cure was to ask for less. Held at a
+     **constant 105 kPa** — inside the range where the ramped run was still
+     passing 104 % of design flow — it ran healthily for a thousand
+     iterations and **collapsed anyway**, between iterations 1000 and 1200.
+     The collapse is not caused by the back pressure, ramped or steady.
+     That is the second obvious hypothesis to die, and both deaths are
+     worth more than the guesses they replace.
+
+196. **The tip gap is 1.45× design, not 14×, and the difference was a
+     station error of mine.** Measuring the blade STL's maximum radius
+     against the *domain's* maximum casing radius gives a 5.02 mm gap and a
+     ratio of 14 — a dramatic finding that would have been wrong. The
+     domain's widest casing is at the **inlet**, four centimetres upstream
+     of the blade and 4.5 mm larger in radius. Measured at the blade's own
+     axial station the gap is **0.515 mm against 0.356 intended: 1.45×,
+     0.70 % of span**. Real, worth fixing, and nowhere near enough to
+     explain a machine passing a third of its flow. Recorded because the
+     wrong number was one edit away from being published.
+
+197. **The solution never converges at all, which reframes the problem.**
+     The trace at constant back pressure is not a march to a stalled
+     branch. The work swings **−3 %, +38, +8, +12, +19, +45, −2, +91 %** of
+     design across 1500 iterations while the flow drifts *upward* from 95 %
+     to 118 % and then crashes to 34 %. **There is no steady state
+     anywhere in the run.** Unit C4-1's finding that residuals were useless
+     as a guide applies again and harder: the earlier runs were described
+     as *converging* to a stalled branch on the strength of a falling
+     pressure residual, and the integral quantities were swinging by a
+     factor of thirty the whole time. A steady solver asked to converge a
+     flow with a large reversed tip region may have nothing steady to
+     converge to. **The next step is therefore not a fifth variation on the
+     steady setup: it is a transient solve** (`rhoPimpleFoam`), which would
+     also say whether the reversal is a rotating-stall cell rather than a
+     fixed separation.
+
+### What to try next, revised
+
+1. **`rhoPimpleFoam`, transient**, from the healthy field at iteration
+   1000 of the constant-105 kPa run. If the tip reversal is unsteady, a
+   steady solver was never going to work and this is the whole answer.
+2. **y+ properly** — write the field, do not recompute it. Step 3 is still
+   open and the tip is where it matters.
+3. Close the tip gap from 0.515 to 0.356 mm and repeat, to bound how much
+   of the tip reversal the 1.45× gap is responsible for.
+4. Only then the rotating-frame formulation of the old step 4.
+

@@ -1,0 +1,92 @@
+# Stage C unit C4-4: what the stalled Rotor 37 solution looks like.
+#
+# DERIVED, not published. These are numbers this project's own CFD run
+# produced on 2026-09-10 and they are recorded here because the sampled
+# profiles live under postProcessing/, which is gitignored as regenerable
+# output -- so without this file the finding would not survive a clean
+# checkout. Regenerate with cfd/rotor37/run_parallel.sh then
+# `postProcess -func sampleDict`.
+meta:
+  src: >
+    solvers/publication -- no. This is solvers/cfd/rotor37_field.py reading
+    system/sampleDict's traverses out of a 1000-iteration rhoSimpleFoam run
+    with the back pressure ramped 95 -> 150 kPa between iterations 300 and
+    1200.
+  run: 2026-09-10, 3 ranks, 138,201 cells, 426 s
+  design_sector_flow_kg_s: 0.5608      # TP-1337 Table I, 20.188 / 36
+
+# The discriminator STEP0 asked for: blocked at the inlet, or doing no
+# work? Neither. The inner two thirds flows; the outer fifth reverses.
+inlet_radial:
+  reverses: true
+  reversal_span_fraction: 0.87
+  min_ux: -165.3
+  max_ux: 97.7
+  peak_swirl: -486.0
+  peak_T: 596.6
+  healthy_fraction: 0.85
+  note: >
+    597 K gas at the INLET plane, four centimetres upstream of the blade,
+    with 486 m/s of swirl. That is rotor-worked fluid driven back out of
+    the machine along the casing.
+
+preblade_radial:
+  reverses: true
+  reversal_span_fraction: 0.84
+  min_ux: -203.3
+  max_ux: 124.4
+  peak_swirl: -607.8
+  peak_T: 461.5
+  healthy_fraction: 0.82
+  note: >
+    -608 m/s of swirl against a tip blade speed of about -453 m/s (omega r,
+    negative-y at positive z for rotation about +x). The tip fluid is
+    moving faster than the blade, in the blade's own direction.
+
+tip_gap:
+  from_file: false
+  blade_tip_mm: 251.439
+  blade_tip_x_cm: 0.828
+  casing_at_that_x_mm: 251.954
+  gap_mm: 0.515
+  intended_mm: 0.356
+  ratio: 1.45
+  pct_of_span: 0.70
+  note: >
+    Measured at the blade's OWN axial station. Comparing against the
+    domain's maximum casing radius -- which is at the inlet, 4 cm upstream
+    and 4.5 mm wider -- gives 5.02 mm and 14x, which is wrong and is
+    finding 196.
+
+collapse:
+  held_iter: 452
+  held_flow: 0.59882
+  collapsed_iter: 693
+  collapsed_flow: 0.16479
+  note: >
+    The ramp is linear from 95 kPa at iteration 300 to 150 kPa at 1200, so
+    the machine still flowed at 104.3 kPa and had collapsed by 119.0.
+
+# The constant-back-pressure run, 2026-09-10. Held at 105 kPa, BELOW the
+# bracket the ramped run collapsed in, for 1500 iterations.
+constant_back_pressure_105kPa:
+  collapses_anyway: true
+  collapsed_between_iter: [1000, 1200]
+  trace:
+    # iteration, mass flow kg/s, percent of design, outlet T K, percent of
+    # the design 78 K rise
+    - [0,    0.5312,  95, 285.5,  -3]
+    - [200,  0.5885, 105, 317.8,  38]
+    - [400,  0.5890, 105, 294.5,   8]
+    - [600,  0.6097, 109, 297.8,  12]
+    - [800,  0.6266, 112, 303.1,  19]
+    - [1000, 0.6594, 118, 323.3,  45]
+    - [1200, 0.2369,  42, 286.3,  -2]
+    - [1400, 0.1934,  34, 358.8,  91]
+  note: >
+    The work swings from -3 to +91 percent of design and back, and the flow
+    drifts UP from 95 to 118 percent before crashing to 34. This solution
+    never reaches a steady state at any point in 1500 iterations. It is not
+    "converging to a stalled branch"; it is oscillating, and one of the
+    swings takes it somewhere it cannot recover from.
+

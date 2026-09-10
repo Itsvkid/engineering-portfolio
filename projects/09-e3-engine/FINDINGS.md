@@ -22,7 +22,7 @@ intermediate fitting.
 | Within 10 % | 56 |
 | Worse than 20 % | 23 |
 | Median absolute error | **7.30 %** |
-| **Unresolved** | **8** |
+| **Unresolved** | **7** |
 
 Unresolved means exactly that: a disagreement with no cause yet. Five
 of ninety-eight is the honest count, and they are listed in section 3.
@@ -33,7 +33,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 |---:|---|---|---|---|
 | +79.1 | E5 | LPT Fig 70 disk_C stress concentration | LPT Fig 70 | **UNRESOLVED** (finding 100) |
 | +78.7 | E3 | HPC rotor 2 3F frequency | HPC Fig 34 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
-| -74.4 | C4 | Rotor 37 mass flow, converged solve | TP-1337 Table I design flow | **UNRESOLVED** (finding 141) |
+| -74.4 | C4 | Rotor 37 mass flow, converged solve | TP-1337 Table I design flow | the solve never reaches a steady state at all -- work swings from -3 to +91 % of design across 1500 iterations while a reversed tip region carries 597 K gas back past the inlet plane. Not a stalled branch; an unsteady flow given to a steady solver (findings 194-197) (finding 197) |
 | +60.8 | E7 | LPT flutter allowable, stage 5 vs stage 1 | LPT Table XI safety factors, which should imply one allowable | **UNRESOLVED** (finding 174) |
 | +54.3 | J2 | HPC stage-1 1F rise, rest to max speed | HPC Figs 33-42, mode lines drawn flat across the speed range | **UNRESOLVED** (finding 162) |
 | +54.0 | E3 | HPC stage-1 first flex at 14,000 rpm | HPC Fig 33, read flat across the speed range | **UNRESOLVED** (finding 145) |
@@ -205,7 +205,6 @@ Five disagreements have no cause. They are not failures of the model so
 much as questions the reports have not answered.
 
 - **LPT Fig 70 disk_C stress concentration** (E5) — 2.86547 against 1.6, +79.1 %. Source: LPT Fig 70.
-- **Rotor 37 mass flow, converged solve** (C4) — 5.17 against 20.188, -74.4 %. Source: TP-1337 Table I design flow.
 - **LPT flutter allowable, stage 5 vs stage 1** (E7) — 63.7728 against 39.6592, +60.8 %. Source: LPT Table XI safety factors, which should imply one allowable.
 - **HPC stage-1 1F rise, rest to max speed** (J2) — 1.54314 against 1, +54.3 %. Source: HPC Figs 33-42, mode lines drawn flat across the speed range.
 - **HPC stage-1 first flex at 14,000 rpm** (E3) — 539 against 350, +54.0 %. Source: HPC Fig 33, read flat across the speed range.
@@ -275,7 +274,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-190 findings, in the `STEP0.md` that owns each one.
+194 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -475,4 +474,8 @@ would break every reference in the commit history.
 | 191 | thermal | The two figures this plan item named do not contain a thrust. |
 | 192 | thermal | The HPC rotors push aft on the annulus control volume, and STEP0 |
 | 193 | thermal | The thrust balance is gated on the disc bore radius, and that is |
+| 194 | cfd | The stalled machine is neither blocked at the inlet nor doing no |
+| 195 | cfd | It collapses at constant back pressure too, which kills the |
+| 196 | cfd | The tip gap is 1.45× design, not 14×, and the difference was a |
+| 197 | cfd | The solution never converges at all, which reframes the problem. |
 

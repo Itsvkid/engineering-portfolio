@@ -103,6 +103,17 @@ closures:
     band: null
     achieved: null
     state: gated
+    gate_2026_09_10: >
+      Still gated, but the fault is now LOCALISED rather than merely
+      characterised. The field was inspected for the first time (finding 194):
+      the inner 87 percent of span flows forward and the outer 13 percent is
+      reversed, with swirl exceeding blade speed and 597 K rotor-worked gas
+      driven back past the inlet plane. The periodics carry flux, so that
+      hypothesis is closed. A constant back pressure collapses too, which
+      kills the throttling explanation (finding 195). And the solution never
+      reaches a steady state at all -- work swinging from -3 to +91 percent
+      of design across 1500 iterations -- so the next step is a TRANSIENT
+      solve rather than a fifth variation on the steady setup (finding 197).
     gate: >
       The mesh is built and checked (C4-3) and the case runs, but it
       collapses onto a stalled branch at 26 % of design flow and 13 % of

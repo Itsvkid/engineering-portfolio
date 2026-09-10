@@ -118,10 +118,10 @@ def test_the_overall_disagreement_statistics_match():
     assert s["total"] == 101
     assert s["median"] == pytest.approx(7.3, abs=0.05)
     assert (s["within_1"], s["within_5"], s["within_10"]) == (12, 38, 56)
-    assert s["unresolved"] == 8
+    assert s["unresolved"] == 7
     claim("**101 comparisons, median absolute error 7.3 %.**")
     claim("Twelve\ninside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %")
-    claim("Eight carry the")
+    claim("Seven carry the")
 
 
 # --- the gap -------------------------------------------------------------

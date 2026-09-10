@@ -195,7 +195,12 @@ def _open_questions():
     # Rotor 37 will not hold a physical solution
     out.append(Disagreement(
         "Rotor 37 mass flow, converged solve", "C4", 5.17, 20.188,
-        "TP-1337 Table I design flow", "unresolved", finding=141))
+        "TP-1337 Table I design flow",
+        "the solve never reaches a steady state at all -- work swings from "
+        "-3 to +91 % of design across 1500 iterations while a reversed tip "
+        "region carries 597 K gas back past the inlet plane. Not a stalled "
+        "branch; an unsteady flow given to a steady solver (findings 194-197)",
+        finding=197))
 
     # the published Campbell lines do not rise with speed; the model says
     # stage-1 first flex gains 54 % across the range (unit J2, finding 162)

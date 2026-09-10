@@ -35,11 +35,19 @@ def test_the_ranking_is_actually_ranked():
 def test_unresolved_is_used_and_is_a_small_minority():
     """I3 asks for 'a cause or unresolved'. Zero unresolved would mean the
     causes were being invented; a large fraction would mean the project had
-    not done its work."""
+    not done its work.
+
+    C4 LEFT this set on 2026-09-10. Its Rotor 37 mass flow had carried the
+    word `unresolved` since the solve was first characterised; inspecting
+    the field gave it a real cause -- the solution never reaches a steady
+    state at all, and a reversed tip region carries 597 K gas back past the
+    inlet plane (findings 194-197). A stage leaving this set is the point
+    of the exercise, so the assertion follows it rather than pinning it."""
     assert 1 <= S["unresolved"] <= 15
     assert S["unresolved"] / S["total"] < 0.2
-    unres = [r for r in ROWS if not r.resolved]
-    assert {r.stage for r in unres} >= {"C4", "E2", "E3", "E5"}
+    unres = {r.stage for r in ROWS if not r.resolved}
+    assert unres >= {"E2", "E3", "E5"}
+    assert "C4" not in unres, "C4 was explained in 2026-09-10; see finding 197"
 
 
 def test_the_median_disagreement_is_single_digit_percent():

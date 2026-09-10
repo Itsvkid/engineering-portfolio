@@ -16,15 +16,13 @@ boundaryField
     // from choke toward stall, each point starting from the last.
     outlet
     {
+        // C4-4, 2026-09-10: the ramp collapsed between 104.3 and 119.0 kPa
+        // (iterations 452 and 693). Held BELOW that bracket to find out
+        // whether the solver has a converged physical point at all -- which
+        // in five previous runs it has never been given the chance to show.
         type            uniformFixedValue;
-        uniformValue    table
-        (
-            (0    95000)
-            (300  95000)
-            (1200 150000)
-            (3000 150000)
-        );
-        value           uniform 95000;
+        uniformValue    constant 105000;
+        value           uniform 105000;
     }
     hub_rotating     { type zeroGradient; }
     hub_static        { type zeroGradient; }

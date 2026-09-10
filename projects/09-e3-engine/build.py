@@ -40,6 +40,7 @@ STAGES = [
                       "meanline.hpc_offdesign"]),
     ("C2 through-flow", ["throughflow.radial_equilibrium", "throughflow.predict",
                          "throughflow.lpt_vortex", "throughflow.hpt_spanwise"]),
+    ("C4 cfd", ["cfd.rotor37_field"]),
     ("C3 blading", ["blading.sections", "blading.lpt_sections", "blading.hpt_sections",
                     "blading.fan_blade", "blading.run"]),
     ("D  thermal", ["thermal.cooling", "thermal.secondary_air", "thermal.clearance",

@@ -59,22 +59,25 @@ not effort, and the split is worth knowing before planning anything.
 | **Genuinely open to code, now** | ~5 | see below |
 | **Deferred by design** | 1 | B's component maps, deferred to Stage C in the plan itself |
 
-**The ~5 that are open to code**, in the order they are worth doing:
+**The five that were open to code are now done** (2026-09-09/10):
 
-1. **Booster and inner-OGV sweep and lean.** The angles are published
-   (60° aft, lean 0° at the OD to 20° at the ID); what is missing is that
-   `wrapped_wire` stacks sections on a radial line. A geometry extension,
-   not a transcription gap.
-2. **HPC stall margin and the VSV schedule effect.** The stagewise
-   diffusion factors, losses and de Haller numbers are done in C1 unit 5;
-   stall margin is the off-design part and needs a compressor map.
-3. **The bolted-joint and inertia-weld rotor structure of the HPC** —
-   partly reachable from Table XVII's flange data.
-4. **D's thrust balance** — needs HPT Figs 95–96 read first, so really an
-   A3 item wearing a D coat.
-5. **Emissions against Tables XVI–XVII** — a correlation from AGARD
-   CP-422; the combustor volume it wants is undimensioned, so any answer
-   would carry that uncertainty.
+1. ~~Booster and inner-OGV sweep and lean~~ — **G2**. The sweep and lean
+   turned out to be the OGV's alone; the booster's radial stack was
+   already right (finding 180).
+2. ~~HPC stall margin and the VSV schedule effect~~ — **C5**. No stall
+   margin is reported, because no stall line is published; the design
+   intent is confirmed against three figures and the VSV effect measured.
+3. ~~The bolted-joint and inertia-weld rotor structure of the HPC~~ —
+   **E9**. Two kinds of joint, neither positioned, so the answer is a
+   torque curve.
+4. ~~D's thrust balance~~ — **D6**. Gated after all, but on the disc bore
+   radius, which is the same A3 figure that gates E2 and F2 — and the
+   disc-face term it needs is 3.2–6.4× the one that closes.
+5. ~~Emissions against Tables XVI–XVII~~ — not attempted; the combustor
+   volume it needs is undimensioned.
+
+**C4-4 has also moved**: the Rotor 37 field is inspected, two hypotheses
+are dead, and the next step is a transient solve. See item 1 below.
 
 **The honest summary:** the modelling this project set out to do is done.
 What remains is transcription, a CAD seat, two toolchains, and one
@@ -82,7 +85,19 @@ unsolved CFD case.
 
 ### The next three things to do
 
-1. **Finish C4-4, the Rotor 37 solve — there is a bug to find.** The mesh
+1. **C4-4, the Rotor 37 solve — the fault is now LOCALISED, and the next
+   step changed.** Updated 2026-09-10: the field has been inspected for
+   the first time (findings 194–197). The machine is **reversed at the
+   tip** — the inner 87 % of span flows forward, the outer 13 % carries
+   597 K rotor-worked gas back past the inlet plane at swirl exceeding
+   blade speed. The periodics carry flux, so that is closed. A **constant**
+   back pressure collapses too, so throttling is not the cause. And the
+   solution **never reaches a steady state at all**: work swings −3 % to
+   +91 % of design across 1500 iterations. **The next step is a transient
+   solve (`rhoPimpleFoam`), not a fifth variation on the steady setup.**
+   The revised list is in `solvers/cfd/STEP0.md`.
+
+   ~~Finish C4-4, the Rotor 37 solve — there is a bug to find.~~ The mesh
    is built and checked, the solver is validated on an exact answer, and
    the geometry is cross-checked three ways. The case runs and the rotor
    compresses (417 K against a 288 K inlet) but **collapses onto a stalled

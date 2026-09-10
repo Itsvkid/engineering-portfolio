@@ -1,7 +1,7 @@
 FoamFile{version 2.0; format ascii; class dictionary; object controlDict;}
 application     rhoSimpleFoam;
 startFrom       startTime;  startTime 0;
-stopAt          endTime;    endTime 1000;
+stopAt          endTime;    endTime 1500;
 deltaT          1;          writeControl timeStep;  writeInterval 200;
 purgeWrite 2;   writeFormat ascii; writePrecision 8; writeCompression off;
 timeFormat general; timePrecision 6; runTimeModifiable false;   // a live re-read of this file killed a run
@@ -36,5 +36,43 @@ functions
         type surfaceFieldValue;  libs (fieldFunctionObjects);
         writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
         regionType patch;  name outlet;  operation areaAverage;  fields (p T);
+    }
+
+    // ---- unit C4-4 diagnostics, added 2026-09-10 -----------------------
+    // STEP0's next steps 2 and 3: does the cyclic pair carry flux, and is
+    // y+ inside the range the wall functions are valid in? Both are
+    // written every 50 iterations so the collapse can be watched, not
+    // only inspected after it.
+    fluxCyclicM
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name periodic_m;  operation sum;  fields (phi);
+    }
+    fluxCyclicP
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name periodic_p;  operation sum;  fields (phi);
+    }
+    yplus
+    {
+        type yPlus;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 200;  log true;
+    }
+    // the inlet axial velocity: a reversal here says "blocked", a small
+    // positive says "the rotor does no work". The integrated mass flow
+    // cannot tell those apart, which is why nothing so far has.
+    inletUx
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name inlet;  operation areaAverage;  fields (U);
+    }
+    inletUmin
+    {
+        type surfaceFieldValue;  libs (fieldFunctionObjects);
+        writeControl timeStep;  writeInterval 50;  log true;  writeFields false;
+        regionType patch;  name inlet;  operation min;  fields (U);
     }
 }

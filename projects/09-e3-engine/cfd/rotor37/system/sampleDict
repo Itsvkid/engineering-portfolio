@@ -1,0 +1,34 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| Unit C4-4 step 1: look at the field, which nothing has done yet.            |
+| Three lines that discriminate "the inlet is blocked" from "the rotor does   |
+| no work" -- a distinction the integrated mass flow cannot make.             |
+\*---------------------------------------------------------------------------*/
+FoamFile { version 2.0; format ascii; class dictionary; object sampleDict; }
+
+type            sets;
+libs            (sampling);
+interpolationScheme cellPoint;
+setFormat       raw;
+fields          ( U p T );
+
+sets
+(
+    // radial traverse at the inlet plane: hub to casing
+    inlet_radial
+    {
+        type    uniform;  axis distance;  nPoints 40;
+        start   (-0.038 0 0.1755);   end (-0.038 0 0.2555);
+    }
+    // radial traverse just upstream of the blade leading edge
+    preblade_radial
+    {
+        type    uniform;  axis distance;  nPoints 40;
+        start   (-0.008 0 0.1770);   end (-0.008 0 0.2540);
+    }
+    // axial traverse at mid-span, inlet to outlet, through the passage
+    midspan_axial
+    {
+        type    uniform;  axis distance;  nPoints 120;
+        start   (-0.038 0 0.2150);   end (0.104 0 0.2150);
+    }
+);
