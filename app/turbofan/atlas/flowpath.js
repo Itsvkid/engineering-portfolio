@@ -220,6 +220,41 @@ export const COMBUSTOR = {
 };
 
 // ── Exhaust (CR-168219 sec 5.8, undimensioned) ────────────────────────────
+/**
+ * The installed nacelle, from CR-159584 Table I p.6 — "E³ Flight Propulsion
+ * System Status, Engine and Nacelle Dimensions".
+ *
+ * This table had been sitting untranscribed in `sources/` for the whole
+ * project. The atlas drew a generic cowl and said so, on the belief that the
+ * FPS nacelle was undimensioned; that is true of CR-168219, which is the
+ * report the flowpath was built from, and false of the programme. The
+ * consequence was an inlet 58 % short — 0.67 m of cowl ahead of the fan
+ * against a published 1.59 — which put the fan face 12 % of the way along
+ * the nacelle instead of 26 % and left the rest as one unbroken barrel.
+ * That, not the exhaust, is why the engine read as a turbojet.
+ *
+ * Two independent routes agree on the maximum diameter: 248.9 cm here and
+ * 244.6 cm in CR-135444 p.249, 1.8 % apart. CR-159584's own Fig. 1 p.7
+ * reproduces six of these dimensions to within 3 %.
+ *
+ * NOT yet applied: the published overall nacelle length of 6.033 m. The
+ * core is currently about 0.35 m too long — the two assumed stitching
+ * offsets of finding 159 are both oversized against the published 3.180 m
+ * turbomachinery length — so the aft end cannot be put where the report
+ * says without first correcting those, which moves every blade row and
+ * every artefact downstream of J1. The forward half is right; the aft half
+ * is honest about waiting.
+ */
+export const NACELLE = {
+  rHilite: 1.0705,          // D_HL 2.141 m = 0.86 x D_max
+  rMax: 1.2445,             // D_max 2.489 m
+  inletLength: 1.59,        // hilite to fan face
+  yHilite: FAN_STATIONS.fanLE - 1.59,
+  yMaxDia: FAN_STATIONS.fanLE - 1.59 + 0.978,   // X/D_max = 0.40
+  publishedOverallLength: 6.033,
+  rNozzleExit: 0.795,       // D 1.590 m; continuity on the published cycle gives 1.586
+};
+
 export const EXHAUST = {
   mixerLobes: 18,
   yMixerStart: LPT0 + 0.62,
@@ -239,5 +274,10 @@ export const STATIONS = {
 };
 
 // The whole engine, for framing the camera and the explode reference.
-export const ENGINE_LENGTH = EXHAUST.yNozzleExit - FAN_STATIONS.spinnerNose;
-export const ENGINE_CENTRE = (EXHAUST.yNozzleExit + FAN_STATIONS.spinnerNose) / 2;
+// The forward extreme is the nacelle hilite, not the spinner: the inlet cowl
+// now reaches its published 1.59 m ahead of the fan, which is a metre in
+// front of the spinner nose. Framing on the spinner would crop the inlet —
+// the very thing that makes the silhouette read as a high-bypass engine.
+export const ENGINE_NOSE = Math.min(NACELLE.yHilite, FAN_STATIONS.spinnerNose);
+export const ENGINE_LENGTH = EXHAUST.yNozzleExit - ENGINE_NOSE;
+export const ENGINE_CENTRE = (EXHAUST.yNozzleExit + ENGINE_NOSE) / 2;

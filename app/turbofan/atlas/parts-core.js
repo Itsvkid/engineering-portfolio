@@ -34,6 +34,7 @@ import {
   LPT_BLADES,
   LPT_ROWS,
   LPT_VANES,
+  NACELLE,
   STATIONS,
 } from "./flowpath";
 
@@ -1000,15 +1001,22 @@ const structure = [
     id: "inlet-cowl",
     name: "Inlet cowl and lip",
     system: "structure",
-    y: -0.6,
+    y: -1.05,
     r: 1.15,
     build: () =>
       merge([
-        shell([[1.13, -0.86], [1.06, -0.78], [1.01, -0.62], [1.03, -0.48], [1.064, -0.33]], 0.012),
-        shell([[1.13, -0.86], [1.21, -0.78], [1.27, -0.6], [1.3, -0.33]], 0.012),
+        // Inner: hilite, contracting to a throat about a quarter of the way
+        // aft, then a long gentle diffusion to the fan face at NACELLE.rHilite.
+        shell([[NACELLE.rHilite, NACELLE.yHilite], [1.005, NACELLE.yHilite + 0.35], [1.02, NACELLE.yHilite + 0.68], [1.045, NACELLE.yHilite + 1.08], [1.064, FS.fanLE - 0.14]], 0.012),
+        // Outer: hilite up to the maximum-diameter station.
+        shell([[NACELLE.rHilite, NACELLE.yHilite], [1.16, NACELLE.yHilite + 0.33], [1.215, NACELLE.yHilite + 0.68], [NACELLE.rMax, NACELLE.yMaxDia]], 0.012),
       ]),
-    text: "The intake: a thick, rounded lip so the flow stays attached at high incidence on rotation and in crosswinds, contracting to a throat and then diffusing gently to the fan face. The lip is a D-shaped duct inside, which is the anti-ice heat exchanger.",
-    facts: [f("Geometry", "generic long-duct nacelle; the E³ FPS nacelle is undimensioned", "", SCH)],
+    text: "The intake: a thick, rounded lip so the flow stays attached at high incidence on rotation and in crosswinds, contracting to a throat and then diffusing gently to the fan face. The lip is a D-shaped duct inside, which is the anti-ice heat exchanger. It is long — 1.59 m of it ahead of the fan — and that length is most of what makes a high-bypass engine look the way it does.",
+    facts: [
+      f("Inlet length, hilite to fan face", "1.590 m, or 0.75 fan diameters", "CR-159584 Table I p.6", "e3"),
+      f("Highlight diameter", "2.141 m, giving D_HL/D_max = 0.86 — slender, against 0.83 on the CF6/DC-10", "CR-159584 p.6; CR-135444 p.249", "e3"),
+      f("Lip and diffuser contour", "not dimensioned; drawn to the published hilite, throat ratio and fan-face radius", "", SCH),
+    ],
   },
   {
     id: "fan-case",
@@ -1121,10 +1129,18 @@ const structure = [
     name: "Fan cowl and nacelle skin",
     system: "structure",
     y: 2.0,
-    r: 1.25,
-    build: () => shell([[1.3, -0.33], [1.3, 0.3], [1.28, 1.2], [1.22, 2.6], [1.06, 3.9]], 0.01),
+    r: 1.24,
+    // From the maximum-diameter station aft. The real mid-body is close to
+    // parallel: read off CR-159584 Fig. 1 the radius falls about 2 % over
+    // the 2.3 m behind the maximum, so the near-cylindrical look is not the
+    // error it appears to be.
+    build: () => shell([[NACELLE.rMax, NACELLE.yMaxDia], [NACELLE.rMax, -0.30], [1.238, 0.6], [1.228, 1.6], [1.215, 2.6], [1.06, 3.9]], 0.01),
     text: "The outer aerodynamic skin. Between it and the bypass duct wall is the fan compartment, fire zone 1, where the gearbox and most of the accessories live. The cowl doors hinge from the pylon and open upward for line maintenance.",
-    facts: [f("Geometry", "generic; maximum diameter 2.6 m", "", SCH)],
+    facts: [
+      f("Maximum diameter", "2.489 m, reached 0.978 m aft of the hilite (X/D_max = 0.40)", "CR-159584 Table I p.6; CR-135444 p.249", "e3"),
+      f("Mid-body", "close to parallel — about 2 % of radius over the 2.3 m behind the maximum", "CR-159584 Fig.1 p.7", SCH),
+      f("Aft contour", "the published 11° terminal boat-tail is not drawn yet: it cannot be reached while the core runs 0.35 m long", "CR-135444 p.249", SCH),
+    ],
   },
   {
     id: "pylon",

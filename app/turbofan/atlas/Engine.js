@@ -6,7 +6,7 @@ import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "rea
 import { BufferGeometry, Color, DoubleSide, Matrix4, Mesh, Plane, PMREMGenerator, Quaternion, Vector3 } from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { acceleratedRaycast, computeBoundsTree, disposeBoundsTree } from "three-mesh-bvh";
-import { ENGINE_CENTRE } from "./flowpath";
+import { ENGINE_CENTRE, ENGINE_LENGTH } from "./flowpath";
 import { bladeGeometry, bladeRingMatrices, cyl, doorRing } from "./geometry";
 import { PARTS } from "./parts";
 import { SYSTEM_BY_ID } from "./systems";
@@ -37,12 +37,31 @@ const CUT_PLANES = [new Plane(new Vector3(0, -1, 0), 0), new Plane(new Vector3(0
 const LP_VIS_RPS = 0.45; // at full throttle
 const HP_OVER_LP = 12645 / 3539; // max climb, CR-168219 / LPT Table VI
 
+/**
+ * Camera presets, held as an offset from the engine's own centre and scaled
+ * by its own length rather than written as absolute coordinates.
+ *
+ * They used to be absolute, tuned when the engine ran -0.62 to 4.60 and its
+ * centre sat at 1.9. Correcting the inlet to its published 1.59 m moved the
+ * nose forward by 1.16 m, and every preset went on pointing at the old
+ * centre from the old distance — so the newly-correct inlet fell straight
+ * off the left of the frame. Deriving them means the geometry can move
+ * again without the framing quietly going stale behind it.
+ */
+const TUNED_LENGTH = 5.222; // what the offsets below were tuned against
+const TUNED_CENTRE = 1.9;
+const K = ENGINE_LENGTH / TUNED_LENGTH;
+const from = ([x, y, z], targetX) => ({
+  position: [ENGINE_CENTRE + (x - TUNED_CENTRE) * K, y * K, z * K],
+  target: [ENGINE_CENTRE + (targetX - TUNED_CENTRE) * K, 0, 0],
+});
+
 export const CAMERA_PRESETS = {
-  iso: { position: [-2.2, 2.3, 5.4], target: [1.9, 0, 0] },
-  front: { position: [-5.6, 0.5, 0.01], target: [0.8, 0, 0] },
-  side: { position: [1.9, 0.6, 10.5], target: [1.9, 0, 0] },
-  top: { position: [1.9, 10, 0.01], target: [1.9, 0, 0] },
-  aft: { position: [11, 0.9, 0.01], target: [2.2, 0, 0] },
+  iso: from([-2.2, 2.3, 5.4], 1.9),
+  front: from([-5.6, 0.5, 0.01], 0.8),
+  side: from([1.9, 0.6, 10.5], 1.9),
+  top: from([1.9, 10, 0.01], 1.9),
+  aft: from([11, 0.9, 0.01], 2.2),
 };
 
 function separationOffset(part, t) {
