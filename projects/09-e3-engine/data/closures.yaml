@@ -562,3 +562,25 @@ closures:
       volume (finding 192). Not attempted: the mission sweep and the bearing
       1 and 3 loads, both of which need the balance first.
 
+  - stage: K2
+    what: the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      The LP-spool speed ratio is published for all three ratings (fan
+      corrected tip speed, FPS against growth) and cross-checks against the
+      separately printed booster increase to 0.11 points. Scaling F1's
+      margins by that ratio squared splits them exactly along the claim's own
+      boundary: the three fan parts the claim covers survive at 1.037, 1.191
+      and 1.397; the three LPT blade retainers, which are not hub radii, go
+      to 0.828, 0.819 and 0.810 (finding 198). At the third rating even the
+      fan dovetail corner goes under, at 0.964 -- the headroom is real and
+      thin (finding 199). Eleven of the seventeen rows are HP-spool and OUT
+      OF SCOPE because no growth HP speed is published, including the HPT
+      dovetail at exactly 1.000 which would have been the sharpest test
+      available (finding 200). Reported as a bound, not a prediction
+      (finding 201).
+

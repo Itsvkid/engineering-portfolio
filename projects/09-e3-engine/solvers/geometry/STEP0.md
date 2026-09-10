@@ -215,7 +215,15 @@ does not apply to a curved stacking axis.
 ### Findings
 
 180. **The plan line conflated two rows: the booster has no published
-     sweep or lean.** Stage C3 asks for *booster rows and inner OGV with
+     sweep or lean.** *(Confirmed 2026-09-10 from the other direction:
+     CR-165148 Appendix D was transcribed and states it outright — one Z
+     for the whole span, "the booster rotor is stacked on a radial line:
+     no sweep, no lean". This finding was reasoned from the absence of the
+     data; the appendix asserts it positively. The test that guarded it
+     was rewritten at the same time, because it had been checking that the
+     WORDS "sweep" and "lean" did not appear in the booster block —
+     absence-of-mention standing in for absence-of-data — and that proxy
+     broke the moment a note affirming the finding was added.)* Stage C3 asks for *booster rows and inner OGV with
      the published sweep 60° / lean 0–20°*. Section II.D gives those two
      angles to the **inner OGV** and to nothing else;
      `booster_rotor_airfoil` carries neither, and no other block in the fan

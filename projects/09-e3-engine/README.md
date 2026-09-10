@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **1036 test functions**, **198 numbered findings**, **41 closures** — 25 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **1052 test functions**, **202 numbered findings**, **42 closures** — 26 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -72,6 +72,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **C5** — the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | met |
 | **E9** — the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | met |
 | **D6** — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | **gated** |
+| **K2** — the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it | — | met |
 
 ### Figures
 

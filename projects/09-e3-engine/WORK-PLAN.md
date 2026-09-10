@@ -1282,6 +1282,45 @@ pointed at with its load stated.
       — J6 done: `POST.md`, short and long versions, every headline claim
       bound to the code by `tests/test_post.py`. Findings 169–170.
 
+
+---
+
+# STAGE K — The growth engine · new, 2026-09-10
+
+The plan ended at J, and the reconstruction it scoped is done. Stage K
+exists because two transcribed lines say the machine nine stages
+validated was **not designed for the case it was validated against**:
+T41 was set at 1343 °C against a 1365 °C sfc optimum *"to leave
+thrust-growth potential"*, and the HPT rotor structure was designed for
+the growth engine with *"the growth case limiting throughout"*.
+
+GE gave up sfc at the design point to buy growth headroom. Stage K asks
+what that cost and whether the hardware has it.
+
+- [ ] **K1 — the price of the headroom.** Run the validated cycle at
+      T41 = 1365 °C against 1343, everything else fixed, and report the
+      sfc difference. Stage B closes to +0.46/+0.56 %, so it can price a
+      22 °C deliberate sacrifice.
+- [x] **K2 — does the hardware have the margin?** Re-margin F1's
+      seventeen rows at the published LP growth speed.
+      — done. The claim `hub_radii_oversized_for_growth` holds **exactly
+      where it applies and nowhere else**: the three fan parts survive at
+      1.037/1.191/1.397, the three LPT retainers fail at
+      0.828/0.819/0.810. At the third rating even the fan dovetail goes
+      under, at 0.964. Eleven HP-spool rows are out of scope — no growth
+      HP speed is published. Findings 198–201.
+- [ ] **K3 — the growth cycle**, as far as the data allows. The fan-side
+      requirements are complete (three ratings, PRs, bypass ratio,
+      airflow, tip speed, efficiencies); **no growth T41, thrust or sfc
+      is transcribed**, so the core side stops there until it is.
+- [ ] **K4 — what would have to change.** Which rows need restagger,
+      which discs need material, against what the reports say changed
+      (`island_le_moves_out_cm: 1.0`, `booster_speed_increase_pct: 11`,
+      `bypass_vane_frame_and_ogv_common: true`).
+
+*Closes when:* the growth claim is tested on every row a published speed
+covers, and the price of the headroom is a number.
+
 ---
 
 ## Consistency rules

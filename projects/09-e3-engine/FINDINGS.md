@@ -137,7 +137,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-25 met, 12 half met, 4 gated, of 41.
+26 met, 12 half met, 4 gated, of 42.
 23 of 27 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -186,6 +186,7 @@ blocks it. None is open without a reason attached.
 | C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
 | E9 | the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | — | met |
 | D6 | thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | — | gated |
+| K2 | the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it | — | — | met |
 
 ### The two recorded misses
 
@@ -274,9 +275,9 @@ restrains.
 
 ## 5. Index of numbered findings
 
-198 findings, in the `STEP0.md` that owns each one.
+202 findings, in the `STEP0.md` that owns each one.
 
-**Numbers 55, 56, 57, 198, 199, 200, 201 are not used.** They were
+**Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
 section stacking — which were handed to a parallel session and never
 landed. The gap is left rather than closed up, because renumbering
@@ -478,6 +479,10 @@ would break every reference in the commit history.
 | 195 | cfd | It collapses at constant back pressure too, which kills the |
 | 196 | cfd | The tip gap is 1.45× design, not 14×, and the difference was a |
 | 197 | cfd | The solution never converges at all, which reframes the problem. |
+| 198 | growth | hub_radii_oversized_for_growth is true, and true only of what it |
+| 199 | growth | The fan's growth margin is four percent, not a comfort. The fan |
+| 200 | growth | The most interesting row in the table cannot be tested. F1 found |
+| 201 | growth | This is a bound, and two things make it pessimistic. N² assumes |
 | 202 | blading | The designed blade reproduces the printed STAGGER to 1.25° rms over |
 | 203 | blading | Camber is 5.08° rms and the error changes sign at 57 % span — the |
 | 204 | blading | Finding 54 is answered by the source, and it was wrong by 6×. It |

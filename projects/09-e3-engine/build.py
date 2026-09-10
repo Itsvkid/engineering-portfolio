@@ -52,6 +52,7 @@ STAGES = [
                        "mechanical.hpc_rotor"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades", "geometry.ogv"]),
+    ("K  growth", ["growth.margins"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
                          "verification.disagreements",
                          "verification.digitising"]),
