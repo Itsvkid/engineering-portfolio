@@ -126,7 +126,7 @@ export default function DraftingMotion() {
         {/* Construction geometry — two small reference circles at roughly
             the compressor and turbine stations, each with a short
             schematic rotation arc rather than a spinning render. */}
-        <g className="dm-appear dm-parallax-near" style={{ "--dm-delay": "500ms" }} opacity="0.1">
+        <g className="dm-appear dm-parallax-near" style={{ "--dm-delay": "500ms", "--dm-appear-to": 0.1 }}>
           <circle cx={CENTER_X - 40} cy={CENTER_Y} r="20" fill="none" className="[stroke:var(--fg2)]" strokeWidth="1" />
           <circle cx={CENTER_X + 60} cy={CENTER_Y} r="15" fill="none" className="[stroke:var(--fg2)]" strokeWidth="1" />
         </g>
@@ -270,22 +270,32 @@ export default function DraftingMotion() {
           this down once scrolled past the hero, same as the desktop tier. */}
       <div className="dm-detail pointer-events-none absolute inset-0 overflow-hidden md:hidden">
         <div
-          className="dm-appear absolute inset-y-0 left-1/2 w-px -translate-x-1/2 opacity-[0.12]"
+          /* Opacity rides `--dm-appear-to`, not a utility class: the reveal
+             animation's final keyframe outranks a normal declaration, so an
+             `opacity-[0.12]` here rendered at full strength and put a hard
+             dashed rule down the middle of the hero paragraph. */
+          className="dm-appear absolute inset-y-0 left-1/2 w-px -translate-x-1/2"
           style={{
             "--dm-delay": "0ms",
+            "--dm-appear-to": 0.12,
             backgroundImage:
               "repeating-linear-gradient(to bottom, var(--fg2) 0 22px, transparent 22px 28px, var(--fg2) 28px 32px, transparent 32px 54px)",
           }}
         />
         <span
-          className="dm-appear absolute top-16 left-1/2 -translate-x-1/2 text-fg2 opacity-40"
-          style={{ "--dm-delay": "150ms", font: "500 9px var(--font-mono)", letterSpacing: "0.1em" }}
+          className="dm-appear absolute top-16 left-1/2 -translate-x-1/2 text-fg2"
+          style={{ "--dm-delay": "150ms", "--dm-appear-to": 0.4, font: "500 9px var(--font-mono)", letterSpacing: "0.1em" }}
         >
           CL
         </span>
+        {/* `.dm-grid` runs the shared reveal before its drift loop, and the
+            drift only animates transform — so the reveal's filled end state
+            owns opacity. A utility class here lost to it and the 5% dot
+            lattice rendered at full strength across the body copy. */}
         <div
-          className="dm-grid absolute inset-0 opacity-[0.05]"
+          className="dm-grid absolute inset-0"
           style={{
+            "--dm-appear-to": 0.05,
             backgroundImage: "radial-gradient(var(--fg2) 1px, transparent 1px)",
             backgroundSize: "34px 34px",
           }}

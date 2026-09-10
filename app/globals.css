@@ -520,12 +520,38 @@
   vector-effect: non-scaling-stroke;
 }
 
+/* The reveal has to end at the element's OWN opacity, not at 1.
+   `animation-fill-mode: both` makes the final keyframe win over normal
+   declarations, so a `to { opacity: 1 }` silently overrode every opacity
+   an author had set on a `.dm-appear` element: the mobile hero centre line
+   asked for 0.12 and rendered at 1, drawing a hard dashed rule down the
+   middle of the body copy, and the desktop rotation circles asked for 0.1
+   and rendered solid. Nothing looked wrong in either caller.
+
+   One custom property drives both the resting value and the animation's
+   target, so the two cannot drift, and a reduced-motion or no-JS visitor —
+   who never runs the animation — still gets the intended opacity from the
+   rule below.
+
+   The selector lists every class that runs `dm-appear` as part of its
+   animation, not just `.dm-appear` itself: `.dm-grid` reveals and then
+   drifts, and covering only the one class fixed the animated path while
+   leaving a reduced-motion visitor with a full-strength dot lattice over
+   the body copy — the exact fault, reachable by a different route. */
+.dm-appear,
+.dm-airflow,
+.dm-grid,
+.dm-dim,
+.dm-rotation {
+  opacity: var(--dm-appear-to, 1);
+}
+
 @keyframes dm-appear {
   from {
     opacity: 0;
   }
   to {
-    opacity: 1;
+    opacity: var(--dm-appear-to, 1);
   }
 }
 
