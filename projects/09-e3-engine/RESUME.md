@@ -1,11 +1,56 @@
 # Where the work stands — resume here
 
-Last updated 2026-09-07. Written so a new session can pick up cold.
+Last updated 2026-09-10. Written so a new session can pick up cold.
 The two files that carry the real state are [WORK-PLAN.md](WORK-PLAN.md)
 (what is ticked and what its status note says) and each solver's
 `STEP0.md` (the band stated before every run, and the findings after it).
 This page is only a pointer.
 
+
+## Session log — 2026-09-09/10
+
+**State now: 41 closures (25 met, 12 half, 4 gated), 194 findings,
+1,020 test functions, 53 unticked plan items.** Suite green at 1117
+passed / 44 xfailed.
+
+**Stage J is complete** — seven units, J1 to J7. Also closed this session:
+E7, E8, E9 (mechanical), C5 (HPC off-design), G2 (the swept OGV), I4 (the
+digitising register), D6 (thrust balance, gated), and C4-4 moved
+substantially.
+
+The units, and the one thing worth remembering about each:
+
+| Unit | What it is | The thing to remember |
+|---|---|---|
+| J1 | meridional plot | An assumption in use had **no home in `data/`**, so a second consumer made its own — two pictures of one engine 128 cm apart (**159**) |
+| J2 | Campbell match | **11 of E3's 24 comparisons cannot resolve a 5 % band at all** — the closure was measuring two things at once (**160**) |
+| J3 | glTF, 2,890 blades | Instancing: 32 meshes, not 2,890. Tip caps stand 3 mm proud of their own sections (**163**) |
+| J4 | generated README | It claimed **"37 tests"** for months. Numbers in prose need a generator and a staleness test (**168**) |
+| J5 | drawing pack | **4 of 10 gas-path stations can be placed**; three of six sheets exist to say something cannot be drawn (**166–167**) |
+| J6 | the post | A **true sentence aged out** — "twenty of twenty-one" was right at 98 comparisons, wrong at 100 (**169**) |
+| J7 | site cutaway | three.js does not surface `asset.extras`; the page would have spun at plausible speeds while ignoring the file (**172**) |
+| E7 | flutter screen | A test built to be **blind to a known bias** — the constancy check survives E3's frequency error (**175**) |
+| E8 | gas bending | **Euler's identity caught a counter-swirl sign.** Check a convention against a conservation law before trusting it (**176**) |
+| E9 | HPC rotor | The rotor has **two kinds of joint**; the open material question is worth **1.67×** in joint torque (**188, 190**) |
+| C5 | HPC off-design | **No stall margin is reported** — none is published. The design intent is confirmed by two figures that do not know about each other (**184**) |
+| G2 | swept inner OGV | The plan line **conflated two rows**; a trapezoidal integral is the wrong reference for a curved stack (**180, 181**) |
+| I4 | digitising register | Stage A3's last line is **14 % done**, measured rather than described (**178**) |
+| D6 | thrust balance | **Gated on the disc bore** — the same A3 figure as E2 and F2, and the term it needs is 3.2–6.4× the one that closes (**193**) |
+| C4-4 | Rotor 37 | **The solution never converges at all.** Next step is transient, not another steady variation (**194–197**) |
+
+### Two hazards this session hit
+
+1. **Another session was committing to this repo throughout.** Its commits
+   are interleaved in the log above — the CI fixes, the atlas and site
+   work, and `52d884e`, which found CR-159584 Table I and corrected two
+   offsets my J1 had assumed 61 cm too long. Nothing was lost, but the
+   README count raced twice and had to be regenerated. **If you are
+   resuming, `git fetch` and check the log before assuming the working
+   tree is yours.**
+2. **Numbers in prose churn.** `POST.md` states closure and finding counts,
+   and every new unit moves them; `tests/test_post.py` catches it, but it
+   is an edit per unit. Test counts and findings are stated as **floors**
+   for that reason (**170**); closure counts are still exact.
 
 ## Handing over — read this first if you are a new session
 
@@ -85,51 +130,46 @@ unsolved CFD case.
 
 ### The next three things to do
 
-1. **C4-4, the Rotor 37 solve — the fault is now LOCALISED, and the next
-   step changed.** Updated 2026-09-10: the field has been inspected for
-   the first time (findings 194–197). The machine is **reversed at the
-   tip** — the inner 87 % of span flows forward, the outer 13 % carries
-   597 K rotor-worked gas back past the inlet plane at swirl exceeding
-   blade speed. The periodics carry flux, so that is closed. A **constant**
-   back pressure collapses too, so throttling is not the cause. And the
-   solution **never reaches a steady state at all**: work swings −3 % to
-   +91 % of design across 1500 iterations. **The next step is a transient
-   solve (`rhoPimpleFoam`), not a fifth variation on the steady setup.**
-   The revised list is in `solvers/cfd/STEP0.md`.
+Written 2026-09-10, after Stage J closed and the last five code-reachable
+plan items were done. **All three of these are picking up threads that are
+already characterised — none is a fresh start.**
 
-   ~~Finish C4-4, the Rotor 37 solve — there is a bug to find.~~ The mesh
-   is built and checked, the solver is validated on an exact answer, and
-   the geometry is cross-checked three ways. The case runs and the rotor
-   compresses (417 K against a 288 K inlet) but **collapses onto a stalled
-   branch at 26 % of design flow, repeatably, near iteration 700** — three
-   different setups landed within 1.3 % of the same mass flow, so it is one
-   mechanism. Three MRF faults have already been found and fixed; a ramped
-   back pressure was tried and ruled out. `solvers/cfd/STEP0.md` unit C4-4
-   has the full characterisation, findings 140–142, and **four things to
-   try next in order** — starting with actually inspecting the stalled
-   field, which nothing has done yet. After that: the back-pressure sweep
-   for the 100 % speed line and three grid levels for the GCI 3 % band.
-   Pass bands were written in `data/methods/rotor37-validation-case.yaml`
-   **before any solver was installed**.
-2. **Stage J is done.** Seven units built, all regenerated by
-   `build.py`: J1 the meridional plot, J2 the Campbell match, J3 the glTF
-   (`exports/e3-blading.glb`), J4 the generated README, J5 the drawing
-   pack, J6 `POST.md` and J7 the site cutaway
-   (`app/components/EngineCutaway.js`, `public/models/e3-blading.glb`).
-   **Stage J is complete.**
-   Be warned by finding 159 before
-   drawing anything else whole-engine: the two axial offsets between
-   module datums are **assumed, not published**, they live in
-   `data/engine-flowpath.yaml → whole_engine_stitching.assumed_offsets`
-   with their allowable ranges, and `app/turbofan/atlas/flowpath.js` reads
-   the same two. Any new figure must read them from there, and a test
-   requires the plot and the atlas to place the engine identically.
-   **Stage I is complete**: I1 consistency, I2 sensitivity, I3
-   `FINDINGS.md` — the deliverable — all closed.
-3. **Stage A3 transcription** — the single biggest unblocker. It gates
-   E2's Fig. 64 peak stress and burst margin, E3's closure, E5's HPC
-   dovetails, F2's mass total and four of Stage G's seven bullets. None of
-   it is a modelling problem; they are all figures nobody has digitised.
+1. **C4-4, the Rotor 37 solve — go transient.** The fault is now
+   *localised*, not merely characterised (findings 194–197). The machine is
+   **reversed at the tip**: the inner 87 % of span flows forward, the outer
+   13 % carries 597 K rotor-worked gas back past the inlet plane at swirl
+   exceeding blade speed. The periodics carry flux, so that is closed. A
+   **constant** back pressure collapses too, so throttling is not the
+   cause. And the solution **never reaches a steady state at all** — work
+   swings −3 % to +91 % of design across 1500 iterations.
+
+   **Do this:** `rhoPimpleFoam` from the healthy field at iteration 1000 of
+   the constant-105 kPa run. If the tip reversal is unsteady, a steady
+   solver was never going to work and that is the whole answer. The revised
+   four-step list is at the end of `solvers/cfd/STEP0.md`. Two smaller
+   things are still open there: y+ on the blade (attempted, inconclusive —
+   write the field, do not recompute it) and closing the tip gap from
+   0.515 mm to the intended 0.356.
+
+2. **Digitise the HPC disc profiles.** This is now the highest-value
+   transcription in the project by some distance: it gates **four**
+   closures, not three. E2's peak stress, E2's 120 % burst margin, F2's
+   disc masses — and, since unit D6, the whole HP thrust balance, whose
+   deciding term is `(p3 − p25)·π(r_hub² − r_bore²)` and is **3.2 to 6.4
+   times** the term that does close (finding 193). One figure, four
+   closures.
+
+3. **Stage H, or say it will not happen.** Thirteen plan items, all hand
+   CAD, all needing a person at a GUI. Fusion 360 is installed and
+   verified. Nothing here can be done by writing code, and it is the only
+   stage untouched. It is worth an explicit decision rather than sitting in
+   the backlog as though it were queued work.
+
+**What is NOT worth picking up:** the remaining ~16 un-digitised figures
+other than the disc profiles, the elevated-temperature properties (four
+closures wait on figures MIL-HDBK-5J prints rather than tabulates), and the
+FEA items (CalculiX is not installed, and meaningful FEA is a stage rather
+than a task). All are in the triage table above with what each waits on.
 
 ## Done
 
