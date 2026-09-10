@@ -8,6 +8,7 @@ import {
   merge,
   mixer,
   pipe,
+  resampleSections,
   ring,
   shell,
   struts,
@@ -133,14 +134,21 @@ const fanModule = [
           {
             // CR-165148 Fig.41: the printed sections, hub to tip. Camber
             // 68° → 8°, stagger 12° → 62°, thickness 10 % → 2.6 % of chord.
-            sections: FAN.sections.map((sec) => ({
-              x: (FAN.rTip - FAN.rHub - 0.01) * sec.h,
-              chord: sec.chord,
-              stagger: sec.stagger,
-              camber: sec.camber,
-              thickness: sec.tm,
-              lean: 0.06 * (FAN.rTip - FAN.rHub) * sec.h * sec.h,
-            })),
+            // Resampled, not re-designed: the seven printed stations all
+            // survive exactly and the loft is evaluated between them. Ruled
+            // straight across a 13° twist step, the blade read as a flat
+            // plate — which is what it looked like, and it is not.
+            sections: resampleSections(
+              FAN.sections.map((sec) => ({
+                x: (FAN.rTip - FAN.rHub - 0.01) * sec.h,
+                chord: sec.chord,
+                stagger: sec.stagger,
+                camber: sec.camber,
+                thickness: sec.tm,
+                lean: 0.06 * (FAN.rTip - FAN.rHub) * sec.h * sec.h,
+              })),
+              28
+            ),
             points: 12,
           },
           FAN.blades,
@@ -259,13 +267,16 @@ const fanModule = [
       bladeRow(
         {
           // CR-165148 Fig.52: camber 33 → 8°, stagger 23 → 42°, t/c 8.2 → 5.2 %.
-          sections: BOOSTER.sections.map((sec) => ({
-            x: (BOOSTER.rTip - BOOSTER.rHub - 0.006) * sec.h,
-            chord: sec.chord,
-            stagger: sec.stagger,
-            camber: sec.camber,
-            thickness: sec.tm,
-          })),
+          sections: resampleSections(
+            BOOSTER.sections.map((sec) => ({
+              x: (BOOSTER.rTip - BOOSTER.rHub - 0.006) * sec.h,
+              chord: sec.chord,
+              stagger: sec.stagger,
+              camber: sec.camber,
+              thickness: sec.tm,
+            })),
+            16
+          ),
         },
         BOOSTER.blades,
         BOOSTER.rHub,
