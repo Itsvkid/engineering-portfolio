@@ -202,7 +202,7 @@ use had no single home.
 Nine of ten stages: cycle, mean-line and through-flow aero, blading,
 cooling and secondary air, blade and disc mechanical, materials and mass,
 32 blade rows lofted from the validated sections, cross-discipline
-verification, and publication. **Over 850 test functions. 38 closures — 23 met,
+verification, and publication. **Over 850 test functions. 40 closures — 25 met,
 12 half, 3 gated. Over 185 numbered findings.**
 
 The tenth stage is hand CAD and needs a person at a GUI. One CFD case, a
