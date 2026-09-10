@@ -145,37 +145,59 @@ headless loads; it clears by itself.
 
 ## Future tasks, in order of value
 
-1. **Designer review of the geometry as a whole** — the designer agent's
-   five-question review (bypass area vs mass ratio, blade sign conventions,
-   goose-neck and stitching, the combustor-region radii, rotor/disc/shaft
-   proportions) was written but hit the session limit twice on 2026-09-07.
-   Re-run it (the prompt is in this session's commit message history:
-   "Design review of the atlas geometry") and act on its ranked list.
-2. **HPT airfoils from the report's figures** — CR-167955 Fig. 6 prints the
+1. **Core cowl is ~5 cm tight over the turbine.** Drawn at 0.60–0.628 m;
+   CR-159584 Fig 1 reads 0.65–0.68. At y = 3.469 the cowl sits 1.6 cm off
+   the LPT rotor-5 tip, which does not fit the LPT casing, its insulation
+   and the four-sector LPT ACC manifold. Raising it narrows the bypass
+   duct, so do it **together** with a re-check of the duct areas against
+   the published 0.40–0.45 fan-duct Mach — that is why it was left out of
+   the 2026-09-10 offset change rather than bundled into it.
+
+2. **The four HPT chords are assumed, and need not be.** HPT Table IV p.12
+   publishes axial-width solidity (0.71 / 0.96 / 1.07 / 1.06 for v1/b1/v2/
+   b2); with the published counts and Fig 3 radii the axial widths follow
+   as 3.33 / 2.75 / 4.83 / 3.30 cm. Vane 1 is currently ~34 % long. This
+   is a promotion from `assumed` to derived-from-`e3`, not a guess.
+3. **HPT airfoils from the report's figures** — CR-167955 Fig. 6 prints the
    four HPT airfoil shapes at three spans; digitise them (DATA-INDEX item 3)
    and loft them the way the LPT rows are, replacing the parametric guess.
-3. **Disc profiles** — CR-167955 and the LPT report print disc cross-sections;
+4. **Disc profiles** — CR-167955 and the LPT report print disc cross-sections;
    digitise and replace the generic web-and-bore lathes (HPT discs, LPT
    discs, HPC discs, fan disc). Gives the "rotor, disc, spool" fidelity the
    owner asked for.
-4. **Blade platforms and dovetails** on the fan, HPC rotor 1 and HPT blades;
+5. **Blade platforms and dovetails** on the fan, HPC rotor 1 and HPT blades;
    the inducer/expander (80 vanes) and CDP seal ahead of HPT disc 1; seal
    teeth on the interstage seals.
-5. **Stitching from the cross-section** — Stage H of PF-09 is to set the two
-   assumed offsets from the bearing spans of CR-168219; when it does, update
-   `HPC0`/`HPT0` and retag those facts `e3`.
+
 6. **Fan blade shroud** — the part-span shroud is a plain ring; the real one
    is per-blade shroud segments with tungsten-carbide faces.
 7. **Mixer lobe shape** — 18 lobes of representative depth; the E³ mixer is
    a scalloped design, undimensioned. Only a drawing exists.
 8. **Analytics on part selection** (Vercel event per `select`) so the
    owner learns what visitors click.
+
 9. **Recording the tours** for the launch post: `?tour=air` with autoplay,
    30 s screen capture; the social card and posters are already rendered.
 10. **Embed on the home page** — a click-to-load viewer in the feature band,
     reusing `Engine` with `ui=0`, lazy behind an IntersectionObserver.
 
 ## Done log
+
+- **2026-09-10 — the geometry review, and two items above closed by it.**
+  Started from the owner's "why does it look like a turbojet?". The
+  architecture and the exhaust were right: the E³ FPS is long-duct
+  mixed-flow, so the tube silhouette, the single C-D nozzle, the 18-lobe
+  mixer and every turbine blade count were correct. The **inlet** was 58 %
+  short. Behind that: `atlas-facts.md` said the FPS nacelle is
+  undimensioned, which is true of CR-168219 and false of the programme —
+  CR-159584 Table I p.6 is a full installation dimension table and had
+  never been opened. That also closed the old "stitching from the
+  cross-section" item from an unexpected direction: the published 318.0 cm
+  turbomachinery length fixes the two offsets' *sum*, so only the split was
+  ever open. Applied as 1.034 and 0.253 m against 1.42 and 0.48; the core
+  had been 61 cm long and the blade envelope shortened by exactly that.
+  Closures J8 and J9. The general lesson is in the designer agent's §9: a
+  value marked "not published" may only mean "not in the report I read".
 
 - **Figures are one build behind as of 2026-09-07 evening.** The four
   project figures and the social card in `public/` were rendered before the
