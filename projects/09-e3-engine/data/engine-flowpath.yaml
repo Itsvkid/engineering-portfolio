@@ -111,14 +111,19 @@ whole_engine_stitching:
     status: assumed
     ranges_corrected: >
       2026-09-10. Both ranges below were WRONG and both excluded the answer: they read
-      [110, 150] and [45, 55] cm, and the evidence now puts the values at roughly 104 and
-      25. The offsets themselves are UNCHANGED and still carry the old values, because
-      moving them moves every blade row and every whole-engine artefact downstream of
-      unit J1. The corrected ranges and the closure test below are recorded so that work
-      has its test ready before it starts. See atlas-facts.md A7 and A8.
+      [110, 150] and [45, 55] cm. Corrected the same day, and the VALUES were then
+      applied in a second change once every consumer could be regenerated together.
+      See atlas-facts.md A7 and A8.
+    values_applied: >
+      2026-09-10. The sum comes from CR-159584 Table I's published 318.0 cm
+      turbomachinery length; the split between the two comes from the ratio read off
+      that report's Fig 1. Sum from a table, split from a drawing -- neither is a free
+      choice any more, which is the whole point of the closure below.
     fan_sa_to_hpc_r1_le:
-      value_cm: 142.0
-      value_status: stale — retained until the closure below is applied as one change
+      value_cm: 103.4
+      value_was_cm: 142.0
+      value_status: applied 2026-09-10 — inside its corrected range and closing the
+        published turbomachinery length with its partner
       range_cm: [100.0, 112.0]
       range_was_cm: [110.0, 150.0]
       best_estimate_cm: 104.0
@@ -132,8 +137,10 @@ whole_engine_stitching:
         above the answer.
       note: fan rotor stacking axis (fan report Fig 15 datum) to HPC rotor-1 LE hub (HPC report z = 0)
     hpc_ogv_te_to_hpt_vane1:
-      value_cm: 48.0
-      value_status: stale — retained until the closure below is applied as one change
+      value_cm: 25.3
+      value_was_cm: 48.0
+      value_status: applied 2026-09-10 — inside its corrected range and closing the
+        published turbomachinery length with its partner
       range_cm: [24.0, 30.0]
       range_was_cm: [45.0, 55.0]
       best_estimate_cm: 25.0
@@ -153,7 +160,7 @@ whole_engine_stitching:
         but it CAN be built up from CR-135444's printed liner length, which is what the
         corrected range does.
     closure_against_published_turbomachinery_length:
-      status: PENDING — the test exists, the change has not been made
+      status: MET — applied 2026-09-10; 103.4 + 25.3 = 128.7 against a required 128.7
       src: "CR-159584 Table I p.6: turbomachinery length, fan front flange to LP turbine aft frame flange = 318.0 cm (125.2 in)"
       definition_check: >
         Measured on CR-159584 Fig 1, the printed 318.0 cm runs to the LPT CASING's aft
@@ -170,8 +177,10 @@ whole_engine_stitching:
       required_sum_basis: 318.0 - 78.2 - 20.0 - 58.65 - 32.5, with the fan front flange at y = -32.5 cm
       fan_front_flange_cm: -32.5
       fan_front_flange_status: assumed — app/turbofan/atlas/parts-core.js fan-case shell; the required sum moves 1:1 with it
-      current_sum_cm: 190.0        # 142.0 + 48.0
-      excess_cm: 61.3
+      current_sum_cm: 128.7
+      previous_sum_cm: 190.0        # 142.0 + 48.0
+      excess_cm: 0.0
+      previous_excess_cm: 61.3
       independent_read_sum_cm: 132.0   # 106 + 25.9 from CR-159584 Fig 1, agrees with 128.7 to 2.6 %
       when_applied_check:
         - fan_sa_to_hpc_r1_le + hpc_ogv_te_to_hpt_vane1 == 128.7 +- 4 cm

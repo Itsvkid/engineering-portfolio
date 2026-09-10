@@ -165,16 +165,23 @@ def test_both_unpublished_joins_are_drawn_with_their_allowable_range():
     assert any("HPT" in u or "HPC OGV" in u for u in J["unknown"])
 
 
-def test_the_two_offsets_overshoot_the_published_length_by_a_pinned_amount():
-    """the open half of the closure above, with its size held so it cannot
-    drift quietly: 318.0 cm published, 190.0 carried against a required
-    128.7. Correcting the pair closes this and this test then fails, which
-    is the point -- it is a reminder, not a permanent allowance."""
+def test_the_two_offsets_close_the_published_turbomachinery_length():
+    """This replaces a tripwire that did its job.
+
+    From 2026-09-10 it asserted the OVERSHOOT -- 190.0 cm carried against a
+    required 128.7 -- so a known miss could not drift while it waited for a
+    change that had to move every consumer at once. That change was made;
+    the tripwire failed, which is what it was for; and the assertion is now
+    the closure itself.
+
+    CR-159584 Table I p.6 gives the fan front flange to LP turbine exit as
+    318.0 cm. With the HPC, HPT and LPT lengths all published, that fixes
+    the two assumed offsets' SUM and leaves only the split open."""
     total = sum(g["value"] for g in L["gaps"])
-    assert total == pytest.approx(190.0, abs=0.5)
+    assert total == pytest.approx(128.7, abs=4.0)
     for g in L["gaps"]:
-        assert g["value"] > g["rng"][1]          # above its ceiling, knowingly
-    assert total - 128.7 == pytest.approx(61.3, abs=1.0)
+        lo, hi = g["rng"]
+        assert lo <= g["value"] <= hi            # back inside its own range
 
 
 def test_the_modules_placed_across_an_assumed_join_are_flagged():
@@ -203,8 +210,16 @@ def test_the_plot_and_the_turbofan_atlas_place_the_engine_identically():
     if not js.exists():
         pytest.skip("the atlas page is not in this checkout")
     text = js.read_text()
+    # HPT0 is DERIVED in the atlas now -- HPC0 + the published HPC length +
+    # the diffuser/combustor offset -- so there is no literal to scrape. That
+    # is the point: it used to be typed as 2.68 with the arithmetic in a
+    # comment beside it, and correcting an offset left the comment true and
+    # the number wrong. Recompute it here the same way the atlas does.
     hpc0 = float(re.search(r"export const HPC0 = ([\d.]+)", text).group(1))
-    hpt0 = float(re.search(r"export const HPT0 = ([\d.]+)", text).group(1))
+    diff_comb = float(re.search(r"export const DIFFUSER_COMBUSTOR = ([\d.]+)",
+                                text).group(1))
+    hpc_len = float(re.search(r"const HPC_LENGTH = ([\d.]+)", text).group(1))
+    hpt0 = hpc0 + hpc_len + diff_comb
     assert hpc0 * 100 == pytest.approx(OFF["fan_sa_to_hpc_r1_le"]["value_cm"], abs=0.5)
     assert hpc0 * 100 == pytest.approx(L["hpc"]["x0"], abs=0.5)
     # the atlas rounds the OGV station to 0.782 m; agree to a centimetre

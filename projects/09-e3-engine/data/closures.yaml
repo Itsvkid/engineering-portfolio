@@ -369,6 +369,46 @@ closures:
       Co-rotation is declared inside the file as a modelling decision, not
       a published fact.
 
+  - stage: J8
+    what: the two assumed axial stitching offsets close the published turbomachinery length
+    band: 4.0
+    achieved: 0.0
+    units: percent of the 318.0 cm fan-flange-to-LPT-exit length
+    state: met
+    gate: null
+    note: >
+      CR-159584 Table I p.6 publishes the turbomachinery length, fan front
+      flange to LP turbine exit, as 318.0 cm. With the HPC (78.2), HPT
+      (20.0) and LPT (58.65) lengths all published, that constrains the two
+      assumed offsets' SUM to 128.7 cm and leaves only the split open. They
+      had carried 190.0 between them, so the core was drawn 61 cm long.
+      Applied 2026-09-10 as 103.4 and 25.3: sum from the table, split from
+      the ratio read off the same report's Fig 1. Both now sit inside their
+      own corrected ranges, which had themselves been wrong -- the old
+      110-150 and 45-55 cm both had floors above the answer. One definition
+      trap recorded: the printed 318.0 cm runs to the LPT CASING's aft
+      flange at the R5 exit plane, not the aft face of the turbine rear
+      frame; 3.21 m against 3.69 on the same drawing.
+
+  - stage: J9
+    what: the mixed-flow nozzle exit area from continuity on the published cycle matches the printed diameter
+    band: 3.0
+    achieved: 0.3
+    units: percent of exit diameter
+    state: met
+    gate: null
+    note: >
+      A 1979 status table and a continuity solve on the published cycle,
+      agreeing to three parts in a thousand. At the max-climb aero design
+      point the mixed stream is 244.2 kg/s at 368.6 K and 59,435 Pa, so the
+      nozzle pressure ratio is 2.49 and the throat chokes -- which is why
+      the report specifies a convergent-divergent nozzle. That gives a
+      throat diameter of 1.586 m against CR-159584 Table I's printed
+      1.590 m. The same chain returns 41.5 kN of max-climb net thrust,
+      23.9 percent of the 173.5 kN sea-level takeoff rating, which is the
+      right ratio at Mach 0.8 and 35,000 ft and is the check on the mass
+      flow standing behind the area.
+
   - stage: E7
     what: the five LPT flutter safety factors imply one allowable index, and the five agree
     band: 15.0

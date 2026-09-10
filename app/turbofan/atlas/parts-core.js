@@ -1101,8 +1101,8 @@ const structure = [
     facts: [
       f("Core flow", "82.4 kg/s corrected of the 143.7 under the island", "CR-165148 Appendix A p.122"),
       f("Second splitter radius", "0.611 m, from the 58/42 area split", "", ASM),
-      f("Axial run to the HPC", "fan axis → rotor 1 = 1.42 m, drawn — but the sheet now allows 1.00–1.12, and this is outside it", "atlas-facts.md A7", ASM),
-      f("Why it is still drawn wrong", "CR-159584 Table I fixes fan flange → LPT exit at 3.180 m, which caps this offset and the diffuser/combustor one together; correcting them moves every blade row, so they move as one change", "CR-159584 Table I p.6", "e3"),
+      f("Axial run to the HPC", "fan axis → rotor 1 = 1.034 m, inside the 1.00–1.12 the corrected sheet allows", "atlas-facts.md A7", ASM),
+      f("How it is fixed", "CR-159584 Table I fixes fan flange → LPT exit at 3.180 m, capping this offset and the diffuser/combustor one at 1.287 m together; the sum is the table's, the split is read off the same report's Fig.1", "CR-159584 Table I p.6", "e3"),
     ],
   },
   {
@@ -1111,7 +1111,13 @@ const structure = [
     system: "structure",
     y: 2.0,
     r: 1.02,
-    build: () => shell([[1.064, 0.43], [1.07, 1.0], [1.06, 1.3], [1.02, 2.6], [0.94, 3.9]], 0.015),
+    // Held near-parallel to y = 2.0, where the annulus is 2.37 down to
+      // 2.27 m2 and the duct Mach is inside the published 0.40-0.45,
+      // then accelerating to 1.98 m2 at the mixer — CR-135444 gives a
+      // preliminary mixing-plane Mach of 0.56, so the duct is supposed to
+      // speed up here rather than arrive parallel. Aft of the mixer the
+      // same wall is the tailpipe, converging to meet the nozzle.
+      build: () => shell([[1.064, 0.43], [1.07, 1.0], [1.06, 1.3], [1.04, 2.0], [1.015, 2.6], [1.005, 2.95], [0.95, 3.4], [0.90, 3.82]], 0.015),
     text: "The outer wall of the bypass duct from the fan case to the nozzle. On a long-duct mixed-flow nacelle it runs the full length of the engine; on a separate-flow nacelle it would end a metre behind the fan. The thrust reverser, if fitted, lives in this wall.",
     facts: [f("Geometry", "long-duct, mixed-flow, as the E³ FPS", "CR-168219 sec 5.8", "e3")],
   },
@@ -1121,7 +1127,7 @@ const structure = [
     system: "structure",
     y: 2.3,
     r: 0.6,
-    build: () => shell([[0.628, 0.84], [0.62, 1.4], [0.6, 2.0], [0.6, 3.0], [0.62, EXHAUST.yMixerStart]], 0.012),
+    build: () => shell([[0.628, 0.84], [0.62, 1.3], [0.6, 1.75], [0.6, 2.35], [0.62, EXHAUST.yMixerStart]], 0.012),
     text: "The fairing over the core. Everything between it and the casings, the pipes, wires, pumps and valves on this page, is the core compartment: fire zone 2, ventilated by a trickle of bypass air.",
     facts: [f("Radius", "0.60 m along the core", "", ASM)],
   },
@@ -1134,13 +1140,16 @@ const structure = [
     // From the maximum-diameter station aft. The real mid-body is close to
     // parallel: read off CR-159584 Fig. 1 the radius falls about 2 % over
     // the 2.3 m behind the maximum, so the near-cylindrical look is not the
-    // error it appears to be.
-    build: () => shell([[NACELLE.rMax, NACELLE.yMaxDia], [NACELLE.rMax, -0.30], [1.238, 0.6], [1.228, 1.6], [1.215, 2.6], [1.06, 3.9]], 0.01),
+    // error it appears to be. The boat-tail then leaves at the published
+    // 11°, which now reaches the published exit because the core no longer
+    // runs long.
+    build: () => shell([[NACELLE.rMax, NACELLE.yMaxDia], [NACELLE.rMax, -0.30], [1.238, 0.6], [1.228, 1.5], [1.222, 2.16], [1.03, 3.15], [0.90, 3.82]], 0.01),
     text: "The outer aerodynamic skin. Between it and the bypass duct wall is the fan compartment, fire zone 1, where the gearbox and most of the accessories live. The cowl doors hinge from the pylon and open upward for line maintenance.",
     facts: [
       f("Maximum diameter", "2.489 m, reached 0.978 m aft of the hilite (X/D_max = 0.40)", "CR-159584 Table I p.6; CR-135444 p.249", "e3"),
+      f("Overall length", "6.033 m, hilite to nozzle exit", "CR-159584 Table I p.6", "e3"),
+      f("Terminal boat-tail", "11°", "CR-135444 p.249", "e3"),
       f("Mid-body", "close to parallel — about 2 % of radius over the 2.3 m behind the maximum", "CR-159584 Fig.1 p.7", SCH),
-      f("Aft contour", "the published 11° terminal boat-tail is not drawn yet: it cannot be reached while the core runs 0.35 m long", "CR-135444 p.249", SCH),
     ],
   },
   {
@@ -1309,12 +1318,20 @@ const exhaust = [
     system: "exhaust",
     y: 4.2,
     r: 0.9,
-    build: () => merge([shell([[0.94, 3.9], [0.88, 4.2], [0.86, 4.35], [0.875, EXHAUST.yNozzleExit]], 0.015), shell([[1.06, 3.9], [0.98, 4.2], [0.92, EXHAUST.yNozzleExit]], 0.01)]),
+    build: () =>
+      merge([
+        // Flow path: convergent to a throat just inside the lip, then the
+        // small divergence, leaving at the published exit radius.
+        shell([[0.88, 3.82], [0.80, 4.10], [0.786, 4.19], [NACELLE.rNozzleExit, EXHAUST.yNozzleExit]], 0.015),
+        // Skin, carrying the boat-tail through to the exit at the same 11°.
+        shell([[0.90, 3.82], [0.86, 4.03], [0.815, EXHAUST.yNozzleExit]], 0.01),
+      ]),
     text: "One nozzle for both streams: convergent to a throat, then a slight divergence. At cruise the nozzle pressure ratio is high enough that the throat chokes and a C-D shape recovers some of the expansion a plain convergent nozzle would leave on the table.",
     facts: [
       f("Type", "single convergent-divergent, low area ratio, C_v 0.996", "CR-168219 sec 5.8 pp.101–102; Table XI p.34"),
+      f("Exit diameter", "1.590 m — and continuity on the published cycle puts the choked throat at 1.586, which is 0.3 % from a number printed in 1979", "CR-159584 Table I p.6", "e3"),
       f("Fan duct Mach", "0.40–0.45", "CR-168219 sec 5.8 p.101"),
-      f("Throat radius", "drawings only; representative here", "", SCH),
+      f("Throat station", "not dimensioned; placed just inside the exit for the published low area ratio", "", SCH),
     ],
   },
 ];

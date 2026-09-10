@@ -218,12 +218,24 @@ LPT R5 TE − fan front flange = 318.0 cm                     [E3: CR-159584 Tab
 Everything else chains: fan → (offset 1) → HPC 0…78.2 → (offset 2) → HPT
 0…20 → LPT 6.85…58.65 → rear frame → mixer.
 
-**Not yet applied.** `app/turbofan/atlas/flowpath.js` and
-`data/engine-flowpath.yaml` still carry 142 and 48 cm. Changing them moves
-every blade row and every whole-engine artefact (the meridional plot, the
-glTF export, the drawing pack's stations 4 and 45), so it is a deliberate
-separate change with the 318.0 cm closure as its test. The ranges in
-`engine-flowpath.yaml` have been corrected; the values have not.
+**Applied 2026-09-10.** `app/turbofan/atlas/flowpath.js` and
+`data/engine-flowpath.yaml` now carry **103.4 and 25.3 cm**, summing to the
+128.7 the published 318.0 cm requires. The sum is the table's; the split is
+the ratio read off CR-159584 Fig 1. Both sit inside their corrected ranges.
+
+Done as one change across every consumer, because it moves every blade row:
+the meridional plot, both glTF exports, the site cutaway and the drawing
+pack's stations 4 and 45 were all regenerated in the same commit, and the
+atlas derives `HPT0` from the two offsets now rather than carrying 2.68 as
+a literal with the arithmetic in a comment beside it.
+
+It also unblocked the three aft-end nacelle numbers A8 had been holding
+back — overall length 603.3 cm, exhaust nozzle diameter 159.0 cm and the
+11° terminal boat-tail — which could not be drawn on a body whose aft end
+was 61 cm too far back. A free check fell out: the mixer start plus the
+drawn lobe plus CR-135444's published 0.889 m mixing length lands the exit
+within **4.5 cm** of where the published nacelle length puts it, by a
+completely independent route.
 
 ### A8. Installation and nacelle dimensions — the table that was there all along
 

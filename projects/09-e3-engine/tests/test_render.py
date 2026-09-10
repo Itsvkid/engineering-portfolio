@@ -179,9 +179,20 @@ def test_the_blades_touch_the_walls_because_no_clearance_is_modelled():
 
 
 def test_the_engine_spans_what_j1_says_it_spans():
+    """285.6 cm, not the 346.9 this asserted until 2026-09-10.
+
+    The difference is 61.3 cm and it is not a coincidence: it is exactly the
+    excess the two assumed stitching offsets were carrying before CR-159584
+    Table I's published 318.0 cm turbomachinery length constrained their
+    sum. Correcting them shortened the core by precisely the amount the
+    closure had predicted, which is the strongest confirmation available
+    that the right thing moved -- an arbitrary error would not have landed
+    on its own predicted size.
+
+    The forward end does not move, because the fan is the datum."""
     env = blade_envelope()
     assert min(e["x_lo"] for e in env) * 100 == pytest.approx(8.19, abs=0.2)
-    assert max(e["x_hi"] for e in env) * 100 == pytest.approx(346.9, abs=1.0)
+    assert max(e["x_hi"] for e in env) * 100 == pytest.approx(285.6, abs=1.0)
     # 104.2, not the 103.9 of the fan tip section: the tip cap stands
     # 3 mm proud of its own boundary wire -- finding 163, tested below
     assert max(e["r_hi"] for e in env) * 100 == pytest.approx(104.2, abs=0.1)

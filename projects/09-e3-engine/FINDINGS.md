@@ -137,8 +137,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-23 met, 12 half met, 3 gated, of 38.
-21 of 25 numeric closures sit inside their own band.
+25 met, 12 half met, 3 gated, of 40.
+23 of 27 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -177,6 +177,8 @@ blocks it. None is open without a reason attached.
 | J5 | the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | — | met |
 | J6 | every headline claim in the post is bound to the value the code produces | — | — | met |
 | J7 | the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 | 2 | met |
+| J8 | the two assumed axial stitching offsets close the published turbomachinery length | 0 | 4 | met |
+| J9 | the mixed-flow nozzle exit area from continuity on the published cycle matches the printed diameter | 0.3 | 3 | met |
 | E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |

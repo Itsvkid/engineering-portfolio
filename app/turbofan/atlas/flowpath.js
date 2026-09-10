@@ -16,18 +16,35 @@
  */
 
 // ── Datum offsets ─────────────────────────────────────────────────────────
-// HPC report's z (rotor-1 LE hub = 0) sits at y = HPC0 (assumed).
-export const HPC0 = 1.42;
-// HPT report's x (stage-1 vane inlet = 0) sits at y = HPT0 (assumed: HPC OGV
-// trailing edge at HPC0 + 0.782 = 2.202, plus 0.48 m of diffuser + combustor,
-// inside the 45–55 cm the fact sheet's A7 allows for a short double-annular).
-export const HPT0 = 2.68;
+//
+// These two were free assumptions until 2026-09-10. CR-159584 Table I p.6
+// publishes the turbomachinery length — fan front flange to LP turbine exit,
+// 318.0 cm — and with the HPC, HPT and LPT lengths all published, that
+// constrains the two offsets' SUM to 128.7 cm and leaves only the split
+// open. They carried 190.0 between them, so the core was drawn 61 cm long.
+//
+// Sum from the table, split from the ratio read off CR-159584 Fig 1 p.7.
+// Neither number is a free choice now, which is why they are written as the
+// only two constants here and everything downstream is derived from them.
+// Getting one wrong can no longer quietly move the other.
+
+/** HPC report's z (rotor-1 LE hub = 0) sits at y = HPC0. */
+export const HPC0 = 1.034;
+/** Diffuser + combustor, HPC OGV trailing edge to HPT vane-1 inlet. */
+export const DIFFUSER_COMBUSTOR = 0.253;
+/** Published, hpc-flowpath.csv: HPC rotor-1 LE to OGV trailing edge. */
+const HPC_LENGTH = 0.782;
+
+// Derived, not typed. HPT0 used to be the literal 2.68 with the arithmetic
+// in a comment beside it, so correcting an offset left the comment true and
+// the number wrong.
+export const HPT0 = HPC0 + HPC_LENGTH + DIFFUSER_COMBUSTOR;
 // LPT datum is the HPT stage-2 blade exit (HPT Fig 3, x = 20 cm).
 export const LPT0 = HPT0 + 0.2;
 
 export const ASSUMED_OFFSETS = [
   { name: "fan stacking axis → HPC rotor-1 LE", value_m: HPC0 },
-  { name: "HPC OGV TE → HPT vane-1 inlet (diffuser + combustor)", value_m: +(HPT0 - (HPC0 + 0.782)).toFixed(3) },
+  { name: "HPC OGV TE → HPT vane-1 inlet (diffuser + combustor)", value_m: DIFFUSER_COMBUSTOR },
 ];
 
 // ── Fan and booster (CR-165148 Table IV, Fig 2, Fig 15) ───────────────────
@@ -259,7 +276,16 @@ export const EXHAUST = {
   mixerLobes: 18,
   yMixerStart: LPT0 + 0.62,
   yMixerEnd: LPT0 + 1.05,
-  yNozzleExit: LPT0 + 1.72,
+  // The nozzle exit is now placed by the PUBLISHED overall nacelle length
+  // rather than by a tailpipe guess: hilite + 6.033 m. It used to be
+  // LPT0 + 1.72, which was a length chosen to reach a plausible-looking
+  // aft end on a core that was 61 cm too long.
+  //
+  // Worth keeping because it is a free check: the mixer starts at
+  // LPT0 + 0.62, and adding the 0.43 m of lobe drawn here to CR-135444's
+  // published 0.889 m mixing length lands the exit within 5 cm of where
+  // the nacelle length puts it, by a completely different route.
+  yNozzleExit: NACELLE.yHilite + NACELLE.publishedOverallLength,
 };
 
 // ── Downstream stations used by the casings and cowls ─────────────────────

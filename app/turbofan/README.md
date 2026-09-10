@@ -46,14 +46,12 @@ Geometry provenance, as of 2026-09-07:
   from the thirty printed sections; fan sections (CR-165148 Fig. 41),
   booster sections (Fig. 52), island stator and core OGV angles (Table VII);
   every blade and vane count; bearings, mounts, frames, mixer lobes.
-- **Assumed, and known to be wrong:** fan axis → HPC rotor 1 = 1.42 m and
-  HPC OGV → HPT vane 1 = 0.48 m. CR-159584 Table I p.6 gives the fan front
-  flange → LPT exit as 3.180 m, which caps the two together at 1.287 m
-  against the 1.90 m they carry, so the core is drawn about 0.61 m long.
-  The sheet's ranges are now 1.00–1.12 and 0.24–0.30 and both values sit
-  outside them. They are retained until they can move as one change, since
-  correcting them moves every blade row and every whole-engine artefact.
-  Second splitter
+- **Assumed, but no longer free:** fan axis → HPC rotor 1 = 1.034 m and
+  HPC OGV → HPT vane 1 = 0.253 m. CR-159584 Table I p.6 gives the fan front
+  flange → LPT exit as 3.180 m, which with the published HPC, HPT and LPT
+  lengths caps the two together at 1.287 m. The sum is the table's; the
+  split is the ratio read off that report's Fig. 1. They used to carry 1.42
+  and 0.48, so the core was drawn 0.61 m long. Second splitter
   radius 0.611 m (58/42 area split); island top 0.705 m; nacelle and cowl
   lines; disc profiles; bolt counts on five of nine flanges.
 - **Schematic:** HPT airfoil shapes (throat and aspect ratio only);
@@ -189,4 +187,4 @@ headless loads; it clears by itself.
   card. Then: every blade row a printed aerofoil (Table XXII, LPT coordinates),
   bright palette, procedural environment, free-camera links. Then: fan and
   booster sections from CR-165148 Figs. 41/52, the quarter-stage second
-  splitter and island exit vanes, HPT datum 0.48 m, thin six-sector bulkhead.
+  splitter and island exit vanes, HPT datum, thin six-sector bulkhead.

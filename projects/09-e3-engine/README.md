@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **993 test functions**, **187 numbered findings**, **38 closures** — 23 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **993 test functions**, **187 numbered findings**, **40 closures** — 25 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -23,7 +23,7 @@ NASA measured, and the gap is published.**
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 2 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 3 met |
-| **J** | publication — meridional plot, Campbell match, glTF | 7 met |
+| **J** | publication — meridional plot, Campbell match, glTF | 9 met |
 
 ### Validation
 
@@ -63,6 +63,8 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J5** — the drawing pack renders a GA and one sheet per module, every assumed dimension parenthesised, no station drawn at an unpublished position | — | met |
 | **J6** — every headline claim in the post is bound to the value the code produces | — | met |
 | **J7** — the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 vs 2.0 percent of row volume, web variant | met |
+| **J8** — the two assumed axial stitching offsets close the published turbomachinery length | 0.0 vs 4.0 percent of the 318.0 cm fan-flange-to-LPT-exit length | met |
+| **J9** — the mixed-flow nozzle exit area from continuity on the published cycle matches the printed diameter | 0.3 vs 3.0 percent of exit diameter | met |
 | **E7** — the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 vs 15.0 percent departure from the mean implied allowable | half |
 | **E8** — uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 vs 25.0 percent | met |
 | **I4** — every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | met |
