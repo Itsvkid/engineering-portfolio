@@ -442,9 +442,14 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
       ratio 4.68 against the cycle's 4.55. Kacker–Okapuu 1982 is not
       needed for this result and is left to fetch before the HPT, whose
       shorter rows put more of the loss in the profile term
-- [ ] Stage-by-stage HPC: work split, DF per row, de Haller, stall margin
+- [x] Stage-by-stage HPC: work split, DF per row, de Haller, stall margin
       estimate, VSV schedule effect. Compare stagewise with HPC report
-      Figs. 14, 17, 18, 27
+      Figs. 14, 17, 18
+      — work split, DF and de Haller closed in C1 unit 5. **C5** closes the
+      off-design half: the published stall-margin design intent is
+      reproduced, both part-speed claims hold, and closing the VSVs widens
+      the low-speed window by 31 %. **No stall margin is reported** — no
+      stall line and no VSV schedule are published. Findings 184–187.
 - [x] Fan and quarter-stage — **unit 6**. The fan's specific flow
       (208.9 kg/s·m²) and corrected tip speed (411.5 m/s) give an axial
       Mach of 0.630 and a **tip relative Mach of 1.405 against the printed

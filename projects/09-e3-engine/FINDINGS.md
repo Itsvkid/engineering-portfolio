@@ -137,7 +137,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-21 met, 12 half met, 3 gated, of 36.
+22 met, 12 half met, 3 gated, of 37.
 21 of 25 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -181,6 +181,7 @@ blocks it. None is open without a reason attached.
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
 | G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 | 2 | half |
+| C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
 
 ### The two recorded misses
 
@@ -270,7 +271,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-180 findings, in the `STEP0.md` that owns each one.
+184 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -460,4 +461,8 @@ would break every reference in the commit history.
 | 181 | geometry | A trapezoidal ∫A·ds is the wrong reference for a curved stacking |
 | 182 | geometry | Two independent lines say Table VII's "length" is measured along |
 | 183 | geometry | The vane overhangs the hub by 5.7 cm on either reading, so it must |
+| 184 | meanline | The report's stall-margin design intent is confirmed by two figures |
+| 185 | meanline | A stage-stacking march that cannot return its own design point is |
+| 186 | meanline | Corrected flow falls far faster than speed, and assuming otherwise |
+| 187 | meanline | The VSVs widen the window in which the published loading order |
 

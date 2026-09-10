@@ -449,3 +449,23 @@ closures:
       reading and must be endwall-trimmed, as Rotor 37's blade was
       (finding 183).
 
+  - stage: C5
+    what: the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed
+    band: null
+    achieved: null
+    units: null
+    state: met
+    gate: null
+    note: >
+      Four figure-checkable claims hold exactly: Figs 14 and 18 independently
+      pick stages 6 and 7 as the two least loaded, Fig 18 puts 8-10 highest at
+      design, and the published variable geometry (IGV and stators 1-4) makes
+      stage 6 the first uncontrolled one exactly as the prose requires
+      (finding 184). The stage-stacking march reproduces both part-speed
+      claims -- 6-7 among the four most loaded at 85 percent speed over a wide
+      flow window, 8-10 the three least loaded at 70 percent over a narrow
+      one -- and closing the VSVs widens that narrow window by 31 percent
+      (finding 187). The characteristic has no free parameter. NO STALL MARGIN
+      IS REPORTED: no stall line for this compressor is published, and neither
+      is a VSV schedule.
+

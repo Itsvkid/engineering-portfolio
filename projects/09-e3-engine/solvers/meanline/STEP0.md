@@ -969,3 +969,129 @@ E3 as built: 1 fan, 1/4 booster, 10 HPC, 2 HPT, 5 LPT
 its validation, the LPT and HPT efficiencies, compressor deviation, the
 compressor loss roll-up, the stagewise curves, the fan, and the stage
 counts.
+
+---
+
+## Unit C5 — HPC off-design: stage stacking, the VSVs, and stall margin
+
+Stage C1's remaining line: *stage-by-stage HPC — work split, DF per row,
+de Haller, **stall margin estimate, VSV schedule effect**.* The first three
+closed in unit 5. These two are the off-design half, and they are the last
+substantial modelling item in the plan.
+
+### What cannot be done, said first
+
+**There is no stall margin here, and there cannot be.** A stall margin is
+the distance from an operating line to a **stall line**, and no stall line
+for this compressor is published — not as a map, not as a table, not as a
+figure this project has read. Nor is a VSV schedule: the reports give the
+variable geometry as *IGV and stators 1–4* and the actuation as a
+torsion-bar system, and never a stagger against speed. Anything this unit
+called a stall margin would be a number with no reference behind it.
+
+### What can be done, and is
+
+The HPC report states its stall-margin **design intent** in four sentences
+that are unusually specific, and every one of them is a claim about
+loading order:
+
+> Stages 6 and 7 are deliberately unloaded: they are the first two stages
+> not controlled by upstream variable stators… Equalising part-speed
+> near-stall loading among the five fixed rear stages gave the highest
+> part-speed stall margin at some cost in design-speed margin. Near stall
+> at design speed stages 8–10 are the most loaded; at intermediate speed
+> 6–7 join them; at low speed 8–10 unload and 6–7 stay heavily loaded.
+
+Three of those are checkable against figures already transcribed, and the
+fourth needs an off-design model.
+
+| Check | Band | Basis |
+|---|---|---|
+| Stages 6 and 7 are the two least loaded at design | **exactly those two**, on both measures | Fig 14's temperature rise and Fig 18's diffusion factor, independently |
+| The variable rows control stages 1–5 | *IGV and stators 1–4*, so stage 6 is the first uncontrolled | the prose and `variable_geometry` must agree, or one of them is misread |
+| Stages 8–10 are the most loaded at design | **the three highest** stator DF | Fig 18 |
+| The loading order at part speed | reproduce **6–7 joining** at intermediate speed and **8–10 unloading** at low speed | a stage-stacking march; a rank check, not a percentage, because the report states ranks |
+
+**The characteristic has no free parameter.** Each stage is closed with
+`ψ = 1 − φ (1 − ψ_d)/φ_d`, which is the Euler relation at a fixed relative
+exit angle, normalised through the stage's own design point. There is no
+slope to choose and nothing to fit — the design point fixes it. A stage
+characteristic with a tunable slope could be made to produce any ordering
+asked of it, and would prove nothing.
+
+**Closes when** the three figure-checkable claims hold exactly, and the
+stage-stacking march reproduces the published loading order at
+intermediate and low speed — as tests, not by inspection. **No stall
+margin is reported.**
+
+### Result — C5
+
+| | |
+|---|---|
+| Stages 6–7 least loaded, Fig 14 temperature rise | **[6, 7]** — exact |
+| Stages 6–7 least loaded, Fig 18 rotor DF | **[6, 7]** — exact, and independent of Fig 14 |
+| Stages 8–10 most loaded at design, Fig 18 stator DF | **[8, 9, 10]** — exact |
+| Variable geometry vs "first uncontrolled stage" | *IGV and stators 1–4* → stage **6**, as the prose says |
+| The march returns its own design point | **0.0000 %** on all ten stages |
+| 6–7 among the four most loaded at 85 % speed | **holds**, over W = 0.40–0.67 (width 0.27) |
+| 8–10 the three least loaded at 70 % speed | **holds**, over W = 0.39–0.47 (width 0.08) |
+| VSV closure 0° → 20° | widens that window **+31 %** and shifts it to lower flow |
+| Stall margin | **not reported** |
+
+**Closure: met.** All four figure-checkable claims hold exactly, and both
+part-speed claims reproduce. No stall margin is given, and the reason is
+in the module rather than in a footnote.
+
+### Findings
+
+184. **The report's stall-margin design intent is confirmed by two figures
+     that do not know about each other.** Section 2.3.1's text says stages
+     6 and 7 were *deliberately unloaded* because they are the first two
+     not controlled by upstream variable stators. Figure 14's average
+     temperature rise picks out **[6, 7]** as the two lowest; Figure 18's
+     rotor diffusion factor independently picks out **[6, 7]**; and Figure
+     18's stator diffusion factor puts **[8, 9, 10]** highest, which is
+     the same text's design-speed claim. The published variable geometry —
+     *IGV and stators 1–4* — makes stage 6 the first uncontrolled one,
+     exactly as the sentence requires. **A design decision, its reason,
+     and three figures, all consistent.** That is rarer in these reports
+     than it should be, and it is worth recording when it happens rather
+     than only when it fails.
+
+185. **A stage-stacking march that cannot return its own design point is
+     worth nothing off it.** The first version used a flat 0.9 polytropic
+     efficiency for every stage. Run at design speed and design flow — the
+     one condition where the answer is known — it drifted: by stage 10 the
+     flow coefficient was **70 % high** and the stage loading **negative**,
+     meaning the model had the last stage of the compressor extracting
+     work. Taking each stage's polytropic efficiency from its **own**
+     published temperature rise and pressure ratio closes it to 0.0000 %
+     on all ten. The identity is now the unit's first test. **This is
+     METHOD.md's "validate the method before applying it" in the one form
+     that costs nothing: run the model at the point you already know.**
+
+186. **Corrected flow falls far faster than speed, and assuming otherwise
+     makes the back of the compressor a turbine.** The obvious operating
+     line — flow proportional to speed — gives stage loadings of **−1.4 at
+     85 % speed** and **−2.3 at 70 %**: the rear stages are being driven,
+     not driving. The physical reason is that the front stages do less
+     work at part speed, so the density rise collapses and the rear
+     annulus, sized for design density, passes far too much axial
+     velocity. The flows at which every stage still does positive work are
+     about **0.60 of design at 85 % speed and 0.42 at 70 %** — that is,
+     0.70 and 0.60 of the speed fraction. **This is the whole reason the
+     variable stators exist**, and it falls out of the march rather than
+     being assumed into it.
+
+187. **The VSVs widen the window in which the published loading order
+     survives, by 31 % over 20° of closure.** The report says the front
+     variable stators are *kept low so they close for low-speed stall
+     margin*. Sweeping the closure and asking over what range of flow
+     stages 8–10 remain the three least loaded — the report's own
+     low-speed claim — gives a window that widens monotonically from
+     0.080 at 0° to **0.105 at 20°**, and shifts to lower flow
+     (0.385–0.465 → 0.320–0.425). The schedule itself is not published, so
+     this is the *effect* of closure and not a reproduction of the
+     schedule. **The claim and the mechanism agree, which is as far as the
+     public record allows.**
+
