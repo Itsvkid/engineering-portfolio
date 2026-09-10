@@ -39,6 +39,14 @@ GAP_RULE = ("An empty sheet with the reason is a result; "
 TITLE_H = 0.155               # fraction of the sheet the title block takes
 
 
+def _rng(off, key):
+    """The allowable range as printed, from the data file rather than a
+    second copy in a format string."""
+    lo, hi = off[key]["range_cm"]
+    fmt = lambda v: f"{v:g}"
+    return f"{fmt(lo)}-{fmt(hi)}"
+
+
 def _y(n):
     return yaml.safe_load((DATA / n).read_text())
 
@@ -113,12 +121,19 @@ def dimensions():
         dict(what="transition duct, HPT exit to LPT vane 1",
              value=min(r["z_hub"] for r in lpt), units="cm", basis="derived",
              src="LPT sections, z from the HPT exit plane"),
+        # The allowable range is READ, not retyped. It used to be spelled out
+        # here as "110-150" and "45-55"; CR-159584 Table I corrected both and
+        # this line went on printing the old ones onto the drawing, which is
+        # the second-copy failure finding 159 exists to stop, reappearing in
+        # a string instead of a number.
         dict(what="fan stacking axis to HPC rotor 1",
              value=off["fan_sa_to_hpc_r1_le"]["value_cm"], units="cm",
-             basis="assumed", src="bearing spans, CR-168219; allowable 110-150"),
+             basis="assumed",
+             src=f"bearing spans, CR-168219; allowable {_rng(off, 'fan_sa_to_hpc_r1_le')}"),
         dict(what="HPC OGV exit to HPT vane 1",
              value=off["hpc_ogv_te_to_hpt_vane1"]["value_cm"], units="cm",
-             basis="assumed", src="diffuser + combustor; allowable 45-55"),
+             basis="assumed",
+             src=f"diffuser + combustor; allowable {_rng(off, 'hpc_ogv_te_to_hpt_vane1')}"),
     ]
     return out
 
