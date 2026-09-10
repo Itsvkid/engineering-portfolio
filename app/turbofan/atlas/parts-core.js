@@ -1,4 +1,4 @@
-import { HPC_SECTIONS, LPT_SECTIONS } from "./data/e3-sections";
+import { BOOSTER_SECTIONS, FAN_SECTIONS, HPC_SECTIONS, LPT_SECTIONS } from "./data/e3-sections";
 import {
   bladeRow,
   bladeRowFromCoords,
@@ -8,7 +8,6 @@ import {
   merge,
   mixer,
   pipe,
-  resampleSections,
   ring,
   shell,
   struts,
@@ -79,9 +78,41 @@ const HPC_MATERIAL = (k) =>
 function printedSections(name) {
   const secs = HPC_SECTIONS[name];
   const r0 = secs[0][0];
+  // Twelve printed stations a row, lofted as printed. The widest twist step
+  // among the twenty-one rows is 8° (stator 3), so a ruled loft does facet
+  // slightly here — but interpolating to even fourteen stations costs
+  // 890,000 triangles across 2,890 blades that sit behind casings and read a
+  // few pixels wide. The fan, which is the row anyone actually looks at,
+  // needs no interpolation at all now that it lofts Appendix B's 23.
   return {
     rHub: r0,
-    stations: secs.map(([r, chord, camber, stagger, tm]) => ({ x: r - r0, chord, camber, stagger, thickness: tm })),
+    stations: secs.map(([r, chord, camber, stagger, tm]) => ({
+      x: r - r0, chord, camber, stagger, thickness: tm,
+    })),
+  };
+}
+
+/**
+ * The fan and booster rotors, from the plane-section appendices.
+ *
+ * These rows used to be lofted from seven and five points read off Figs 41
+ * and 52. CR-165148 Appendices B and D print the same blades at 23 and 14
+ * stations, and the read-offs carried a mean stagger error of +3.14° on the
+ * fan (+5.82° at the hub) and −1.61° on the booster. Opposite signs, so
+ * there was never a correction to apply — only the tables.
+ *
+ * The end stations stay. Appendix B's first and last are the flowpath hub
+ * and tip, not overhang, and radius comes from the printed radius column
+ * rather than the percent-height label, which is nominal at both ends.
+ */
+function appendixSections(secs) {
+  const r0 = secs[0][0];
+  return {
+    rHub: r0,
+    rTip: secs[secs.length - 1][0],
+    stations: secs.map(([r, chord, camber, stagger, tm]) => ({
+      x: r - r0, chord, camber, stagger, thickness: tm,
+    })),
   };
 }
 
@@ -134,21 +165,12 @@ const fanModule = [
           {
             // CR-165148 Fig.41: the printed sections, hub to tip. Camber
             // 68° → 8°, stagger 12° → 62°, thickness 10 % → 2.6 % of chord.
-            // Resampled, not re-designed: the seven printed stations all
-            // survive exactly and the loft is evaluated between them. Ruled
-            // straight across a 13° twist step, the blade read as a flat
-            // plate — which is what it looked like, and it is not.
-            sections: resampleSections(
-              FAN.sections.map((sec) => ({
-                x: (FAN.rTip - FAN.rHub - 0.01) * sec.h,
-                chord: sec.chord,
-                stagger: sec.stagger,
-                camber: sec.camber,
-                thickness: sec.tm,
-                lean: 0.06 * (FAN.rTip - FAN.rHub) * sec.h * sec.h,
-              })),
-              28
-            ),
+            // Appendix B's 23 printed stations, lofted as printed. No
+            // resampling and no lean: the appendix prints ONE axial
+            // coordinate for the whole stacking axis, which is what a
+            // radial stack with no sweep and no lean looks like written
+            // down. The 60° sweep in the reports is the inner OGV's.
+            sections: appendixSections(FAN_SECTIONS).stations,
             points: 12,
           },
           FAN.blades,
@@ -267,16 +289,10 @@ const fanModule = [
       bladeRow(
         {
           // CR-165148 Fig.52: camber 33 → 8°, stagger 23 → 42°, t/c 8.2 → 5.2 %.
-          sections: resampleSections(
-            BOOSTER.sections.map((sec) => ({
-              x: (BOOSTER.rTip - BOOSTER.rHub - 0.006) * sec.h,
-              chord: sec.chord,
-              stagger: sec.stagger,
-              camber: sec.camber,
-              thickness: sec.tm,
-            })),
-            16
-          ),
+          // Appendix D's 14 printed stations. Its tm/c rises at the tip,
+          // the only non-monotonic column in either appendix; it is printed
+          // that way and is not smoothed here.
+          sections: appendixSections(BOOSTER_SECTIONS).stations,
         },
         BOOSTER.blades,
         BOOSTER.rHub,

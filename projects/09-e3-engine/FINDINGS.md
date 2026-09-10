@@ -274,9 +274,9 @@ restrains.
 
 ## 5. Index of numbered findings
 
-194 findings, in the `STEP0.md` that owns each one.
+198 findings, in the `STEP0.md` that owns each one.
 
-**Numbers 55, 56, 57 are not used.** They were
+**Numbers 55, 56, 57, 198, 199, 200, 201 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
 section stacking — which were handed to a parallel session and never
 landed. The gap is left rather than closed up, because renumbering
@@ -478,4 +478,8 @@ would break every reference in the commit history.
 | 195 | cfd | It collapses at constant back pressure too, which kills the |
 | 196 | cfd | The tip gap is 1.45× design, not 14×, and the difference was a |
 | 197 | cfd | The solution never converges at all, which reframes the problem. |
+| 202 | blading | The designed blade reproduces the printed STAGGER to 1.25° rms over |
+| 203 | blading | Camber is 5.08° rms and the error changes sign at 57 % span — the |
+| 204 | blading | Finding 54 is answered by the source, and it was wrong by 6×. It |
+| 205 | blading | Third time. A backlog line that names a table nobody has opened is |
 

@@ -54,9 +54,14 @@ export const FAN = {
   blades: 32,
   // Part-span shroud at 55 % of blade height (CR-165148 p.3, Fig.2; CR-168219 says 50 %).
   shroudSpan: 0.55,
-  // Blade sections read off CR-165148 Fig.41 p.50, percent blade height from
-  // the hub: chord (in → m), camber, stagger from axial, max thickness/chord.
-  sections: [
+  // SUPERSEDED 2026-09-10, kept because the error is the interesting part.
+  // These seven were read off CR-165148 Fig.41 p.50. Appendix B of the same
+  // report prints the same blade at 23 stations, and the read-off carries a
+  // mean stagger error of +3.14° and +5.82° at the hub. The atlas now lofts
+  // the appendix, exported to data/e3-sections.js as FAN_SECTIONS; nothing
+  // reads the list below. See fan-design.yaml
+  // fan_rotor_mechanical.blade_geometry.read_off_error_vs_appendix_b.
+  sectionsFromFigure41: [
     { h: 0.0, chord: 7.3 * 0.0254, camber: 68, stagger: 12, tm: 0.1 },
     { h: 0.2, chord: 8.1 * 0.0254, camber: 42, stagger: 22, tm: 0.066 },
     { h: 0.4, chord: 8.9 * 0.0254, camber: 24, stagger: 35, tm: 0.049 },
@@ -76,8 +81,12 @@ export const BOOSTER = {
   bypassOgv: 34,
   splitFraction: 0.223, // of fan flow under the island
   returnFraction: 0.42, // of the island flow back to the bypass behind the booster
-  // Booster rotor sections read off CR-165148 Fig.52 p.63.
-  sections: [
+  // SUPERSEDED 2026-09-10, same story with the opposite sign: these five were
+  // read off CR-165148 Fig.52 p.63 and run 1.61° LOW in stagger against
+  // Appendix D's 14 printed stations, where the fan's read-off runs high. The
+  // bias is per-figure, so there was never a correction to apply. The atlas
+  // lofts BOOSTER_SECTIONS; nothing reads the list below.
+  sectionsFromFigure52: [
     { h: 0.0, chord: 2.8 * 0.0254, camber: 33, stagger: 23, tm: 0.082 },
     { h: 0.2, chord: 2.74 * 0.0254, camber: 22, stagger: 26, tm: 0.076 },
     { h: 0.5, chord: 2.65 * 0.0254, camber: 13, stagger: 31, tm: 0.065 },

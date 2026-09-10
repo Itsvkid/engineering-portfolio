@@ -95,4 +95,25 @@ def test_findings_md_has_the_sections_i3_asked_for():
     assert "Unresolved" in t
     assert "as designed and the E" in t          # the FPS vs ICLS section
     assert "Index of numbered findings" in t
-    assert "55, 56, 57 are not used" in t        # the gap, recorded not hidden
+
+
+def test_the_unused_finding_numbers_are_named_and_really_are_unused():
+    """The gap is recorded rather than hidden — but which numbers are in it
+    is not fixed. It read "55, 56, 57 are not used" until unit 15b landed at
+    202 and left 198-201 open for work another session had not committed.
+    Pinning the list in prose made this assertion go stale the first time
+    two units were numbered out of order, which is the same defect the
+    generated block exists to prevent. Check the property instead: the
+    sentence is there, and every number it claims is unused really is."""
+    import re
+    t = (ROOT / "FINDINGS.md").read_text()
+    m = re.search(r"\*\*Numbers ([\d, ]+) are not used\.\*\*", t)
+    assert m, "FINDINGS.md must name its unused finding numbers"
+    claimed = [int(n) for n in m.group(1).replace(" ", "").split(",") if n]
+    assert claimed
+    used = {int(n) for n in re.findall(r"^\|\s*(\d+)\s*\|", t, re.M)}
+    assert used, "no numbered findings found in the index"
+    for n in claimed:
+        assert n not in used, f"finding {n} is claimed unused but appears in the index"
+    gaps = {n for n in range(min(used), max(used) + 1) if n not in used}
+    assert gaps == set(claimed), f"unrecorded gap: {sorted(gaps - set(claimed))}"

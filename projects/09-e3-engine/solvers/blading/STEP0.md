@@ -307,6 +307,14 @@ Zweifel vs Table IV: mean -0.039, rms 0.077
 
 ## Unit 15 — the fan blade. **Designed, not transcribed.**
 
+> **CORRECTION, 2026-09-10.** The premise below is wrong. CR-165148
+> **Appendix B, p.134** prints camber and stagger at 23 spanwise stations;
+> it was cited in `data/fan-design.yaml` as an A3 backlog line the whole
+> time. Nothing in this unit is retracted — the design stands and its method
+> is unchanged — but it is a design of something the report published, and
+> it now has a validation case. See **unit 15b** at the end of this file,
+> findings 202–205. The text below is left as written.
+
 The E³ fan report publishes almost everything about its rotor blade except
 the blade: chord and maximum thickness against radius (Figs 15, 16), 32
 blades, the design incidence (5° across the span), the leading- and
@@ -417,3 +425,74 @@ published solidity: hub 2.3, tip 1.4
    the bisection that solves for axial velocity, was caught the same way:
    relative Mach rises with axial velocity, so overshooting means c_x is
    too high.
+
+---
+
+## Unit 15b — Appendix B, and unit 15's premise was wrong
+
+**2026-09-10.** Unit 15 opens with "It gives no coordinate, no camber angle
+and no stagger", and designs both. **CR-165148 Appendix B, report p.134
+(PDF p.142), prints camber and stagger at 23 spanwise stations**, together
+with chord, tm/c, β\*_LE, β\*_TE and a stacking axis. It was on disk the
+whole time, recorded in `data/fan-design.yaml` as a one-line backlog note —
+"manufacturing-plane section geometry tabulated (p.134) — A3" — from
+2026-09-05 to 2026-09-10.
+
+Unit 15 remains a legitimate *design* exercise and its method is unchanged.
+What changes is that it now has a **validation case**, and it passes most of
+it. The table is transcribed at `fan_rotor_airfoil.appendix_b`; the booster's
+14 stations from Appendix D at `booster_rotor_airfoil.appendix_d`.
+
+### Findings
+
+202. **The designed blade reproduces the printed STAGGER to 1.25° rms over
+     the whole published span, having never seen the table.** Mean −0.34°,
+     worst −2.41° at the island end, and the sign flips across the span so
+     it is scatter and not a bias. Chord comes out −0.99 % on the mean
+     (that is the Fig 15 read-off the design used, which is itself 1.2–2.8 %
+     under Appendix B) and tm/c to about 0.002. For a blade built from a
+     pressure profile, two Mach numbers and an incidence, with the camber
+     family assumed, that is a better result than unit 15 could claim at the
+     time — and it is the *stagger*, the quantity that carries the twist,
+     that closes.
+
+203. **Camber is 5.08° rms and the error changes sign at 57 % span — the
+     designed camber falls too fast.** +5.5 to +6.7° too cambered from 33
+     to 45 % span, then −3 to −8.8° too flat from 76 to 88 %. The mean is
+     −0.12°, so this is a *shape* error and not an offset: the assumed
+     double-circular-arc camber line with Carter deviation distributes
+     turning across the span differently from the real blade. Appendix B's
+     own arithmetic says why — stagger − (β\*_LE + β\*_TE)/2 runs −1.57° at
+     the hub to +1.82° at the tip, so the real sections are not circular
+     arcs and their maximum camber migrates aft with radius. The design
+     assumed a family the blade does not have, which is exactly the
+     assumption finding 53 named as the price of its throat margin.
+
+204. **Finding 54 is answered by the source, and it was wrong by 6×.** It
+     said the designed tip camber falls below 1° outboard of 90 % span,
+     that the double-arc construction cannot draw it, and that a transonic
+     fan tip "genuinely does have near-zero camber". **Appendix B prints
+     6.21° at the outermost station and 6.75° at 100 % blade height.** The
+     directional argument in finding 54 survives — the fan tip does carry
+     less camber than the E³'s own HPC rotor-1 tip, which is 9.65° at
+     M_rel 1.35 against the fan's 6.2° at 1.41 — but the *magnitude* was
+     six times too small, and the "construction cannot draw it" limitation
+     was a consequence of the design's own camber error, not a property of
+     the blade. There was never anything undrawable about this fan tip.
+
+205. **Third time. A backlog line that names a table nobody has opened is
+     indistinguishable from a statement that the data does not exist.**
+     The combustor length (CR-135444 Table 65 p.239), the nacelle
+     installation table (CR-159584 Table I p.6, unit J8) and now the fan's
+     own section geometry (CR-165148 Appendix B p.134) were each recorded
+     as absent, or as backlog, while sitting legible in `sources/`. The
+     first two were true statements about the primary source promoted into
+     false statements about the engine, and §9 of the agent already carries
+     that rule. **This one is different and worse:** the note was
+     *accurate* — it said the table exists, gives its page, and marks it
+     A3 — and it still caused unit 15 to design a blade the report prints,
+     because a backlog line reads to everyone downstream as "not available
+     yet". The rule that follows: **a backlog line that names a specific
+     table and page is not a task, it is an unpaid debt, and it must be
+     paid before any solver designs the quantity that table holds.** Cost
+     of paying it here: one afternoon, and it validated a solver.

@@ -143,45 +143,6 @@ function airfoilSection(chord, thicknessRatio, camberDeg, points = 14) {
  * from a highly-cambered root to a flat, swept tip the way the real E³
  * blade does, and a turbine blade can be short, thick and heavily turned.
  */
-/**
- * Resample printed blade sections onto a finer ladder of stations.
- *
- * The loft between two stations is RULED — straight lines joining
- * corresponding section points. That is fine where the blade changes
- * slowly and visibly wrong where it does not. The E³ fan is printed at
- * seven heights across 50° of twist, and the widest gap between two of
- * them carries 13°; ruled across that span the surface facets, and a
- * blade that is in fact strongly twisted reads as a flat plate.
- *
- * This does not invent geometry. Every printed station is kept exactly as
- * printed and lands on a station of the output; the added stations sit
- * between them with their parameters linearly interpolated, which is the
- * same assumption the ruled surface was already making — just evaluated
- * as an aerofoil rather than as a straight line between two aerofoils.
- * The result is a smooth twisted surface with correct normals.
- */
-export function resampleSections(sections, target = 25) {
-  if (sections.length < 2 || target <= sections.length) return sections;
-  const keys = Object.keys(sections[0]).filter((k) => typeof sections[0][k] === "number");
-  const x0 = sections[0].x;
-  const x1 = sections[sections.length - 1].x;
-  const out = [];
-  const stations = new Set(sections.map((s) => s.x));
-  for (let i = 0; i <= target; i++) stations.add(x0 + ((x1 - x0) * i) / target);
-  for (const x of [...stations].sort((a, b) => a - b)) {
-    let j = 1;
-    while (j < sections.length - 1 && sections[j].x < x) j += 1;
-    const a = sections[j - 1];
-    const b = sections[j];
-    const t = b.x === a.x ? 0 : (x - a.x) / (b.x - a.x);
-    const st = { ...a };
-    for (const k of keys) st[k] = a[k] + (b[k] - a[k]) * t;
-    st.x = x;
-    out.push(st);
-  }
-  return out;
-}
-
 export function bladeGeometry({
   span,
   chordRoot,

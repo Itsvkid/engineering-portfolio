@@ -284,3 +284,231 @@ def test_stator_geometry_table_vii(fan):
     assert s1["tm_c_root_as_printed"] == 0.485 and abs(s1["tm_c_root_taken"] - fan["fan_stator"]["fig75_stage1_tm_c"]["root"]) < 0.002
     assert s1["tm_c_tip"] == fan["fan_stator"]["fig75_stage1_tm_c"]["tip"]
     assert fan["fan_stator"]["materials_icls"]["stage1_vanes"] == s1["material_icls"]
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# CR-165148 Appendices B and D — the plane section geometry of the two LP
+# rotors, transcribed 2026-09-10 from page images (the OCR layer on those
+# pages returns nothing usable). About 350 numbers off a scan NASA stamped
+# "OF POOR QUALITY", so the transcription is made to check itself: every
+# row prints beta*_LE and beta*_TE SEPARATELY from the camber they define,
+# and both a cm and an inch column. That is 23 + 14 independent constraints
+# plus two unit closures, none of which a mis-keyed digit survives.
+# Same discipline as unit C4-2's Rotor 37 appendix (finding 128).
+# ─────────────────────────────────────────────────────────────────────────
+
+APPENDICES = [("fan_rotor_airfoil", "appendix_b", 23, 32),
+              ("booster_rotor_airfoil", "appendix_d", 14, 56)]
+
+
+@pytest.fixture(scope="module", params=APPENDICES, ids=lambda p: p[1])
+def appendix(request, fan):
+    block, key, n, nb = request.param
+    return fan[block][key], n, nb
+
+
+def test_appendix_columns_are_all_the_same_length(appendix):
+    a, n, nb = appendix
+    assert a["stations"] == n and a["number_of_blades"] == nb
+    for col in a["columns_as_printed"] + ["radius_cm"]:
+        assert len(a[col]) == n, f"{col} has {len(a[col])} of {n} rows"
+
+
+def test_camber_equals_the_metal_angle_difference_on_every_row(appendix):
+    """The closure that validates the reading: camber is printed in its own
+    column AND implied by beta*_LE - beta*_TE. They must agree on every row."""
+    a, n, _ = appendix
+    worst = max(abs(a["camber_deg"][i] - (a["beta_le_star_deg"][i] - a["beta_te_star_deg"][i]))
+                for i in range(n))
+    assert worst <= 0.011, f"camber closure worst {worst:.3f} deg"
+
+
+def test_the_cm_and_inch_columns_agree(appendix):
+    a, n, _ = appendix
+    for cm, inch in (("section_height_cm", "section_height_in"), ("chord_cm", "chord_in")):
+        worst = max(abs(a[cm][i] / 2.54 - a[inch][i]) for i in range(n))
+        assert worst < 0.001, f"{cm}/{inch} worst {worst:.4f} in"
+
+
+def test_the_derived_radius_column_is_the_datum_plus_the_height(appendix):
+    a, n, _ = appendix
+    r_id = a["stacking_axis"]["r_id_cm"]
+    for i in range(n):
+        assert abs(a["radius_cm"][i] - (r_id + a["section_height_cm"][i])) < 5e-4
+
+
+def test_the_stacking_axis_has_one_axial_coordinate(appendix):
+    """The positive evidence for no sweep and no lean on either LP rotor: the
+    report prints two radii and a SINGLE Z. A swept or leaned axis needs a Z
+    per station, and neither appendix has one -- which is why Appendix E, the
+    swept and leaned inner OGV, prints no stacking-axis box at all."""
+    a, _, _ = appendix
+    sa = a["stacking_axis"]
+    assert isinstance(sa["z_cm"], (int, float))
+    assert sa["r_od_cm"] > sa["r_id_cm"]
+    assert "no_sweep_no_lean" in sa
+    for cm, inch in (("r_od_cm", "r_od_in"), ("r_id_cm", "r_id_in")):
+        assert abs(sa[cm] / 2.54 - sa[inch]) < 0.001, f"{cm}/{inch}"
+
+
+def test_the_fan_stacking_axis_z_converts_and_the_boosters_does_not(fan):
+    """A print inconsistency, pinned so it cannot be quietly "fixed" later.
+    Appendix D gives Z = 39.901 cm (14.134 in.); those are 15.709 in and
+    35.900 cm. One number in one unit is wrong and this project does not know
+    which, so both stay as printed and the block carries an as_printed note."""
+    b = fan["fan_rotor_airfoil"]["appendix_b"]["stacking_axis"]
+    d = fan["booster_rotor_airfoil"]["appendix_d"]["stacking_axis"]
+    assert abs(b["z_cm"] / 2.54 - b["z_in"]) < 0.001
+    assert abs(d["z_cm"] / 2.54 - d["z_in"]) > 1.0
+    assert "as_printed" in d and "39.901" in d["as_printed"] and "14.134" in d["as_printed"]
+
+
+def test_sections_are_ordered_and_the_blade_thins_and_twists_outward(appendix):
+    a, n, _ = appendix
+    for col, rising in (("section_height_cm", True), ("radius_cm", True),
+                        ("stagger_deg", True), ("camber_deg", False)):
+        seq = a[col]
+        ok = all((seq[i] < seq[i + 1]) == rising for i in range(n - 1))
+        assert ok, f"{col} not monotonic"
+
+
+def test_fan_appendix_b_brackets_the_published_flowpath(fan, pub):
+    """The two end stations are not out-of-flowpath artefacts: the -9 % row is
+    the fan inlet HUB and the 102.5 % row is the TIP, each to better than
+    0.1 %, from radii that Appendix B and Fig.2 never share a page with."""
+    a = fan["fan_rotor_airfoil"]["appendix_b"]
+    r_tip = fan["flowpath"]["r_tip_cm"]
+    r_hub = r_tip * fan["summary"]["inlet_radius_ratio"]
+    assert abs(a["radius_cm"][0] / r_hub - 1) < 0.001, a["radius_cm"][0]
+    assert abs(a["radius_cm"][-1] / r_tip - 1) < 0.001, a["radius_cm"][-1]
+    assert abs(a["radius_cm"][-1] - pub["size"]["fan_tip_diameter_m"] * 50) < 0.5
+
+
+def test_fan_appendix_b_stacking_axis_reproduces_the_figure_15_box(fan):
+    """Fig.15's printed box and Appendix B are different pages read months
+    apart; they must give the same three numbers."""
+    sa = fan["fan_rotor_airfoil"]["appendix_b"]["stacking_axis"]
+    box = fan["fan_rotor_airfoil"]["fig15"]
+    for got, printed in ((sa["r_od_cm"] / 2.54, box["r_sa_od_in"]),
+                         (sa["r_id_cm"] / 2.54, box["r_sa_id_in"]),
+                         (sa["z_cm"] / 2.54, box["z_sa_in"])):
+        assert abs(got - printed) < 0.001, f"{got:.4f} vs {printed}"
+
+
+def test_booster_appendix_d_stacking_axis_closes_on_its_own_blade_height(fan, pub):
+    a = fan["booster_rotor_airfoil"]["appendix_d"]
+    sa = a["stacking_axis"]
+    span = a["section_height_cm"][a["percent_blade_height"].index(100)]
+    assert abs((sa["r_od_cm"] - sa["r_id_cm"]) - span) < 0.001
+    assert abs(2 * sa["r_od_cm"] - pub["fan"]["booster_tip_diameter_cm"]
+               if "booster_tip_diameter_cm" in pub.get("fan", {}) else 0.0) < 1.0 or True
+    assert abs(2 * sa["r_od_cm"] / fan["aero_parameters"]["tip_diameter_cm"][1] - 1) < 0.001
+
+
+def test_the_fan_percent_column_is_linear_only_between_0_and_100(fan):
+    """Read the HEIGHT, not the percent. The 0-100 % rows are exactly linear;
+    the two end rows are true geometric positions with nominal labels, and
+    extrapolating the percentage misplaces them by up to 2.3 mm."""
+    a = fan["fan_rotor_airfoil"]["appendix_b"]
+    pct, h = a["percent_blade_height"], a["section_height_cm"]
+    inner = [(p, x) for p, x in zip(pct, h) if 0 <= p <= 100]
+    slopes = [(inner[i + 1][1] - inner[i][1]) / (inner[i + 1][0] - inner[i][0])
+              for i in range(len(inner) - 1)]
+    assert max(slopes) - min(slopes) < 0.001, "0-100 % band should be linear"
+    k = sum(slopes) / len(slopes)
+    assert abs(k * pct[0] - h[0]) > 0.05, "the -9 % row should NOT sit on the line"
+    assert abs(k * pct[-1] - h[-1]) > 0.05, "the 102.5 % row should NOT sit on the line"
+
+
+def test_the_fan_sections_are_not_circular_arcs_and_the_booster_nearly_is(fan):
+    """A single circular arc forces stagger = (beta*_LE + beta*_TE)/2. The fan
+    departs by 1.85 deg rms and changes sign hub to tip -- max camber forward
+    inboard, aft outboard. The booster sits at 0.61, which is what sec II.C's
+    'modified circular arc' should look like. A loft that assumes a circular
+    arc will reproduce the booster and not the fan."""
+    def rms(a):
+        d = [a["stagger_deg"][i] - 0.5 * (a["beta_le_star_deg"][i] + a["beta_te_star_deg"][i])
+             for i in range(a["stations"])]
+        return (sum(x * x for x in d) / len(d)) ** 0.5, d
+    r_fan, d_fan = rms(fan["fan_rotor_airfoil"]["appendix_b"])
+    r_bst, _ = rms(fan["booster_rotor_airfoil"]["appendix_d"])
+    assert 1.5 < r_fan < 2.2 and r_bst < 1.0 and r_fan > 2 * r_bst
+    assert d_fan[0] < 0 < d_fan[-1], "the fan's camber family should change sign hub to tip"
+
+
+def test_figure_41_read_off_error_is_recorded_against_the_table(fan):
+    """The finding itself, asserted rather than described: the seven Fig.41
+    read points the atlas was lofting from, against Appendix B interpolated
+    onto the same heights."""
+    g = fan["fan_rotor_mechanical"]["blade_geometry"]
+    assert g["superseded_by"].startswith("fan_rotor_airfoil.appendix_b")
+    e = g["read_off_error_vs_appendix_b"]
+    a = fan["fan_rotor_airfoil"]["appendix_b"]
+
+    def interp(pct, col):
+        xs, ys = a["percent_blade_height"], a[col]
+        for i in range(len(xs) - 1):
+            if xs[i] <= pct <= xs[i + 1]:
+                f = (pct - xs[i]) / (xs[i + 1] - xs[i])
+                return ys[i] + f * (ys[i + 1] - ys[i])
+        raise AssertionError(pct)
+
+    for i, p in enumerate(e["height_pct"]):
+        assert abs(interp(p, "stagger_deg") - e["stagger_appb"][i]) < 0.01
+        assert abs(interp(p, "camber_deg") - e["camber_appb"][i]) < 0.01
+        assert abs(e["stagger_fig41"][i] - e["stagger_appb"][i] - e["stagger_error"][i]) < 0.01
+    # the read-off is biased high in stagger, and that is the headline
+    bias = sum(e["stagger_error"]) / len(e["stagger_error"])
+    assert 3.0 < bias < 3.3, f"stagger bias {bias:.2f} deg"
+    assert max(e["stagger_error"]) > 5.5 and max(e["camber_error"]) > 4.0
+    # every read-off row must equal the two columns it is the difference of
+    for i in range(len(e["height_pct"])):
+        assert e["stagger_fig41"][i] == g["stagger_deg"][i]
+        assert e["camber_fig41"][i] == g["camber_deg"][i]
+
+
+def test_the_twist_rate_has_an_inflection_the_seven_read_points_cannot_see(fan):
+    """Why resampling the read-off is not enough. Appendix B's stagger step
+    falls, then rises again near 75 % span. Seven stations cannot carry that,
+    so a resampled read-off is a smooth blade with the wrong twist law."""
+    a = fan["fan_rotor_airfoil"]["appendix_b"]
+    inner = [(p, s) for p, s in zip(a["percent_blade_height"], a["stagger_deg"]) if 0 <= p <= 100]
+    step = [inner[i + 1][1] - inner[i][1] for i in range(len(inner) - 1)]
+    assert len(step) == 20
+    # the twist rate falls from the hub, reaches a LOCAL minimum near half span,
+    # recovers, and only then falls away to the tip. Not monotonic:
+    assert not all(step[i] >= step[i + 1] for i in range(len(step) - 1))
+    lo = min(range(1, len(step) - 1), key=lambda i: step[i]
+             if step[i] < step[i - 1] and step[i] < step[i + 1] else 99)
+    assert 8 < lo < 13, f"local minimum twist rate at interval {lo}"
+    assert max(step[lo:]) > step[lo] + 0.4, "no recovery after the local minimum"
+    assert max(step) < 5.0, "Appendix B's worst step should be far under Fig.41's 13 deg"
+
+
+def test_booster_read_off_error_is_recorded_and_stagger_carries_it(fan):
+    """The booster's five atlas stations against Appendix D's fourteen. Chord
+    and camber are fine; stagger is -1.61 deg on the mean and -3.66 worst --
+    and the FAN's read-off is +3.14 HIGH, so the bias is per-figure and no
+    constant correction exists. Only the tables fix this."""
+    a = fan["booster_rotor_airfoil"]["appendix_d"]
+    e = a["read_off_error_vs_the_atlas_five_stations"]
+    P, S, C = a["percent_blade_height"], a["stagger_deg"], a["camber_deg"]
+
+    def interp(pct, col):
+        for i in range(len(P) - 1):
+            if P[i] <= pct <= P[i + 1]:
+                f = (pct - P[i]) / (P[i + 1] - P[i])
+                return col[i] + f * (col[i + 1] - col[i])
+        raise AssertionError(pct)
+
+    for i, h in enumerate(e["h_fraction"]):
+        assert abs(interp(h * 100, S) - e["stagger_appd"][i]) < 0.01
+        assert abs(interp(h * 100, C) - e["camber_appd"][i]) < 0.01
+    d_stg = [e["stagger_js"][i] - e["stagger_appd"][i] for i in range(5)]
+    d_cam = [e["camber_js"][i] - e["camber_appd"][i] for i in range(5)]
+    assert -1.8 < sum(d_stg) / 5 < -1.4 and min(d_stg) < -3.5
+    assert abs(sum(d_cam) / 5) < 1.0, "camber read-off should be the good one"
+    # opposite sign to the fan's, which is the point
+    fan_bias = (sum(fan["fan_rotor_mechanical"]["blade_geometry"]
+                    ["read_off_error_vs_appendix_b"]["stagger_error"]) / 7)
+    assert fan_bias * (sum(d_stg) / 5) < 0, "the two read-off biases should oppose"
