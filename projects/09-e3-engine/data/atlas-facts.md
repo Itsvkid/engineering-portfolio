@@ -15,7 +15,11 @@ NASA Lewis under NAS3-20643, 1978–83. Every number carries one of three tags:
 Report short names and PDF offsets (printed page + offset = PDF page):
 CR-168219 FPS final design (+14) · HPC detail design NTRS 19850002690 (+9) ·
 HPT CR-167955 (+9) · LPT NTRS 19850002686 (+13) · fan CR-165148 (+10) ·
-combustor CR-168301 (+15) · ICLS CR-168211 (+25) · controls CR-168017.
+combustor CR-168301 (+15) · ICLS CR-168211 (+25) · controls CR-168017 ·
+FPS preliminary analysis CR-159584 (**+11**) · preliminary design/trade
+studies CR-135444 (**−3**). The last two were added 2026-09-10: between them
+they hold the only installation dimensions and the only combustor length in
+the programme (§A8).
 
 Where a report prints a number two ways and they disagree, both are given
 and neither is "corrected". Where nothing is printed, it says so.
@@ -107,11 +111,20 @@ is 3–10 % wider than the flow needs; draw the walls, not the streamtube.
 | Comparators: ECCP/CF6-50 double annular 32.8 cm, QCSEE 17.8 cm; E³ "shorter and more compact than QCSEE" | | [E3: CR-168301 §3.1 pp.6–9] |
 | HPT vane-1 inlet radii (= combustor exit) | hub 31.5, tip 37.2 | [E3: CR-167955 Fig.3 p.9, read off, not dimensioned] |
 | HPC OGV exit radii (= diffuser inlet) | hub 27.36, tip 29.34 | [E3: HPC Table XXI] |
+| **Combustor length (Task III preliminary)** | **0.1778 m (7.0 in)**; L/dome height 3.0 outer, 3.3 inner; ref. velocity 16.76 m/s; 56 injectors (the FPS has 30) | [E3: CR-135444 Table 65 p.239] |
 
 For drawing: OGV TE → vane-1 inlet is the one core gap with **no printed
-length**. `[schematic]`: 45–55 cm (diffuser + dome + liner), scaled by eye
-from CR-168219 Fig.1 p.4 / Fig.22 p.59, which this project deliberately does
-not treat as a source. Label it as such on the page.
+length**. `[schematic]`: **24–30 cm** (prediffuser + dome + liner), built up
+from CR-135444 Table 65's printed 17.78 cm combustor length plus a "very
+short-length" prediffuser (CR-135444 p.237), and cross-checked at 26 cm on
+CR-159584 Fig.1 p.7 calibrated on Table I. **Corrected 2026-09-10 from a
+`[schematic]` 45–55 cm scaled by eye off CR-168219 Fig.1 p.4 / Fig.22 p.59** —
+a figure this project deliberately does not treat as a source, and the
+eyeballed value was roughly 2× the built-up one. Label it `[schematic]` on
+the page: the sum, not this term, is what the published 318.0 cm constrains
+(A7). Note the 17.78 cm is the *preliminary* design and CR-168301 §3.1
+pp.6–9 says the FPS combustor is shorter still than QCSEE's 17.8 cm, so treat
+it as an upper bound.
 
 ### A4. High-pressure turbine (datum: x = 0 at stage-1 vane inlet)
 
@@ -160,20 +173,124 @@ Table VII for that reason [derived, `data/engine-flowpath.yaml`].
 | Mixer | 18 scalloped lobes, matching centrebody corrugations | [E3: CR-168219 §5.8 p.102, Fig.39 p.103] |
 | Preliminary (Task III) mixer | 24 lobes, mixing-plane perimeter 16.26 m, mixing length 0.889 m, hydraulic dia 1.404 m, mixing-plane Mach 0.56 | [E3: CR-135444 pp.246–249] |
 | Nozzle | single converging–diverging, low area ratio, C_v 0.996; centre vent tube through the exit plane | [E3: CR-168219 §5.8 pp.101–102; Table XI p.34] |
+| **Exhaust nozzle diameter** | **159.0 cm (62.6 in)** | [E3: CR-159584 Table I p.6 — see A8] |
+| **Terminal boat-tail angle** | **11°**, afterbody R/D_max = 4.0 | [E3: CR-135444 p.250] |
 | Fan duct Mach | 0.40–0.45 | [E3: CR-168219 §5.8 p.101] |
-| Lobe geometry, nozzle throat radius, tailpipe length | **not dimensioned** | Figs.39–40 only |
+| Lobe geometry, tailpipe length | **not dimensioned** | Figs.39–40 only |
 
-### A7. The two open stitching offsets
+**Correction, 2026-09-10.** This block previously read "Lobe geometry,
+nozzle throat radius, tailpipe length — **not dimensioned** — Figs.39–40
+only". That was true of CR-168219 and false of the programme: the nozzle
+diameter is printed in CR-159584 Table I p.6. Only the lobe geometry and the
+tailpipe length remain genuinely unpublished. The published 159.0 cm is
+independently reproduced to **−0.3 %** by continuity on the published cycle
+(choked throat at max climb, NPR 2.49, gives r = 0.793 m against a printed
+0.795 m) — see A8.
 
-1. Fan stacking axis → HPC IGV LE: not in any transcribed table. `[schematic]`
-   110–150 cm (bypass OGV at 1.8–1.9 tip chords, inner OGV, transition duct,
-   No.1/2/3 bearing sump under the fan frame hub).
-2. HPC OGV TE → HPT vane-1 inlet: see A3, `[schematic]` 45–55 cm.
+### A7. The two open stitching offsets — now under a published constraint
+
+Neither offset is printed anywhere. What changed on 2026-09-10 is that they
+are no longer *free*: CR-159584 Table I p.6 prints a **turbomachinery length,
+fan front flange → LP turbine aft frame flange, of 318.0 cm (125.2 in)**, and
+every other length in the chain is published. The two offsets are therefore
+constrained to a **sum**, and only their split is open.
+
+```
+LPT R5 TE − fan front flange = 318.0 cm                     [E3: CR-159584 Table I p.6]
+  = (fan SA → HPC R1 LE) + HPC 78.2 + (OGV TE → vane 1) + HPT 20.0 + LPT 58.65
+⇒ offset 1 + offset 2 = 318.0 − 78.2 − 20.0 − 58.65 − |y_fan-front-flange|
+                      ≈ 128.7 cm   with the fan front flange at −32.5 cm
+```
+
+1. **Fan stacking axis → HPC rotor-1 LE.** `[schematic]` **100–112 cm**,
+   best estimate **104**. *Was recorded as 110–150 cm; that range is wrong and
+   its floor excludes the answer.* Basis: CR-159584 Fig.1 p.7 read at a scale
+   calibrated on Table I gives **106 ± 7 cm**, and the 318.0 cm closure gives
+   129 cm less offset 2.
+2. **HPC OGV TE → HPT vane-1 inlet.** `[schematic]` **24–30 cm**, best
+   estimate **25**. *Was recorded as 45–55 cm; that range is wrong by roughly
+   a factor of two.* Basis: CR-135444 Table 65 p.239 prints an E³
+   double-annular **combustor length of 17.78 cm (7.0 in)** and CR-135444
+   p.237 calls the prediffuser "a very short-length design"; Fig.1 read gives
+   **26 cm**. The comparator line in A3 already carried the shape of this —
+   QCSEE at 17.8 cm, CF6-50 at 32.8 — and it was not connected to the offset.
 
 Everything else chains: fan → (offset 1) → HPC 0…78.2 → (offset 2) → HPT
-0…20 → LPT 6.85…58.65 → rear frame → mixer. A published overall engine
-length does not exist in the transcribed data; the nacelle GA (Fig.40 p.106)
-is undimensioned.
+0…20 → LPT 6.85…58.65 → rear frame → mixer.
+
+**Not yet applied.** `app/turbofan/atlas/flowpath.js` and
+`data/engine-flowpath.yaml` still carry 142 and 48 cm. Changing them moves
+every blade row and every whole-engine artefact (the meridional plot, the
+glTF export, the drawing pack's stations 4 and 45), so it is a deliberate
+separate change with the 318.0 cm closure as its test. The ranges in
+`engine-flowpath.yaml` have been corrected; the values have not.
+
+### A8. Installation and nacelle dimensions — the table that was there all along
+
+**How this was missed, and the rule it produces.** From the sheet's first
+draft until 2026-09-10 this file said, in two places, that the E³ nacelle is
+undimensioned and that no published overall engine length exists. Both
+statements were true **of CR-168219**, which is the sheet's primary source and
+does not dimension Fig.40. Neither was true of the programme.
+`sources/e3-fps-preliminary-analysis-CR-159584.pdf` has held a seven-row
+installation dimension table since `fetch-sources.sh` first ran, and
+`REFERENCES.md` described that report only as "The FPS as first laid out".
+**A stated absence of data had been promoted from a fact about one report into
+a fact about the engine.** The rule: *"not published" is a claim about the
+whole source list, so it may only be written after the whole source list has
+been looked at — otherwise write "not in CR-XXXXX".*
+
+Report offsets for this section: **CR-159584 +11** (printed 6 → PDF 17),
+**CR-135444 −3** (printed 239 → PDF 236).
+
+| Quantity | Value | Provenance |
+|---|---|---|
+| TO thrust, SLS | 162.4 kN (36,500 lb) — the earlier FPS rating; the final is 173.5 kN | [E3: CR-159584 Table I p.6] |
+| Fan diameter | 210.8 cm (83.0 in) | same; agrees with CR-168219 §4.3 p.32 |
+| **Max nacelle diameter** | **248.9 cm (98.0 in)** — D_max/D_fan = **1.181** | same |
+| **Inlet length from fan face** | **159.0 cm (62.6 in)** | same |
+| **Turbomachinery length**, fan front flange → LP turbine aft frame flange | **318.0 cm (125.2 in)** | same |
+| **Overall nacelle length** | **603.3 cm (237.5 in)** — L/D_max = **2.42** | same |
+| **Exhaust nozzle diameter** | **159.0 cm (62.6 in)** | same |
+| **Highlight / max diameter** | **D_HL/D_max = 0.86**, "the nacelle is slender, relative to current practice" | [E3: CR-159584 p.6 text] |
+| D_max (Task III preliminary) | 2.446 m (96.3 in), D_HL/D_max = 0.88 ("the CF6/DC10 has 0.83") | [E3: CR-135444 p.250] |
+| **Station of max diameter** | **X = 0.978 m (38.5 in) aft of the hilite, X/D_max = 0.40**, chosen to avoid inlet drag rise at A0/A_max = 0.58 cruise; inlet drag-rise design Mach 0.87 | same |
+| **Terminal boat-tail angle** | **11°**, afterbody R/D_max = 4.0; afterbody length set by the 65 % mixing-effectiveness target | same |
+| Isolated nacelle drag (Task III) | friction 126.10 kg (278 lb) + pressure 65.7 kg (145 lb) = 191.8 kg (423 lb) | same |
+| Installed drag claim | 0.6 % cruise drag reduction and 15–20 % installation weight saving vs the CF6-50C nacelle baseline | [E3: CR-168219 §5.9 p.105] |
+| **Lobe geometry, tailpipe length, nacelle contour between the anchors** | **still not dimensioned anywhere** | — |
+
+**Cross-checks — the two reports and the drawing agree.** D_max 248.9 against
+CR-135444's 244.6 cm, **1.8 %**. D_HL/D_max 0.86 against 0.88. And CR-159584
+**Fig.1 p.7** — a clean installed cutaway, much more legible than CR-168219
+Fig.1 or Fig.40 — reproduces the table six ways when its outer mould line is
+extracted numerically and calibrated on Table I: D_HL/D_max −2 %, nozzle
+diameter +3.0 %, overall length +1.4 %, fan tip diameter −3 %, X/D_max 0.405
+against 0.40, terminal boat-tail 10.4° against 11°. Its axial and radial
+scales differ by 3 % (an anisotropic scan of a rotated page), so use
+s_x ≈ 0.00199 and s_y ≈ 0.00205 m/px at 400 dpi, not one scale.
+
+**And a seventh check that owes nothing to any drawing.** Continuity on the
+published cycle at max climb (fan corrected flow 646.0 kg/s, BPR 6.7,
+Table XI component performance, Table XXIII mixer loss 0.57 %) gives a mixed
+stream of 244.2 kg/s at T 368.6 K and P 59.4 kPa, NPR 2.49 — choked, which is
+why §5.8 specifies a C-D nozzle — hence A\* = 1.951 m² and **r = 0.793 m,
+diameter 1.586 m against the printed 1.590 m, −0.3 %**. The same chain returns
+41.5 kN of max-climb net thrust, 23.9 % of SLTO, which is the right ratio for
+a high-bypass at M 0.8 / 10.7 km, so the mass flow behind the area is right
+too. `[derived]`
+
+Two rows of Table I print the identical **159.0 cm**. That was treated as a
+suspected transcription slip and both were checked separately — the nozzle by
+continuity above, the inlet length against Fig.1 at 1.55 m — so it is a
+coincidence, not a slip.
+
+**For the page.** The four forward-half numbers are applied and tagged `[E3]`:
+inlet length 1.590 m, highlight diameter 2.141 m (= 0.86 D_max), max nacelle
+diameter 2.489 m, X/D_max 0.40. The overall length 6.033 m, the nozzle
+diameter 1.590 m and the 11° boat-tail **wait on the A7 core-length
+correction**, because they fix the aft end of a body whose aft end has not
+moved yet.
 
 ---
 
@@ -524,7 +641,7 @@ guide vane row.
 | LPT casing | two Inco 718 forgings, one EB weld, no horizontal flanges; 132 × 5/16-in bolts to the HPT casing (sized for axial containment of the LPT rotor on a shaft failure), 120 to the rear frame; wall insulation; containment 0.203 cm combined wall vs 2.7–5.6 kN·m single-blade energies | core backbone | [E3: LPT §4.3.3–4.3.4 pp.128–133] |
 | Turbine rear frame | see D11; carries No.5, mixer, centrebody, aft mounts | LPT loads + aft engine weight → aft links | [E3: CR-168219 §5.6] |
 | Pressure bulkhead / fire wall | six-sector, at the HPT | pressure boundary, not primary load | [E3: CR-168219 §5.7.4 p.100] |
-| Nacelle | composite inlet and aft cowl, slim lines, core-mounted accessories; hinged reverser halves and core cowl panels swing up for access | — | [E3: CR-168219 §5.9 pp.102–105, Fig.40 p.106] |
+| Nacelle | composite inlet and aft cowl, slim lines, core-mounted accessories; hinged reverser halves and core cowl panels swing up for access. **Dimensioned in A8**: max diameter 248.9 cm, overall length 603.3 cm, inlet length 159.0 cm from the fan face, D_HL/D_max 0.86, max diameter at X/D_max 0.40, 11° terminal boat-tail | — | [E3: CR-168219 §5.9 pp.102–105, Fig.40 p.106; **CR-159584 Table I p.6 and Fig.1 p.7; CR-135444 p.250** — see A8] |
 | Accessory gearbox | core-compartment mounted (chosen over fan-case and pylon: 0 kg vs +34 / +22.7 kg, sfc 0 vs +0.65 / −0.1 %); radial drive of two splined shafts with a midspan bearing from the PTO; pads for lube & scavenge pump, air starter(s), control alternator, VSCF generator, hydraulic pumps, fuel pump & control; max starter torque 1,084.6 N·m; ICLS accessory power 53.69 kW | — | [E3: CR-168219 §5.9.3 p.114, Tables XXIV–XXV pp.115–116, Fig.46 p.117; CR-168211 p.132] |
 
 Mass by module [E3: CR-168219 Table XXVI p.140], kg: fan & booster 1,103

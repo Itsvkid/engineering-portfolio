@@ -90,7 +90,15 @@ whole_engine_stitching:
   status: open
   known_offsets: [HPT exit plane to LPT sections (the LPT datum), HPT Fig 3 within itself]
   unknown_offsets: [fan stacking axis to HPC IGV, HPC OGV exit to HPT vane-1 inlet]
-  plan: Stage H sets the two unknown offsets from the bearing spans and frame positions of CR-168219 with a stated uncertainty, and records them here with their source
+  plan: >
+    SUPERSEDED 2026-09-10. The original plan was for Stage H to set the two unknown
+    offsets from the bearing spans and frame positions of CR-168219's undimensioned
+    cross-section. That is no longer the best available method: CR-159584 Table I p.6
+    prints a turbomachinery length of 318.0 cm, which constrains their sum directly,
+    and CR-135444 Table 65 p.239 prints a combustor length, which builds up the second
+    of them. Stage H's job is now to APPLY the closure recorded under
+    assumed_offsets.closure_against_published_turbomachinery_length, in one change
+    across every consumer, and to check it.
   assumed_offsets:
     src: >
       Placed by the bearing spans and frame positions of CR-168219's whole-engine
@@ -101,15 +109,78 @@ whole_engine_stitching:
       back-sourced from app/turbofan/atlas/flowpath.js, which had carried them since
       2026-09-07 without a home in data/.
     status: assumed
+    ranges_corrected: >
+      2026-09-10. Both ranges below were WRONG and both excluded the answer: they read
+      [110, 150] and [45, 55] cm, and the evidence now puts the values at roughly 104 and
+      25. The offsets themselves are UNCHANGED and still carry the old values, because
+      moving them moves every blade row and every whole-engine artefact downstream of
+      unit J1. The corrected ranges and the closure test below are recorded so that work
+      has its test ready before it starts. See atlas-facts.md A7 and A8.
     fan_sa_to_hpc_r1_le:
       value_cm: 142.0
-      range_cm: [110.0, 150.0]
+      value_status: stale — retained until the closure below is applied as one change
+      range_cm: [100.0, 112.0]
+      range_was_cm: [110.0, 150.0]
+      best_estimate_cm: 104.0
+      range_basis: >
+        CR-159584 Fig 1 p.7, read numerically at a scale calibrated on that report's own
+        Table I p.6, gives 106 +- 7 cm. The 318.0 cm published turbomachinery length then
+        constrains this plus hpc_ogv_te_to_hpt_vane1 to about 128.7 cm in total (see
+        closure_against_published_turbomachinery_length), which with a 25 cm combustor
+        section leaves about 104. The old 110-150 cm range was placed by bearing spans and
+        frame positions off CR-168219's undimensioned cross-section, and its floor sits
+        above the answer.
       note: fan rotor stacking axis (fan report Fig 15 datum) to HPC rotor-1 LE hub (HPC report z = 0)
     hpc_ogv_te_to_hpt_vane1:
       value_cm: 48.0
-      range_cm: [45.0, 55.0]
+      value_status: stale — retained until the closure below is applied as one change
+      range_cm: [24.0, 30.0]
+      range_was_cm: [45.0, 55.0]
+      best_estimate_cm: 25.0
+      range_basis: >
+        Built up rather than eyeballed. CR-135444 Table 65 p.239 prints an E3
+        double-annular COMBUSTOR LENGTH of 17.78 cm (7.0 in), and p.237 calls the
+        prediffuser 'a very short-length design'; CR-159584 Fig 1 read at the calibrated
+        scale gives 25.9 cm for the whole OGV-TE-to-vane-1 span. The old 45-55 cm was
+        scaled by eye off CR-168219 Fig 1 p.4 / Fig 22 p.59 — figures this project
+        deliberately does not treat as sources — and is roughly 2x the built-up value.
+        CR-168301 sec 3.1 says the hardware combustor is shorter still than QCSEE's
+        17.8 cm, so 17.78 is an upper bound on the liner term.
       note: >
         HPC OGV trailing edge to HPT stage-1 vane inlet, spanning the diffuser and the
         double-annular combustor. The combustor's own axial coordinates are undimensioned
-        in Figs 1, 22 and 79, which is why this cannot be built up from its parts.
+        in Figs 1, 22 and 79, which is why this cannot be built up from its own drawing —
+        but it CAN be built up from CR-135444's printed liner length, which is what the
+        corrected range does.
+    closure_against_published_turbomachinery_length:
+      status: PENDING — the test exists, the change has not been made
+      src: "CR-159584 Table I p.6: turbomachinery length, fan front flange to LP turbine aft frame flange = 318.0 cm (125.2 in)"
+      definition_check: >
+        Measured on CR-159584 Fig 1, the printed 318.0 cm runs to the LPT CASING's aft
+        flange at the R5 exit plane (3.21 m read), not to the aft face of the turbine rear
+        frame (3.69 m read). It excludes the rear frame and the mixer. Get this wrong and
+        the test is 50 cm out.
+      identity: >
+        LPT_R5_TE - y_fan_front_flange
+          = fan_sa_to_hpc_r1_le + HPC(78.2) + hpc_ogv_te_to_hpt_vane1 + HPT(20.0) + LPT(58.65)
+        with HPC, HPT and LPT lengths all published (hpc-flowpath.csv, HPT Fig 3,
+        lpt-flowpath.csv). Only the two assumed offsets are free, so the published
+        318.0 cm constrains their SUM and leaves only the split open.
+      required_sum_cm: 128.7
+      required_sum_basis: 318.0 - 78.2 - 20.0 - 58.65 - 32.5, with the fan front flange at y = -32.5 cm
+      fan_front_flange_cm: -32.5
+      fan_front_flange_status: assumed — app/turbofan/atlas/parts-core.js fan-case shell; the required sum moves 1:1 with it
+      current_sum_cm: 190.0        # 142.0 + 48.0
+      excess_cm: 61.3
+      independent_read_sum_cm: 132.0   # 106 + 25.9 from CR-159584 Fig 1, agrees with 128.7 to 2.6 %
+      when_applied_check:
+        - fan_sa_to_hpc_r1_le + hpc_ogv_te_to_hpt_vane1 == 128.7 +- 4 cm
+        - every consumer below re-runs and produces one axial layout, not two
+      consequences_of_applying: >
+        Moves every blade row, the meridional plot (unit J1), the glTF export (unit J3),
+        the site cutaway (unit J7) and the drawing pack's stations 4 and 45 (unit J5
+        finding 166, which are parenthesised precisely because they inherit this offset).
+        It also unblocks the three aft-end nacelle numbers held back from the atlas —
+        overall nacelle length 603.3 cm, exhaust nozzle diameter 159.0 cm and the 11 deg
+        terminal boat-tail — which fix the aft end of a body whose aft end has not moved.
     consumers: [app/turbofan/atlas/flowpath.js (HPC0, HPT0), solvers/publication/meridional.py (unit J1)]

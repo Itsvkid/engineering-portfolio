@@ -481,6 +481,36 @@ combustor:
   test_hours: {rig: 320, core_and_icls_engine: 109}
   test_hours_src: "sec 5.3.3 p.62"
 
+  # The only printed axial dimension of an E3 combustor anywhere in the reports.
+  # Found 2026-09-10 with the nacelle dimensions; it is what turns the
+  # HPC-OGV-to-HPT-vane-1 stitching offset from a guess into a build-up.
+  aerodynamic_design_parameters_task3:
+    src: "CR-135444 Table 65 p.239 (PDF p.236; report offset -3), Task III preliminary design"
+    basis: E3 double annular vs the ECCP CF6-50 double annular, side by side
+    e3:
+      combustor_length_m: 0.1778        # 7.0 in
+      outer_dome_height_m: 0.061        # 2.4 in
+      inner_dome_height_m: 0.0567       # 2.2 in
+      length_over_dome_height: {outer: 3.0, inner: 3.3}
+      fuel_injectors: 56                # the FPS has 30 nozzles / 60 cups
+      reference_velocity_m_s: 16.76
+      space_rate_W_per_m3_atm_x1e6: 82.7
+      dome_velocity_m_s: {outer: 5.49, inner: 19.51}
+      passage_velocity_m_s: {outer: 42.67, inner: 42.67}
+    cf6_50_double_annular:
+      combustor_length_m: 0.328         # 12.9 in
+      outer_dome_height_m: 0.069
+      inner_dome_height_m: 0.061
+      length_over_dome_height: {outer: 4.8, inner: 5.4}
+      fuel_injectors: 60
+      reference_velocity_m_s: 22.86
+    design_intent_quote: "CR-135444 p.237: 'The double-annular combustion system design selected for the E3 is a compact design with a very short overall length. The combustor inlet diffuser, with an annular splitter vane, is a very short-length design and the combustor liner has a short length with relatively large dome heights.'"
+    treat_as_upper_bound: >
+      This is the Task III preliminary combustor. CR-168301 sec 3.1 pp.6-9 says the
+      hardware combustor is shorter still than QCSEE's 17.8 cm, so 17.78 cm is an upper
+      bound on the final liner length, not the final value. Used that way in
+      atlas-facts.md A3 and A7.
+
 # ─────────────────────────────────────────────────────────────────────────
 # HIGH PRESSURE TURBINE
 # ─────────────────────────────────────────────────────────────────────────
@@ -702,7 +732,158 @@ nacelle:
   containment: Kevlar
   reverser: contained entirely in the nacelle outer wall, no bifurcation
   exhaust_duct: long duct, mixed flow
-  general_arrangement: "Fig.40 p.106 — not yet digitised"
+  general_arrangement: "CR-168219 Fig.40 p.106 is undimensioned; the dimensions are in CR-159584 — see installation_dimensions below"
+
+  architecture_quotes:
+    src: "CR-168219 sec 5.8 p.101, sec 5.9 p.102"
+    full_length_duct: "'THE FPS uses a full length exhaust duct. The mixer combines the fan and core streams prior to being discharged through a single exhaust nozzle.' (sec 5.8 p.101)"
+    long_duct_mixed_flow: "'A long-duct, mixed-flow exhaust system to enhance propulsive efficiency, achieving a higher level of engine performance with a smaller fan and low pressure turbine than would be required for a comparable separate-flow system.' (sec 5.9 p.102, nacelle design bullet 4)"
+    contrast_with_separate_flow: "'Typical Mach numbers for separate flow nacelle fan ducts range from 0.45 to 0.50, whereas the E3 fan duct ranges from 0.40 to 0.45.' (sec 5.8 p.101)"
+    reverser_consequence: "'A reverser contained entirely in the outer wall of the nacelle, without need for bifurcation and cross-duct linkage' (sec 5.9 p.102); CR-159584 p.6: the long-duct mixed-flow installation 'eliminates the need for a core thrust reverser'"
+    note: >
+      Recorded verbatim because the installed architecture is the one thing about this
+      engine's outer mould line that a reader is most likely to get wrong from memory:
+      the E3 is a long-duct mixed-flow installation (RB211-535E4 / CFM56-5C family in
+      silhouette), NOT a separate-flow short cowl. The tube-like external shape is correct.
+
+  # ─────────────────────────────────────────────────────────────────────
+  # THE ONLY INSTALLATION DIMENSION TABLE IN THE PROGRAMME.
+  # Found 2026-09-10, in a report that had been in sources/ since the first
+  # fetch and was described in REFERENCES.md only as "the FPS as first laid
+  # out". Until then atlas-facts.md A6/A7 stated that the FPS nacelle is
+  # undimensioned and that no published overall engine length exists -- true
+  # of CR-168219, false of the programme. See atlas-facts.md A8.
+  # ─────────────────────────────────────────────────────────────────────
+  installation_dimensions:
+    src: "CR-159584 Table I p.6 (PDF p.17; report offset +11), 'E3 Flight Propulsion System Status - Engine and Nacelle Dimensions'"
+    rating_note: >
+      This table belongs to the earlier 162.4 kN (36,500 lb) FPS rating, not the final
+      173.5 kN of CR-168219 sec 4.3 p.32. The fan diameter is identical (210.8 cm) in
+      both, so the installation scale is the same engine.
+    takeoff_thrust_sls_kN: 162.4
+    takeoff_thrust_sls_lbf: 36500
+    fan_diameter_cm: 210.8
+    fan_diameter_in: 83.0
+    max_nacelle_diameter_cm: 248.9
+    max_nacelle_diameter_in: 98.0
+    inlet_length_from_fan_face_cm: 159.0
+    inlet_length_from_fan_face_in: 62.6
+    turbomachinery_length_cm: 318.0
+    turbomachinery_length_in: 125.2
+    turbomachinery_length_definition: >
+      Fan front flange to LP turbine aft frame flange, as printed. Measured on
+      CR-159584 Fig.1 this runs to the LPT CASING's aft flange at the R5 exit plane
+      (3.21 m read), not to the aft face of the turbine rear frame (3.69 m read) --
+      i.e. the 318.0 cm excludes the rear frame and the mixer.
+    overall_nacelle_length_cm: 603.3
+    overall_nacelle_length_in: 237.5
+    exhaust_nozzle_diameter_cm: 159.0
+    exhaust_nozzle_diameter_in: 62.6
+    highlight_over_max_diameter: 0.86
+    highlight_quote: "'The nacelle is slender, relative to current practice, with a highlight diameter to maximum diameter ratio of 0.86.' (CR-159584 p.6)"
+    derived_ratios:
+      max_diameter_over_fan_diameter: 1.181
+      overall_length_over_max_diameter: 2.42
+      inlet_length_over_fan_diameter: 0.754
+      fan_face_position_along_nacelle: 0.264   # 159.0 / 603.3
+      highlight_diameter_cm: 214.1             # 0.86 x 248.9
+      nozzle_diameter_over_fan_diameter: 0.754
+    two_rows_print_the_same_number: >
+      Inlet length and exhaust nozzle diameter both print 159.0 cm (62.6 in). Treated as
+      a suspected transcription slip and each checked independently -- the nozzle by
+      continuity (below, -0.3 %) and the inlet against Fig.1 (1.55 m read, -2.4 %).
+      Both stand. It is a coincidence, not a slip.
+
+  installation_dimensions_preliminary:
+    src: "CR-135444 p.250 (PDF p.247; report offset -3), Task III preliminary design"
+    max_nacelle_diameter_m: 2.446
+    max_nacelle_diameter_in: 96.3
+    highlight_over_max_diameter: 0.88
+    highlight_ratio_quote: "'The DHL/DMAX was chosen as 0.88 to minimize the nacelle maximum diameter (the CF6/DC10 has a DHL/DMAX = 0.83) and thus minimize the maximum cross sectional area and the resultant nacelle pressure drag.'"
+    max_diameter_station_m: 0.978     # 38.5 in aft of the hilite
+    max_diameter_station_over_Dmax: 0.40
+    max_diameter_station_reason: "'chosen to avoid inlet drag rise for the A0/AMAX = 0.58 at cruise. (Inlet drag rise design Mach number was 0.87.)'"
+    inlet_A0_over_Amax_cruise: 0.58
+    inlet_drag_rise_design_mach: 0.87
+    afterbody_R_over_Dmax: 4.0
+    terminal_boattail_angle_deg: 11
+    afterbody_quote: "'The afterbody was designed with a R/DMAX = 4.0 and maintained a terminal boattail angle of 11 deg. This was an optimization of the external drag at cruise and Mach number (losses) in the mixing region. The afterbody length was set to obtain the 65% mixing effectiveness noted in the previous mixer design section.'"
+    isolated_nacelle_drag_kg: {friction: 126.10, pressure: 65.7, total: 191.8}
+    isolated_nacelle_drag_lb: {friction: 278, pressure: 145, total: 423}
+    drag_method: "flat-plate skin friction with a supervelocity correction and a 1.05 roughness multiplier for steps, gaps and undefined protuberances; GE 'EXT Drag' program; isolated nacelle pressure drag from an L/D_eq vs C_Dpi correlation curve; interference drag booked separately"
+    agreement_with_final: "D_max 244.6 vs CR-159584's 248.9 cm = 1.8 %; D_HL/D_max 0.88 vs 0.86. Two independent routes to the same nacelle."
+
+  installed_drag_claim:
+    src: "CR-168219 sec 5.9 p.105"
+    quote: "'The aggressive use of advanced structural design and low drag aerodynamics is estimated to contribute a 0.6% cruise drag reduction and a 15% to 20% installation weight saving relative to the current technology of the CF6-50C nacelle that was the E3 program baseline.'"
+    note: >
+      Worth keeping next to the diameter ratio: D_max/D_fan = 1.181 here against roughly
+      1.23 for the CF6-50C nacelle this claim is measured against. A reconstruction drawn
+      at 1.23 is drawing the baseline, not the E3.
+
+  general_arrangement_figure:
+    src: "CR-159584 Fig.1 p.7 (installed FPS features) and Fig.2 p.8 (uninstalled)"
+    status: "read numerically for this project 2026-09-10; NOT a source in its own right -- every number above is from a table, and the figure is used only to check them"
+    method: >
+      Rendered at 400 dpi, rotated, outer mould line taken per column as the smaller of the
+      upper and lower outermost-ink radius (which rejects leader lines), median filtered,
+      then calibrated on CR-159584 Table I. The axial and radial scales differ by 3 %,
+      an anisotropic scan of a rotated page: use s_x = 0.00199 and s_y = 0.00205 m/px,
+      not one scale.
+    checks_against_the_tables:
+      highlight_over_max_diameter_pct: -2
+      exhaust_nozzle_diameter_pct: 3.0
+      overall_nacelle_length_pct: 1.4
+      fan_tip_diameter_pct: -3
+      max_diameter_station_over_Dmax: 0.405   # printed 0.40
+      terminal_boattail_angle_deg: 10.4       # printed 11
+      hpt_axial_length_m: 0.199               # HPT Fig.3 prints 0.200
+      hpc_igv_le_to_ogv_te_m: 0.857           # hpc-flowpath.csv gives 0.8585
+    reads_for_the_open_offsets:
+      fan_sa_to_hpc_r1_le_m: 1.06             # +-0.07; see engine-flowpath.yaml
+      hpc_ogv_te_to_hpt_vane1_m: 0.259
+      core_cowl_radius_over_turbine_m: 0.66   # +-0.02, essentially constant
+      fan_duct_outer_radius_m: [1.04, 1.08]
+      mid_body_is_nearly_cylindrical: "r 1.245 m at 1.0 m aft of the hilite to about 1.22 m at 3.3 m -- a 2 % drop over 2.3 m"
+
+  nozzle_area_by_continuity:
+    src: derived
+    method: >
+      Max climb (10.67 km, M0.8, ISA+10). Fan corrected flow 646.0 kg/s at the cycle match
+      point, BPR 6.7, component performance from Table XI, mixer loss 0.57 % from Table
+      XXIII. Mixed stream 244.2 kg/s at T0 368.6 K and P0 59.4 kPa; NPR 2.49 against
+      23.8 kPa ambient, so the throat is CHOKED -- which is why sec 5.8 specifies a
+      converging-diverging nozzle. A* = W sqrt(T0) / (P0 F(1)) with F(1) = 0.04044.
+    throat_area_m2: 1.951
+    throat_radius_m: 0.793
+    throat_diameter_m: 1.586
+    published_diameter_m: 1.590
+    agreement_pct: -0.3
+    supporting_check: "the same chain returns 41.5 kN of max-climb net thrust, 23.9 % of the 173.5 kN SLTO, the right ratio for a high-bypass at M0.8 / 10.7 km -- so the mass flow behind the area is right too"
+    note: >
+      A 1979 status table and a 2026 continuity solve on the published cycle, agreeing to
+      three parts in a thousand. This is the check that retires any doubt about the 159.0 cm.
+
+  bypass_duct_area_by_continuity:
+    src: derived
+    method: "same design point; bypass 212.0 kg/s at T0 304.2 K, P0 60.3 kPa, against the published fan duct Mach band 0.40-0.45 (CR-168219 sec 5.8 p.101)"
+    required_annulus_area_m2: [2.20, 2.41]    # 2.20 at M 0.45, 2.41 at M 0.40
+    note: >
+      The area a drawn bypass duct must have if it is to pass the ~87 % of fan flow the
+      published BPR gives it at the published duct Mach. Recorded because it is the only
+      quantitative test of a bypass-duct height that this project can make from published
+      data, and it is a test any reconstruction of the OML should be made to pass.
+
+  hpt_axial_widths_from_solidity:
+    src: derived from "HPT report Table IV p.12 (axial-width solidity AW/t) x pitch from the published counts and Fig.3 p.9 radii"
+    method: "AW = (AW/t) x 2*pi*r_pitch / N; chord follows from AW/cos(stagger)"
+    row:            [stage1_vane, stage1_blade, stage2_vane, stage2_blade]
+    solidity_AW_t:  [0.71,        0.96,         1.07,        1.06]
+    axial_width_cm: [3.33,        2.75,         4.83,        3.30]
+    note: >
+      Recorded because the HPT airfoil coordinates were never published (unit 14) and the
+      axial widths were therefore being ASSUMED by anything that drew the row -- yet they
+      follow from two printed columns. Sum 14.2 cm inside the 20.0 cm the flowpath allows.
 
 # ─────────────────────────────────────────────────────────────────────────
 # MASS.  Module-level, which is far more useful than a total.

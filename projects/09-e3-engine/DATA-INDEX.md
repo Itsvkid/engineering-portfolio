@@ -8,9 +8,16 @@ Status key — **T** transcribed into the YAML with a `src:` · **L** located
 (report, table/figure, page) but not yet transcribed · **D** must be
 digitised off a figure, not a table · **—** not published in the E³ reports.
 
-All seven source documents are on disk under `sources/` via
+All source documents are on disk under `sources/` via
 `./fetch-sources.sh`. Report page numbers are the printed ones; add the
 front-matter offset (given per report below) to get the PDF page.
+
+**A “—” in the Status column means *not published in the E³ reports* — all of
+them, not just CR-168219.** That distinction cost this project two real
+quantities: the nacelle dimensions and the combustor length were both marked
+absent while sitting in CR-159584 and CR-135444, which had been on disk from
+the first fetch. If only the primary source has been searched, the honest
+status is **L** against that report, not **—**.
 
 | Report | PDF offset | On disk as |
 |---|---|---|
@@ -22,6 +29,8 @@ front-matter offset (given per report below) to get the PDF page.
 | Combustor CR-168301 | +15 (design sections); +37 in the test section from about p.380 (plates) | `e3-combustor-hardware-design.pdf` |
 | ICLS CR-168211 | +25 | `e3-icls-design-and-performance-CR-168211.pdf` |
 | HPT cooling model CR-165374 (P&W) | +5 | `e3-hp-turbine-cooling-model.pdf` |
+| **FPS preliminary analysis CR-159584** | **+11** | `e3-fps-preliminary-analysis-CR-159584.pdf` |
+| **Preliminary design / trade studies CR-135444** | **−3** | `e3-preliminary-design-CR-135444.pdf` |
 
 ---
 
@@ -112,7 +121,7 @@ front-matter offset (given per report below) to get the PDF page.
 | **HPT blades and stator — stage-1 blade transient LCF (Figs 77–79, 414 MPa range, 26,000 cycles), Campbell (Fig 80: 46/23/48/24/30/72 per rev), platform damper, dovetail (Fig 81); stage-2 blade mission (Table XXI), rupture map (Fig 84), Campbell (Fig 85), damper, three-tang dovetail (Fig 87); rotor dynamics (Table XXII, Fig 88); bolts (Figs 89–91); casing LCF map (Fig 93), nozzle support (Fig 94), inducer seal (Figs 95–96), stage-1 nozzle (Figs 97–101), stage-2 nozzle (Figs 102–105)** — `data/hpt-mechanical.yaml` | **T** | CR-167955 §5.2.1.9–5.2.2, pp.130–170 |
 | **HPT mechanical — configuration (Fig 50), Table XV lives, materials (Figs 51–52, Table XVI), Table XVII methods, Table XVIII flight times, Fig 54 rotor temperatures (17 locations × 3 times), Fig 55 CLASS/MASS stresses (19 × 3), forward shaft, inducer disk, impeller (Fig 60), stage-1 disk (Figs 61–64), interstage seal disk (Fig 65), retainers (Figs 66–68), stage-2 disk (Figs 69–71), aft shaft (Fig 72), stage-1 blade mission (Tables XIX–XX, Fig 74)** — `data/hpt-mechanical.yaml` | **T** | CR-167955 §5.1–5.2.1.9, pp.86–130 |
 | **LPT clearances and weights: out-of-round stage 1 (Table XVIII, 3 conditions × 4 clock positions), combined clearance (Table XIX), summary (Table XX: 0.010 cm new, goal 0.038), Fig 92 relative diameters, manifold tube sizes; Table XXI weights (rotor 254.4, stator 250.4, total 504.8 kg)** — `data/lpt-design.yaml` | **T** | LPT report §4.4.4–4.5, pp.136–142 |
-| **Flowpaths derived from the tables** — `data/lpt-flowpath.csv` (hub/tip at every row's LE and TE from the airfoil sections, z from the HPT exit plane), `data/hpc-flowpath.csv` (Table XXI streamlines 1 and 12 at every row's inlet and exit), both rebuilt by `tools/build_flowpaths.py`; `data/engine-flowpath.yaml` maps every component's datum, its radii and the two stitching offsets no source gives | **D→T** | derived; A3 |
+| **Flowpaths derived from the tables** — `data/lpt-flowpath.csv` (hub/tip at every row's LE and TE from the airfoil sections, z from the HPT exit plane), `data/hpc-flowpath.csv` (Table XXI streamlines 1 and 12 at every row's inlet and exit), both rebuilt by `tools/build_flowpaths.py`; `data/engine-flowpath.yaml` maps every component's datum, its radii and the two stitching offsets no source gives | **D→T** | derived; A3. **Constrained since 2026-09-10**: no source gives either offset, but CR-159584 Table I p.6's 318.0 cm turbomachinery length fixes their SUM at ≈128.7 cm, so only the split is open. The corrected ranges and the closure test are recorded in `engine-flowpath.yaml`; the values are still the stale 142/48 cm pending a single change across every consumer |
 | **LPT airfoil coordinates** — all ten rows at 10/50/90 % span, suction and pressure surfaces, 48 points each, (Z, R, Rθ) in inches: 30 sections, 2,879 triples in `data/lpt-airfoils/*.csv` (one illegible row omitted and noted; one ambiguous digit noted). Every section checked by `tools/lpt_airfoil_check.py` (monotonic Z after the nose, one-way R, quadratic smoothness of R and Rθ in Z, shared leading edge, closing trailing edge) and by `tests/test_lpt_airfoils.py` against Fig 52's chords, Table VII's radii, gas-path order and stagger sense | **T** | LPT report appendix pp.144–173 |
 | **LPT mean-line at pitch** — `solvers/meanline/lpt.py`, `figures/lpt-vector-diagrams.png`: five stages from the max-climb state at 3,539 rpm, Δh and α₂ from Table II, radii from the sections; Mach numbers, exit angles and loading on Table II, 28 of 50 quantities in band. Findings: Table II's stator-exit column is at the stator TE (annulus 5–10 % under the rotor LE); its φ and reaction columns are not the kinematics of its own angles (1.43 / 0.52 vs 1.25 / 0.305 on stage 1); its stage PRs multiply to the pre-rematch 4.21, not the final 4.55; β₂ 3–7° low on every stage | **D** | derived; C1 unit 1, `tests/test_lpt_meanline.py` |
 | **Ainley–Mathieson loss method, digitised** — `data/methods/ainley-mathieson-rm2974.yaml`: Figs 4–9 of R&M 2974 read at 300 dpi with stated uncertainties, equations 1–6, and the report's worked example (row coefficients, incidence table, Fig 15 stage characteristic) as the validation case; `solvers/meanline/losses.py` reproduces the example to its chart-read bands. Applied to the E³ LPT (`lpt_losses.py`, `figures/lpt-losses.png`): 0.837 as printed, 0.869 with a Dunham–Came c/h term (labelled assumption), against 0.917 — the 1951 method's missing aspect-ratio term and profile-loss level, recorded | **T** / **D** | R&M 2974 pp.1–19, 24–30; C1 unit 2, `tests/test_ainley_mathieson.py`, `tests/test_lpt_losses.py` |
@@ -171,8 +180,12 @@ front-matter offset (given per report below) to get the PDF page.
 | Combustor | **D** | CR-168219 Fig. 22 p.59 |
 | LPT — 25° outer wall slope, 7.62 cm transition duct | **T** / **D** | CR-168219 §5.5 p.82; Fig. 32 p.83; LPT report Fig. 6 p.12 |
 | HPT stage exit annulus areas | **T** | HPT report Fig. 1 p.7 (design points ≈ 0.0895 / 0.151 m²) |
-| Whole engine | **D** | CR-168219 Fig. 1 p.4 |
-| Nacelle GA, inlet, exhaust | **D** | CR-168219 Fig. 40 p.106 |
+| Whole engine | **D** | CR-168219 Fig. 1 p.4 (undimensioned, deliberately not digitised); **CR-159584 Fig. 2 p.8** is the uninstalled equivalent and is cleaner |
+| **Nacelle and installation dimensions** — max nacelle diameter 248.9 cm, overall nacelle length 603.3 cm, inlet length from fan face 159.0 cm, **turbomachinery length fan front flange → LPT aft frame flange 318.0 cm**, exhaust nozzle diameter 159.0 cm, D_HL/D_max 0.86 | **T** | **CR-159584 Table I p.6** (the only installation dimension table in the programme) → `data/e3-fps-published.yaml` `nacelle.installation_dimensions`; `data/atlas-facts.md` A8 |
+| **Nacelle contour rules** — max diameter at X/D_max 0.40, 11° terminal boat-tail, afterbody R/D_max 4.0, A0/A_max 0.58, D_HL/D_max 0.88, D_max 244.6 cm | **T** | **CR-135444 p.250** → same YAML block, `installation_dimensions_preliminary` |
+| **Combustor length 0.1778 m** (Task III; the FPS liner is shorter still) | **T** | **CR-135444 Table 65 p.239** → `combustor.aerodynamic_design_parameters_task3` |
+| Nacelle GA drawing | **D** | CR-168219 Fig. 40 p.106 is **undimensioned**; **CR-159584 Fig. 1 p.7** is the legible installed cutaway and reproduces its own Table I six ways when calibrated on it (`nacelle.general_arrangement_figure`) |
+| Nacelle lobe geometry, tailpipe length, contour between the published anchors | **—** | genuinely not printed in any report on the list |
 | **Annulus by continuity at max climb** — `solvers/e3cycle/stations.py`, `figures/annulus.png`: HPT stage exits −3.6 / +0.2 % against Fig 3; HPC −5.5 / −10.2 % geometric, −2.5 / −0.2 % with Table XXI's blockage 0.97 / 0.90; LPT stage exits at pitch Mach a uniform 3.4–5.5 % under the sections (an unprinted 4–5 % blockage); vane-1 LE Mach 0.32 by continuity against Fig 7's 0.40; fan-face Mach 0.63. Turbine cycle-match tables by two routes: HPT W41√T/P +0.8 %, Δh/T +0.7 %; T49 +0.25 %; LPT W49√T/P −0.5 %, Δh/T +2.8 % | **D** | derived; B4, `tests/test_e3stations.py`, findings in `solvers/e3cycle/STEP0.md` |
 
 ## Discs, shafts, bearings, structure

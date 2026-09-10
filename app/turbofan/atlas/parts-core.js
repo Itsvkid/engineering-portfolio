@@ -1101,7 +1101,8 @@ const structure = [
     facts: [
       f("Core flow", "82.4 kg/s corrected of the 143.7 under the island", "CR-165148 Appendix A p.122"),
       f("Second splitter radius", "0.611 m, from the 58/42 area split", "", ASM),
-      f("Axial run to the HPC", "fan axis → rotor 1 = 1.42 m; the sheet allows 1.10–1.50", "atlas-facts.md A7", ASM),
+      f("Axial run to the HPC", "fan axis → rotor 1 = 1.42 m, drawn — but the sheet now allows 1.00–1.12, and this is outside it", "atlas-facts.md A7", ASM),
+      f("Why it is still drawn wrong", "CR-159584 Table I fixes fan flange → LPT exit at 3.180 m, which caps this offset and the diffuser/combustor one together; correcting them moves every blade row, so they move as one change", "CR-159584 Table I p.6", "e3"),
     ],
   },
   {

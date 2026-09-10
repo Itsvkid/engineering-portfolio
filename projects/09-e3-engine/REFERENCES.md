@@ -22,8 +22,8 @@ Efficiency Program. **All US Government works, public use permitted.**
 | File | NTRS | Gives |
 |---|---|---|
 | **`e3-fps-final-design-CR-168219.pdf`** | 19900019242 | **The primary source.** Cycle at 3 ratings (Table XII p.35), component performance and cooling flows (XI p.34), fan (§5.1, XIII), compressor (§5.2, XIV, XV), combustor (§5.3), HPT (§5.4, XVIII), LPT (§5.5, XXI), turbine frame, **sumps and bearings (§5.7, Figs. 37–38)**, exhaust and mixer (§5.8, XXIII), nacelle, controls, dynamics, **weights (XXVI p.140)**, cross-sections of every component |
-| `e3-fps-preliminary-analysis-CR-159584.pdf` | 19810013521 | The FPS as first laid out — what changed and why |
-| `e3-preliminary-design-CR-135444.pdf` | 19780023165 | Trade studies behind the configuration (402 pp.) |
+| **`e3-fps-preliminary-analysis-CR-159584.pdf`** | 19810013521 | The FPS as first laid out — what changed and why. **Also the only installation dimension table in the programme:** **Table I p.6** gives fan diameter, max nacelle diameter, inlet length from the fan face, turbomachinery length, overall nacelle length and exhaust nozzle diameter, with D_HL/D_max in the text. **Fig. 1 p.7** is the clearest installed cutaway in any E³ report. CR-168219 does not dimension its nacelle (Fig. 40 p.106); this one does. Offset +11 |
+| **`e3-preliminary-design-CR-135444.pdf`** | 19780023165 | Trade studies behind the configuration (402 pp.). **The nacelle afterbody and inlet design rules (p.250): D_HL/D_max, X/D_max = 0.40, 11° terminal boat-tail, A0/A_max, isolated drag build-up. The only printed E³ combustor length (Table 65 p.239, 0.1778 m). The 24-lobe Task III mixer (pp.246–249).** Offset −3 |
 | `e3-fan-hardware-design-CR-165148.pdf` | 19830008070 | Fan and quarter-stage detailed design: blade, shroud, dovetail, containment |
 | `e3-fan-quarter-stage-performance.pdf` | 19850025828 | Fan rig test results — measured against design |
 | **`e3-hp-compressor-detail-design.pdf`** | 19850002690 | **Table X per-stage rotor summary; Table XXI stator vector diagrams and geometry; Table XXII rotor section geometry**; Campbell diagrams all stages; clearances; casing bolting; dovetails |
@@ -35,6 +35,16 @@ Efficiency Program. **All US Government works, public use permitted.**
 | `e3-component-development-vol2-appA.pdf` | 19850002683 | Component development summary across the programme |
 | `e3-core-design-and-performance.pdf` | 19900019243 | The core as tested (538 pp.) |
 | `e3-icls-design-and-performance-CR-168211.pdf` | 19900019245 | **The engine as tested** — measured performance to compare the FPS *design* numbers against |
+
+**CR-168219 is the primary source, and that is a trap as well as a
+convenience.** Twice — the nacelle dimensions (CR-159584 Table I p.6) and the
+combustor length (CR-135444 Table 65 p.239) — this project recorded a quantity
+as *not published* when what it meant was *not in CR-168219*, while the number
+sat in a report already on disk. Before writing that something is
+unpublished, search the whole list above, and if you have not, write "not in
+CR-XXXXX" instead. The earlier reports are not superseded: they carry the
+design rules, the trade studies and the installation, and CR-168219 carries
+the final numbers.
 
 ## 2 · Design methods — public-domain textbooks
 
