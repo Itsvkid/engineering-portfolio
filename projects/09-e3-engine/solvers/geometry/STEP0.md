@@ -145,3 +145,123 @@ $ python build.py --export        # adds unit G1's CAD: 35 STEP files, 132 MB
      machinery that built the blades — sections, loft, cap, sew, check —
      and it is demonstrably working. What is missing is the numbers to
      feed it, which is the same gate E2, E3, E5 and F2 each hit.
+
+---
+
+## Unit G2 — the swept and leaned inner OGV
+
+Stage C3's line: *Booster rows and inner OGV with the published sweep 60° /
+lean 0–20°.*
+
+**First, a correction to that line.** The sweep and lean are published for
+the **inner OGV only**. `fan-design.yaml`'s `booster_rotor_airfoil` block
+carries no sweep and no lean, and nothing else in the fan report gives the
+booster one. G1 already builds the booster rotor on a radial stacking line,
+and that is right rather than a shortcut. This unit is the inner OGV.
+
+### What is published
+
+Table VII p.92 gives the row completely: 64 vanes, length 11.61 cm, chord
+9.25 cm at the root falling to 5.44 at the tip, stagger 18.40° → 21.53°,
+camber 55.38° → 62.38°, tm/c 0.053 → 0.062. Section II.D adds the shape of
+the stacking axis:
+
+> curved in space, swept aft 60 degrees from radial, leaned
+> circumferentially from 0 at the OD to 20 degrees at the ID with the
+> pressure side facing the axis
+
+and — the sentence that decides how the sections are placed —
+
+> sections: on planes perpendicular to the swept and leaned axis
+
+### What is not
+
+The vane's **radial position**. Table VII gives a length, not a hub
+radius. `app/turbofan/atlas/flowpath.js` has carried `rCoreHubAtOgv =
+0.49 m` as an assumption; by unit J1's finding 159 that belongs in `data/`
+where both artefacts can read it, and this unit puts it there rather than
+making a second copy.
+
+| Check | Band | Basis |
+|---|---|---|
+| Sections lie on planes normal to the stacking axis | every section's plane normal parallel to the local tangent, to **1e-9** | the report's own sentence; this is construction, not tolerance |
+| Sweep | **60°** from radial, constant | the one number the sentence gives |
+| Lean | **20° at the ID falling to 0° at the OD**, linear in radius | the sentence gives the two ends and calls the axis curved; linear is the reading, and it is stated |
+| Volume against a trapezoidal integral along the axis | **±2 %** | G1's own band for the same check on 32 radial rows |
+| Blade-to-blade interference at 64 vanes | **zero** | G1's rule; a swept and leaned vane is the one most likely to break it |
+| Table VII's aspect ratio, reproduced from its own length and chords | reported, not banded | it reproduces on stage 1 to 0.2 % and does **not** on the other two rows — a property of the table, not of this geometry |
+
+**Closes when** the vane builds as a valid solid with its sections on
+planes normal to a 60°-swept, 20°-to-0°-leaned axis, the volume holds
+inside 2 % of the trapezoidal integral, and 64 of them do not touch.
+
+### Result — G2
+
+Built on the plain reading STEP0 named: Table VII's 11.61 cm as the radial
+span, 60° sweep, lean 20° → 0°.
+
+| | |
+|---|---|
+| Sections on planes normal to the axis | **exact by construction** |
+| Valid solid | **yes** |
+| Blade-to-blade interference, 64 vanes | **zero** |
+| Volume vs the trapezoidal integral | **−2.09 %** against a ±2 % band — **narrow miss** |
+| Straight-axis control (same CAD, same integral) | **−0.015 %** |
+
+**Closure: half.** Three of the four checks pass. The volume check misses
+by 0.09 of a percentage point against a reference that finding 181 shows
+does not apply to a curved stacking axis.
+
+### Findings
+
+180. **The plan line conflated two rows: the booster has no published
+     sweep or lean.** Stage C3 asks for *booster rows and inner OGV with
+     the published sweep 60° / lean 0–20°*. Section II.D gives those two
+     angles to the **inner OGV** and to nothing else;
+     `booster_rotor_airfoil` carries neither, and no other block in the fan
+     report gives the booster one. G1 has been building the booster on a
+     radial stacking line since Stage G, and that is **correct rather than
+     a shortcut** — the work-plan note that called it a gap was wrong, and
+     is corrected. One row needed building, not two.
+
+181. **A trapezoidal `∫A·ds` is the wrong reference for a curved stacking
+     axis, and the error is 6 % on this vane.** The CAD came out 2.09 %
+     below the integral, just outside the ±2 % band G1 uses for its
+     thirty-two radially stacked rows. Section count was not the cause —
+     5 to 25 sections all land within 0.17 % of each other. The cause was
+     found by straightening the axis: with **constant** sweep and no lean
+     the axis is straight, and the same CAD against the same integral
+     agrees to **−0.015 %**. Restore the lean and it is −6.12 % with no
+     sweep, −2.09 % with 60°. The gap is entirely the axis curvature, and
+     it is a Pappus term the integral omits: a section swept along a
+     curved path sweeps more volume on the outside of the bend than on the
+     inside. **The reference is wrong here, not the CAD** — and the band
+     stands as a miss because it was stated before the run.
+
+182. **Two independent lines say Table VII's "length" is measured along
+     the swept axis, not radially.** Neither is proof, and together they
+     are hard to ignore. *One:* the fan report's Appendix A prints an
+     aspect ratio of **0.83** for this row where Table VII prints 1.39.
+     Reading 11.61 cm as the length along a 60°-swept axis gives a radial
+     span of 5.81 cm and an aspect ratio of **0.790** on the mean chord —
+     within 5 % of Appendix A. *Two:* the atlas's own station spacing
+     leaves about **10 cm** of core duct between the inner OGV and the
+     island exit vanes. The radial-span reading builds a vane **22.6 cm**
+     long axially, which does not fit; the along-axis reading builds one
+     **12.6 cm** long, which nearly does. The plain reading of "length" is
+     still the radial span and STEP0 named it before the run, so the unit
+     is built and closed on that. `LENGTH_IS_ALONG_AXIS` builds the other.
+
+183. **The vane overhangs the hub by 5.7 cm on either reading, so it must
+     be trimmed by the endwalls.** Its sections sit on planes 60° from
+     radial, and a section on such a plane reaches about `chord/2 × sin 60°`
+     in radius either side of its own axis point — 4 cm at the 9.25 cm
+     root chord. The lofted vane spans **43.3 to 60.6 cm** in radius
+     against an assumed annulus of 49.0 to 60.6. This is not an error in
+     the loft; it is what a steeply swept vane with normal-plane sections
+     does, and the real part is cut by the hub and casing. **Unit C4-2
+     found exactly this on Rotor 37** — finding 134, where the blade is
+     trimmed by the casing rather than stopping short of it. Trimming here
+     needs the core-duct walls, and those are assumed rather than
+     published, so it is left undone and stated.
+

@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **937 test functions**, **176 numbered findings**, **35 closures** — 21 met, 11 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **955 test functions**, **180 numbered findings**, **36 closures** — 21 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -20,7 +20,7 @@ NASA measured, and the gap is published.**
 | **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half |
 | **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 2 met, 6 half |
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
-| **G** | geometry — 32 blade rows lofted to STEP | 1 met, 1 half |
+| **G** | geometry — 32 blade rows lofted to STEP | 1 met, 2 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 3 met |
 | **J** | publication — meridional plot, Campbell match, glTF | 7 met |
@@ -66,6 +66,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **E7** — the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 vs 15.0 percent departure from the mean implied allowable | half |
 | **E8** — uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 vs 25.0 percent | met |
 | **I4** — every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | met |
+| **G2** — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 vs 2.0 percent of vane volume | half |
 
 ### Figures
 
@@ -76,7 +77,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 
 ### Outstanding
 
-14 closures are not met. None is open without a reason attached:
+15 closures are not met. None is open without a reason attached:
 
 - **B1** (half) — the mixer reproduces Table XXIII's sfc improvement. open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fi
 - **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
@@ -92,6 +93,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 - **G1** (half) — generated blade volume against Stage F2's integral. the closure also asks the generated engine mass to match F2, whose own total is gated
 - **H** (gated) — zero clashes through rotation, every bearing with its load. no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt
 - **E7** (half) — the five LPT flutter safety factors imply one allowable index, and the five agree. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 fro
+- **G2** (half) — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis. Three of four checks pass: the sections are normal to the axis by construction, the solid is valid, and 64 vanes have zero overlap. The volume misses by 0.09 of a point -- and finding 181 sh
 
 The four gaps that are **transcription, not modelling**: the HPT disc profile has no absolute radial scale (blocks E2's peak stress and burst margin, and F2's disc masses); the HPC §3.2.3 dovetails (E5); the casing, liner and dome flowpaths (G); and the combustor liner hole areas (D2). None is a hard problem — they are figures nobody has digitised.
 

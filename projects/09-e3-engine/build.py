@@ -47,7 +47,7 @@ STAGES = [
                        "mechanical.blade_frequency", "mechanical.rotordynamics",
                        "mechanical.attachments", "mechanical.flutter", "mechanical.gas_bending"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
-    ("G  geometry", ["geometry.blades"]),
+    ("G  geometry", ["geometry.blades", "geometry.ogv"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
                          "verification.disagreements",
                          "verification.digitising"]),

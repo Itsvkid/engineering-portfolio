@@ -644,14 +644,18 @@ Fig 5 profile shape is reproduced and explained. Twelve findings, 30–41.
       rule was used instead. Scope: Fig 3 publishes the profile only from
       the OD to the island at 78 % of the flow, so the inner span is left
       to the booster rather than extrapolated
-- [~] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
-      — **half done**: the booster rotor is built and lofted by G1, but on a
-      RADIAL stacking line. The inner OGV is not built at all. Both halves
-      of what is missing are the same thing: `wrapped_wire` stacks sections
-      on a radial line, and sweep (60° aft) and lean (0° at OD to 20° at
-      ID) need each section offset axially and circumferentially. That is a
-      geometry extension, not a transcription gap — the angles are
-      published in `fan-design.yaml.inner_ogv_airfoil`.
+- [x] Booster rows and inner OGV with the published sweep 60° / lean 0–20°
+      — **G2 done.** ~~The booster rotor is built on a RADIAL stacking line~~
+      — that note was wrong and is corrected: **the sweep and lean are the
+      inner OGV's only** (finding 180). `booster_rotor_airfoil` carries
+      neither, so G1's radial booster is right rather than a shortcut. One
+      row needed building, not two.
+      The OGV is built in `solvers/geometry/ogv.py` with its sections on
+      planes **normal to** a 60°-swept, 20°→0°-leaned axis, which is what
+      §II.D says and what no other row in this project needs. Valid solid,
+      zero interference at 64 vanes; volume −2.09 % against a ±2 % band, a
+      miss on a reference finding 181 shows does not apply to a curved
+      stack. Findings 180–183.
 - [x] Throat area per row from the sections — **unit 12**. Nothing about
       the throat is transcribed; it comes out of seven printed numbers per
       section. **The transonic rotors 1–4 land at 4.0 % above choking

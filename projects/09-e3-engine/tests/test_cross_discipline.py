@@ -139,17 +139,20 @@ def test_the_spool_ratio_matches_the_assumption_stage_h_was_going_to_use():
 def test_every_numeric_closure_is_inside_its_band_or_a_recorded_miss():
     """finding 122 -- Stage I1's third bullet, made a test.
 
-    Three misses now. B3's takeoff sfc has been a pinned xfail since Stage
+    Four misses now. B3's takeoff sfc has been a pinned xfail since Stage
     B. E3 joined it on 2026-09-08 when transcribing HPC Figs 33-42 lifted
     the gate on its closure and let it be *evaluated* for the first time --
     at which point it failed, 1 of 24 inside a 5 % band (finding 143). E7
     joined on 2026-09-09: the LPT flutter safety factors do not imply one
-    allowable index, missing a 15 % band at 24.4 % (findings 173-175).
+    allowable index, missing a 15 % band at 24.4 % (findings 173-175). G2
+    joined on 2026-09-10 by 0.09 of a point, and its own finding 181 shows
+    the reference rather than the CAD is what fails -- straighten the
+    stacking axis and the same pair agree to 0.015 %.
 
     A miss that can be measured is worth more than a gate that cannot, so
     this test wants all of them present and explained, not absent."""
     misses = SUMMARY["misses"]
-    assert {m["stage"] for m in misses} == {"B3", "E3", "E7"}
+    assert {m["stage"] for m in misses} == {"B3", "E3", "E7", "G2"}
     for m in misses:
         assert m["state"] == "half"
         assert m.get("gate"), f"{m['stage']} misses its band without an explanation"

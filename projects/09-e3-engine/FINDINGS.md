@@ -137,8 +137,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-21 met, 11 half met, 3 gated, of 35.
-21 of 24 numeric closures sit inside their own band.
+21 met, 12 half met, 3 gated, of 36.
+21 of 25 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -180,6 +180,7 @@ blocks it. None is open without a reason attached.
 | E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
+| G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 | 2 | half |
 
 ### The two recorded misses
 
@@ -187,6 +188,8 @@ blocks it. None is open without a reason attached.
 - **E3 — first three modes of every HPC stage against Figs 33-42**: 21.4 against a band of 5. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-predicted on nine stages of ten. The cause is the one finding 84 already named: a clamped beam is the stiffest root a blade can have and a dovetail is not a clamp. Closing this needs a root-flexibility model or an FE blade, not a better beam. Findings 143-145.
 
 - **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back, which points at the model rather than the data -- the beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8, and the beam pins the tip shroud without its mass (findings 173-175). On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted.
+
+- **G2 — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis**: 2.09 against a band of 2. Three of four checks pass: the sections are normal to the axis by construction, the solid is valid, and 64 vanes have zero overlap. The volume misses by 0.09 of a point -- and finding 181 shows the reference is the thing that does not apply: with the axis straightened, the same CAD against the same integral agrees to 0.015 percent, and the whole gap is a Pappus term the trapezoidal integral omits for a curved stack. The band stands as a miss because it was stated before the run.
 
 
 ---
@@ -267,7 +270,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-176 findings, in the `STEP0.md` that owns each one.
+180 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -453,4 +456,8 @@ would break every reference in the commit history.
 | 177 | mechanical | The stacking tilt cancels about half the gas bending, on every |
 | 178 | verification | Stage A3's last line is 14 % done, on the generous count. The |
 | 179 | verification | Four of the five recorded uncertainties are prose, and are left as |
+| 180 | geometry | The plan line conflated two rows: the booster has no published |
+| 181 | geometry | A trapezoidal ∫A·ds is the wrong reference for a curved stacking |
+| 182 | geometry | Two independent lines say Table VII's "length" is measured along |
+| 183 | geometry | The vane overhangs the hub by 5.7 cm on either reading, so it must |
 

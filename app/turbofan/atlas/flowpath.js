@@ -84,6 +84,9 @@ export const ISLAND = {
   rTop: 0.705,
   ySplit2: 0.55,
   rSplit2: 0.611,
+  // ASSUMED. Recorded in projects/09-e3-engine/data/fan-design.yaml
+  // under `inner_ogv_placement` (range 0.46-0.52 m) so this page and
+  // solvers/geometry/ogv.py read one source -- see unit J1 finding 159.
   rCoreHubAtOgv: 0.49,
 };
 // Axial stations for the fan module (fan-report datum is the stacking axis).

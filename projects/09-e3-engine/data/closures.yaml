@@ -427,3 +427,25 @@ closures:
       the 5 percent band they are judged against, and 0 of the 10 first-flex
       modes can.
 
+  - stage: G2
+    what: the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis
+    band: 2.0
+    achieved: 2.09
+    units: percent of vane volume
+    state: half
+    gate: >
+      Three of four checks pass: the sections are normal to the axis by
+      construction, the solid is valid, and 64 vanes have zero overlap. The
+      volume misses by 0.09 of a point -- and finding 181 shows the reference
+      is the thing that does not apply: with the axis straightened, the same
+      CAD against the same integral agrees to 0.015 percent, and the whole
+      gap is a Pappus term the trapezoidal integral omits for a curved
+      stack. The band stands as a miss because it was stated before the run.
+    note: >
+      Built on the plain reading of Table VII's 11.61 cm as a radial span.
+      Two independent lines say it may be measured along the swept axis
+      instead -- Appendix A's aspect ratio and the core duct's axial space
+      (finding 182). The vane overhangs the assumed hub by 5.7 cm on either
+      reading and must be endwall-trimmed, as Rotor 37's blade was
+      (finding 183).
+
