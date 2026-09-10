@@ -528,3 +528,26 @@ closures:
       Not attempted: weld positions, bolt count, bolt size, bolt-circle
       radius, axial load. None is published.
 
+  - stage: D6
+    what: thrust balance on the HP rotor -- the net axial load and what the balance piston must trim
+    band: null
+    achieved: null
+    units: null
+    state: gated
+    gate: >
+      GATED on the HPC disc BORE RADIUS, the un-digitised disc profile --
+      the same figure that gates E2's peak stress, E2's burst margin and
+      F2's disc masses (finding 193). The gas-path annulus term closes and
+      is -105.9 kN aft over the ten HPC rotors; the disc-face term, which
+      the annulus control volume excludes, is +342 to +672 kN forward over
+      any plausible bore, 3.2 to 6.4 times larger. The balance is decided by
+      the term that cannot be computed. Also: HPT report Figs 95-96, which
+      the plan item names, give the balance-piston seal as HARDWARE and
+      never as a load -- no thrust, area, radius or cavity pressure
+      (finding 191).
+    note: >
+      STEP0 predicted the HPC rotors would push forward and they push aft on
+      that control volume -- right about the rotor, wrong about the control
+      volume (finding 192). Not attempted: the mission sweep and the bearing
+      1 and 3 loads, both of which need the balance first.
+

@@ -10,14 +10,14 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **993 test functions**, **187 numbered findings**, **40 closures** — 25 met, 12 half, 3 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **1006 test functions**, **190 numbered findings**, **41 closures** — 25 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
 | **A** | sources and transcription — data/*.yaml, every value with a src: | transcribed; four figure gaps remain |
 | **B** | cycle — three Table XII ratings, the mixer, the station table | 1 met, 2 half |
 | **C** | aero — mean-line, through-flow, blading, CFD validation | 7 met, **1 gated** |
-| **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half |
+| **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half, **1 gated** |
 | **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 3 met, 6 half |
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
 | **G** | geometry — 32 blade rows lofted to STEP | 1 met, 2 half |
@@ -71,6 +71,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **G2** — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 vs 2.0 percent of vane volume | half |
 | **C5** — the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | met |
 | **E9** — the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | met |
+| **D6** — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | **gated** |
 
 ### Figures
 
@@ -81,7 +82,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 
 ### Outstanding
 
-15 closures are not met. None is open without a reason attached:
+16 closures are not met. None is open without a reason attached:
 
 - **B1** (half) — the mixer reproduces Table XXIII's sfc improvement. open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fi
 - **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
@@ -98,6 +99,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 - **H** (gated) — zero clashes through rotation, every bearing with its load. no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt
 - **E7** (half) — the five LPT flutter safety factors imply one allowable index, and the five agree. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 fro
 - **G2** (half) — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis. Three of four checks pass: the sections are normal to the axis by construction, the solid is valid, and 64 vanes have zero overlap. The volume misses by 0.09 of a point -- and finding 181 sh
+- **D6** (gated) — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim. GATED on the HPC disc BORE RADIUS, the un-digitised disc profile -- the same figure that gates E2's peak stress, E2's burst margin and F2's disc masses (finding 193). The gas-path annulus te
 
 The four gaps that are **transcription, not modelling**: the HPT disc profile has no absolute radial scale (blocks E2's peak stress and burst margin, and F2's disc masses); the HPC §3.2.3 dovetails (E5); the casing, liner and dome flowpaths (G); and the combustor liner hole areas (D2). None is a hard problem — they are figures nobody has digitised.
 

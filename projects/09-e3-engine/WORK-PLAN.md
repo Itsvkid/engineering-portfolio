@@ -839,8 +839,14 @@ exit profile is what D1 used.
       (finding 65). The remaining disc cavities are still to do
 - [ ] Labyrinth seal leakages from clearance and pressure ratio
       (sealing report); sump pressurisation (§5.7)
-- [ ] **Thrust balance** on each rotor across the mission; balance-piston
+- [~] **Thrust balance** on each rotor across the mission; balance-piston
       cavities per HPT report Figs. 95–96; net load into bearings 1 and 3
+      — **D6: gated, and now gated on something specific.** Figs 95–96 give
+      the piston seal as *hardware*, never as a load (finding 191). The
+      gas-path annulus term closes at −105.9 kN aft; the disc-face term
+      that decides the answer is +342 to +672 kN forward, **3.2–6.4× larger**,
+      and needs the **disc bore radius** — the same un-digitised profile that
+      gates E2 and F2. Findings 191–193.
 - [ ] Rotor bore cooling with fan discharge air (§5.2.2)
 
 *Closes when:* total secondary air lands at Table XI's 16.1 % of W25 and

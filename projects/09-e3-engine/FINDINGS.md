@@ -137,7 +137,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-25 met, 12 half met, 3 gated, of 40.
+25 met, 12 half met, 4 gated, of 41.
 23 of 27 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
@@ -185,6 +185,7 @@ blocks it. None is open without a reason attached.
 | G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 | 2 | half |
 | C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
 | E9 | the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | — | met |
+| D6 | thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | — | gated |
 
 ### The two recorded misses
 
@@ -274,7 +275,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-187 findings, in the `STEP0.md` that owns each one.
+190 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -471,4 +472,7 @@ would break every reference in the commit history.
 | 188 | mechanical | The rotor has two kinds of joint, and only one of them is |
 | 189 | mechanical | The torque a rotor joint carries is a computable function of where |
 | 190 | mechanical | The unresolved material question is worth a factor of 1.67 in joint |
+| 191 | thermal | The two figures this plan item named do not contain a thrust. |
+| 192 | thermal | The HPC rotors push aft on the annulus control volume, and STEP0 |
+| 193 | thermal | The thrust balance is gated on the disc bore radius, and that is |
 

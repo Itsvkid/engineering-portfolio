@@ -499,3 +499,108 @@ bridge** between the two reports:
     to run cooler and are not policed. A combustor exit profile is not a
     flat target with tolerance; it is shaped to the turbine's stress
     distribution.
+
+---
+
+## Unit D6 — thrust balance on the HP rotor
+
+Stage D's line: *thrust balance on each rotor across the mission;
+balance-piston cavities per HPT report Figs. 95–96; net load into bearings
+1 and 3.*
+
+### What Figs 95–96 actually contain
+
+They are transcribed, and they are **not what this item assumed**. Figure
+95 and section 5.2.2.2 give the inducer and piston-balance seal
+*structure* — 62 tangential holes at 30°, 64 Inco 718 bypass tubes, an
+Inco 903A seal running against the rotating balance-piston seal disk, 64
+Waspaloy OGV bolts. Figure 96 gives eleven stress-temperature-LCF points
+on it at a 40-second hot-day takeoff. **Neither gives a thrust, a piston
+area, a piston radius, or a cavity pressure.** The balance piston is
+described as hardware and never as a load.
+
+So the thrust balance cannot be closed, and this unit does not pretend to.
+
+### What can be closed
+
+The **gas-path axial load on the rotating blade rows** is fully
+determined by data already transcribed. Table XXI gives every HPC rotor
+row its own inlet and exit stations, twelve streamlines each, with radius,
+axial velocity, total pressure ratio and Mach — so the rotor-only control
+volume closes without any cavity information. The HPT's two rotors close
+the same way from the C1 mean-line and Fig 3's dimensioned annulus.
+
+That is a **component** of the thrust balance, not the balance: the disc
+faces and the balance piston act on areas nothing published dimensions.
+What it does give is the sign and the scale of what the piston must trim,
+and one number that can be inverted — the piston area that would be needed
+at the available pressure difference.
+
+| Check | Band | Basis |
+|---|---|---|
+| The HPC rotors push **forward** | sign, all ten | static pressure rises through a compressor rotor, so the net pressure force is upstream |
+| The HPT rotors push **aft** | sign, both | it falls through a turbine rotor |
+| The two partly cancel | HPT load between **10 %** and **100 %** of the HPC load in magnitude | a spool whose gas loads did not nearly cancel would need a piston bigger than the rotor |
+| Mass flow is conserved through the HPC | **±2 %** across the ten rotors by continuity | a check on the streamline areas and the pressure chain, not on the loads |
+| Piston area required | reported, not banded | inverted from the net load and the published CDP-to-sump pressure difference |
+
+**Closes when** the signs come out as physics requires, the two loads
+partly cancel inside the stated band, and the required piston area is
+reported alongside an explicit statement that the disc-face and cavity
+terms are missing.
+
+**Not attempted:** the mission sweep, the bearing 1 and 3 net loads, and
+the balance itself. Bearing loads need the disc-face pressures; the
+mission sweep needs a thrust balance to sweep.
+
+### Result — D6
+
+**Closure: gated**, and now gated on something specific with a number
+against it.
+
+| | |
+|---|---|
+| Figs 95–96 | structure only — 62 holes, 64 tubes, 11 stress points. **No thrust, no piston area, no cavity pressure** |
+| HPC annulus term, ten rotors | **−105.9 kN**, i.e. **aft** |
+| HPT annulus term, two rotors | +8.3 kN net, the two rotors opposing |
+| Disc-face term, bore 8–20 cm | **+342 to +672 kN forward** |
+| Disc face against annulus | **3.2× to 6.4×** |
+| Gated on | the HPC disc **bore radius** — the un-digitised disc profile |
+
+### Findings
+
+191. **The two figures this plan item named do not contain a thrust.**
+     Stage D's line sends the reader to *balance-piston cavities per HPT
+     report Figs. 95–96*. Both are transcribed. Figure 95 and §5.2.2.2
+     give the inducer and piston-balance seal as **hardware** — 62
+     tangential holes at 30°, 64 Inco 718 bypass tubes, an Inco 903A seal
+     against the rotating balance-piston seal disk, 64 Waspaloy bolts —
+     and Figure 96 gives eleven stress, temperature and LCF points at a
+     40-second hot-day takeoff. **The balance piston is described as a
+     part and never as a load.** No thrust, no piston area, no piston
+     radius, no cavity pressure appears in either. The plan item assumed
+     otherwise, and the assumption is the thing that was wrong.
+
+192. **The HPC rotors push aft on the annulus control volume, and STEP0
+     predicted forward.** The prediction was written before the run and it
+     was wrong — but wrong in an informative way, because it was right
+     about the *rotor* and wrong about the *control volume*. Between a
+     rotor's inlet and exit planes, static pressure rises faster than the
+     annulus contracts, so `p_in·A_in − p_out·A_out` is negative: **−105.9
+     kN over the ten rotors**, aft. The familiar forward push of a
+     compressor rotor comes from high pressure behind the **drum** and low
+     in front of it, acting on the disc faces from the bore out to the hub
+     line — an area the gas-path control volume excludes entirely. The
+     band was stated first and it is recorded as failed.
+
+193. **The thrust balance is gated on the disc bore radius, and that is
+     the same gate as E2 and F2.** The disc-face term is
+     `(p3 − p25) · π(r_hub² − r_bore²)`, and over any plausible bore — 8
+     to 20 cm — it is **+342 to +672 kN forward, 3.2 to 6.4 times the
+     annulus term**. So the balance is decided by the term that cannot be
+     computed, not by the one that can. The bore radius is the
+     un-digitised HPC disc profile: the identical figure that blocks unit
+     E2's peak stress and 120 % burst margin and unit F2's disc masses.
+     **A fourth closure now waits on that one transcription**, and this is
+     the first time the connection has been priced rather than asserted.
+
