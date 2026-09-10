@@ -31,15 +31,39 @@ def test_table_vii_gives_the_row_completely():
     assert T["vanes"] == 64
 
 
-def test_the_booster_has_no_published_sweep_or_lean():
-    """finding 180: the plan line conflated two rows"""
+def test_the_booster_is_stacked_on_a_radial_line():
+    """finding 180, now POSITIVELY evidenced rather than inferred.
+
+    This test used to assert that the words "sweep" and "lean" did not
+    appear in the booster block -- absence-of-mention as a proxy for
+    absence-of-data. On 2026-09-10 CR-165148 Appendix D was transcribed
+    and the proxy broke in the best possible way: the appendix states
+    outright that the booster is stacked on a radial line, "no sweep, no
+    lean", one Z for the whole span. The conclusion stands and is now
+    read rather than deduced, so the test asserts the substance."""
     import yaml
     d = yaml.safe_load((ROOT / "data/fan-design.yaml").read_text())
     b = d["booster_rotor_airfoil"]
-    blob = str(b).lower()
-    assert "sweep" not in blob and "lean" not in blob
-    # and the OGV does have them
+
+    # Appendix D says it, in words, and cites this very finding
+    ax = b["appendix_d"]["stacking_axis"]
+    note = ax["no_sweep_no_lean"]
+    assert "radial line" in note
+    assert "no sweep, no lean" in note
+    assert "finding 180" in note
+
+    # and the positive evidence: ONE Z for the whole span. A swept or
+    # leaned stack needs a Z per section; a radial one needs one number.
+    assert isinstance(ax["z_cm"], (int, float))
+    assert "stacking" in b and "radial stacking axis" in b["stacking"]
+
+    # and carries no sweep or lean COLUMN, which is the substantive check
+    cols = [c.lower() for c in b["appendix_d"]["columns_as_printed"]]
+    assert not any("sweep" in c or "lean" in c for c in cols), cols
+
+    # the OGV, by contrast, has both
     assert "swept aft 60" in d["inner_ogv_airfoil"]["blade_axis"]
+    assert "leaned circumferentially" in d["inner_ogv_airfoil"]["blade_axis"]
 
 
 # --- the stacking axis ---------------------------------------------------
