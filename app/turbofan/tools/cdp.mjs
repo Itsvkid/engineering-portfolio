@@ -1,5 +1,10 @@
 // Minimal CDP driver: headless Edge, collect console + exceptions, run steps, screenshot.
-// usage: node cdp.mjs <url> <out.png> [steps...]   steps: wait:ms | click:x,y | key:Name | eval:js | shot:file.png | move:x,y
+// usage: node cdp.mjs <url> <out.png> [steps...]
+//   steps: wait:ms | click:x,y | move:x,y | key:Name | eval:js | goto:url
+//          shot:file.png | media:pointer=coarse,prefers-color-scheme=dark
+//   env:   W, H (viewport), MOBILE=1 (device metrics + touch flag)
+// NOTE: MOBILE=1 does NOT make `@media (pointer: coarse)` match. Use the
+// media: step for that, or touch-target rules test as if absent.
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
 
@@ -48,6 +53,19 @@ for (const s of steps) {
     await sleep(600);
   } else if (k === "key") { await send("Input.dispatchKeyEvent", { type: "keyDown", key: v }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: v }); await sleep(400); }
   else if (k === "eval") { const r = await send("Runtime.evaluate", { expression: v, returnByValue: true }); console.log("[eval]", JSON.stringify(r.result?.result?.value ?? r.result?.exceptionDetails?.text)); }
+  // media:pointer=coarse,prefers-color-scheme=dark — emulate CSS media
+  // features. MOBILE=1 sets the viewport and the touch flag but NOT the
+  // pointer media feature, so `@media (pointer: coarse)` never matches and
+  // a touch-target rule silently tests as if it were not there.
+  else if (k === "media") {
+    const features = v.split(",").filter(Boolean).map((f) => {
+      const [name, value] = f.split("=");
+      return { name: name.trim(), value: (value ?? "").trim() };
+    });
+    await send("Emulation.setEmulatedMedia", { features });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: features.some((f) => f.name === "pointer" && f.value === "coarse") });
+    await sleep(400);
+  }
   else if (k === "shot") { await sleep(800); const r = await send("Page.captureScreenshot", { format: "png" }); writeFileSync(v, Buffer.from(r.result.data, "base64")); console.log("[shot]", v); }
 }
 await sleep(500);

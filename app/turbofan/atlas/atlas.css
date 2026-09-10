@@ -853,4 +853,69 @@
       columns: 1;
     }
   }
+
+  /* ── Touch targets ────────────────────────────────────────────────── */
+
+  /* Keyed on the POINTER rather than the viewport, because the two do not
+     agree. A tablet in landscape is wider than the block above and is
+     still driven by a thumb; a desktop window dragged narrow is not.
+     Apple's guidance is 44px and Material's is 48dp; these controls
+     measured 29 to 34.
+
+     Nothing changes size visually. The type, padding-x, radius and colour
+     all stay, and the extra height is distributed by the `align-items:
+     center` these controls already carry — so the bars read as they did
+     and only the area that accepts a thumb grows. */
+  @media (pointer: coarse) {
+    .atlas-tabs button,
+    .atlas-chip,
+    .atlas-btn,
+    .atlas-brand,
+    .atlas-search,
+    .atlas-quick button {
+      min-height: 44px;
+    }
+    /* Square up the icon-only controls, which are the narrow ones. */
+    .atlas-btn {
+      min-width: 44px;
+      justify-content: center;
+    }
+    .atlas-tabs button {
+      min-width: 44px;
+    }
+    /* The mark alone is not enough. The link's base rule sets
+       `min-width: 0` so the wordmark beside it can shrink, and the header's
+       flex row duly squeezed the link to 32px around a 44px mark — the
+       thing a thumb has to hit is the link, not its child. A floor keeps
+       the target without pinning the width, so the wordmark still shrinks
+       on the wider touch screens that show it. */
+    .atlas-brand {
+      min-width: 44px;
+    }
+    .atlas-brand-mark {
+      width: 44px;
+      height: 44px;
+    }
+
+    /* The field is 44px tall but the element that actually takes focus was
+       18: a tap on the padding landed on the wrapper, which has no handler
+       and so did nothing. Move the vertical padding off the wrapper and let
+       the input stretch, and the whole field becomes the target it looks
+       like. */
+    .atlas-search {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .atlas-search input {
+      align-self: stretch;
+    }
+
+    /* "/" focuses the search box — a keyboard affordance with nothing
+       behind it on a touch device. It also cost the 25px of gap and glyph
+       that made the placeholder truncate: the input measured 170px where
+       "Search parts, systems, numbers" needs 175. */
+    .atlas-search kbd {
+      display: none;
+    }
+  }
 }

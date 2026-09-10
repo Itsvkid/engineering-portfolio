@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ASSUMED_OFFSETS } from "./flowpath";
 import { PARTS_BY_SYSTEM, PART_BY_ID, provenanceOf, searchParts } from "./parts";
 import { PRESETS, SYSTEMS, SYSTEM_BY_ID, TAGS } from "./systems";
@@ -361,7 +361,39 @@ export function TourPanel({ state, dispatch, part }) {
 
 // ── Search ────────────────────────────────────────────────────────────────
 
+/* The placeholder has to fit the box, and on a phone the box is far
+   narrower than the string. Measured against the built page, with the
+   header's three 44px touch targets taking their share:
+
+     viewport   input width   "Search parts, systems, numbers" needs 175px
+       390px        161px
+       360px        131px
+       320px         91px
+
+   Widening cannot close that, so the string is what gives. The short form
+   is sized for the 320px case rather than the comfortable one, because a
+   placeholder that fits every phone but the smallest is a placeholder that
+   truncates on the phone least able to spare the room. It drops the
+   enumeration, not a capability: systems and numbers still match. */
+const PLACEHOLDER_FULL = "Search parts, systems, numbers";
+const PLACEHOLDER_SHORT = "Search parts";
+const NARROW_QUERY = "(max-width: 620px)";
+
+function subscribeToNarrow(onChange) {
+  const query = window.matchMedia(NARROW_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
 export function SearchBox({ dispatch, inputRef }) {
+  // Server-rendered as the full string: the markup is static, and a
+  // narrow visitor swaps to the short one on hydration rather than being
+  // served a guess about their viewport.
+  const narrow = useSyncExternalStore(
+    subscribeToNarrow,
+    () => window.matchMedia(NARROW_QUERY).matches,
+    () => false
+  );
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const results = q ? searchParts(q) : [];
@@ -380,7 +412,7 @@ export function SearchBox({ dispatch, inputRef }) {
         <input
         ref={inputRef}
         type="search"
-        placeholder="Search parts, systems, numbers"
+        placeholder={narrow ? PLACEHOLDER_SHORT : PLACEHOLDER_FULL}
         value={q}
         onChange={(e) => {
           setQ(e.target.value);
