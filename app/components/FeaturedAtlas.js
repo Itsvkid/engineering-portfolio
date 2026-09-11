@@ -19,7 +19,7 @@ const poster = {
 // Provenance, not effort. An earlier version led with part and triangle
 // counts, which read as a web-development statistic on a design portfolio.
 const stats = [
-  { value: "12", label: "engine systems, 142 parts" },
+  { value: "12", label: "engine systems, 144 parts" },
   { value: "67", label: "published stations, to scale" },
   { value: "0", label: "numbers without a source" },
 ];

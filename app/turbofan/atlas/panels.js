@@ -520,8 +520,10 @@ export function AboutDialog({ onClose }) {
           <li>
             Blade rows: the ten HPC rotors and eleven stators are lofted from all twelve printed sections per row of Table XXII
             (chord, camber, stagger and thickness at each radius); the ten LPT rows from the printed surface coordinates of the LPT
-            report at three spans, hub and tip extrapolated. The HPT airfoils are inferred from throat and aspect ratio, and the fan is designed,
-            not transcribed: the E³ never published its fan sections.
+            report at three spans, hub and tip extrapolated; the fan and booster from the twenty-three and fourteen plane sections
+            Appendices B and D of the fan report print. The HPT airfoils are the one row still inferred, from throat and aspect ratio.
+            The fan was designed rather than transcribed until 2026-09-10, on the belief that the E³ never published its sections. It
+            did, in its own appendix, cited in this project&apos;s data as a backlog line for months.
           </li>
           <li>Disc profiles are generic web-and-bore shapes at the published rim and bore radii.</li>
           <li>
