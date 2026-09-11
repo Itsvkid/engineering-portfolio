@@ -420,6 +420,34 @@ closures:
       right ratio at Mach 0.8 and 35,000 ft and is the check on the mass
       flow standing behind the area.
 
+  - stage: L1
+    what: ME TF0.01 reproduces the E3 at its own bypass ratio before the excursion leaves it, the mixer closes at the published p5/p13 across the sweep, and the LPT stage count falls out of a measured loading limit rather than being chosen
+    band: 1.0
+    achieved: 0.49
+    units: percent, worst of the reproduction checks
+    state: met
+    gate: null
+    note: >
+      Stage L is the owner's derivative, not part of the reconstruction:
+      a fixed-core bypass excursion at the same thrust class, every number
+      derived rather than transcribed. Distinct from Stage K, which is GE's
+      own growth engine pushed harder with the reports' numbers.
+
+      Band 3 is the one worth reading: two independent routes to the LPT
+      work agree to 0.49 percent with nothing fitted between them. Bands 2,
+      4 and 5 check against the model's own baseline or a design rule and
+      are marked L2 for that reason, which is the honest level for a
+      derivative -- ME TF0.01 was never built, so there is no published
+      performance for it to be validated against, and every number in it
+      drops one rung from the reconstruction it stands on.
+
+      The band did work rather than decorate. A scoping solve had said
+      bypass ratio 10 closes at seven LPT stages, on a fan tip Mach of 1.47
+      judged acceptable after it was seen. Step 0 fixed the ceiling at 1.45
+      beforehand -- the E3's own fan runs 1.41 -- and seven stages fails
+      it. The answer is eight. Two points of Mach number is one whole
+      turbine stage, and stating the ceiling first is what caught it.
+
   - stage: E7
     what: the five LPT flutter safety factors imply one allowable index, and the five agree
     band: 15.0
