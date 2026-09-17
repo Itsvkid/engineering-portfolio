@@ -54,10 +54,9 @@ NASA/GE E3 Turbofan, Rebuilt from its Design Reports — gas turbine performance
   point.
 Education
 Postgraduate Coursework, Thermal Power and Propulsion — Cranﬁeld University, Cranﬁeld, UK Oct 2025 – Sep 2026
-Gas Turbine Performance    ·   Combustion    ·   Turbomachinery Aerodynamics       ·   Propulsion System Design
+Gas Turbine Performance    ·   Combustion     ·   Turbomachinery Aerodynamics      ·   Propulsion System Design
 BEng Aeronautical Engineering — CGPA 7.37/10 (ﬁrst class) — KCG College of Technology, Chennai                        2021 – 2025
-Final-year project, team of 3: ﬂow-control tabs validated against experimental shadowgraph imaging — 64–76% core-length reduction,
-no thrust penalty
+Final-year project, team of 3: ﬂow-control tabs, shadowgraph-validated — 64–76% core-length reduction, no thrust penalty
 Certiﬁcations: CATIA V5 (Proﬁcient), CADD Centre, 80 hrs, 2024 · IELTS Academic 6.5 (UKVI B2), 2025
 Experience
 Engineering Intern, Aircraft Maintenance — AIESL — Boeing 737 MRO base, India                                     Mar – Apr 2025
