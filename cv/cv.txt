@@ -3,23 +3,25 @@ Coventry, United Kingdom · kumarvsvinay@gmail.com · +44 7742 914241
 linkedin.com/in/vinaykumar-venkateshkumar · github.com/Itsvkid · vinaykumar.is-a.dev
 UK Student visa, coursework complete · Available immediately · Sponsorship may be required
 Proﬁle
-Graduate design engineer for the engine externals and secondary-systems lane: release-ready mechanical design from parametric
-CAD, sized by FEA. Writes the tolerance a result must meet before running it, and publishes the runs that miss it.
+Graduate design engineer for the engine externals and secondary-systems lane: mechanical design from parametric CAD through
+to issued drawings, sized by FEA. Writes the tolerance a result must meet before running it, and publishes the ones that miss.
 Technical Skills
-Mech. Design         Geometric tolerancing (ISO 1101), limits and ﬁts (ISO 286), tolerance stack-up (worst case and RSS), design
-                     for manufacture, sheet-metal forming (K-factor, bend allowance, ﬂat patterns), detail and GA drawings
+Mech. Design         Geometric dimensioning and tolerancing (GD&T) to ISO 1101, limits and ﬁts (ISO 286), tolerance stack-up
+                     (worst case, RSS), design for manufacture (DFM), sheet-metal forming (K-factor, ﬂat patterns), detail and
+                     general-arrangement (GA) drawings, parts lists
 CAD                  CATIA V5 (proﬁcient, 80 hrs certiﬁed), CadQuery, pyOCC / Open CASCADE, ANSYS DesignModeler,
                      STEP and DXF interchange, parametric geometry
-Analysis             FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence, stress-singularity identiﬁcation, hand
-                     calculation as an independent check. CFD (ANSYS Fluent, ICEM, OpenFOAM): k-ω SST, grid independence.
-                     Python (NumPy, SciPy, pytest), MATLAB, Git
+Analysis             Finite element analysis / FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence,
+                     stress-singularity identiﬁcation, hand calculation as an independent check. CFD (ANSYS Fluent, ICEM,
+                     OpenFOAM): k-ω SST, grid independence. Python (NumPy, SciPy, pytest), MATLAB, Git
+Domains              Gas turbine performance, turbomachinery aerodynamics, aero-engine propulsion, thermodynamics
 Selected Projects
-Parametric Actuator and Accessory-Gearbox Generators, with Drawing Pack — mechanical design, GD&T                             2026
+Parametric Actuator and Accessory-Gearbox Generators, with Drawing Pack — mechanical design, GD&T                                2026
 
 • Sized before drawn — a ﬂight-control actuator family across four aircraft classes and an accessory gearbox across ﬁve ratings
   (5–50 kW), with involute gear geometry, Lewis bending-stress sizing and SKF 60xx bearings — then issued as a four-sheet A4
-  pack: three details and a ballooned GA with ISO 286 ﬁts (35 H8 bore, 21 f7 rod), ISO 1101 tolerances, a datum scheme and a
-  ﬁve-contributor stack on 390 mm nominal (worst case ±0.90, RSS ±0.44).
+  pack: three details and a ballooned GA with ISO 286 ﬁts (35 H8 bore, 21 f7 rod), ISO 1101 tolerances, a datum scheme, a parts
+  list and a ﬁve-contributor stack on 390 mm nominal (worst case ±0.90, RSS ±0.44).
 • Veriﬁcation found six real defects, including meshing teeth intersecting by 424 mm3 in every exported assembly because the
   gears were never phased — then the test suite was checked against itself with a reintroduced sign error, which only the
   tooth-taper test catches. 132 tests.
@@ -37,29 +39,28 @@ Nacelle Cowl Geometry and CFD Validation — personal project, public data      
 CST curve ﬁtted to NASA TM 110300’s published NACA 1-85-100 cowl ordinates to 0.019% RMS of max radius: a compressible
 RANS OpenFOAM case (k-ω SST, 108,904 cells) at Mach 0.79 matched to that report’s wind-tunnel pressures to RMS Cp 0.65
 over 17 stations, including where it misses the suction peak. Separately: a Cranﬁeld research project on nacelle installation
-aerodynamics — industrial, conﬁdential, result pending.
+aerodynamics, on an industry partner’s geometry data — conﬁdential, result pending.
 NASA/GE E3 Turbofan, Rebuilt from its Design Reports — gas turbine performance, turbomachinery                          2026
 
-• Nine of ten stages of a twin-spool turbofan rebuilt from public-domain NASA reports — cycle, blading, cooling, secondary air,
-  stress — every value carrying its report page and every solver stating the tolerance it must meet before it runs: HPC eﬃciency
-  lands 0.15 of a point from the published value on a 2.0-point band, while engine sfc lands at 1.91% against a 1.5% band — a
-  miss, recorded as one rather than rounded into a pass. Over 1,000 automated tests. Published as an interactive 3D anatomy
-  at vinaykumar.is-a.dev/turbofan — 144 procedural parts, every fact on it tagged to a report page or ﬂagged schematic or
-  assumed — with a six-sheet drawing pack behind it.
+• Nine of ten planned work stages complete on a twin-spool turbofan reproduced from public-domain NASA reports — cycle,
+  blading, cooling, secondary air, stress. Every value carries its report page and every solver states the tolerance it must meet
+  before it runs: HPC eﬃciency lands 0.15 of a point from the published value on a 2.0-point band, while engine sfc lands at
+  1.91% against a 1.5% band — a miss, recorded as one rather than rounded into a pass. Over 1,000 automated tests. Published
+  as an interactive 3D anatomy at vinaykumar.is-a.dev/turbofan — 144 procedural parts, every fact on it tagged to a report
+  page or ﬂagged schematic or assumed — with a six-sheet drawing pack behind it.
 • ME TF0.01 — a derivative trade study of my own on that ﬁxed core, never built: what bypass ratio 10 costs. Fan and LP
   turbine want the LP shaft 46% apart at BPR 10, against 0.7% at the E3 ’s own 6.7 — the geared-fan argument as a number,
   and on this core the answer is a longer LP turbine, not a 1.46:1 gearbox: eight LP stages direct-drive against ﬁve geared, and
-  the tip-Mach ceiling written down before the run rejected my own ﬁrst answer of seven. Fuel burn is reported as a 3–4.5%
-  band, not the 4.5% headline, because fan eﬃciency is held at the E3 ’s values at a diﬀerent tip Mach — worth 0.68% of sfc a
-  point.
+  the tip-Mach ceiling written down before the run rejected my own ﬁrst answer of seven. Fuel burn is a 3–4.5% band, not the
+  4.5% headline, because fan eﬃciency is held at the E3 ’s values at a diﬀerent tip Mach — worth 0.68% of sfc a point.
 Education
-Postgraduate Coursework, Thermal Power and Propulsion — Cranﬁeld University, Cranﬁeld, UK Oct 2025 – Sep 2026
-Gas Turbine Performance    ·   Combustion     ·   Turbomachinery Aerodynamics      ·   Propulsion System Design
-BEng Aeronautical Engineering — CGPA 7.37/10 (ﬁrst class) — KCG College of Technology, Chennai                        2021 – 2025
-Final-year project, team of 3: ﬂow-control tabs, shadowgraph-validated — 64–76% core-length reduction, no thrust penalty
+Postgraduate Coursework, Thermal Power and Propulsion — Cranﬁeld University, UK                                 Oct 2025 – Sep 2026
+Gas Turbine Performance     ·   Combustion     ·   Turbomachinery Aerodynamics       ·   Propulsion System Design
+BEng Aeronautical Engineering — CGPA 7.37/10 (ﬁrst class) — KCG College of Technology, Chennai                           2021 – 2025
+Final-year, team of 3: shadowgraph-validated ﬂow-control tabs, 64–76% potential-core-length cut, Mach 0.8, no signiﬁcant thrust penalty
 Certiﬁcations: CATIA V5 (Proﬁcient), CADD Centre, 80 hrs, 2024 · IELTS Academic 6.5 (UKVI B2), 2025
 Experience
-Engineering Intern, Aircraft Maintenance — AIESL — Boeing 737 MRO base, India                                     Mar – Apr 2025
+Engineering Intern, Aircraft Maintenance — AIESL — Boeing 737 MRO base, India                                        Mar – Apr 2025
 Rotation across Component Overhaul, Production Planning and Stores (Air India Express ﬂeet). Documented wheel/brake overhaul to
 speciﬁcation (158 lb-ft torque, 205 ± 5 psi) and Eddy Current Testing; parts tracked in AMOS/RAMCO.
 

@@ -117,3 +117,30 @@ def test_the_unused_finding_numbers_are_named_and_really_are_unused():
         assert n not in used, f"finding {n} is claimed unused but appears in the index"
     gaps = {n for n in range(min(used), max(used) + 1) if n not in used}
     assert gaps == set(claimed), f"unrecorded gap: {sorted(gaps - set(claimed))}"
+
+
+def test_no_two_solvers_claim_the_same_finding_number():
+    """a finding number is an address, and two things cannot live at one
+
+    The index is built by scanning every `STEP0.md` for a numbered line, so a
+    number claimed twice does not collide loudly — the second one silently
+    replaces the first, and a finding disappears from the deliverable while
+    the count beside it stays right. Two units written in parallel pick the
+    next free number from the same stale view and land on it honestly."""
+    import collections
+    import re
+
+    # Two or three digits and a bold title. The one-digit range is left
+    # alone deliberately: a step 0's own method is written as a short ordered
+    # list, so "1. **Parameters**" appears in nine of them and means nothing.
+    # That ambiguity is also why `findings_index()` silently keeps the first
+    # occurrence -- this test covers the range where a clash is unambiguous.
+    pat = re.compile(r"^\s{0,5}(\d{2,3})\.\s+\*\*", re.M)
+    owners = collections.defaultdict(list)
+    for p in sorted(ROOT.glob("solvers/*/STEP0.md")):
+        for n in pat.findall(p.read_text()):
+            owners[int(n)].append(p.parent.name)
+
+    clashes = {n: who for n, who in owners.items() if len(who) > 1}
+    assert not clashes, "finding numbers claimed twice: " + "; ".join(
+        f"{n} by {' and '.join(who)}" for n, who in sorted(clashes.items()))

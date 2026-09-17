@@ -4,7 +4,8 @@
 Stage G's last bullet: *`build.py`: one command regenerates every table,
 figure and export.* This is that command.
 
-    python build.py                 # every stage's tables, the figures, the CAD
+    python build.py                 # every stage's tables, the figures, the CAD,
+                                    # and the two generated documents
     python build.py --no-geometry   # skip the CAD, which is the slow part
     python build.py --list          # what would run, without running it
 
@@ -71,6 +72,29 @@ def run(module: str) -> tuple[bool, float, str]:
     return p.returncode == 0, time.time() - t0, text
 
 
+DOCS = ["tools/build_readme.py", "tools/build_findings.py"]
+
+
+def docs() -> list[str]:
+    """Rebuild the two generated documents.
+
+    These belong in the build for the same reason the tables do: they are
+    outputs, not sources. README.md's generated block quotes the test-function
+    count, the closure states and the figure list, and FINDINGS.md is built
+    from every STEP0.md -- so both go stale on a commit that never opens
+    them, and the first thing that notices is CI, sixteen minutes later. They
+    run last, after the figures they list have been written."""
+    failed = []
+    for script in DOCS:
+        p = subprocess.run([sys.executable, script], cwd=ROOT,
+                           capture_output=True, text=True)
+        line = (p.stdout.strip().splitlines() or [""])[-1]
+        print(f"   {'ok ' if p.returncode == 0 else 'FAIL'} {script:<34} {line}")
+        if p.returncode != 0:
+            failed.append(script)
+    return failed
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--no-geometry", action="store_true",
@@ -109,11 +133,16 @@ def main() -> int:
         written = export()
         print(f"   ok  {len(written)} files in exports/{'':<14}{time.time() - t0:>7.1f} s")
 
+    print("\n   documents")
+    doc_failures = docs()
+
     print(f"\n{len(plan) - len(failures)} of {len(plan)} modules ran, {total:.0f} s total")
     print(f"output in build/ — diff it against the tables quoted in each STEP0.md")
     if failures:
         print(f"FAILED: {', '.join(failures)}")
-    return 1 if failures else 0
+    if doc_failures:
+        print(f"FAILED: {', '.join(doc_failures)}")
+    return 1 if failures or doc_failures else 0
 
 
 if __name__ == "__main__":
