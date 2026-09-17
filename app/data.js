@@ -194,6 +194,15 @@ export const projects = [
       "Bounded rather than sold. The fuel saving is quoted as 3 to 4.5 per cent, not 4.5, because fan efficiency is held at the E\u00b3's values at a different pressure ratio and tip Mach, and one point of it is worth 0.68 per cent. It is a design-point solve at max climb with no off-design re-match, and the bypass ratio at takeoff is not the one at climb even on the real engine. ME TF0.01 was never built, so every number in it sits one rung below the reconstruction it stands on \u2014 which is recorded as its closure rather than glossed.",
     ],
     tech: ["Python", "Validated E\u00b3 cycle model", "Mean-line turbine loading", "NASA E\u00b3 reports (CR-168219 and companions)"],
+    figures: [
+      {
+        src: "/figures/shaft-speed-conflict-dark.png",
+        srcLight: "/figures/shaft-speed-conflict.png",
+        alt: "Two lines against bypass ratio on one shaft-speed axis. They start together near 3,530 rpm at bypass ratio 6.7. The turbine line rises gently to about 3,670 rpm; the fan line falls steeply to about 2,510. The widening gap between them is shaded, and the gap at bypass ratio 10 is marked as 46 per cent apart, equal to a 1.46 to 1 gearbox or three more turbine stages.",
+        short: "The shaft-speed conflict",
+        caption: "The whole study in one picture. At the E\u00b3's own bypass ratio the fan and the LP turbine want the shaft within 0.7 % of the same speed, which is why the real engine is a direct drive. Raise the bypass ratio and they pull apart, because a bigger fan must turn slower while the turbine driving it wants to turn faster. By bypass ratio 10 they are 46 % apart, and every option left \u2014 a gearbox, more turbine stages, or a faster fan tip \u2014 is a way of paying that one number.",
+      },
+    ],
   },
   {
     title: "Nacelle Cowl Geometry and CFD Validation",

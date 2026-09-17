@@ -230,3 +230,39 @@ def test_the_fan_face_axial_mach_is_the_published_match_point_value():
 def test_fan_radius_inverts_the_annulus(sweep):
     for p in sweep[::3]:
         assert fan_radius(p.w2_corrected_kg_s) == pytest.approx(p.fan_diameter_m / 2)
+
+
+# --- the figure -----------------------------------------------------------
+
+def test_the_chart_draws_the_two_speeds_the_study_computes():
+    """The figure is not an illustration: it reads the same solve the
+    numbers come from, so it cannot drift from them."""
+    from derivative.figures import series
+    s = series()
+    assert len(s) >= 6
+    assert s[0]["bpr"] == pytest.approx(6.7, abs=0.01)
+    assert s[-1]["bpr"] == pytest.approx(10.0, abs=0.01)
+    # they start together and pull apart -- the whole point of the chart
+    assert s[0]["ratio"] == pytest.approx(1.007, abs=0.01)
+    assert s[-1]["ratio"] == pytest.approx(1.463, abs=0.01)
+    ratios = [p["ratio"] for p in s]
+    assert ratios == sorted(ratios), "the gap must widen monotonically"
+    # and the direction of each line is the physics, not a drawing choice
+    assert s[-1]["fan"] < s[0]["fan"], "a bigger fan must turn slower"
+    assert s[-1]["lpt"] > s[0]["lpt"], "the turbine must turn faster for more work"
+
+
+def test_both_theme_variants_render():
+    """The site serves a dark and a light figure per entry. The dark one is
+    its own set of steps for the dark surface, not the light hexes on a
+    black ground -- the published pair failed the lightness band and the
+    chroma floor when checked, so this asserts they are different."""
+    import os
+    import tempfile
+    from derivative.figures import DARK, LIGHT, shaft_speed_figure
+
+    assert DARK["fan"] != LIGHT["fan"] and DARK["lpt"] != LIGHT["lpt"]
+    with tempfile.TemporaryDirectory() as d:
+        for dark in (False, True):
+            p = shaft_speed_figure(os.path.join(d, f"f{int(dark)}.png"), dark=dark)
+            assert os.path.getsize(p) > 20_000, p
