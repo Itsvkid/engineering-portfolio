@@ -141,11 +141,23 @@ def test_the_three_gap_sheets_are_the_three_in_the_code():
     claim("**Three of the six sheets exist to say something cannot be drawn.**")
 
 
-def test_the_closure_scoreboard_matches():
+def test_the_post_states_a_closure_floor_that_is_true():
+    """A floor, like the findings and the test count below it.
+
+    This read as an exact four-tuple and broke three times in a week --
+    once for J8/J9, once for D7, once for L1 -- each time on a document
+    that was correct when written. Closures now arrive as a side effect of
+    routine unit work, which is exactly the condition finding 170 names:
+    a mutable metric belongs in a bound or a generated block, never as an
+    exact figure in prose. The scoreboard's shape still matters, so the
+    proportion is asserted rather than dropped."""
     import collections
     by = collections.Counter(c["state"] for c in CLOSURES)
-    assert (len(CLOSURES), by["met"], by["half"], by["gated"]) == (42, 26, 12, 4)
-    claim("42 closures — 26 met,\n12 half, 4 gated.")
+    n = len(CLOSURES)
+    assert n >= 40, n
+    assert by["met"] > n / 2, (by["met"], n)
+    assert by["met"] + by["half"] + by["gated"] == n, by
+    claim("Over 40 closures,\nmore than half of them met.")
 
 
 def test_the_post_states_a_findings_floor_that_is_true():

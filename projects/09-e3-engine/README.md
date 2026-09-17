@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **1052 test functions**, **202 numbered findings**, **42 closures** — 26 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **1077 test functions**, **210 numbered findings**, **43 closures** — 27 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
@@ -65,6 +65,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **J7** — the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 vs 2.0 percent of row volume, web variant | met |
 | **J8** — the two assumed axial stitching offsets close the published turbomachinery length | 0.0 vs 4.0 percent of the 318.0 cm fan-flange-to-LPT-exit length | met |
 | **J9** — the mixed-flow nozzle exit area from continuity on the published cycle matches the printed diameter | 0.3 vs 3.0 percent of exit diameter | met |
+| **L1** — ME TF0.01 reproduces the E3 at its own bypass ratio before the excursion leaves it, the mixer closes at the published p5/p13 across the sweep, and the LPT stage count falls out of a measured loading limit rather than being chosen | 0.49 vs 1.0 percent, worst of the reproduction checks | met |
 | **E7** — the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 vs 15.0 percent departure from the mean implied allowable | half |
 | **E8** — uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 vs 25.0 percent | met |
 | **I4** — every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | met |

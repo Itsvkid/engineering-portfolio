@@ -137,8 +137,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-26 met, 12 half met, 4 gated, of 42.
-23 of 27 numeric closures sit inside their own band.
+27 met, 12 half met, 4 gated, of 43.
+24 of 28 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -179,6 +179,7 @@ blocks it. None is open without a reason attached.
 | J7 | the site cutaway turns both spools at the ratio the glTF carries, taking every row's spool and both speeds from the file | 1.35 | 2 | met |
 | J8 | the two assumed axial stitching offsets close the published turbomachinery length | 0 | 4 | met |
 | J9 | the mixed-flow nozzle exit area from continuity on the published cycle matches the printed diameter | 0.3 | 3 | met |
+| L1 | ME TF0.01 reproduces the E3 at its own bypass ratio before the excursion leaves it, the mixer closes at the published p5/p13 across the sweep, and the LPT stage count falls out of a measured loading limit rather than being chosen | 0.49 | 1 | met |
 | E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
@@ -275,7 +276,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-202 findings, in the `STEP0.md` that owns each one.
+210 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -487,4 +488,12 @@ would break every reference in the commit history.
 | 203 | blading | Camber is 5.08° rms and the error changes sign at 57 % span — the |
 | 204 | blading | Finding 54 is answered by the source, and it was wrong by 6×. It |
 | 205 | blading | Third time. A backlog line that names a table nobody has opened is |
+| 206 | derivative | A mixed-flow derivative's fan pressure ratio is an output, not a |
+| 207 | derivative | The fan and the LP turbine want the shaft at two different speeds, |
+| 208 | derivative | The ceiling written down in step 0 rejected the answer the scoping |
+| 209 | derivative | The largest sensible direct-drive bypass ratio on this core is 8.44. |
+| 210 | derivative | The gearbox answer is no, and the number is why. The fan and LPT |
+| 211 | derivative | The quarter stage does not survive, and that is the E3 feature the |
+| 212 | derivative | The blade stress does not bind; the tip Mach does. A bigger fan |
+| 213 | derivative | A loading coefficient is frame-invariant only if both its halves are |
 

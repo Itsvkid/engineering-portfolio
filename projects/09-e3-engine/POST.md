@@ -71,7 +71,7 @@ disagreements, and each closure's tolerance was written in a `STEP0.md`
 >
 > Source: NASA CR-168219 and thirteen further E³ reports, General Electric
 > for NASA Lewis Research Center, contract NAS3-20643. US Government work.
-> Code, data and all 165 findings: [link]
+> Code, data and every numbered finding: [link]
 
 ---
 
@@ -202,8 +202,8 @@ use had no single home.
 Nine of ten stages: cycle, mean-line and through-flow aero, blading,
 cooling and secondary air, blade and disc mechanical, materials and mass,
 32 blade rows lofted from the validated sections, cross-discipline
-verification, and publication. **Over 850 test functions. 42 closures — 26 met,
-12 half, 4 gated. Over 200 numbered findings.**
+verification, and publication. **Over 850 test functions. Over 40 closures,
+more than half of them met. Over 200 numbered findings.**
 
 The tenth stage is hand CAD and needs a person at a GUI. One CFD case, a
 transonic compressor rotor, converges to a stalled branch at 26 % of design
