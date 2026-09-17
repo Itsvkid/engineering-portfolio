@@ -197,16 +197,71 @@ def test_the_gearbox_ratio_is_too_small_to_argue_for(ex, sweep):
         assert lo < g < hi, f"{n} stages -> {g:.3f}"
 
 
+def test_what_the_gearbox_buys_is_the_difference_between_the_architectures(ex, sweep):
+    """THE relation finding 210 got wrong: what a gearbox saves is the
+    ACCEPTED direct-drive stage count minus the geared one. 210 said "two",
+    which was eight-minus-five computed while the answer was still seven.
+    Asserting the subtraction binds the two numbers together so a correction
+    to one cannot leave the other behind."""
+    p = sweep[-1]
+    g = ex.gearbox_saving(p)
+    assert g["direct_drive_stages"] == ex.min_direct_drive_stages(p)
+    assert g["geared_stages"] == 5
+    assert g["stages_saved"] == g["direct_drive_stages"] - g["geared_stages"]
+    # at BPR 10 the step-0 ceiling makes that eight against five
+    assert g["direct_drive_stages"] == 8, "finding 208's answer, not scoping's 7"
+    assert g["stages_saved"] == 3, "finding 210 said 2, against the overturned 7"
+    assert 1.40 < g["gear_ratio"] < 1.55
+
+
+def test_the_accepted_stage_count_is_derived_from_the_ceiling(ex, sweep):
+    """No caller may name a stage count as a literal. The accepted count is
+    the fewest that keep the fan tip inside the step-0 ceiling, and it must
+    agree with the architecture table it came from."""
+    for p in (sweep[0], sweep[-1]):
+        n = ex.min_direct_drive_stages(p)
+        assert ex.architecture(p, n)["within_ceiling"]
+        assert not ex.architecture(p, n - 1)["within_ceiling"], \
+            f"BPR {p.bpr}: {n-1} stages should fail the ceiling"
+    assert ex.min_direct_drive_stages(sweep[0]) == 5    # the E3 itself
+    assert ex.min_direct_drive_stages(sweep[-1]) == 8
+
+
+def test_a_looser_ceiling_would_have_given_the_scoping_answer(ex, sweep):
+    """The whole correction in one line: the stage count is a function of the
+    ceiling, and scoping's 7 was what a ceiling of ~1.47 would have allowed."""
+    p = sweep[-1]
+    assert ex.min_direct_drive_stages(p, ceiling=1.45) == 8
+    assert ex.min_direct_drive_stages(p, ceiling=1.47) == 7
+    assert ex.min_direct_drive_stages(p, ceiling=1.60) == 6
+
+
 def test_the_quarter_stage_booster_does_not_survive(ex, sweep):
     """Fan hub and bypass are the same rotor, so a lower bypass PR drops the
     hub's too; holding the core supercharged falls to the booster."""
-    b = ex.booster_loading(sweep[-1], 7)
+    p = sweep[-1]
+    n = ex.min_direct_drive_stages(p)          # derived, never a literal -- finding 215
+    b = ex.booster_loading(p, n)
     assert b["e3_pitch_loading"] == pytest.approx(0.235, abs=0.01)
     ratio = b["loading_if_one_stage"] / b["e3_pitch_loading"]
-    assert 1.8 < ratio < 2.0, f"loading rises {ratio:.2f}x"
-    assert b["loading_if_one_stage"] > 0.40, "at or past the subsonic stage limit"
+    assert 2.0 < ratio < 2.3, f"loading rises {ratio:.2f}x"
+    assert b["loading_if_one_stage"] > 0.40, "past the subsonic stage limit"
     assert b["stages_at_psi_040"] > 1.0, "one comfortable stage no longer does it"
     assert b["fan_hub_pr"] < 1.40
+
+
+def test_the_booster_loading_moves_with_the_architecture(ex, sweep):
+    """Finding 215: the booster's loading is set by the shaft speed, which is
+    set by the LPT stage count. A slower shaft gives the booster less blade
+    speed for the same work, so MORE turbine stages means a HARDER booster.
+    This coupling is why finding 211's numbers went stale when 208 moved the
+    architecture, and it is asserted here so they cannot drift apart again."""
+    p = sweep[-1]
+    seven = ex.booster_loading(p, 7)["loading_if_one_stage"]
+    eight = ex.booster_loading(p, 8)["loading_if_one_stage"]
+    assert eight > seven, "more stages, slower shaft, harder booster"
+    assert seven == pytest.approx(0.438, abs=0.005)   # the overturned figure
+    assert eight == pytest.approx(0.500, abs=0.005)   # the one that stands
 
 
 def test_the_held_efficiency_assumption_is_priced(ex):

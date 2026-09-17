@@ -172,18 +172,30 @@ The sweep, fixed core, mixer-matched, booster restaged to hold OPR 38.4:
      **1.64:1** for four stages, **1.89:1** for three. A real geared fan runs
      about 3:1, and it exists because a large fan sits on a small, very fast
      core. Here the core is small *and* the fan is only 2.5 m, so the two
-     speeds were never far apart. Spending a 30,000 hp epicyclic, its oil
-     system and its certification case to delete two LP turbine stages is a
-     bad trade. **Direct drive with a longer turbine is the right answer for
-     this core**, and the reason is the ratio, not a preference.
+     speeds were never far apart. **What the gearbox buys is the difference
+     between the two architectures: eight stages direct-drive against five
+     geared — three stages, for 1.463:1.** Spending a 30,000 hp epicyclic,
+     its oil system and its certification case to delete three LP turbine
+     stages is still a bad trade, and it is a bad trade for the reason the
+     ratio gives rather than for a preference. **Direct drive with a longer
+     turbine is the right answer for this core.**
+
+     *(Corrected 2026-09-17 — see finding 214. This finding originally said
+     "two stages", the difference against the seven-stage direct drive that
+     finding 208 had already overturned.)*
 
 211. **The quarter stage does not survive, and that is the E3 feature the
      derivative loses.** The fan hub and the bypass are the same rotor, so
      dropping the bypass pressure ratio to 1.468 drops the hub's to
      **1.321**; holding the core supercharged at 1.70 then asks the booster
-     for **1.287** where it makes 1.129. Pitch loading goes **0.235 → 0.438**,
-     a factor of 1.86 and at the diffusion limit for one subsonic stage, so
-     it becomes two. The island — the untrapped splitter that centrifuges
+     for **1.287** where it makes 1.129. At the accepted eight-stage shaft
+     speed of 2904 rpm, pitch loading goes **0.235 → 0.500**, a factor of
+     **2.13** and **past** the diffusion limit for one subsonic stage — it
+     needs 1.25 stages at ψ 0.40, so it becomes two. Note the dependency,
+     because it is what made this finding fragile: the booster's loading is
+     set by the shaft speed, and the shaft speed is set by the LP turbine's
+     stage count, so this number moves whenever the architecture does. The
+     island — the untrapped splitter that centrifuges
      half to two-thirds of ingested debris away from the core, and one of
      the three things that make the E3 distinctive — is gone, replaced by a
      conventional multi-stage booster. **The cheapest way to see what a
@@ -208,6 +220,32 @@ The sweep, fixed core, mixer-matched, booster restaged to hold OPR 38.4:
      46 % result was never affected — but any ψ *quoted* from it was wrong.
      Same class as unit 15's error 2, one discipline over: **check which
      frame a published number is in before dividing by it.**
+
+214. **A conclusion downstream of a corrected number needs re-deriving, not
+     re-reading — and this unit failed that on its own correction.** Finding
+     208 moved the BPR 10 direct drive from seven LPT stages to eight.
+     Finding 210, written in the same sitting, kept the arithmetic it had
+     before: it said a gearbox deletes "two" stages, which is seven minus
+     five. The right answer is **three**, and 210's own second sentence
+     already contained the five it needed to subtract from. The failure was
+     not arithmetic — it was that **the number had been written as a literal
+     rather than derived**, so the correction that invalidated it passed it
+     by. It reached the portfolio page before the resume agent caught it.
+
+215. **The same sweep found a second one, and it had moved further.** Finding
+     211's booster numbers were computed at the seven-stage shaft speed of
+     3104 rpm. At the accepted eight-stage 2904 rpm the booster's pitch
+     loading is **0.500, not 0.438** — a factor of **2.13** rather than 1.86
+     — because a slower shaft gives the booster less blade speed for the same
+     work. The conclusion strengthened rather than moved: 0.438 sat *at* the
+     one-stage diffusion limit and 0.500 is clearly past it, so the quarter
+     stage was never in doubt. **Only its numbers were wrong, which is the
+     harder kind to notice.** The structural fix is in `tf001.py`:
+     `min_direct_drive_stages()` derives the accepted stage count from the
+     step-0 ceiling, `gearbox_saving()` does the subtraction, and no caller
+     names a stage count as a literal any more. `test_tf001.py` asserts the
+     relation *direct-drive stages − geared stages = what the gearbox buys*,
+     which is the one relation that would have caught 210 at the time.
 
 ### What is still not verified
 

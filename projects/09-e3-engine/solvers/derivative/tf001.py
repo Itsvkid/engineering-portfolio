@@ -246,7 +246,7 @@ class Excursion:
                     fan_u_tip_corrected=u_fan_corr, fan_m_rel=tip_relative_mach(u_fan_corr),
                     fan_psi=psi_e3)
 
-    def architecture(self, p, n_stages):
+    def architecture(self, p, n_stages, ceiling=M_REL_CEILING):
         """What an n-stage direct-drive LPT costs the fan at this bypass ratio.
         The shaft speed is set by the TURBINE; the fan has to live with it."""
         theta = self.base.stations["t0"] / 288.15
@@ -256,7 +256,33 @@ class Excursion:
         return dict(bpr=p.bpr, stages=n_stages, rpm=rpm,
                     u_tip_corrected=u_tip_corr, m_rel_tip=tip_relative_mach(u_tip_corr),
                     root_stress_Pa=blade_root_stress(p.fan_annulus_m2, rpm),
-                    within_ceiling=tip_relative_mach(u_tip_corr) <= M_REL_CEILING)
+                    within_ceiling=tip_relative_mach(u_tip_corr) <= ceiling)
+
+    def min_direct_drive_stages(self, p, ceiling=M_REL_CEILING, limit=12):
+        """The fewest LPT stages that keep the fan tip inside the ceiling at
+        this bypass ratio -- the ACCEPTED direct-drive architecture.
+
+        Everything downstream of the architecture choice (booster loading,
+        what a gearbox buys) must call this rather than name a number.
+        Finding 208 moved the answer at BPR 10 from 7 stages to 8, and
+        finding 210 kept 7's arithmetic because it had been written down as
+        a literal; findings 214-215 are that correction."""
+        for n in range(1, limit + 1):
+            if self.architecture(p, n, ceiling=ceiling)["within_ceiling"]:
+                return n
+        raise RuntimeError(f"no stage count under {limit} stays inside M_rel {ceiling}")
+
+    def gearbox_saving(self, p, geared_stages=5, ceiling=M_REL_CEILING):
+        """What the gearbox actually buys, derived rather than remembered:
+        the accepted DIRECT-DRIVE stage count minus the geared one, with the
+        reduction ratio that delivers it. The subtraction is the relation
+        finding 210 got wrong."""
+        n_direct = self.min_direct_drive_stages(p, ceiling=ceiling)
+        c = self.shaft_speed_conflict(p, n_stages_target=geared_stages)
+        return dict(bpr=p.bpr, direct_drive_stages=n_direct,
+                    geared_stages=geared_stages,
+                    stages_saved=n_direct - geared_stages,
+                    gear_ratio=c["gear_ratio"])
 
     def largest_direct_drive_bpr(self, hub_mode="held", ceiling=M_REL_CEILING,
                                  max_extra_stages=MAX_EXTRA_LPT_STAGES, hi=10.0):
@@ -265,13 +291,13 @@ class Excursion:
         at most `max_extra_stages` more than the E3's five. Bisect on BPR."""
         n_max = 5 + max_extra_stages
         lo = 6.7
-        if not self.architecture(self.point(lo, hub_mode), n_max)["within_ceiling"]:
+        if not self.architecture(self.point(lo, hub_mode), n_max, ceiling)["within_ceiling"]:
             return None
-        if self.architecture(self.point(hi, hub_mode), n_max)["within_ceiling"]:
+        if self.architecture(self.point(hi, hub_mode), n_max, ceiling)["within_ceiling"]:
             return hi
         for _ in range(30):
             mid = 0.5 * (lo + hi)
-            if self.architecture(self.point(mid, hub_mode), n_max)["within_ceiling"]:
+            if self.architecture(self.point(mid, hub_mode), n_max, ceiling)["within_ceiling"]:
                 lo = mid
             else:
                 hi = mid
@@ -386,8 +412,14 @@ def main():
     print(f"\nLargest sensible direct-drive BPR (M_rel <= {M_REL_CEILING}, "
           f"<= {5+MAX_EXTRA_LPT_STAGES} LPT stages): {best:.2f}" if best else "\nno sensible point")
 
-    bc = ex.booster_loading(p10, 7)
-    print(f"\nThe quarter-stage booster at BPR {p10.bpr}:")
+    n_dd = ex.min_direct_drive_stages(p10)
+    g = ex.gearbox_saving(p10)
+    print(f"\nWhat a gearbox would buy at BPR {p10.bpr}: {g['direct_drive_stages']} direct-drive "
+          f"stages against {g['geared_stages']} geared = {g['stages_saved']} stages, "
+          f"for {g['gear_ratio']:.3f}:1")
+
+    bc = ex.booster_loading(p10, n_dd)
+    print(f"\nThe quarter-stage booster at BPR {p10.bpr}, at the accepted {n_dd}-stage shaft speed:")
     print(f"  fan hub PR falls to {bc['fan_hub_pr']:.3f}, so the booster must make "
           f"{bc['booster_pr_needed']:.3f} to hold 1.70")
     print(f"  pitch loading {bc['e3_pitch_loading']:.3f} (E3) -> {bc['loading_if_one_stage']:.3f}; "
