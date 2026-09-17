@@ -3,64 +3,64 @@ Coventry, United Kingdom · kumarvsvinay@gmail.com · +44 7742 914241
 linkedin.com/in/vinaykumar-venkateshkumar · github.com/Itsvkid · vinaykumar.is-a.dev
 UK Student visa, coursework complete · Available immediately · Sponsorship may be required
 Proﬁle
-Graduate design engineer for the engine externals and secondary-systems lane. Produces release-ready mechanical design from
-parametric CAD — detail and GA drawings with geometric tolerancing to ISO 1101, limits and ﬁts to ISO 286, tolerance stack-up,
-sheet-metal ﬂat patterns, DFM — and sizes it against load cases by FEA. Veriﬁes geometry rather than assuming it, and treats
-a simulation result as a claim to be tested.
+Graduate design engineer for the engine externals and secondary-systems lane: release-ready mechanical design from parametric
+CAD — detail and GA drawings to ISO 1101 and ISO 286, tolerance stack-up, ﬂat patterns, DFM — sized by FEA. Writes the
+tolerance a result must meet before running it, and publishes the runs that miss it.
 Technical Skills
 Mech. Design         Geometric tolerancing (ISO 1101), limits and ﬁts (ISO 286), tolerance stack-up (worst case and RSS), design
                      for manufacture, sheet-metal forming (K-factor, bend allowance, ﬂat patterns), detail and GA drawings
 CAD                  CATIA V5 (proﬁcient, 80 hrs certiﬁed), CadQuery, pyOCC / Open CASCADE, ANSYS DesignModeler,
-                     STEP and DXF interchange, parametric geometry (iCST)
+                     STEP and DXF interchange, parametric geometry
 Analysis             FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence, stress-singularity identiﬁcation, hand
                      calculation as an independent check. CFD (ANSYS Fluent, ICEM, OpenFOAM): k-ω SST, grid independence.
                      Python (NumPy, SciPy, pytest), MATLAB, Git
-Domains              Gas turbine performance, turbomachinery aerodynamics, thermodynamics, aircraft structures,
-                     non-destructive testing
 Selected Projects
 Parametric Actuator and Accessory-Gearbox Generators, with Drawing Pack — mechanical design, GD&T                             2026
 
 • Sized before drawn — a ﬂight-control actuator family across four aircraft classes and an accessory gearbox across ﬁve power
   ratings (5–50 kW), with involute gear geometry, Lewis bending-stress sizing and SKF 60xx bearings — then issued as a four-
-  sheet A4 pack: three details and a ballooned GA carrying ISO 286 ﬁts (35 H8 bore, 21 f7 rod), ISO 1101 tolerances, a datum
+  sheet A4 pack: three details and a ballooned GA with ISO 286 ﬁts (35 H8 bore, 21 f7 rod), ISO 1101 tolerances, a datum
   scheme and a ﬁve-contributor stack on 390 mm nominal (worst case ±0.90, RSS ±0.44).
 • Veriﬁcation found six real defects, including meshing teeth intersecting by 424 mm3 in every exported assembly because the
-  gears were never phased. The test suite was then checked against itself with a reintroduced sign error, which only the tooth-taper
-  test catches. 132 automated tests.
-Formed Sheet-Metal Equipment Bracket, Sized and Redesigned — sheet metal, DFM, FEA                                             2026
+  gears were never phased — then the test suite was checked against itself with a reintroduced sign error, which only the
+  tooth-taper test catches. 132 automated tests.
+Formed Sheet-Metal Equipment Bracket, Sized and Redesigned — sheet metal, DFM, FEA                                       2026
 
 • Flat pattern from a K-factor neutral axis rather than assumed (101.52 mm blank against 105.00 mm of summed legs), validated
-   by conservation of volume to 0.25% against 5.12% for a naive blank. Five DFM rules, and a material trade with a real answer:
-   2024-T3 is twice as strong as 5052-H32 and cannot make the fold — 4T minimum bend radius against 1T.
+  by conservation of volume to 0.25% against 5.12% for a naive blank; ﬁve DFM rules, and a material trade with a real answer
+  — 2024-T3 is twice as strong as 5052-H32 and cannot make the fold, 4T bend radius against 1T.
 • Sized against a 9g crash load in CalculiX, where a ﬁve-density convergence study made the result usable: peak stress climbed
-   12% and never settled — a singularity at a ﬁxed constraint, so the 545 MPa headline is a boundary condition, not a stress. The
-   converged 196.7 MPa against 193 MPa yield condemns the part marginally, not by 2.8×. Four ﬁxes were screened analytically
-   ﬁrst — stiﬀening the upright makes that leg 7.4× stiﬀer, margin unchanged — before 2.0 mm gauge (126.1 MPa, +53%) and
-   a re-issued drawing. 66 tests.
-Nacelle Cowl Geometry and CFD Validation — personal project, public data                                                     2026
+  12% and never settled — a singularity at a ﬁxed constraint, so the 545 MPa headline is a boundary condition, not a stress, and
+  the converged 196.7 MPa against 193 MPa yield condemns the part marginally rather than by 2.8×. Four ﬁxes were screened
+  by hand ﬁrst — stiﬀening the upright makes that leg 7.4× stiﬀer and changes the margin by nothing — before 2.0 mm gauge
+  (126.1 MPa, +53%) and a re-issued drawing, the bend deduction having moved with the gauge. 66 tests.
+Nacelle Cowl Geometry and CFD Validation — personal project, public data                                                   2026
 CST curve ﬁtted to NASA TM 110300’s published NACA 1-85-100 cowl ordinates to 0.019% RMS of max radius; a compressible
-RANS OpenFOAM case (k-ω SST, 108,904 cells) at Mach 0.79 matched to the report’s wind-tunnel pressures to RMS Cp 0.65
+RANS OpenFOAM case (k-ω SST, 108,904 cells) at Mach 0.79 matched to that report’s wind-tunnel pressures to RMS Cp 0.65
 over 17 stations, including where it misses the suction peak. Separately: a Cranﬁeld research project on nacelle installation
-aerodynamics, industrial context — result pending, conﬁdential.
-Twin-Spool Cycle Model, and the NASA/GE E3 Engine — gas turbine performance                                                  2026
-Separate-exhaust station solver with every turbine pressure ratio matched to the power its own spool demands rather than
-assumed: 57.67 kN net thrust, 46.7% thermal eﬃciency, within 0.01% of the ideal-Brayton limit (82 tests). Separately, the E3 ’s
-published architecture, cycle, compressor blading and HPT ﬂowpath transcribed with a page citation on every value, held by 37
-tests forcing independent routes to agree.
-Controlled Jets for Enhanced Mixing Rates — BEng ﬁnal-year project, team of 3                                          Mar 2025
-Passive ﬂow-control tabs in ANSYS Fluent across Mach 0.6–1.0, grid independence to 3.4M+ nodes, validated against experi-
-mental shadowgraph imaging: 64–76% core-length reduction against an uncontrolled baseline at Mach 0.8, no signiﬁcant thrust
-penalty. Further work at vinaykumar.is-a.dev — bleed-air duct clearance study, airfoil panel method cross-checked against XFoil
-(0.047 RMS), parametric wing and blade-row generators.
+aerodynamics — industrial, conﬁdential, result pending.
+NASA/GE E3 Turbofan, Rebuilt from its Design Reports — gas turbine performance, turbomachinery                             2026
+
+• Nine of ten stages of a twin-spool turbofan rebuilt from public-domain NASA reports — cycle, blading, cooling, secondary air,
+  blade and disc stress, mass — every value carrying its report page and every solver stating the tolerance it must meet before it
+  runs: HPC eﬃciency lands 0.15 of a point from the published value on a 2.0-point band, while engine sfc lands at 1.91% against
+  a 1.5% band and is recorded as a miss, not rounded into a pass. Over 1,000 automated tests. Published as an interactive 3D
+  anatomy at vinaykumar.is-a.dev/turbofan — 144 procedural parts across 12 systems, blade rows lofted from printed section
+  tables rather than drawn by eye, every fact tagged to a report page or ﬂagged schematic or assumed, with a six-sheet drawing
+  pack behind it.
+• ME TF0.01 — a derivative trade study of my own on that ﬁxed core, never built: what bypass ratio 10 costs. Fan and LP
+  turbine want the LP shaft 46% apart at BPR 10, against 0.7% at the E3 ’s own 6.7 — the geared-fan argument as a number,
+  and on this core the answer is more LP turbine stages, not a 1.46:1 gearbox. The tip-Mach ceiling written down before the
+  run rejected my own ﬁrst answer of seven stages; it needs eight. Fuel burn is reported as a 3–4.5% band rather than the 4.5%
+  headline, because fan eﬃciency is held at the E3 ’s values at a diﬀerent tip Mach — worth 0.68% of sfc per point.
 Education
 Postgraduate Coursework, Thermal Power and Propulsion — Cranﬁeld University, Cranﬁeld, UK Oct 2025 – Sep 2026
-Gas Turbine Performance     ·   Combustion    ·   Turbomachinery Aerodynamics      ·   Propulsion System Design
+Gas Turbine Performance    ·   Combustion    ·   Turbomachinery Aerodynamics       ·   Propulsion System Design
 BEng Aeronautical Engineering — CGPA 7.37/10 (ﬁrst class) — KCG College of Technology, Chennai, India                        2021 –
 2025
-Certiﬁcations: CATIA V5 (Proﬁcient), CADD Centre, 80 hrs, 2024        ·   MATLAB Essential Training, LinkedIn Learning, 2024       ·
-IELTS Academic 6.5, UKVI B2, Jan 2025
+Certiﬁcations: CATIA V5 (Proﬁcient), CADD Centre, 80 hrs, 2024     ·   IELTS Academic 6.5 (UKVI B2), 2025
 Experience
 Engineering Intern, Aircraft Maintenance — AIESL — Boeing 737 MRO base, India                                     Mar – Apr 2025
 Rotation across Component Overhaul, Production Planning and Stores servicing Air India Express. Documented wheel/brake overhaul
-to speciﬁcation (torque 158 lb-ft, tyre pressure 205 ± 5 psi) and Eddy Current Testing; tracked parts in AMOS and RAMCO.
+to speciﬁcation (158 lb-ft torque, 205 ± 5 psi) and Eddy Current Testing; tracked parts in AMOS and RAMCO.
 

@@ -71,19 +71,17 @@
 
 % ---- Profile --------------------------------------------------------------
 \section{Profile}
-Graduate design engineer for the engine externals and secondary-systems lane. Produces release-ready
-mechanical design from parametric CAD --- detail and GA drawings with geometric tolerancing to ISO 1101,
-limits and fits to ISO 286, tolerance stack-up, sheet-metal flat patterns, DFM --- and sizes it against load
-cases by FEA. Verifies geometry rather than assuming it, and treats a simulation result as a claim to be tested.
+Graduate design engineer for the engine externals and secondary-systems lane: release-ready mechanical design from parametric CAD
+--- detail and GA drawings to ISO 1101 and ISO 286, tolerance stack-up, flat patterns, DFM --- sized by FEA. Writes the tolerance a
+result must meet \textit{before} running it, and publishes the runs that miss it.
 
 % ---- Skills ---------------------------------------------------------------
 \section{Technical Skills}
 {\small
 \begin{tabular}{@{}L{2.6cm}L{15.1cm}@{}}
-\textbf{Mech. Design} & Geometric tolerancing (ISO 1101), limits and fits (ISO 286), tolerance stack-up (worst case and RSS), design for manufacture, sheet-metal forming (K-factor, bend allowance, flat patterns), detail and GA drawings\\[0.12em]
-\textbf{CAD} & CATIA V5 (proficient, 80 hrs certified), CadQuery, pyOCC / Open CASCADE, ANSYS DesignModeler, STEP and DXF interchange, parametric geometry (iCST)\\[0.12em]
-\textbf{Analysis} & FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence, stress-singularity identification, hand calculation as an independent check. CFD (ANSYS Fluent, ICEM, OpenFOAM): $k$-$\omega$ SST, grid independence. Python (NumPy, SciPy, pytest), MATLAB, Git\\[0.1em]
-\textbf{Domains} & Gas turbine performance, turbomachinery aerodynamics, thermodynamics, aircraft structures, non-destructive testing\\
+\textbf{Mech. Design} & Geometric tolerancing (ISO 1101), limits and fits (ISO 286), tolerance stack-up (worst case and RSS), design for manufacture, sheet-metal forming (K-factor, bend allowance, flat patterns), detail and GA drawings\\[0.10em]
+\textbf{CAD} & CATIA V5 (proficient, 80 hrs certified), CadQuery, pyOCC / Open CASCADE, ANSYS DesignModeler, STEP and DXF interchange, parametric geometry\\[0.12em]
+\textbf{Analysis} & FEA (CalculiX, gmsh, FreeCAD FEM): load cases, mesh convergence, stress-singularity identification, hand calculation as an independent check. CFD (ANSYS Fluent, ICEM, OpenFOAM): $k$-$\omega$ SST, grid independence. Python (NumPy, SciPy, pytest), MATLAB, Git\\
 \end{tabular}}
 
 % ---- Design projects ------------------------------------------------------
@@ -91,36 +89,37 @@ cases by FEA. Verifies geometry rather than assuming it, and treats a simulation
 
 \project{Parametric Actuator and Accessory-Gearbox Generators, with Drawing Pack}{mechanical design, GD\&T}{2026}
 \begin{itemize}
-\item Sized before drawn --- a flight-control actuator family across four aircraft classes and an accessory gearbox across five power ratings (5--50\,kW), with involute gear geometry, Lewis bending-stress sizing and SKF 60xx bearings --- then issued as a four-sheet A4 pack: three details and a ballooned GA carrying ISO 286 fits (35\,H8 bore, 21\,f7 rod), ISO 1101 tolerances, a datum scheme and a five-contributor stack on 390\,mm nominal (worst case $\pm$0.90, RSS $\pm$0.44).
-\item Verification found six real defects, including meshing teeth intersecting by 424\,mm\textsuperscript{3} in every exported assembly because the gears were never phased. The test suite was then checked against itself with a reintroduced sign error, which only the tooth-taper test catches. 132 automated tests.
+\item Sized before drawn --- a flight-control actuator family across four aircraft classes and an accessory gearbox across five power ratings (5--50\,kW), with involute gear geometry, Lewis bending-stress sizing and SKF 60xx bearings --- then issued as a four-sheet A4 pack: three details and a ballooned GA with ISO 286 fits (35\,H8 bore, 21\,f7 rod), ISO 1101 tolerances, a datum scheme and a five-contributor stack on 390\,mm nominal (worst case $\pm$0.90, RSS $\pm$0.44).
+\item Verification found six real defects, including meshing teeth intersecting by 424\,mm\textsuperscript{3} in every exported assembly because the gears were never phased --- then the test suite was checked against itself with a reintroduced sign error, which only the tooth-taper test catches. 132 automated tests.
 \end{itemize}
 
 \project{Formed Sheet-Metal Equipment Bracket, Sized and Redesigned}{sheet metal, DFM, FEA}{2026}
 \begin{itemize}
-\item Flat pattern from a K-factor neutral axis rather than assumed (101.52\,mm blank against 105.00\,mm of summed legs), validated by conservation of volume to 0.25\% against 5.12\% for a naive blank. Five DFM rules, and a material trade with a real answer: 2024-T3 is twice as strong as 5052-H32 and cannot make the fold --- 4T minimum bend radius against 1T.
-\item Sized against a 9g crash load in CalculiX, where a five-density convergence study made the result usable: peak stress climbed 12\% and never settled --- a singularity at a fixed constraint, so the 545\,MPa headline is a boundary condition, not a stress. The converged 196.7\,MPa against 193\,MPa yield condemns the part marginally, not by 2.8$\times$. Four fixes were screened analytically first --- stiffening the upright makes that leg 7.4$\times$ stiffer, margin unchanged --- before 2.0\,mm gauge (126.1\,MPa, +53\%) and a re-issued drawing. 66 tests.
+\item Flat pattern from a K-factor neutral axis rather than assumed (101.52\,mm blank against 105.00\,mm of summed legs), validated by conservation of volume to 0.25\% against 5.12\% for a naive blank; five DFM rules, and a material trade with a real answer --- 2024-T3 is twice as strong as 5052-H32 and cannot make the fold, 4T bend radius against 1T.
+\item Sized against a 9g crash load in CalculiX, where a five-density convergence study made the result usable: peak stress climbed 12\% and never settled --- a singularity at a fixed constraint, so the 545\,MPa headline is a boundary condition, not a stress, and the converged 196.7\,MPa against 193\,MPa yield condemns the part marginally rather than by 2.8$\times$. Four fixes were screened by hand first --- stiffening the upright makes that leg 7.4$\times$ stiffer and changes the margin by nothing --- before 2.0\,mm gauge (126.1\,MPa, +53\%) and a re-issued drawing, the bend deduction having moved with the gauge. 66 tests.
 \end{itemize}
 
 \project{Nacelle Cowl Geometry and CFD Validation}{personal project, public data}{2026}
-CST curve fitted to NASA TM 110300's published NACA 1-85-100 cowl ordinates to 0.019\% RMS of max radius; a compressible RANS OpenFOAM case ($k$-$\omega$ SST, 108{,}904 cells) at Mach 0.79 matched to the report's wind-tunnel pressures to RMS $C_p$ 0.65 over 17 stations, including where it misses the suction peak. \textit{Separately: a Cranfield research project on nacelle installation aerodynamics, industrial context --- result pending, confidential.}
+CST curve fitted to NASA TM 110300's published NACA 1-85-100 cowl ordinates to 0.019\% RMS of max radius; a compressible RANS OpenFOAM case ($k$-$\omega$ SST, 108{,}904 cells) at Mach 0.79 matched to that report's wind-tunnel pressures to RMS $C_p$ 0.65 over 17 stations, including where it misses the suction peak. \textit{Separately: a Cranfield research project on nacelle installation aerodynamics --- industrial, confidential, result pending.}
 
-\project{Twin-Spool Cycle Model, and the NASA/GE E\textsuperscript{3} Engine}{gas turbine performance}{2026}
-Separate-exhaust station solver with every turbine pressure ratio matched to the power its own spool demands rather than assumed: 57.67\,kN net thrust, 46.7\% thermal efficiency, within 0.01\% of the ideal-Brayton limit (82 tests). Separately, the E\textsuperscript{3}'s published architecture, cycle, compressor blading and HPT flowpath transcribed with a page citation on every value, held by 37 tests forcing independent routes to agree.
+\project{NASA/GE E\textsuperscript{3} Turbofan, Rebuilt from its Design Reports}{gas turbine performance, turbomachinery}{2026}
+\begin{itemize}
+\item Nine of ten stages of a twin-spool turbofan rebuilt from public-domain NASA reports --- cycle, blading, cooling, secondary air, blade and disc stress, mass --- every value carrying its report page and every solver stating the tolerance it must meet \textit{before} it runs: HPC efficiency lands 0.15 of a point from the published value on a 2.0-point band, while engine sfc lands at 1.91\% against a 1.5\% band and is recorded as a miss, not rounded into a pass. Over 1{,}000 automated tests. Published as an interactive 3D anatomy at \href{https://vinaykumar.is-a.dev/turbofan}{vinaykumar.is-a.dev/turbofan} --- 144 procedural parts across 12 systems, blade rows lofted from printed section tables rather than drawn by eye, every fact tagged to a report page or flagged schematic or assumed, with a six-sheet drawing pack behind it.
+\item \textbf{ME TF0.01} --- a derivative trade \textit{study} of my own on that fixed core, never built: what bypass ratio 10 costs. Fan and LP turbine want the LP shaft 46\% apart at BPR 10, against 0.7\% at the E\textsuperscript{3}'s own 6.7 --- the geared-fan argument as a number, and on this core the answer is more LP turbine stages, not a 1.46:1 gearbox. The tip-Mach ceiling written down before the run rejected my own first answer of seven stages; it needs eight. Fuel burn is reported as a 3--4.5\% band rather than the 4.5\% headline, because fan efficiency is held at the E\textsuperscript{3}'s values at a different tip Mach --- worth 0.68\% of sfc per point.
+\end{itemize}
 
-\project{Controlled Jets for Enhanced Mixing Rates}{BEng final-year project, team of 3}{Mar 2025}
-Passive flow-control tabs in ANSYS Fluent across Mach 0.6--1.0, grid independence to 3.4M+ nodes, validated against experimental shadowgraph imaging: 64--76\% core-length reduction against an uncontrolled baseline at Mach 0.8, no significant thrust penalty. \textit{Further work at \href{https://vinaykumar.is-a.dev}{vinaykumar.is-a.dev}} --- bleed-air duct clearance study, airfoil panel method cross-checked against XFoil (0.047 RMS), parametric wing and blade-row generators.
 
 % ---- Education ------------------------------------------------------------
 \section{Education}
 \oneline{Postgraduate Coursework, Thermal Power and Propulsion}{Cranfield University, Cranfield, UK}{Oct 2025 -- Sep 2026}
-{\small Gas Turbine Performance \sep Combustion \sep Turbomachinery Aerodynamics \sep Propulsion System Design}\\[0.1em]
+{\small Gas Turbine Performance \sep Combustion \sep Turbomachinery Aerodynamics \sep Propulsion System Design}\\[0.05em]
 \oneline{BEng Aeronautical Engineering --- CGPA 7.37/10 (first class)}{KCG College of Technology, Chennai, India}{2021 -- 2025}
-{\small \textit{Certifications:} CATIA V5 (Proficient), CADD Centre, 80 hrs, 2024 \sep MATLAB Essential Training, LinkedIn Learning, 2024 \sep IELTS Academic 6.5, UKVI B2, Jan 2025}
+{\small \textit{Certifications:} CATIA V5 (Proficient), CADD Centre, 80 hrs, 2024 \sep IELTS Academic 6.5 (UKVI B2), 2025}
 
 % ---- Experience -----------------------------------------------------------
 \section{Experience}
 \oneline{Engineering Intern, Aircraft Maintenance}{AIESL --- Boeing 737 MRO base, India}{Mar -- Apr 2025}
-{\small Rotation across Component Overhaul, Production Planning and Stores servicing Air India Express. Documented wheel/brake overhaul to specification (torque 158\,lb-ft, tyre pressure 205\,$\pm$\,5\,psi) and Eddy Current Testing; tracked parts in AMOS and RAMCO.}
+{\small Rotation across Component Overhaul, Production Planning and Stores servicing Air India Express. Documented wheel/brake overhaul to specification (158\,lb-ft torque, 205\,$\pm$\,5\,psi) and Eddy Current Testing; tracked parts in AMOS and RAMCO.}
 % NOTE: this document is built to fill exactly one page. Adding a line here
 % pushes the last two lines of Experience onto a second page - cut something
 % else first, or the CV silently becomes a two-pager with three lines on it.
