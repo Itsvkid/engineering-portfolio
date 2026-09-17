@@ -55,7 +55,7 @@ NASA/GE E3 Turbofan, Rebuilt from its Design Reports — gas turbine performance
   4.5% headline, because fan eﬃciency is held at the E3 ’s values at a diﬀerent tip Mach — worth 0.68% of sfc a point.
 Education
 Postgraduate Coursework, Thermal Power and Propulsion — Cranﬁeld University, UK                                 Oct 2025 – Sep 2026
-Gas Turbine Performance     ·   Combustion     ·   Turbomachinery Aerodynamics       ·   Propulsion System Design
+Modules taken: Gas Turbine Performance      ·   Combustion     ·   Turbomachinery Aerodynamics      ·   Propulsion System Design
 BEng Aeronautical Engineering — CGPA 7.37/10 (ﬁrst class) — KCG College of Technology, Chennai                           2021 – 2025
 Final-year, team of 3: shadowgraph-validated ﬂow-control tabs, 64–76% potential-core-length cut, Mach 0.8, no signiﬁcant thrust penalty
 Certiﬁcations: CATIA V5 (Proﬁcient), CADD Centre, 80 hrs, 2024 · IELTS Academic 6.5 (UKVI B2), 2025
