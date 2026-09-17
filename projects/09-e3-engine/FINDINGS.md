@@ -276,7 +276,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-210 findings, in the `STEP0.md` that owns each one.
+212 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -496,4 +496,6 @@ would break every reference in the commit history.
 | 211 | derivative | The quarter stage does not survive, and that is the E3 feature the |
 | 212 | derivative | The blade stress does not bind; the tip Mach does. A bigger fan |
 | 213 | derivative | A loading coefficient is frame-invariant only if both its halves are |
+| 214 | derivative | A conclusion downstream of a corrected number needs re-deriving, not |
+| 215 | derivative | The same sweep found a second one, and it had moved further. Finding |
 
