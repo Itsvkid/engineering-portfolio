@@ -1269,3 +1269,157 @@ radii the blade is built on have changed.
      distinguishes the two at speed and the comparison does not. Any future
      fan frequency work should compare against the **fixed-blade** line
      where the report prints one.
+
+---
+
+## Unit E10 — HPT blade rupture life · step 0, 2026-09-18
+
+Written **before** `solvers/mechanical/rupture.py` first ran.
+
+E1's closure has two halves. The first — Table X's ten HPC centrifugal
+stresses — closed at 6.5 % in 2026-09-07. The second has read *"HPT blade
+rupture life within a factor of 2"* since the work plan was written, and
+its gate has read *"no creep data or Larson–Miller constants are sourced"*
+since. **That gate is wrong, and the data is inside the report the closure
+is about.** CR-167955 Fig 84 p.142 prints eleven (rupture life, metal
+temperature) pairs round the stage-2 blade's pitch section at one stated
+condition — FPS base, hot-day takeoff, 13,414 rpm — and `hpt-mechanical.yaml`
+has carried them, transcribed, since 2026-09-05.
+
+### What is published, and what is not
+
+| | |
+|---|---|
+| stage-2 blade, limiting rupture point | **341 h at 926 °C**, Fig 84, and Table XXI's own *340 h required* |
+| stage-2 pitch metal map, same section, same condition | Fig 35, bulk 929 °C, surface nodes 914–1013 °C |
+| stage-1 blade, available life at max takeoff | **264 h** against 250 required (Table XX) |
+| stage-1 blade, rupture vs span | Fig 76: 450 / 390 / 345 / 310 / 830 h at 0 / 12.5 / 25 / 50 / 70 % span |
+| stage-1 pitch metal map, hot-day takeoff | Fig 27, bulk **953 °C** |
+| stage-1 BUCKET-CREEP model | Fig 75 p.129 — a **mesh picture of the cooled pitch section, with no numbers and no scale**. It fixes *where* GE computed (2-D, pitch, hollow, five passages) and nothing else |
+| **the Larson–Miller constant for René 150** | **nowhere on disk.** F1 already records that MIL-HDBK-5J carries none of René 77/95/150 or AF115 |
+| **the two blades' section areas** | **never published** — G3's finding 222 records the HPT's four airfoil rows as the rows this project cannot build |
+
+So the stress at either limiting section cannot be computed, and the
+master curve's *slope* against stress has no source. What the data does
+support is a **same-stress** Larson–Miller transfer from the stage-2 blade
+to the stage-1 blade, with C taken at the standard 20 for a nickel alloy
+and labelled a handbook assumption.
+
+### Bands
+
+| # | Band | Why |
+|---|---|---|
+| 1 | Fig 84 and Fig 35 are the same section at the same condition, so their metal-temperature ranges agree to **25 K** at both ends | the project's standing metal-temperature tolerance. Two figures eleven pages apart, never compared |
+| 2 | the published mission mixes are self-consistent: the damage shares reproduce the printed equivalent hours at max takeoff to **1 %**, on both blades | Table XX and Table XXI are Miner sums and must close on themselves |
+| 3 | a Larson–Miller curve calibrated on Fig 84's limiting point predicts the stage-1 blade's life at its published pitch metal temperature within a **factor of 2** of the published 264 h | **E1's own closure band, unchanged** |
+| 4 | read as one constant-stress master curve, Fig 84's eleven points do **not** collapse, and the residual is ordered by position: the two hottest points — leading edge and trailing-edge tip — have the two largest positive life residuals | if they did collapse, the eleven points would be a creep curve; if the residual is unordered, it is scatter. This band asserts it is neither |
+| 5 | the calibrated curve reproduces the standing rule **50 °C ≈ 10× creep life** to ±20 % | the rule is in the agent's §5 and has never been checked against an E³ number |
+
+### Estimate before computing
+
+Same-stress transfer: LMP = 1199.15 × (20 + log 341) = 27,018; at the
+stage-1 pitch metal temperature of 1226.15 K that is log t = 2.03, so
+**about 110 h against a published 264 — a factor of 2.4, just outside
+band 3.** The expected direction is that the stage-1 blade must be the
+*less stressed* of the two, which is physical: stage 2 is the bigger blade
+on the bigger annulus (0.151 m² against 0.0895), and AN² alone would make
+it 1.7× the stress. So band 3 is expected to **fail**, and the useful
+output is the stress ratio it implies.
+
+### Not attempted
+
+Any prediction that needs a stress: the stage-1 and stage-2 section areas
+are unpublished, so no centrifugal or gas-bending stress can be formed at
+either pitch section, and E8's method — which needs transcribed root
+coordinates — cannot be pointed at a row whose coordinates do not exist.
+No slope of the master curve against stress is fitted, because fitting one
+from a single blade's data would be fitting the answer.
+
+## Unit E10 — after the run · 2026-09-18
+
+`python -m mechanical.rupture`. Nothing above was edited.
+
+| # | Band | Result | Verdict |
+|---|---|---|---|
+| 1 | Fig 84 and Fig 35 agree to 25 K at both ends | **1 K** cold, **0 K** hot | **pass** |
+| 2 | the mission mixes close on themselves to 1 % | shares sum 100.1 % as printed; margins 1.056 and 1.003 | **pass** |
+| 3 | stage-1 life within a factor of 2 of 264 h | **109 h, a factor of 2.43** | **MISS — E1 stays half** |
+| 4 | the constant-stress residual is ordered by position | the two hottest points carry the two largest positive residuals, **+1.54 and +0.89**; the limiting point carries the most negative, −0.51 | **pass** |
+| 5 | 50 °C ≈ 10× creep life to ±20 % | **7.98×** | **miss by a hair — 20.2 % low**, finding 248 |
+
+Band 3 landed where step 0 said it would — the estimate written before the
+run was *"about 110 h … a factor of 2.4, just outside"*, and the answer is
+109 h and 2.43. **The closure does not close and the band was not widened.**
+
+### Findings
+
+244. **E1's gate was wrong, and the creep data was inside the report the
+     closure is about.** The gate has read *"no creep data or
+     Larson–Miller constants are sourced"* since the plan was written.
+     CR-167955 Fig 84 p.142 prints **eleven (rupture life, metal
+     temperature) pairs** on the stage-2 blade's pitch section at one
+     stated condition, and `hpt-mechanical.yaml` has carried them
+     transcribed since 2026-09-05 — thirteen days before anyone tried to
+     use them. This is the fourth time in this project that a stated
+     absence has turned out to be a statement about the reader rather than
+     about the record. What is *actually* missing is not creep data. It is
+     **stress**, and finding 247 says why that one is real.
+245. **A rupture map is not a surface map, and Fig 84's coldest point
+     proves it.** Fig 84's 867 °C point is labelled *suction side forward*
+     and there is no 867 °C node anywhere on Fig 35's **surface** — the
+     coldest surface node is 914 °C, a 47 K miss that would read as a
+     transcription error in either figure. Fig 35's **interior** nodes run
+     866–947 °C, and the coldest is **866 against 867**. BUCKET CREEP runs
+     element by element over the whole section, so its life map covers the
+     wall interior too, and its labels name a *region* of the section, not
+     a point on the skin. Two figures eleven pages apart, in different
+     chapters, closing to 1 K and 0 K once that is understood.
+246. **The two blades' mission mixes independently agree about how much
+     gentler max climb is.** Tables XX and XXI are separate Miner sums on
+     separate blades, and the ratio of rupture life at max climb to
+     rupture life at max takeoff falls out of each one's own hours and
+     damage shares: **8.1× from the stage-1 blade and 7.6× from the
+     stage-2 blade**, 6 % apart. The cruise ratios agree far less well —
+     57.6× against 43.9×, 31 % apart — which is the expected ordering,
+     because cruise carries the least damage (15 % and 18 %) and so the
+     least resolution in a column printed to the nearest per cent.
+247. **E1's second half misses by a factor of 2.43, and the miss is a
+     stress rather than a creep model.** A same-stress Larson–Miller
+     transfer from the stage-2 blade's limiting point (341 h at 926 °C,
+     LMP 27,020 at C = 20) to the stage-1 blade's published pitch metal
+     temperature of 953 °C gives **109 h against a published 264**. The
+     direction is the physical one: the stage-1 blade must be the *less*
+     stressed of the two, and the ratio the miss implies is
+     **σ₁/σ₂ = 0.90–0.94** over a rupture exponent n of 8–15. What that
+     cannot be checked against is the thing the E³ never published: the
+     HPT's airfoil sections. G3's finding 222 already records the HPT's
+     four airfoil rows as the rows this project cannot build, and the same
+     absence stops the stress here. An AN² proxy — 0.0895 m² against
+     0.151 — would put the ratio at 0.59, but AN² is a *root* stress and
+     these are *pitch* sections, so it is an indication and not a
+     measurement. Two published stage-1 lives are on the record and 17 %
+     apart: Table XX's printed **264 h** and Fig 76's read-off minimum of
+     **310 h**, both at hot-day takeoff; the factor is 2.43 against the
+     first and 2.85 against the second, so which one is used does not
+     change the verdict.
+
+248. **On the E³'s own numbers, 50 °C of metal temperature is worth 8×,
+     not 10×.** The standing rule of thumb is in this project's own
+     reference sheet and had never been checked against an E³ number.
+     Calibrated on Fig 84's limiting point at C = 20 it comes out
+     **7.98×** — 20.2 % below the rule, and so 0.2 of a percentage point
+     outside the ±20 % band step 0 set. Recorded as a miss rather than
+     rounded into a pass, because the interesting part is the direction:
+     the rule is a decade *at most*, and at the 1,200 K and few-hundred-hour
+     corner where an HP blade actually lives it is nearer 8. The sensitivity
+     is all in C, which is the one assumption in the chain.
+
+### What would close it
+
+One number: the ratio of the two blades' pitch-section areas, or either
+blade's pitch-section area together with its own centrifugal pull. Neither
+is in CR-167955, and the report's own stress work is carried entirely
+inside BUCKET CREEP and FINITE, whose meshes (Fig 75) are printed without
+a scale. A published René 150 rupture curve would be a second route and is
+in no document on disk — F1 already records MIL-HDBK-5J as carrying none
+of René 77/95/150 or AF115.

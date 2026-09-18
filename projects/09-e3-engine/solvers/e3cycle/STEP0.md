@@ -248,3 +248,172 @@ combustor 26.7, W41 29.7, W49 32.0, LPT exit 32.4, mixed 245.5, fuel 0.74.
 **B4 closes:** the computed annulus is inside the band at every
 dimensioned HPT station; the disagreement elsewhere is quantified and
 explained, twice by a published blockage and once by a coarse figure.
+
+---
+
+# Unit B5 · The momentum-balance mixing plane · step 0, 2026-09-18
+
+Written **before** the run, as METHOD.md step 0 requires. Nothing below
+this heading was edited after `solvers/e3cycle/mixing_plane.py` first ran;
+what the run produced is in the section after it.
+
+## The question
+
+B1 is half closed and its gate says the level needs *"Fig 39/40's
+mixing-plane area, which is Stage H"*. **Two things about that sentence
+are worth testing before anything is digitised.**
+
+First, the figures. Printed p.103 (Fig 39, the mixer) and p.106 (Fig 40,
+the nacelle general arrangement) are both full-page figures whose text
+layer is empty — `pdftotext -f 117 -l 117` on CR-168219 returns the page
+number and nothing else. So the gate's own premise has never been checked:
+this project cannot confirm from the text layer that either figure carries
+a mixing-plane *dimension*, and `e3-fps-published.yaml` already records
+Fig 40 as *undimensioned* in so many words.
+
+Second, and the reason this unit exists: **a momentum-balance mixing plane
+should not need an absolute area at all.** Take the two streams to a common
+static pressure at the mixing plane, mix them at constant total area, and
+every equation in the chain is per unit area. If that is right, the area
+*ratio* is the only geometric input, and the cycle already has both
+annulus areas from published geometry — so B1's gate is arithmetic, not
+transcription.
+
+## The method
+
+1. **Common static pressure** at the mixing-plane inlet. For a trial p_s
+   each stream expands from its own total state (real gas, `gas.py`) to
+   p_s, giving V and ρ and hence the area it needs, A_i = w_i/(ρ_i V_i).
+   A_c/A_b rises monotonically with p_s, so bisection on p_s hits a
+   prescribed area ratio.
+2. **Constant-area momentum balance.** With A = A_c + A_b,
+   w_c V_c + w_b V_b + p_s A = w_6 V_6 + p_s6 A, energy mixes the two
+   total enthalpies, and continuity closes it:
+   w_6 R T_s6 + w_6 V_6² = F V_6, subsonic root.
+3. **p_t6** from p_s6 and the entropy function, exactly as `gas.py` does
+   everywhere else. This replaces the mass-weighted p_t, which is the
+   **ideal upper bound** and is what the model has been using.
+
+## Inputs, and where they come from
+
+| Input | Value | Source |
+|---|---|---|
+| core annulus at the mixing plane | 0.7106 m² | `lpt-flowpath.csv` R5 trailing edge, hub 36.787 / tip 60.127 cm — itself derived from the transcribed LPT airfoil coordinates |
+| bypass annulus | 2.20–2.41 m² | `e3-fps-published.yaml nacelle.bypass_duct_area_by_continuity`, the published fan-duct Mach band 0.40–0.45 (CR-168219 §5.8 p.101) |
+| nominal area ratio A_c/A_b | 0.307 | 0.7106 / 2.31, the midpoint |
+
+Both are the natural annulus of each stream a little upstream of where
+they meet; neither is the mixer's own lobed cross-section, and the ratio
+is swept accordingly.
+
+## Bands, all stated now
+
+| # | Band | Why this number |
+|---|---|---|
+| 1 | the mixed total pressure is **identical to 1 part in 10⁹** when both areas are scaled by 10 | this is the unit's central claim. If it fails, the absolute area *is* needed and B1 really does wait on a figure |
+| 2 | p_t6 sits **strictly between** the lower stream's total pressure and the mass-weighted mean | the mass-weighted mean is the ideal-mixing upper bound; a real mixing plane must lose |
+| 3 | mixer sfc gain at 85 % effectiveness and 0.57 % loss within **±0.5 point of Table XXIII's 2.9 %**, at the nominal area ratio | B1's own band, unchanged, not widened |
+| 4 | both mixing-plane Mach numbers inside **0.30–0.70** | the Task III mixer plane is designed at 0.56 in a stated 0.50–0.60 band (CR-135444 p.248) and the FPS fan duct runs 0.40–0.45. Outside this the area ratio is wrong, whatever band 3 says |
+| 5 | Table XXIII's **column-to-column slopes** stay inside ±0.5 point (printed −0.5 and +0.3) | they already pass on the ideal model and must not be broken by fixing the level |
+| 6 | over an area ratio swept **±30 %** about nominal, the gain moves by less than the 0.71 point the correction is being asked to find | if the answer is more sensitive to the assumed ratio than to the physics, the unit has replaced one unknown with another and says so |
+
+## Estimate before computing
+
+Kinetic-energy mixing loss ≈ ½·(w_c w_b/w_6²)·ΔV² with ΔV ≈ 77 m/s at
+max cruise is about 340 J/kg, i.e. Δs ≈ 0.98 J/kg·K and Δp_t/p_t ≈ 0.34 %.
+At NPR 2.49 that is 0.16 % of jet velocity and so of gross thrust, and
+gross is about 2.5× net at M 0.8 — **0.4 point of sfc**. So the expected
+landing is near **3.2 % against 2.9**, *inside* band 3 but only just, and
+the honest prior is that this closes marginally or not at all. It is not
+expected to recover the whole 0.71 point.
+
+## Not attempted
+
+The mixer's own 0.57 % pressure loss stays a published input on both
+streams; this unit changes the **thermodynamic mixing floor** only, which
+is exactly the separation GE's own Task III text makes (CR-135444 p.248,
+already transcribed). No lobe geometry, no mixing length, no effectiveness
+model — effectiveness stays Table XXIII's published number.
+
+---
+
+## Unit B5 — after the run · 2026-09-18
+
+Nothing above this line was edited. `python -m e3cycle.mixing_plane`.
+
+| # | Band | Result | Verdict |
+|---|---|---|---|
+| 1 | mixed p_t identical to 1 part in 10⁹ under a scale change | **0.0 exactly** (both flows ×10 → both areas ×10, every intensive quantity bit-identical) | **pass** |
+| 2 | p_t6 strictly between the lower stream and the mass-weighted mean | 57,835 Pa, between 55,700 and 58,366 — a **0.909 %** mixing loss | **pass** |
+| 3 | sfc gain within ±0.5 point of Table XXIII's 2.9 % | **2.66 %**, 0.24 point | **pass — B1 closes** |
+| 4 | both mixing-plane Mach numbers in 0.30–0.70 | core **0.394**, bypass **0.515** | **pass** |
+| 5 | Table XXIII's column-to-column slopes inside ±0.5 point | −0.31 and +0.23 against a printed −0.5 and +0.3 | **pass** |
+| 6 | the gain moves less across a ±30 % area-ratio sweep than the 0.71 point it corrects | 0.12 point across the *published* band; the −30 % end **cannot be run at all** | **pass, with finding 243** |
+
+All three Table XXIII columns, at the published area ratio:
+**2.74 / 2.43 / 2.66** against the printed **3.1 / 2.6 / 2.9**. The
+mass-weighted model, unchanged and still in the code, gives
+3.57 / 3.31 / 3.61.
+
+### What the inputs were
+
+| | |
+|---|---|
+| core annulus, LPT R5 trailing edge | 0.7106 m² |
+| bypass annulus, published fan-duct Mach 0.40–0.45 | 2.20–2.41 m² |
+| **A_core/A_bypass** | **0.3083** (0.2949–0.3230) |
+
+### Findings
+
+241. **B1's gate was arithmetic, not a transcription.** The closure has
+     said since 2026-09-06 that the mixer level needs *Fig 39/40's
+     mixing-plane area*, which put it behind Stage H. It needs no area at
+     all. Take the two streams to a common static pressure and mix them at
+     constant total area and every equation is per unit area: `solve()`
+     has no absolute-area argument, and scaling both flows by ten moves
+     the intensive state by **exactly zero**. The area *ratio* is the only
+     geometric input and the project already had both annulus areas. The
+     two figures the gate named are, for the record, full-page figures
+     whose text layer is empty — `pdftotext` on printed p.103 returns the
+     page number and nothing else — so the gate's premise had never been
+     checked either. **A closure carried half-open for twelve days,
+     and stamped Stage H, on a figure that was never needed.** The lesson generalises: before digitising a
+     figure to supply a quantity, ask whether the physics needs the
+     quantity or only its ratio to something already known.
+242. **My own pre-run estimate of the mixing loss was 2.7× low, and the
+     reason is the common-static-pressure condition.** Step 0 put the
+     kinetic-energy mixing loss at 340 J/kg → 0.34 % of total pressure →
+     0.4 point of sfc, using a bypass velocity taken from the published
+     fan-duct Mach of 0.40–0.45. The solve gives **0.909 %** and 0.95
+     point. The gap is ΔV: the core arrives with 5 % less total pressure,
+     so the common static at the mixing plane sits *below* the bypass
+     duct's static and the bypass **accelerates to M 0.515** before it
+     meets the core. A mixing plane is not the duct upstream of it, and
+     estimating ΔV from duct Mach numbers understates it.
+243. **There is a floor on the achievable area ratio, and the E³ sits
+     24 % above it.** Each stream's mass flux peaks at its own sonic
+     point, so A_core/A_bypass as a function of the common static pressure
+     turns over: below **0.249** no common static pressure produces the
+     ratio with both streams subsonic, and a little above that the
+     mixed-out stream itself chokes. Step 0 asked for a ±30 % sweep and
+     the −30 % end (0.216) **does not exist**. Reported rather than
+     quietly narrowed. Two consequences worth keeping: a bisection on
+     static pressure started at p_s → 0 walks onto the supersonic branch
+     and returns a plausible-looking wrong answer (it did, on the first
+     run, at M6 = 1.35); and the admissible window on physical grounds —
+     both Mach numbers in 0.30–0.70 — is **0.270–0.350**, which *contains*
+     the published geometric band 0.295–0.323. Two independent constraints
+     on the same ratio agreeing is a check on the annulus areas, not on
+     the mixer.
+
+### Derived, not printed anywhere
+
+| | max climb | max cruise | takeoff |
+|---|---|---|---|
+| mixing-plane Mach, core / bypass | 0.391 / 0.501 | 0.394 / 0.515 | 0.319 / 0.432 |
+| mixing total-pressure loss | 0.860 % | 0.909 % | 0.671 % |
+| sfc gain at 85 % / 0.57 % | 2.83 % | **2.66 %** | 0.61 % |
+
+The takeoff column is the reminder that a mixer is a cruise device: the
+sfc gain is the gross-thrust gain multiplied by F_gross/F_net, which is
+about 2.5 at M 0.8 and exactly 1 at sea-level static.

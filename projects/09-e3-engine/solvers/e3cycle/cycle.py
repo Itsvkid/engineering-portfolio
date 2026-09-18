@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 
 import yaml
 
-from . import gas
+from . import gas, mixing_plane
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 DATA = ROOT / "data"
@@ -102,7 +102,7 @@ class Result:
     stations: dict = field(default_factory=dict)
 
 
-def solve(rating: Rating, inp: Inputs, *, mixed=True, mixer_eff=None, extra_loss=0.0, eta_mech=1.0, w2=None):
+def solve(rating: Rating, inp: Inputs, *, mixed=True, mixer_eff=None, extra_loss=0.0, eta_mech=1.0, w2=None, mixing_area_ratio=None):
     """One rating point. `extra_loss` is an additional fractional total-
     pressure loss on both streams ahead of the mixing plane (negative
     removes the mixer's own loss for a separate-flow comparison)."""
@@ -183,7 +183,10 @@ def solve(rating: Rating, inp: Inputs, *, mixed=True, mixer_eff=None, extra_loss
     w6 = w5 + w_byp
     f6 = w_fuel / (w6 - w_fuel)
     t6 = gas.t_from_h((w5 * gas.h(t5, f5) + w_byp * gas.h(t13)) / w6, f6, guess=0.5 * (t5 + t13))
-    p6 = (w5 * p6_core + w_byp * p6_byp) / w6          # mass-weighted: ideal mixing
+    if mixing_area_ratio is None:
+        p6 = (w5 * p6_core + w_byp * p6_byp) / w6      # mass-weighted: no mixing loss at all
+    else:                                              # unit B5: constant-area momentum balance
+        p6 = mixing_plane.solve(w5, t5, p6_core, f5, w_byp, t13, p6_byp, mixing_area_ratio)["pt6"]
     fg_mix = jet(t6, p6, f6, w6)
     eff = comp["mixer_effectiveness"] if mixer_eff is None else mixer_eff
     fg = fg_sep + eff * (fg_mix - fg_sep) if mixed else fg_sep

@@ -34,7 +34,7 @@ OUT = ROOT / "build"
 
 # stage order, the same order WORK-PLAN.md uses
 STAGES = [
-    ("B  cycle", ["e3cycle.run", "e3cycle.stations"]),
+    ("B  cycle", ["e3cycle.run", "e3cycle.stations", "e3cycle.mixing_plane"]),
     ("C1 mean-line", ["meanline.lpt", "meanline.lpt_losses", "meanline.hpt",
                       "meanline.compressor", "meanline.fan", "meanline.stage_counts",
                       "meanline.sections",
@@ -47,12 +47,14 @@ STAGES = [
     ("D  thermal", ["thermal.cooling", "thermal.secondary_air", "thermal.clearance",
                     "thermal.combustor",
                     "thermal.thrust_balance"]),
+    ("D  secondary", ["secondary.backflow"]),
     ("E  mechanical", ["mechanical.blade_stress", "mechanical.disc",
                        "mechanical.blade_frequency", "mechanical.rotordynamics",
                        "mechanical.attachments", "mechanical.flutter", "mechanical.gas_bending",
-                       "mechanical.hpc_rotor"]),
+                       "mechanical.hpc_rotor", "mechanical.rupture"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades", "geometry.ogv", "geometry.assembly"]),
+    ("H4 kinematics", ["geometry.kinematics"]),
     ("K  growth", ["growth.margins"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
                          "verification.disagreements",

@@ -711,3 +711,226 @@ inside G1's ±2 %. `exports/e3-engine-assembly.step` 79.9 MB, 1 root /
      agreement is **circular** and is evidence about the AR convention
      rather than about the airfoil. Recorded as the size of an open
      question, because every band rebanded in finding 239 rests on it.
+
+---
+
+## Unit G2b — the curved-axis reference integral · step 0, 2026-09-18
+
+Written **before** `pappus_volume()` existed.
+
+### The question
+
+G2 is half closed on a 0.09 of a point. The vane's CAD came out **2.09 %**
+below `trapezoid_volume()` against a 2 % band, and finding 181 already
+localised it: straighten the stacking axis and the same CAD against the
+same integral agrees to **−0.015 %**; restore the lean and it is −6.12 %
+with no sweep and −2.09 % with 60°. **The reference is what does not
+apply, not the CAD.**
+
+∫A·ds is the volume of a prism swept along a *straight* path. On a curved
+path the material on the concave side travels a shorter distance than the
+material on the convex side, and the two only cancel if the path runs
+through the section's **centroid**. It does not: `_section_2d` builds each
+section from its leading edge, so the stacking axis carries a centroid
+offset of roughly half a chord — four centimetres on a vane whose lean
+bends the axis over an eleven-centimetre span.
+
+### The restated band
+
+Pappus's second theorem in its differential form. A point offset by **d**
+from the axis in the normal plane sweeps an arc length ds·(1 − κ **d**·**N̂**),
+so
+
+    V = ∫ A(s) · (1 − c̄(s)·dT̂/ds) ds
+
+with c̄ the section centroid taken from the axis point and dT̂/ds the
+curvature vector. Where the axis is straight, dT̂/ds = 0 and this is the
+old integral exactly, so **no straight-axis row changes and no band
+elsewhere moves.**
+
+| # | Band | Why |
+|---|---|---|
+| 1 | the Pappus integral reproduces an **exact** answer before it touches the OGV: a circular section swept round a circle with the stacking axis offset from its centroid gives 2π(R−e)A, to **1 part in 10⁶** | METHOD.md step 0 — a correction that improves an agreement is only worth what an independent exact case says it is. This is the same discipline C4-1 used on the shock tube |
+| 2 | with a **straight** axis the Pappus integral equals the trapezoidal one to **1 part in 10⁹** | it must not disturb the 31 rows already checked |
+| 3 | the OGV's CAD against the Pappus integral is inside the project's standing **2 %** geometry band | the same band every other row is judged against, deliberately not tightened to flatter this unit |
+| 4 | the Pappus term cuts the residual by at least a **factor of 2** against the trapezoidal reference | this is the actual claim. A band of 2 % alone would be passed by a correction that did nothing useful |
+| 5 | the residual's **sign** is explained: the centroid lies on the concave side, so c̄·dT̂/ds > 0 and the corrected reference is **smaller** than ∫A ds | finding 181 measured a CAD *below* the trapezoidal integral. If the sign comes out the other way the term is not what is missing |
+
+### Estimate before computing
+
+The centroid sits about 0.45 of a chord aft of the leading edge, so
+c̄ ≈ 4 cm at the root falling to 2.4 at the tip; the lean turns the axis
+about 20° over 11.6 cm, so κ ≈ 0.35 rad / 0.116 m ≈ 3 m⁻¹. The product is
+of order 0.012 to 0.12 depending on how much of c̄ lies along the principal
+normal — which brackets the measured 2.09 % comfortably and is the reason
+to compute it rather than assert it.
+
+### Not attempted
+
+Re-lofting the vane, changing its sections, or changing the assumed hub
+radius. Nothing about the CAD moves in this unit; only what it is compared
+against.
+
+## Unit G2b — after the run · 2026-09-18
+
+Nothing above was edited.
+
+| # | Band | Result | Verdict |
+|---|---|---|---|
+| 1 | the torus case to 1 part in 10⁶ | **2.0 × 10⁻⁶** against the exact circle at n = 721; against the exact answer for the 360-gon actually integrated it converges **first order** — 1.0e-4, 5.3e-5, 2.7e-5, 1.4e-5, **6.9e-6** at n = 5761 | **miss — finding 252** |
+| 2 | straight axis, both integrals identical to 1 part in 10⁹ | **1.6 × 10⁻¹⁵** | **pass** |
+| 3 | CAD against the Pappus integral inside 2 % | **+0.0064 / +0.0253 / +0.0429 %** at 9 / 13 / 21 span sections | **pass — G2 closes** |
+| 4 | the term cuts the residual by at least 2× | **327× / 83× / 48×** at the same three resolutions — 2.11 % → 0.006–0.043 % | **pass** |
+| 5 | the sign is explained: the corrected reference is smaller | Pappus **−2.11 %** against trapezoidal, so c̄·dT̂/ds > 0 and the centroid is on the concave side | **pass** |
+
+**Grid independence** (METHOD.md step 6), on both sides. The Pappus
+integral at n = 51 … 1601 halves its step each refinement — first order —
+with a Richardson limit of **4.76075 × 10⁻⁵ m³**; the CAD at 9, 13 and 21
+span sections rises 4.76166 → 4.76256 → 4.76340 × 10⁻⁵. The two converge
+towards each other from opposite sides and the residual at the finest pair
+is **+0.055 %** against the extrapolated integral — still forty times
+inside the band, and a factor of 38 better than the trapezoidal reference
+at the same resolution. The improvement factor falls from 327 to 48 as
+both sides sharpen, which is the right behaviour: at coarse resolution two
+discretisation errors happened to cancel.
+
+### Findings
+
+252. **The exact case has to be exact for the thing you actually
+     integrate.** Band 1 asked the torus to reproduce 2πR·πa² to a part in
+     a million and it does not: it converges first order to the 360-gon's
+     answer, which sits 5.1 × 10⁻⁵ below the circle's, and the +2.0 × 10⁻⁶
+     at n = 721 was those two errors cancelling. The residual is an
+     artefact of the *test harness* and not of the method — the torus's
+     axis is closed and the tangent differencer is written for an open
+     curve, so the two end stations get one-sided tangents and contribute
+     an O(1/n) error the OGV's genuinely open axis does not have. Recorded
+     as a miss rather than re-based onto the polygon's own exact answer
+     after the fact, which would have turned a 2× miss into a pass by
+     changing the reference after seeing the number.
+253. **The inner OGV's CAD was right all along and the reference was
+     wrong, and the correction is a textbook theorem rather than a fitted
+     term.** ∫A·ds is the volume of a prism swept along a *straight* path.
+     Pappus's second theorem in differential form adds the only
+     first-order term a curved path has — V = ∫A(1 − c̄·dT̂/ds)ds, the
+     section centroid's offset from the axis times the curvature vector —
+     and it takes the E³'s inner OGV from **−2.1056 % to +0.0064 %, a
+     factor of 327**, with **not one number in the CAD changed**. The new
+     reference is identical to the old one wherever the axis is straight,
+     to 1.6 × 10⁻¹⁵, so none of the other 31 rows moves. The size of the
+     term is the size of the mistake it corrects: `_section_2d` builds
+     each section from its leading edge, so the stacking axis carries a
+     centroid offset of about 0.45 of a chord — four centimetres on a vane
+     whose lean bends the axis 20° over eleven — and a four-centimetre
+     offset on a metre-ish radius of curvature is exactly the two per cent
+     that was being reported as a CAD error for eight days.
+
+---
+
+## Unit H4 — the assembly's kinematics · step 0, 2026-09-18
+
+Written **before** `solvers/geometry/kinematics.py` existed.
+
+### Stage H is two closures wearing one name
+
+`closures.yaml` carries a single Stage H entry — *"zero clashes through
+rotation, every bearing with its load"* — gated on *"no hand-CAD tool
+installed and verified"*. The two halves have nothing to do with each
+other. **The clash-through-rotation half no longer needs a human**: G3
+places all 32 rows at their true stations and proves row-to-row clearance
+analytically, so a full-rotation sweep is a script. The bearing loads and
+the static structure are a different problem and stay gated.
+
+They are split into two closures here. **They are NOT named H1 and H2**,
+because WORK-PLAN.md's Stage H already uses H1 for *Gates*, H2 for *Static
+structure*, H3 for *Sumps and bearings* and H4 for *Assembly, motion,
+section* — the kinematics half **is** plan item H4, and the hand-CAD half
+is plan items H2 and H3. Using the plan's own numbering avoids two
+different things called H1 in one repository.
+
+### Bands
+
+| # | Band | Why |
+|---|---|---|
+| 1 | across **all** row pairs, not only the 31 consecutive ones, the count whose assembled axial extents overlap is **zero** | this is the closure, and as an axial-extent statement it is **angle-independent**: two rows that do not share an axial interval cannot touch at any relative angular position, for any blade of either. A sweep samples; this proves |
+| 2 | a 360-step sweep over one LP revolution changes the minimum row-to-row gap by **0.0 mm** | the numerical confirmation of band 1. If it moves, the placement is not rotationally periodic and something is wrong |
+| 3 | the LP : HP ratio is **one number** wherever the project carries it — the glTF's `extras.kinematics`, unit I1's four-route reconciliation — to **0.5 %** | J1's finding 159 rule: a quantity two artefacts both carry is asserted equal by a test |
+| 4 | every HPC rotor stage's printed Campbell per-rev lines contain the vane count of the stator **immediately downstream** (10 of 10) and **immediately upstream** (9 of 9, rotor 1's IGV excepted), and the HPT blade Campbell's 72/rev equals the LPT stage-1 vane count | **exact integers.** The engine orders a rotating assembly generates are its own blade counts, so this asks whether the counts the assembly is built from are the counts GE drew its Campbell diagrams against — across three separate reports |
+| 5 | blade-passing frequency for every placed row at both spool speeds | an output, no band |
+
+### Estimate before computing
+
+Band 4 is the one that could fail and the one worth having. The HPC stator
+counts are 32 / 50 / 68 / 82 / 92 / 110 / 120 / 112 / 104 / 118 / 140 and
+the ten Campbell diagrams' per-rev lines run up to 140, so the numbers are
+of the right size; whether each rotor's diagram carries *its own two
+neighbours* rather than some other set is not obvious in advance. Rotor 1's
+upstream neighbour is the variable IGV, which sits further forward than a
+normal stator gap and is expected to be the exception.
+
+### Not attempted
+
+Bearing loads, casings, frames, sumps, flanges, mounts — all of Stage H's
+hand-CAD half, which stays gated and whose gate is restated honestly in
+`closures.yaml`. Nothing here is drawn; this unit only asks what the
+already-built assembly implies about motion.
+
+## Unit H4 — after the run · 2026-09-18
+
+`python -m geometry.kinematics`. Nothing above was edited.
+
+| # | Band | Result | Verdict |
+|---|---|---|---|
+| 1 | zero axially overlapping pairs across **all** pairs | **0 of 496** | **pass — the closure, as a proof** |
+| 2 | 360-step sweep moves the tightest gap by 0.0 mm | tightest real pair HPC stator 4 / rotor 5 at **7.50 mm, spread 0.000 mm** | **pass** |
+| 3 | one LP : HP ratio, to 0.5 % | glTF **3.5833** against I1's four-route **3.5739** — **0.26 %** | **pass** |
+| 4 | each HPC rotor's Campbell lines carry its two neighbours' vane counts | **downstream 10 of 10, upstream 9 of 10** (rotor 1's IGV the exception, as step 0 predicted); HPT blade Campbell's 72/rev = the LPT stage-1 vane count | **pass** |
+| 5 | blade-passing frequencies | 1,882 Hz at the fan to **19,810 Hz** at HPC rotor 10 | output |
+
+### Findings
+
+254. **"Zero clashes through rotation" is a proof on this assembly, not a
+     sweep, and that is what took Stage H's first half off the human's
+     desk.** Two rows whose assembled axial extents do not overlap cannot
+     touch at any relative angular position, for any blade of either — and
+     **none of the 496 row pairs overlaps**, not merely none of the 31
+     consecutive ones G3 checked. The 360-step sweep was run anyway, on the
+     real solids rather than on the argument, and moves the tightest gap by
+     **0.000 mm**. That number is worth having for what it tests, which is
+     not the engine: rotation about the engine axis cannot change an axial
+     coordinate, so a spread of anything but zero would mean the placement
+     transform had quietly carried a scale, a shear or an off-axis centre.
+     It is unit J7's finding 171 — a spool turning about a line 5 mm off
+     the axis — caught one artefact earlier.
+255. **The assembly's own vane counts are the engine orders GE drew its
+     Campbell diagrams against.** A rotor blade's excitation orders are the
+     blade counts it passes, so the counts this project builds from ought
+     to be the per-rev lines on the published diagrams — and across three
+     separate reports they are. Every one of the ten HPC rotor stages
+     carries the vane count of the stator **immediately downstream** among
+     its printed per-rev lines, and nine of the ten carry the one
+     **immediately upstream**: 50, 68, 82, 92, 110, 120, 112, 104, 118,
+     140, each appearing on the two diagrams either side of it. And the
+     **HPT stage-2 blade's Campbell carries 72/rev, which is the LPT
+     stage-1 vane count** — an order drawn in the HPT report that only
+     exists because of a number printed in the LPT report. Twenty
+     integers, nineteen hits, nothing fitted.
+256. **The one absence is the IGV, and it is unresolved.** Rotor 1's
+     diagram does not carry 32/rev, although rotor 2's does and rotor 2 is
+     further from the IGV. Rotor 1's printed lines are 2, 3, 4, 6, 8, 18,
+     26, 50, and **8 and 26 match no vane count anywhere in the
+     compressor**. Two readings are open and this project cannot choose
+     between them: a variable row whose excitation GE judged not worth
+     drawing on the one blade it is closest to, or a figure read where 32
+     was taken as 26. The same row is the one `geometry.assembly` cannot
+     build either, for an entirely unrelated reason — Table XXII prints its
+     camber as a 65-series design lift coefficient rather than metal angles
+     (finding 222). The E³'s IGV is the awkward row twice over.
+
+### Blade passing, for the record
+
+Fan 1,882 Hz · booster 3,294 · HPC rotor 1 5,901 rising to rotor 10
+**19,810** · LPT rotors 6,470–9,175. The HPC's rear stages sit an order of
+magnitude above the fan, which is why the rear-stage vanes' first flex has
+to be up at 18–29 kHz (unit E3) and why a compressor's HCF problem is a
+different problem from a fan's.

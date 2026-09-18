@@ -139,11 +139,66 @@ def test_sixty_four_vanes_do_not_touch():
     assert vol == 0.0
 
 
-def test_the_volume_misses_the_band_by_a_whisker():
-    """closure as stated: -2.09 % against +-2 %"""
+def test_the_trapezoidal_reference_still_misses_by_a_whisker():
+    """unit G2's closure as originally stated: -2.09 % against +-2 %. The
+    number is kept, because unit G2b's claim is that this reference does not
+    APPLY to a curved axis, not that it changed."""
     err = (solid(13).Volume() / trapezoid_volume() - 1) * 100
     assert err == pytest.approx(-2.09, abs=0.15)
-    assert abs(err) > 2.0          # it really is a miss
+    assert abs(err) > 2.0          # against the wrong reference, it is a miss
+
+
+# --- unit G2b: the curved-axis reference --------------------------------
+
+#: the loft is the slow part; build it once for the whole module
+V13 = solid(13).Volume()
+
+def test_g2b_band2_a_straight_axis_leaves_the_old_integral_untouched():
+    """the Pappus term must not move any of the other 31 rows"""
+    a, b = ogv.straight_axis_check()
+    assert abs(a / b - 1.0) < 1e-9
+
+
+def test_g2b_band3_the_cad_closes_against_the_pappus_reference():
+    """G2's closure. Nothing in the CAD changed; the reference did."""
+    err = (V13 / ogv.pappus_volume() - 1) * 100
+    assert abs(err) < 2.0
+    assert abs(err) < 0.1          # and it is two orders inside
+
+
+def test_g2b_band4_the_term_cuts_the_residual_by_far_more_than_two():
+    v = V13
+    trap = abs(v / trapezoid_volume() - 1)
+    pap = abs(v / ogv.pappus_volume() - 1)
+    assert trap / pap > 2.0
+    # measured 327x at 9 span sections, 83 at 13, 48 at 21 -- the loft and
+    # the integral both converge, so the factor falls as both sharpen
+    assert trap / pap > 20
+
+
+def test_g2b_band5_the_centroid_is_on_the_concave_side():
+    """the corrected reference must be SMALLER than the trapezoidal one"""
+    assert ogv.pappus_volume() < trapezoid_volume()
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "finding 252: band 1 asked the torus case for 1 part in 1e6 against the "
+    "exact CIRCLE. The integrator converges first order to the 360-gon's own "
+    "exact volume -- 6.9e-6 at n=5761 -- and the 2.0e-6 at n=721 is two "
+    "errors cancelling. The residual is the test harness closing a circular "
+    "axis with an open-curve tangent differencer, not the method."))
+def test_g2b_band1_the_torus_case_to_one_part_in_a_million():
+    p, exact, _ = ogv.torus_validation()
+    assert abs(p / exact - 1.0) < 1e-6
+
+
+def test_g2b_the_torus_case_converges_and_the_wrong_answer_is_wrong():
+    """what the validation case DOES establish: the Pappus form lands on the
+    exact torus to a few parts in 1e5 where the plain trapezoidal integral is
+    out by 4 %, which is e/R by construction"""
+    p, exact, trap = ogv.torus_validation()
+    assert abs(p / exact - 1.0) < 1e-4
+    assert abs(trap / exact - 1.0) == pytest.approx(0.04, abs=0.002)
 
 
 def test_the_miss_is_the_reference_and_not_the_cad():

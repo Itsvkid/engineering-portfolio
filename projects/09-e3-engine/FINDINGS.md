@@ -144,15 +144,15 @@ section 3.
 
 ## 2. Closures
 
-29 met, 12 half met, 4 gated, of 45.
-26 of 30 numeric closures sit inside their own band.
+33 met, 9 half met, 4 gated, of 46.
+29 of 32 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
 
 | stage | closure | achieved | band | state |
 |---|---|---:|---:|---|
-| B1 | the mixer reproduces Table XXIII's sfc improvement | 0.7 | — | half |
+| B1 | the mixer reproduces Table XXIII's sfc improvement | 0.24 | 0.5 | met |
 | B3 | sfc at three ratings against Table XII | 1.91 | 1.5 | half |
 | B4 | annulus by continuity at every dimensioned HPT station | 3.6 | — | met |
 | C1 | LPT mean-line efficiency against 0.917 | 0.6 | 2 | met |
@@ -162,7 +162,7 @@ blocks it. None is open without a reason attached.
 | C4-1 | the solver against an exact answer (Sod shock tube, star pressure) | 0.02 | 2 | met |
 | C4-2 | Rotor 37 blade geometry, 24 section-closure constraints | 0 | 0 | met |
 | C4-3 | CFD against the Rotor 37 validation case | — | — | gated |
-| D3 | total secondary air against Table XI's 16.1 % of W25 | 0.04 | 0.5 | half |
+| D3 | total secondary air against Table XI's 16.1 % of W25 | 0.04 | 0.5 | met |
 | D4 | cruise clearance, two independent routes | 0.04 | 0.2 | met |
 | E1 | Table X centrifugal stresses, all ten HPC stages | 6.5 | 10 | half |
 | E2 | the bore doubling for a small hole | 0 | 0.5 | half |
@@ -174,7 +174,8 @@ blocks it. None is open without a reason attached.
 | F2 | basic engine mass within 10 % of 3,473 kg | — | 10 | gated |
 | G1 | generated blade volume against Stage F2's integral | 0.94 | 2 | half |
 | G1 | blade-to-blade interference, all 32 rows | 0 | 0 | met |
-| H | zero clashes through rotation, every bearing with its load | — | — | gated |
+| H4 | zero clashes through a full rotation of both spools, at the published LP:HP ratio | 0 | 0 | met |
+| H2-H3 | the static structure and the sumps in hand CAD, and every bearing pointed at with its load | — | — | gated |
 | I3 | FINDINGS.md written -- every disagreement ranked, with a cause or unresolved | 0 | 0 | met |
 | I2 | one-at-a-time sensitivity of sfc, metal temperature and disc stress | 0.017 | 0.02 | met |
 | J1 | the meridional plot draws every module at true scale, with the known join measured and both unknown joins visible as gaps | — | — | met |
@@ -190,7 +191,7 @@ blocks it. None is open without a reason attached.
 | E7 | the five LPT flutter safety factors imply one allowable index, and the five agree | 24.4 | 15 | half |
 | E8 | uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections | 17.7 | 25 | met |
 | I4 | every recorded reading uncertainty is in the register with the closures it governs and a resolvability verdict, and the unstated ones are counted | — | — | met |
-| G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 2.09 | 2 | half |
+| G2 | the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis | 0.0064 | 2 | met |
 | C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
 | E9 | the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | — | met |
 | D6 | thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | — | gated |
@@ -198,14 +199,12 @@ blocks it. None is open without a reason attached.
 | K2 | the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it | — | — | met |
 | G3 | the 32 blade rows as ONE STEP assembly at their true stations, and the assembled length against the published 318.0 cm | 0.08 | 2 | met |
 
-### The 4 recorded misses
+### The 3 recorded misses
 
 - **B3 — sfc at three ratings against Table XII**: 1.91 against a band of 1.5. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on the standard day.
 - **E3 — first three modes of every HPC stage against Figs 33-42**: 21.4 against a band of 5. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-predicted on nine stages of ten. The cause is the one finding 84 already named: a clamped beam is the stiffest root a blade can have and a dovetail is not a clamp. Closing this needs a root-flexibility model or an FE blade, not a better beam. Findings 143-145.
 
 - **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back, which points at the model rather than the data -- the beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8, and the beam pins the tip shroud without its mass (findings 173-175). On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted.
-
-- **G2 — the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis**: 2.09 against a band of 2. Three of four checks pass: the sections are normal to the axis by construction, the solid is valid, and 64 vanes have zero overlap. The volume misses by 0.09 of a point -- and finding 181 shows the reference is the thing that does not apply: with the axis straightened, the same CAD against the same integral agrees to 0.015 percent, and the whole gap is a Pappus term the trapezoidal integral omits for a curved stack. The band stands as a miss because it was stated before the run.
 
 
 ---
@@ -285,7 +284,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-233 findings, in the `STEP0.md` that owns each one.
+249 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -528,4 +527,20 @@ would break every reference in the commit history.
 | 238 | geometry | The 3 mm tip-cap bulge was coarse section spacing, not the capping |
 | 239 | geometry | Three bands and a pinned tuple were calibrated on a blade that was |
 | 240 | geometry | Whether Appendix B's two end stations are airfoil or manufacturing |
+| 241 | e3cycle | B1's gate was arithmetic, not a transcription. The closure has |
+| 242 | e3cycle | My own pre-run estimate of the mixing loss was 2.7× low, and the |
+| 243 | e3cycle | There is a floor on the achievable area ratio, and the E³ sits |
+| 244 | mechanical | E1's gate was wrong, and the creep data was inside the report the |
+| 245 | mechanical | A rupture map is not a surface map, and Fig 84's coldest point |
+| 246 | mechanical | The two blades' mission mixes independently agree about how much |
+| 247 | mechanical | E1's second half misses by a factor of 2.43, and the miss is a |
+| 248 | mechanical | On the E³'s own numbers, 50 °C of metal temperature is worth 8×, |
+| 249 | secondary | The blade's backflow margin is a relative total pressure and the |
+| 250 | secondary | On a 4 cm blade the vortex law decides the SIGN of the spanwise |
+| 251 | secondary | Fig 26's tip line is nine times flatter than proportionality, and |
+| 252 | geometry | The exact case has to be exact for the thing you actually |
+| 253 | geometry | The inner OGV's CAD was right all along and the reference was |
+| 254 | geometry | "Zero clashes through rotation" is a proof on this assembly, not a |
+| 255 | geometry | The assembly's own vane counts are the engine orders GE drew its |
+| 256 | geometry | The one absence is the IGV, and it is unresolved. Rotor 1's |
 

@@ -21,12 +21,36 @@ closures:
 
   - stage: B1
     what: the mixer reproduces Table XXIII's sfc improvement
-    band: null
-    achieved: 0.7
+    band: 0.5
+    achieved: 0.24
     units: points on the level
-    state: half
-    gate: "open on the LEVEL. Table XXIII's column-to-column differences reproduce to 0.25 point, but the level is 0.7 point high because mass-weighted total pressure is the ideal upper bound. Needs Fig 39/40's mixing-plane area, which is Stage H."
-    note: "3.6 % at 85 % effectiveness against a separate-flow engine without the mixer's own 0.57 % loss"
+    state: met
+    gate: null
+    note: >
+      CLOSED 2026-09-18 by unit B5, and it needed no figure. The level was
+      0.7 point high because the model formed the mixed total pressure as
+      the mass-weighted mean, which has no mixing loss in it at all. A
+      constant-area momentum balance at a common static pressure gives
+      2.66 percent against Table XXIII's 2.9, and the six bands stated
+      before the run all hold: the slopes survive (-0.31 and +0.23 against
+      a printed -0.5 and +0.3) and the mixing-plane Mach numbers come out
+      0.394 core and 0.515 bypass.
+
+      The gate had said this needed Fig 39/40's mixing-plane AREA and was
+      therefore Stage H. It needs only the area RATIO -- every equation in
+      a mixing plane is per unit area, proved by scaling both flows by ten
+      and finding the intensive state moves by exactly zero (finding 241).
+      The ratio, 0.3083, is the LPT rotor-5 exit annulus over the bypass
+      annulus the published fan-duct Mach requires, and the closure holds
+      across the whole band that Mach allows.
+
+      Two things recorded rather than smoothed: the pre-run hand estimate
+      of the mixing loss was 2.7x low because a mixing plane is not the
+      duct upstream of it (finding 242), and the area ratio has a choking
+      FLOOR at 0.249 below which no solution exists, so the +-30 percent
+      sensitivity sweep step 0 asked for cannot be run symmetrically
+      (finding 243). The mass-weighted model is retained and still misses;
+      that comparison is the finding.
 
   - stage: B3
     what: sfc at three ratings against Table XII
@@ -129,8 +153,37 @@ closures:
     band: 0.5
     achieved: 0.04
     units: percent of W25
-    state: half
-    gate: "the closure also asks that every cavity keeps hot gas out; the stage-1 nozzle's two are done and no others"
+    state: met
+    gate: null
+    note: >
+      CLOSED 2026-09-18 by unit D9. The budget half closed at 0.04 percent in
+      2026-09-06; the sentence "every cavity keeps hot gas out" is now
+      answered for ALL FOUR numeric backflow margins CR-167955 prints -- the
+      stage-1 nozzle's forward and aft cavities (D3, and the reference
+      pressure each is measured against settled by D7's finding 233) and the
+      stage-1 blade's tip and dovetail here. All four exceed unity, including
+      the inducer-seal damage case, and the design dovetail pressure ratio
+      sits 9.3 percent above the printed minimum supply ratio.
+
+      The closure is met as the INEQUALITY it is written as. A forward
+      reproduction of the printed 1.10 to 0.5 percent -- what D7 achieved on
+      the vane -- was declared unreachable in step 0 and is not attempted:
+      the blade's margin is a ratio to a RELATIVE total, reached through a
+      rotational pump and a five-pass serpentine whose internal pressure loss
+      the report never prints (finding 249). The inversion that replaces it
+      gives 24.5-29.9 percent of internal loss, which is physical, on a
+      bracket that is a vortex law rather than a fudge.
+
+      Two results step 0 did not ask for. The vortex law decides the SIGN of
+      the spanwise term on a 4 cm blade, not its size, which is a band stated
+      before the run and missed (finding 250). And Fig 26's tip line is nine
+      times flatter than proportionality, so an 11-point loss of dovetail
+      supply ratio costs only 1 point of tip margin -- which is the whole
+      reason the inducer-seal failure case survives (finding 251).
+
+      Named so it is not later recorded as unchecked: the stage-2 nozzle's
+      "positive coolant backflow margin" is a listed design feature with no
+      printed number.
 
   - stage: D4
     what: cruise clearance, two independent routes
@@ -145,7 +198,35 @@ closures:
     achieved: 6.5
     units: percent
     state: half
-    gate: "the closure also asks HPT blade rupture life within a factor of 2; no creep data or Larson-Miller constants are sourced"
+    gate: >
+      EVALUATED 2026-09-18 by unit E10 rather than gated, and it MISSES:
+      a same-stress Larson-Miller transfer from CR-167955 Fig 84's stage-2
+      limiting point (341 h at 926 C, LMP 27,020 at C = 20) to the stage-1
+      blade's published pitch metal temperature gives 109 h against a
+      published 264 -- a factor of 2.43 against a band of 2. Step 0 said
+      "about 110 h, a factor of 2.4, just outside" before the run.
+
+      The old gate said no creep data is sourced. It is sourced, and it was
+      inside the report the closure is about: Fig 84 p.142 prints eleven
+      (rupture life, metal temperature) pairs and hpt-mechanical.yaml has
+      carried them since 2026-09-05 (finding 244). What is actually missing
+      is STRESS. The two blades' pitch-section areas were never published --
+      the same absence that leaves the HPT's four airfoil rows out of the
+      G3 assembly -- so the ratio sigma_1/sigma_2 the miss implies, 0.90 to
+      0.94 over a rupture exponent of 8 to 15, cannot be checked against
+      anything (finding 247). A published Rene 150 rupture curve would be a
+      second route and is on no document on disk; F1 already records
+      MIL-HDBK-5J as carrying none of Rene 77/95/150 or AF115.
+    note: >
+      Three of E10's five bands pass and two miss. Fig 84 and Fig 35 are the
+      same section at the same condition and agree to 1 K and 0 K once it is
+      understood that a BUCKET CREEP life map covers the wall interior and
+      not only the skin -- against surface nodes alone the cold end misses
+      by 47 K (finding 245). The two blades' separately computed mission
+      mixes independently imply the same climb severity, 8.1x and 7.6x
+      (finding 246). And the standing "50 C is 10x creep life" rule comes
+      out at 7.98x on the E3's own numbers, 0.2 of a point outside its own
+      band (finding 248).
 
   - stage: E2
     what: the bore doubling for a small hole
@@ -225,12 +306,62 @@ closures:
     units: cubic metres of overlap
     state: met
 
-  - stage: H
-    what: zero clashes through rotation, every bearing with its load
+  # Stage H was ONE closure holding two unrelated problems. Split 2026-09-18.
+  # The names follow WORK-PLAN.md's own Stage H numbering -- H1 Gates,
+  # H2 Static structure, H3 Sumps and bearings, H4 Assembly, motion, section --
+  # so the kinematics closure is H4 and the hand-CAD closure is H2-H3. They are
+  # deliberately NOT called H1 and H2, which would put two different things
+  # under one name in one repository.
+
+  - stage: H4
+    what: zero clashes through a full rotation of both spools, at the published LP:HP ratio
+    band: 0.0
+    achieved: 0.0
+    units: row pairs overlapping axially, out of 496
+    state: met
+    gate: null
+    note: >
+      CLOSED 2026-09-18 by unit H4, and it needed no hand CAD. G3 places all
+      32 rows at their true stations, so this is a script.
+
+      The result is a PROOF rather than a sweep: two rows whose assembled
+      axial extents do not overlap cannot touch at any relative angular
+      position, and none of the 496 pairs overlaps -- not merely none of the
+      31 consecutive ones G3 checked. The 360-step sweep over one LP
+      revolution was run anyway, on the real solids, and moves the tightest
+      real gap (7.50 mm, HPC stator 4 to rotor 5) by 0.000 mm. That tests
+      the placement transform rather than the engine, which is the point:
+      a scale, a shear or an off-axis rotation centre would show up nowhere
+      else (finding 254).
+
+      Two results step 0 asked for and got. The LP:HP ratio is one number
+      across the glTF and unit I1's four-route reconciliation, 3.5833
+      against 3.5739. And the assembly's own vane counts ARE the engine
+      orders GE drew its Campbell diagrams against: every one of the ten
+      HPC rotor stages carries its downstream stator's count among its
+      printed per-rev lines and nine of ten carry its upstream one, and the
+      HPT stage-2 blade's 72/rev is the LPT stage-1 vane count printed in a
+      different report (finding 255). The single absence is rotor 1's
+      variable IGV and it is unresolved (finding 256).
+
+  - stage: H2-H3
+    what: the static structure and the sumps in hand CAD, and every bearing pointed at with its load
     band: null
     achieved: null
     state: gated
-    gate: "no hand-CAD tool installed and verified; the plan records Fusion's install as corrupt"
+    gate: >
+      Two gates, neither of them the tool. (1) NO BEARING LOAD OR CAPACITY IS
+      PRINTED ANYWHERE: CR-168219 sec 5.7 names all five bearings, their
+      types, sumps, seals and lubrication and gives no load -- unit E4's
+      closure carries the same gate -- and the thrust balance that would
+      produce one is itself gated on the HPC disc bore radius (D6, finding
+      193). (2) The hand-CAD half needs a human at a GUI. The plan's old
+      note that Fusion's install is corrupt was checked on 2026-09-07 and is
+      WRONG -- the 11 GB payload is present and complete at version
+      2704.1.53 and only the launcher stub is unsigned -- so what is left is
+      launching it and exporting one STEP, which an agent cannot do.
+      Casings, frames, flanges, mounts and the pressure bulkhead are
+      figure-status transcriptions on top of that.
 
   - stage: I3
     what: FINDINGS.md written -- every disagreement ranked, with a cause or unresolved
@@ -509,18 +640,38 @@ closures:
   - stage: G2
     what: the inner OGV builds with its sections on planes normal to a 60-degree swept, 20-to-0-degree leaned stacking axis
     band: 2.0
-    achieved: 2.09
+    achieved: 0.0064
     units: percent of vane volume
-    state: half
-    gate: >
-      Three of four checks pass: the sections are normal to the axis by
-      construction, the solid is valid, and 64 vanes have zero overlap. The
-      volume misses by 0.09 of a point -- and finding 181 shows the reference
-      is the thing that does not apply: with the axis straightened, the same
-      CAD against the same integral agrees to 0.015 percent, and the whole
-      gap is a Pappus term the trapezoidal integral omits for a curved
-      stack. The band stands as a miss because it was stated before the run.
+    state: met
+    gate: null
     note: >
+      CLOSED 2026-09-18 by unit G2b, and NOT ONE NUMBER IN THE CAD CHANGED.
+      Three of the four checks always passed -- sections normal to the axis
+      by construction, a valid solid, 64 vanes with zero overlap -- and the
+      fourth compared the CAD against the volume of a prism swept along a
+      STRAIGHT path, which is what the trapezoidal integral of A ds is.
+
+      The reference now carries the only first-order term a curved path has,
+      Pappus's second theorem in differential form: V = integral of
+      A (1 - c_bar . dT/ds) ds, the section centroid's offset from the
+      stacking axis dotted with the curvature vector. That takes the vane
+      from -2.1056 percent to +0.0064, a factor of 327, and it is identical
+      to the old integral wherever the axis is straight -- checked to
+      1.6e-15 -- so none of the other 31 rows moves (finding 253).
+
+      The size of the term is the size of the mistake: the sections are
+      built from their leading edge, so the axis carries a centroid offset
+      of about 0.45 of a chord, four centimetres on a vane whose lean bends
+      the axis 20 degrees over eleven.
+
+      One band stated before the run was missed and is recorded: the torus
+      validation case was asked for 1 part in 1e6 against the exact circle
+      and converges first order to the 360-gon's own exact volume instead,
+      6.9e-6 at n=5761, because the test harness closes a circular axis with
+      an open-curve tangent differencer (finding 252). Grid independence on
+      the OGV itself is first order with a Richardson limit of 4.76075e-5
+      m3, against which the CAD agrees to +0.019 percent.
+    note_carried_forward: >
       Built on the plain reading of Table VII's 11.61 cm as a radial span.
       Two independent lines say it may be measured along the swept axis
       instead -- Appendix A's aspect ratio and the core duct's axial space

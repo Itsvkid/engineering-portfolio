@@ -68,7 +68,7 @@ def _mixer_gain(eff, loss):
 TABLE_XXIII = [(0.75, 0.0020, 3.1), (0.79, 0.0057, 2.6), (0.85, 0.0057, 2.9)]
 
 
-@pytest.mark.xfail(strict=True, reason="STEP0 finding 3: ideal (mass-weighted total pressure) mixing puts the level 0.7 point above Table XXIII; the momentum-balance mixer needs the mixing-plane geometry (Stage H)")
+@pytest.mark.xfail(strict=True, reason="STEP0 finding 3: ideal (mass-weighted total pressure) mixing puts the level 0.7 point above Table XXIII. Unit B5 CLOSES this with a momentum-balance mixing plane (tests/test_mixing_plane.py); this test stays as the pinned record of what the ideal bound gives, and finding 241 records that no figure was needed")
 def test_mixer_gain_level_table_xxiii():
     assert abs(_mixer_gain(0.85, 0.0057) - 2.9) < 0.5
 

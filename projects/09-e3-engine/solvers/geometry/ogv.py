@@ -29,6 +29,7 @@ to a curve, and the curve leaves the meridional plane.
 STEP0.md, unit G2."""
 from __future__ import annotations
 
+import functools
 import math
 
 import cadquery as cq
@@ -272,3 +273,144 @@ def summary():
 
 if __name__ == "__main__":
     print(summary())
+
+
+# ---------------------------------------------------------------------------
+# Unit G2b -- the curved-axis reference integral
+# ---------------------------------------------------------------------------
+
+def _polygon_area_centroid(pts):
+    """Signed area and centroid of a closed polygon, in its own plane."""
+    a = 0.0
+    cx = cy = 0.0
+    n = len(pts)
+    for i in range(n):
+        x0, y0 = pts[i]
+        x1, y1 = pts[(i + 1) % n]
+        cross = x0 * y1 - x1 * y0
+        a += cross
+        cx += (x0 + x1) * cross
+        cy += (y0 + y1) * cross
+    a *= 0.5
+    if abs(a) < 1e-18:
+        return 0.0, (0.0, 0.0)
+    return abs(a), (cx / (6.0 * a), cy / (6.0 * a))
+
+
+@functools.lru_cache(maxsize=8)
+def _pappus_cached(n, lean, sweep, along):
+    return _pappus_volume_uncached(n)
+
+
+def pappus_volume(n=201, axis=None, section=None):
+    """Memoised on the module state the result depends on, because building
+    201 cadquery Planes is the slow part and the test suite asks for this
+    several times."""
+    if axis is None and section is None:
+        return _pappus_cached(n, LEAN_ID_DEG, SWEEP_DEG, LENGTH_IS_ALONG_AXIS)
+    return _pappus_volume_uncached(n, axis, section)
+
+
+def _pappus_volume_uncached(n=201, axis=None, section=None):
+    """The reference volume for a section swept along a CURVED axis.
+
+    V = integral of A(s) * (1 - c_bar . dT/ds) ds, which is Pappus's second
+    theorem in differential form: a point offset by d from the axis sweeps
+    an arc ds(1 - kappa d.N), so the section's own centroid offset is the
+    only first-order term. Where the axis is straight dT/ds vanishes and
+    this is `trapezoid_volume` exactly -- so no straight-stacked row in this
+    project moves.
+
+    `axis` and `section` are injectable so the exact torus case below can
+    validate the machinery without going near the OGV.
+    """
+    axis = axis if axis is not None else stacking_axis(n)
+    section = section if section is not None else _section_2d
+    n = len(axis)
+
+    # arc length and unit tangent at every station, then dT/ds by central
+    # difference on arc length
+    s = [0.0]
+    for i in range(1, n):
+        a, b = axis[i - 1]["point"], axis[i]["point"]
+        s.append(s[-1] + math.sqrt(sum((b[k] - a[k]) ** 2 for k in range(3))))
+    tang = [p["tangent"] for p in axis]
+    dtds = []
+    for i in range(n):
+        lo, hi = max(i - 1, 0), min(i + 1, n - 1)
+        ds = s[hi] - s[lo]
+        dtds.append(tuple((tang[hi][k] - tang[lo][k]) / ds if ds else 0.0
+                          for k in range(3)))
+
+    total = 0.0
+    prev = None
+    for i, p in enumerate(axis):
+        pts = section(p["f"])
+        a, (cx, cy) = _polygon_area_centroid(pts)
+        plane = _plane_at(p)
+        c3 = [plane.xDir.toTuple()[k] * cx + plane.yDir.toTuple()[k] * cy
+              for k in range(3)]
+        factor = 1.0 - sum(c3[k] * dtds[i][k] for k in range(3))
+        w = a * factor
+        if prev is not None:
+            total += 0.5 * (w + prev) * (s[i] - s[i - 1])
+        prev = w
+    return total
+
+
+@functools.lru_cache(maxsize=8)
+def torus_validation(R=1.0, a=0.1, e=0.04, n=721):
+    """Band 1: the exact case, before the OGV.
+
+    A circular section of radius `a` swept round a circle of radius `R`,
+    with the stacking axis offset from the section centroid by `e` towards
+    the centre. Pappus gives 2*pi*(R - e)*pi*a^2 exactly, and the plain
+    trapezoidal integral gives 2*pi*R*pi*a^2 -- so the case has a known
+    right answer AND a known wrong one.
+
+    Returns (pappus, exact, trapezoid).
+    """
+    axis = []
+    for i in range(n):
+        f = i / (n - 1)
+        th = 2.0 * math.pi * f
+        # the axis circle sits at radius R + e, so its centroid circle -- the
+        # axis point displaced by -e towards the centre -- is at radius R
+        ra = R + e
+        axis.append(dict(f=f, point=(ra * math.cos(th), ra * math.sin(th), 0.0)))
+    for i, p in enumerate(axis):
+        lo, hi = axis[max(i - 1, 0)]["point"], axis[min(i + 1, n - 1)]["point"]
+        t = [hi[k] - lo[k] for k in range(3)]
+        m = math.sqrt(sum(v * v for v in t))
+        p["tangent"] = tuple(v / m for v in t)
+
+    def circ(f, m=360):
+        """a circle of radius `a` whose centre is offset by -e along the
+        plane axis that points radially outward"""
+        p = min(axis, key=lambda q: abs(q["f"] - f))
+        pl = _plane_at(p)
+        out = []
+        for j in range(m):
+            ang = 2.0 * math.pi * j / m
+            out.append((a * math.cos(ang), a * math.sin(ang)))
+        # find which plane direction is radial, and offset along it
+        radial = (math.cos(2 * math.pi * f), math.sin(2 * math.pi * f), 0.0)
+        ex = sum(pl.xDir.toTuple()[k] * radial[k] for k in range(3))
+        ey = sum(pl.yDir.toTuple()[k] * radial[k] for k in range(3))
+        return [(x - e * ex, y - e * ey) for x, y in out]
+
+    exact = 2.0 * math.pi * R * math.pi * a * a
+    return pappus_volume(axis=axis, section=circ), exact, \
+        2.0 * math.pi * (R + e) * math.pi * a * a
+
+
+def straight_axis_check(n=201):
+    """Band 2: with no lean the axis is straight and the two integrals must
+    be the same number."""
+    global LEAN_ID_DEG
+    keep = LEAN_ID_DEG
+    try:
+        LEAN_ID_DEG = 0.0
+        return pappus_volume(n), trapezoid_volume(n)
+    finally:
+        LEAN_ID_DEG = keep

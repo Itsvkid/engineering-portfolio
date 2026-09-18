@@ -1241,14 +1241,26 @@ machinery a disc or a casing needs, and it demonstrably works.
 - [ ] Every bearing placed with its type and its E4 load
 
 ## H4 · Assembly, motion, section · 18 h
-- [ ] Real joints: revolute per spool, static grounded
-- [ ] Clearances set to the D4 values; interference **through a full
-      rotation** — zero
-- [ ] Motion at LP : HP ≈ 1 : 3.6, co-rotating. Turns; does not run
+- [x] Clearances and interference **through a full rotation** — zero.
+      **Unit H4**, `solvers/geometry/kinematics.py`, 2026-09-18. G3 places
+      all 32 rows, so this is a script and not a GUI job. **0 of 496 row
+      pairs overlap axially**, which is a proof at every angle rather than
+      a sample at one; a 360-step sweep on the real solids moves the
+      tightest gap by **0.000 mm** (finding 254). The LP : HP ratio is one
+      number across the glTF and unit I1, 3.5833 against 3.5739. And the
+      assembly's own vane counts reproduce **19 of the 20** upstream and
+      downstream per-rev lines on the ten published HPC Campbell diagrams,
+      plus the HPT blade's 72/rev against the LPT stage-1 vane count
+      (finding 255); the one absence is rotor 1's IGV (finding 256)
+- [ ] Real joints in a CAD kernel: revolute per spool, static grounded
 - [ ] Section, exploded by module, renders
 
 *Closes when:* zero clashes through rotation, and every bearing can be
-pointed at with its load stated.
+pointed at with its load stated. **Split into two closures 2026-09-18**,
+because the two halves have nothing to do with each other:
+`data/closures.yaml` now carries **H4** (kinematics — met) and **H2-H3**
+(hand CAD and bearing loads — gated, and gated on *no printed bearing
+load anywhere in CR-168219 §5.7*, not on the tool).
 
 ---
 
