@@ -180,7 +180,7 @@ const fanModule = [
         // The mid-span shroud ring the E³ fan carries.
         tipShroud(FAN.rHub + (FAN.rTip - FAN.rHub) * FAN.shroudSpan, 0.0, 0.05, 0.012),
       ]),
-    text: "Thirty-two solid titanium blades with a part-span shroud, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic; the root is a 68°-camber subsonic section set almost axially, which is why the blade twists through fifty degrees from hub to tip. The 23 sections here are the report's own printed table, Appendix B p.134 \u2014 not the seven points read off its Fig. 41, which understate the hub stagger by almost six degrees.",
+    text: "Thirty-two solid titanium blades with a part-span shroud, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic; the root is an 81°-camber subsonic section set almost axially, which is why the blade twists through sixty-one degrees of stagger from hub to tip. The 23 sections here are the report's own printed table, Appendix B p.134 \u2014 not the seven points read off its Fig. 41, which understate the hub stagger by almost six degrees.",
     facts: [
       f("Blade count", "32", "CR-168219 sec 5.1.2 p.45"),
       f("Tip radius", "1.054 m", "CR-165148 Table IV"),
