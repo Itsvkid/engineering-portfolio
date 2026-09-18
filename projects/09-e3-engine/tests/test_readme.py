@@ -17,7 +17,8 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "solvers"))
 
 import yaml  # noqa: E402
-from build_readme import BEGIN, END, block, closures  # noqa: E402
+from build_readme import (BEGIN, END, STAGES, block, closures,  # noqa: E402
+                          stage_closures, stage_states)
 
 README = (ROOT / "README.md").read_text()
 GENERATED = re.search(re.escape(BEGIN) + r"(.*?)" + re.escape(END), README,
@@ -73,6 +74,28 @@ def test_the_status_line_counts_agree_with_the_data():
     c, by = closures()
     assert f"**{len(c)} closures**" in GENERATED
     assert f"{by['met']} met, {by['half']} half, {by['gated']} gated" in GENERATED
+
+
+def test_the_status_line_names_no_stage_state_by_hand():
+    """finding 220: "Stage J is in progress" outlived all nine J closures.
+
+    The counts beside it were generated and the sentence was not, which is
+    finding 168's rot one clause to the right. The sentence is derived from
+    the scoreboard now; this holds it there."""
+    c, _ = closures()
+    status = GENERATED.splitlines()[2]
+    not_started, still_open = stage_states(c)
+
+    for letter, *_ in STAGES:
+        rel = stage_closures(letter, c)
+        if rel and all(x["state"] == "met" for x in rel):
+            assert f"Stage {letter} " not in status, \
+                f"Stage {letter}'s closures are all met; the status line " \
+                "still singles it out"
+    for letter in still_open:
+        assert letter in status, f"Stage {letter} has an open closure and " \
+                                 "the status line does not say so"
+    assert not_started or "not started" not in status
 
 
 def test_the_hand_written_half_carries_no_stale_test_count():

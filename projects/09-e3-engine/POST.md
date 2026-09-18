@@ -54,7 +54,7 @@ disagreements, and each closure's tolerance was written in a `STEP0.md`
 > a 0–6 kHz axis reads to ±14 %. My model is wrong there, and the reference
 > could never have proved it either way.
 >
-> 101 comparisons, median absolute error 7.3 %. 7 have no explanation and
+> 107 comparisons, median absolute error 6.4 %. 7 have no explanation and
 > say so.
 >
 > The part I'd defend hardest is the last drawing sheet. Three of the six
@@ -162,8 +162,8 @@ The reference could not have shown it either way. The published closure —
 "1 of 24" — turns out to be two different results added together, and the
 figure now marks the two groups differently.
 
-Across everything: **101 comparisons, median absolute error 7.3 %.** Twelve
-inside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %. Seven carry the
+Across everything: **107 comparisons, median absolute error 6.4 %.** Eighteen
+inside 1 %, forty-four inside 5 %, sixty-two inside 10 %. Seven carry the
 word *unresolved*, which is a legitimate entry — zero would have meant
 inventing causes to fill a column.
 

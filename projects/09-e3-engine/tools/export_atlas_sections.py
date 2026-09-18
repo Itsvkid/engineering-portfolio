@@ -98,9 +98,30 @@ for row, spans in lpt.items():
 fan_yaml = yaml.safe_load(open(os.path.join(DATA, "fan-design.yaml")))
 
 def plane_sections(block, key):
+    """Seven columns, hub first: r, chord, camber, stagger, tm/c, and the
+    two PRINTED METAL ANGLES.
+
+    The first five are what the atlas loft reads today. beta*_LE and
+    beta*_TE are appended by unit G5 because the solvers now build these
+    two rows from them -- `blading.sections.section` solves the
+    double-circular-arc join so the section reproduces both angles and the
+    stagger, which puts maximum camber where the blade has it rather than
+    at mid-chord. On the fan that position runs 0.48 at the hub to 0.81 at
+    90 % span; on the booster it stays within 0.09 of mid-chord.
+
+    The atlas's own `geometry.js:airfoilSection` uses a 14-point PARABOLIC
+    camber line whose maximum is at mid-chord by construction, so it cannot
+    use these two columns yet. That is a declared fidelity difference in a
+    viewer and not the two-different-tables defect unit G4 removed -- the
+    tables are the same. The columns are exported so that closing the gap
+    is a rendering change and not another transcription, and so that a
+    reader of this file can see that the data is present and unused.
+
+    A JS destructure of the first five is unaffected by the extra two."""
     a = fan_yaml[block][key]
     return [[round(a["radius_cm"][i] / 100, 5), round(a["chord_cm"][i] / 100, 5),
-             a["camber_deg"][i], a["stagger_deg"][i], a["tm_over_c"][i]]
+             a["camber_deg"][i], a["stagger_deg"][i], a["tm_over_c"][i],
+             a["beta_le_star_deg"][i], a["beta_te_star_deg"][i]]
             for i in range(a["stations"])]          # printed hub first already
 
 fan = plane_sections("fan_rotor_airfoil", "appendix_b")
@@ -115,7 +136,11 @@ with open(OUT, "w") as f:
     f.write("// resampled to %d points per surface as [r_m, z_m from the HPT exit plane, rtheta_m];\n" % N)
     f.write("// hub and tip extrapolated from the 10/50/90 % sections as the flowpath is.\n")
     f.write("// FAN / BOOSTER: CR-165148 Appendix B p.134 (23 plane sections) and Appendix D\n")
-    f.write("// p.136 (14), hub first as [r_m, chord_m, camber_deg, stagger_deg, tmax/chord].\n")
+    f.write("// p.136 (14), hub first as [r_m, chord_m, camber_deg, stagger_deg, tmax/chord,\n")
+    f.write("// beta*_LE_deg, beta*_TE_deg]. The last two are the PRINTED metal angles, which\n")
+    f.write("// the solvers build these rows from (unit G5) and this page's parabolic camber\n")
+    f.write("// line cannot yet use -- max camber runs 0.48 chord at the fan hub to 0.81 at\n")
+    f.write("// 90 %% span, where a parabola forces 0.50. Present and unused, deliberately.\n")
     f.write("// These replaced seven and five points read off Figs 41 and 52, which carried a\n")
     f.write("// mean stagger error of +3.14 deg on the fan and -1.61 deg on the booster.\n")
     f.write("export const HPC_SECTIONS = " + json.dumps(hpc, separators=(",", ":")) + ";\n")

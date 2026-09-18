@@ -571,3 +571,24 @@ file from 3.24 MB to 2.84 MB, losslessly.
      kinematics block on the scene as well, and the test loads the real
      `GLTFLoader` in Node to check the assumption against the library
      rather than against the specification.
+
+220. **The sentence beside the generated numbers was not generated, and it
+     outlived the stage it described.** The status line read *"Stage J is in
+     progress"* while all nine J closures stood met, `RESUME.md` said J was
+     complete, and `data/closures.yaml` — the authority both are supposed to
+     be read from — agreed with `RESUME.md`. Nothing was ever wrong when it
+     was written: J was in progress the day unit J4 built the block around
+     it. This is finding 168 one clause to the right. The counts in that
+     line were generated precisely because a hand-maintained number rots,
+     and the hand-maintained **claim** sitting in the same sentence was left
+     to rot instead — which is the more dangerous of the two, because a
+     reader checks a number against the scoreboard and takes a sentence on
+     trust. Fixed by deriving both halves from the scoreboard:
+     `stage_states()` calls a stage not started when no closure of its is
+     met or half, still open when any is unmet, and done otherwise, so
+     "nine of ten stages built" and the list of open stages are now read off
+     `closures.yaml` on every run. The test that holds it asserts the
+     converse of what rotted — **a stage whose closures are all met may not
+     be named in the status line at all.** Stage A is deliberately outside
+     this: it carries no closure, and its state is the transcription note
+     the table already prints.

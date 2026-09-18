@@ -114,12 +114,25 @@ def test_the_fan_blade_weight_matches_table_vis_own_per_blade_note():
 
 
 def test_a_released_fan_blade_throws_seventy_odd_tonnes_into_the_mounts():
-    """finding 94"""
+    """finding 94, REBANDED 2026-09-18.
+
+    The whole-blade term is the robust one: Table VI prints the 7.272 kg
+    and only r_cg is reconstructed, so it has stayed seventy-odd tonnes
+    across every geometry this project has built -- 76 on the read-off,
+    72.75 now. The function name still says what the engine does.
+
+    The airfoil-only term is the reconstruction, and unit G4 moved it 16 %
+    when the fan blade gained the root it was missing: 50.1 tonnes to 55.6.
+    The 45-55 band was fitted to the short blade. What the comparison is
+    FOR is the certification argument in 33.94 / CS-E 810, which is about
+    the release PLANE -- so the quantity that matters is the ratio of the
+    two, and that is banded here instead of the absolute."""
     rows = {(b["blade"], b["basis"]): b for b in blade_out()}
     whole = rows[("fan rotor", "whole blade (Table VI)")]
     airfoil = rows[("fan rotor", "airfoil only")]
     assert 70 < whole["tonnes"] < 82
-    assert 45 < airfoil["tonnes"] < 55
+    assert 50 < airfoil["tonnes"] < 60
+    assert 0.70 < airfoil["tonnes"] / whole["tonnes"] < 0.80
     assert whole["rpm"] == 3653
 
 

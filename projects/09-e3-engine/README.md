@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **1123 test functions**, **227 numbered findings**, **45 closures** — 29 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **1124 test functions**, **233 numbered findings**, **45 closures** — 29 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stages B, C, D, E, F and G still carry open closures.
 
 | Stage | | State |
 |---|---|---|

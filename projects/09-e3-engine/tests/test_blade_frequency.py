@@ -96,27 +96,31 @@ def test_each_blade_gets_the_tip_condition_its_own_report_names():
 def test_the_unshrouded_booster_blade_is_a_beam_to_under_one_percent():
     """finding 82 as RESTATED 2026-09-18 on Appendix D's printed sections.
 
-    The read-off geometry gave 243 Hz against a published 250, -2.7 %, and
-    250 sat strictly inside the weak-axis/root-axis twist bracket. On the
-    printed sections the beam gives 250.68, +0.27 %, and the published
-    value now sits 0.68 Hz BELOW the bracket's soft end.
+    Three geometries, in order. The Fig 52 read-off gave 243 Hz against a
+    published 250, -2.7 %. Unit G4's printed section table gave 250.68,
+    +0.27 %, with the published value 0.68 Hz BELOW the bracket's soft end.
+    Unit G5's printed metal angles give **249.81, -0.07 %**, and the
+    published value is strictly inside the bracket again.
 
-    That is the bracket collapsing onto the answer, not a miss. The bracket
-    is 46 % wide and the agreement is 0.27 %, so "inside the bracket" was
-    never what carried this result -- the number was. This test therefore
-    asserts the number, and asserts only the half of the bracket claim that
-    still means something: the published value is below the root-axis end,
-    so the blade is not behaving as though forced to bend about one axis."""
+    The claim that survives all three is the NUMBER, not the bracket: the
+    bracket is 44 % wide and the agreement is now seven hundredths of a
+    percent, three orders finer than it can resolve. The bracket membership
+    is asserted because it is currently true and because losing it again
+    should be visible, not because it is what carries the result."""
     b = BY["booster rotor"]
     soft, stiff = b.bracket(0.0, 1)
     err = soft[0] / b.published_f1_Hz - 1
     assert abs(err) < 0.15                      # the band stated in step 0
-    assert abs(err) < 0.01                      # and in fact 0.27 %
-    assert b.published_f1_Hz < stiff[0]         # still below the stiff end
-    # and the soft end is now ABOVE the published value, which is the part
-    # of finding 82's old form that was withdrawn. Asserted so that a
-    # future change moving it back is visible rather than silent.
-    assert soft[0] > b.published_f1_Hz
+    assert abs(err) < 0.01                      # and in fact 0.07 %
+    # RESTORED 2026-09-18 by unit G5. The line below was the converse this
+    # test carried after G4 -- `soft[0] > published`, written so that a
+    # change moving it back would be visible rather than silent. It fired
+    # on the very next change: building the sections from the PRINTED metal
+    # angles instead of a symmetric camber split took the booster from
+    # 250.68 to 249.81 Hz, and the published 250 is strictly inside the
+    # twist bracket again. Finding 82's original form is restored, at a
+    # quarter of its original error. See finding 236.
+    assert soft[0] < b.published_f1_Hz < stiff[0]
 
 
 def test_the_fan_brackets_now_overlap_so_the_boundary_condition_is_not_resolved():

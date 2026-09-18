@@ -74,17 +74,71 @@ def figures():
     return out
 
 
+WORDS = ("zero", "one", "two", "three", "four", "five", "six",
+         "seven", "eight", "nine", "ten", "eleven", "twelve")
+
+
+def stage_closures(letter, c):
+    """the closures belonging to one stage letter -- C4-3 and C5 are C"""
+    return [x for x in c if x["stage"].rstrip("0123456789-") == letter
+            or x["stage"] == letter]
+
+
+def stage_states(c):
+    """(not started, still open) as letters, read off the scoreboard.
+
+    A stage with closures but not one of them met or half has not been
+    started; a stage with any closure not met is still open; the rest are
+    done. Stage A has no closures and is neither -- its state is the
+    transcription note the table carries.
+
+    Derived rather than written down, because the sentence this feeds said
+    "Stage J is in progress" for as long as it took all nine J closures to
+    close and a reader to notice (finding 220). It is the same rot as the
+    "37 tests" of finding 168, one sentence to the right of the numbers
+    that were generated to stop it."""
+    not_started, still_open = [], []
+    for letter, _, _ in STAGES:
+        rel = stage_closures(letter, c)
+        if not rel:
+            continue
+        if all(x["state"] == "gated" for x in rel):
+            not_started.append(letter)
+        elif any(x["state"] != "met" for x in rel):
+            still_open.append(letter)
+    return not_started, still_open
+
+
+def _stages_phrase(letters):
+    """'H' -> 'Stage H'; 'B','C','D' -> 'Stages B, C and D'"""
+    head = "Stage" if len(letters) == 1 else "Stages"
+    if len(letters) == 1:
+        return f"{head} {letters[0]}"
+    return f"{head} {', '.join(letters[:-1])} and {letters[-1]}"
+
+
 def block():
     c, by = closures()
     n_tests, n_find = test_count(), findings_count()
     open_ones = [x for x in c if x["state"] != "met"]
+    not_started, still_open = stage_states(c)
+    n_built = len(STAGES) - len(not_started)
+
+    status = []
+    if "H" in not_started:
+        status.append(f"{_stages_phrase(['H'])} needs a human at a CAD GUI")
+    for letter in not_started:
+        if letter != "H":
+            status.append(f"{_stages_phrase([letter])} has not started")
+    status.append(f"{_stages_phrase(still_open)} still carry open closures"
+                  if still_open else "every other stage's closures are met")
 
     L = [BEGIN, ""]
-    L.append(f"**Status:** nine of ten stages built. "
+    L.append(f"**Status:** {WORDS[n_built]} of {WORDS[len(STAGES)]} stages built. "
              f"**{n_tests} test functions**, "
              f"**{n_find} numbered findings**, **{len(c)} closures** — "
              f"{by['met']} met, {by['half']} half, {by['gated']} gated. "
-             "Stage H needs a human at a CAD GUI; Stage J is in progress.")
+             + "; ".join(status) + ".")
     L += ["", "| Stage | | State |", "|---|---|---|"]
     for letter, name, what in STAGES:
         rel = [x for x in c if x["stage"].rstrip("0123456789-") == letter

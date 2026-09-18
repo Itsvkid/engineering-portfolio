@@ -45,7 +45,7 @@ from functools import lru_cache
 import numpy as np
 import yaml
 
-from blading.sections import section
+from blading.sections import implied_max_camber, section
 from e3cycle.cycle import DATA
 from mechanical.beam import Beam, closed_airfoil, polygon_properties
 from meanline.losses import _interp
@@ -181,21 +181,54 @@ def lpt_rotor(stage):
     return _fill(m, [(f * length, poly) for f, poly in zip((0.10, 0.50, 0.90), polys)])
 
 
-def _built_sections(chord_cm, camber_deg, stagger_deg, tm_c_pct, edge_c_pct, pct_c_tm_list):
+def _built_sections(chord_cm, beta1_deg, beta2_deg, stagger_deg, tm_c_pct,
+                    edge_c_pct, pct_c_tm_list):
     """double-circular-arc camber, quarter-sine thickness -- the E3's own
     documented construction (CR-165148 sec II.A), as C3 unit 12 uses it.
-    Camber is split symmetrically about the stagger, which is the circular-
-    arc case; only the section SHAPE enters a second moment, not the
-    absolute angles."""
+
+    **The metal angles are the PRINTED ones** (unit G5). Appendices B and D
+    give beta*_LE and beta*_TE in their own columns, and
+    `blading.sections.section` solves the double-arc join so that the
+    section reproduces both of them AND the printed stagger -- which puts
+    the maximum camber where the blade actually has it instead of at
+    mid-chord.
+
+    Until 2026-09-18 this function took `camber` and split it symmetrically,
+    `b1 = stg + cam/2, b2 = stg - cam/2`, which forces max camber to
+    mid-chord on every section. That is the single-circular-arc case, and
+    the fan is not one: the appendix's own `stagger - (b1+b2)/2` runs
+    -1.57 deg at the hub to +1.82 deg at the tip, 1.85 deg rms, changing
+    sign. The booster very nearly is one, 0.61 deg rms, which is why it is
+    the control for this change.
+
+    Returns None if any section's join falls outside the arc family, rather
+    than silently dropping a station -- a short blade is not a blade."""
     out = []
-    for c, cam, stg, tmc, ec, a in zip(chord_cm, camber_deg, stagger_deg,
-                                       tm_c_pct, edge_c_pct, pct_c_tm_list):
-        b1, b2 = stg + cam / 2, stg - cam / 2
+    for c, b1, b2, stg, tmc, ec, a in zip(chord_cm, beta1_deg, beta2_deg,
+                                          stagger_deg, tm_c_pct, edge_c_pct,
+                                          pct_c_tm_list):
         sec = section(c * CM, b1, b2, stg, tmc / 100, a, ec / 100)
         if sec is None:
             return None
         out.append(closed_airfoil(sec))
     return out
+
+
+def max_camber_positions(kind):
+    """`f`, the chordwise position of maximum camber, for every printed
+    station of the fan or booster.
+
+    An output of the printed angles, not a choice. This is unit G5's
+    headline: a symmetric split can only ever return 0.5, and the fan does
+    not sit there."""
+    f = _fan()
+    a = (f["fan_rotor_airfoil"]["appendix_b"] if kind == "fan"
+         else f["booster_rotor_airfoil"]["appendix_d"])
+    return [(a["percent_blade_height"][i],
+             implied_max_camber(a["beta_le_star_deg"][i],
+                                a["beta_te_star_deg"][i],
+                                a["stagger_deg"][i]))
+            for i in range(a["stations"])]
 
 
 def _at_pct(x, xs, ys):
@@ -262,8 +295,13 @@ def appendix_sections(kind):
         raise ValueError(kind)
 
     edges = [_at_pct(h, h_old, edge_pct) for h in a["percent_blade_height"]]
-    polys = _built_sections(a["chord_cm"], a["camber_deg"], a["stagger_deg"],
+    polys = _built_sections(a["chord_cm"], a["beta_le_star_deg"],
+                            a["beta_te_star_deg"], a["stagger_deg"],
                             [t * 100 for t in a["tm_over_c"]], edges, ats)
+    if polys is None:
+        raise RuntimeError(
+            f"a printed {kind} section's double-arc join falls outside the "
+            "family; it must be reported, not skipped")
     return [r * CM for r in a["radius_cm"]], polys
 
 

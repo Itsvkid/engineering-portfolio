@@ -230,8 +230,44 @@ def _open_questions():
     return out
 
 
+def _nozzle_cooling_network():
+    """D7. Six numbers the report prints twice over: two band pressures its
+    own losses have to reproduce, two impingement ratios its own pressures
+    have to give, and two cavity statics its own backflow margins have to
+    return. Nothing here is fitted -- each is printed arithmetic checked
+    against a printed answer."""
+    from thermal.nozzle_network import (
+        pressure_chain, impingement_ratios, discharge_reference)
+    out = []
+    for r in pressure_chain():
+        out.append(Disagreement(
+            f"stage-1 nozzle {r['band']}-band coolant pressure", "D7",
+            r["predicted_MPa"], r["printed_MPa"],
+            "CR-167955 Fig.13(b) delivery vs sec 3.2.1 system losses",
+            "the printed system loss applied to the printed CPD; nothing "
+            "fitted", units="MPa"))
+    for r in impingement_ratios():
+        out.append(Disagreement(
+            f"stage-1 nozzle {r['cavity'].replace('_', ' ')} impingement ratio",
+            "D7", r["predicted"], r["printed"],
+            "CR-167955 Figs.13(a) and 14",
+            "insert supply over cavity static, both printed", units="-"))
+    for r in discharge_reference()["rows"]:
+        ref = "total" if r["reference"] == "pt_MPa" else "static"
+        out.append(Disagreement(
+            f"stage-1 nozzle {r['cavity']} static from its backflow margin",
+            "D7", r["predicted_MPa"], r["printed_MPa"],
+            f"CR-167955 Fig.13 margin against gas {ref} pressure",
+            f"the printed margin is referenced to gas {ref}, not to the gas "
+            "total its printed definition names -- forward and aft use "
+            "different references and each fits its own to better than "
+            "0.02 %", units="MPa", finding=217))
+    return out
+
+
 HARVESTERS = (_open_questions, _cycle, _hpc_blade_stress, _hpc_density, _hpc_areas_and_masses,
-              _hpc_campbell, _blade_frequencies, _rotor_criticals, _geometry)
+              _hpc_campbell, _blade_frequencies, _rotor_criticals, _geometry,
+              _nozzle_cooling_network)
 
 
 def collect():

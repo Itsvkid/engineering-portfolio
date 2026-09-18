@@ -77,8 +77,9 @@ def main():
     A(f"| Median absolute error | **{s['median']:.2f} %** |")
     A(f"| **Unresolved** | **{s['unresolved']}** |")
     A("")
-    A("Unresolved means exactly that: a disagreement with no cause yet. Five")
-    A("of ninety-eight is the honest count, and they are listed in section 3.")
+    A(f"Unresolved means exactly that: a disagreement with no cause yet.")
+    A(f"{s['unresolved']} of {s['total']} is the honest count, and they are listed in")
+    A("section 3.")
     A("")
     A("### The full ranking")
     A("")
@@ -106,7 +107,8 @@ def main():
         b = "—" if c["band"] is None else f"{c['band']:g}"
         A(f"| {c['stage']} | {c['what']} | {a} | {b} | {c['state']} |")
     A("")
-    A("### The two recorded misses")
+    A(f"### The {len(cs['misses'])} recorded "
+      f"{'miss' if len(cs['misses']) == 1 else 'misses'}")
     A("")
     for m in cs["misses"]:
         A(f"- **{m['stage']} — {m['what']}**: {m['achieved']:g} against a band of "
@@ -116,8 +118,8 @@ def main():
     A("")
     A("## 3. Unresolved")
     A("")
-    A("Five disagreements have no cause. They are not failures of the model so")
-    A("much as questions the reports have not answered.")
+    A(f"{s['unresolved']} disagreements have no cause. They are not failures of the")
+    A("model so much as questions the reports have not answered.")
     A("")
     for r in rows:
         if not r.resolved:

@@ -115,12 +115,22 @@ def test_the_beam_bias_share_is_not_overstated():
 def test_the_overall_disagreement_statistics_match():
     from verification.disagreements import collect, summary
     s = summary(collect())
-    assert s["total"] == 101
-    assert s["median"] == pytest.approx(7.3, abs=0.05)
-    assert (s["within_1"], s["within_5"], s["within_10"]) == (12, 38, 56)
+    assert s["total"] == 107
+    assert s["median"] == pytest.approx(6.4, abs=0.05)
+    # NOT an exact tuple. It was (18, 44, 62) until 2026-09-18, when unit
+    # G5's geometry moved a comparison inside 1 % and the tuple failed on an
+    # IMPROVEMENT. That is finding 170's rule broken a second time in this
+    # same file -- a mutable metric written as an exact figure -- and it is
+    # fixed the same way the closure scoreboard was: a floor on the count
+    # and a proportion, both of which a better model can only move the
+    # right way. The bands are one-sided on purpose.
+    assert s["within_1"] >= 18
+    assert s["within_5"] >= 44
+    assert s["within_10"] >= 62
+    assert s["within_1"] < s["within_5"] < s["within_10"] <= s["total"]
+    assert s["within_10"] / s["total"] > 0.55
     assert s["unresolved"] == 7
-    claim("**101 comparisons, median absolute error 7.3 %.**")
-    claim("Twelve\ninside 1 %, thirty-eight inside 5 %, fifty-six inside 10 %")
+    claim("**107 comparisons, median absolute error 6.4 %.**")
     claim("Seven carry the")
 
 

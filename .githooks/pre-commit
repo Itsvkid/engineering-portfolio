@@ -46,7 +46,15 @@ for f in README.md FINDINGS.md; do
     echo "pre-commit: $E3/$f is not in the index; commit refused." >&2; exit 1; }
 done
 
-HOOKS=$(git rev-parse --show-toplevel)/$(git config core.hooksPath)
+# core.hooksPath may be absolute or relative to the repository root.
+HOOKS=$(git config core.hooksPath)
+case "$HOOKS" in
+  /*) : ;;
+  *)  HOOKS=$(git rev-parse --show-toplevel)/$HOOKS ;;
+esac
+[ -f "$HOOKS/findings-index-check.py" ] || {
+  echo "pre-commit: cannot find $HOOKS/findings-index-check.py; commit refused." >&2
+  exit 1; }
 cd "$TMP/tree/$E3"
 
 # README.md is regenerated in full: it costs about a tenth of a second.

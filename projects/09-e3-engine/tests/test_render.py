@@ -195,15 +195,31 @@ def test_the_engine_spans_what_j1_says_it_spans():
     assert max(e["x_hi"] for e in env) * 100 == pytest.approx(285.6, abs=1.0)
     # 104.2, not the 103.9 of the fan tip section: the tip cap stands
     # 3 mm proud of its own boundary wire -- finding 163, tested below
-    assert max(e["r_hi"] for e in env) * 100 == pytest.approx(104.2, abs=0.1)
+    # Checked against the PUBLISHED fan tip radius rather than against a
+    # number this project once measured. It read 104.2 until 2026-09-18,
+    # which was the stacking-axis box's outer radius plus a 3 mm cap bulge
+    # -- a blade 1.5 cm short at the tip. Unit G4 put the row on Appendix
+    # B, whose outermost station is the flowpath tip, and the mesh now
+    # lands on the report's own 105.4 cm to 0.02 %.
+    import yaml
+    fan = yaml.safe_load((ROOT / "data" / "fan-design.yaml").read_text())
+    r_tip_published = fan["aero_parameters"]["tip_diameter_cm"][0] / 2
+    assert max(e["r_hi"] for e in env) * 100 == pytest.approx(r_tip_published, abs=0.1)
 
 
 def test_the_tip_caps_bulge_past_their_own_sections():
     """finding 163: makeNSidedSurface interpolates across the boundary wire
     and overshoots it, worst on the largest cap"""
     o = {r["row"]: r for r in cap_overshoot()}
-    assert o["fan-rotor"]["overshoot_mm"] == pytest.approx(3.0, abs=0.3)
-    assert all(r["overshoot_mm"] < 0.7 for k, r in o.items() if k != "fan-rotor")
+    # RESTATED 2026-09-18, finding 238. The fan's bulge was 3.0 mm and is
+    # now 0.14 mm, and nothing about `makeNSidedSurface` changed: the fan
+    # went from seven sections to Appendix B's twenty-three, so the last
+    # loft interval fell from 12.4 cm to 1.5 cm and the surface arrives at
+    # the tip almost parallel to the cap. The bulge was a symptom of COARSE
+    # SECTION SPACING, not a property of the capping call -- which is worth
+    # knowing, because the fix for it is sections and not a tolerance.
+    assert o["fan-rotor"]["overshoot_mm"] < 0.7
+    assert all(r["overshoot_mm"] < 0.7 for r in o.values())
     # the LPT caps are exact
     assert all(r["overshoot_mm"] < 0.1 for k, r in o.items() if k.startswith("lpt-"))
     # and it is always outward, never inward
@@ -276,13 +292,16 @@ def test_indices_narrow_to_uint16_exactly_when_the_row_allows_it(gltf):
     # Every row qualifies, which is why the saving is worth having. The
     # bound is the uint16 ceiling, not a number measured once: the first
     # draft asserted "under 6,000", which was the largest row at the WEB
-    # tolerance and not at this one -- the archival file's largest is
-    # 10,886. Same conclusion, wrong evidence.
+    # tolerance and not at this one. A second draft pinned the archival
+    # file's largest at exactly 10,886 -- the same defect one layer down,
+    # and it duly failed on 2026-09-18 when the fan went to Appendix B's
+    # 23 sections and the largest row became 18,251. A vertex count moves
+    # whenever the geometry improves, so it is bounded, not pinned.
     biggest = max(gltf["accessors"][m["primitives"][0]["attributes"]
                                     ["POSITION"]]["count"]
                   for m in gltf["meshes"])
     assert biggest < 65536, biggest
-    assert biggest == 10886, biggest        # pinned: archival tolerance
+    assert 5000 < biggest < 65536, biggest   # bounded, not pinned
 
 
 def test_materials_carry_one_colour_per_spool(gltf):

@@ -552,3 +552,162 @@ piece of evidence than either number alone.
      it: **the airfoil loft is checkable against the published blade mass
      only as a lower bound, and the bound is met — 5.543 < 7.27, 0.135 <
      0.28.**
+
+---
+
+## Unit G5 — the camber split, the last assumption the appendix makes unnecessary
+
+Unit G4 put the fan and booster onto their printed section tables and left
+one thing behind. `mechanical.blade_frequency._built_sections` still builds
+each section's metal angles from camber and stagger by **splitting the
+camber symmetrically**:
+
+    b1 = stagger + camber/2      b2 = stagger - camber/2
+
+which forces the maximum camber to mid-chord on every section of every
+blade. **Appendices B and D print β\*_LE and β\*_TE directly**, so the
+split is an assumption the tables make unnecessary — and it is an
+assumption the tables also *contradict*: `test_the_fan_sections_are_not_
+circular_arcs_and_the_booster_nearly_is` already measures the fan's
+departure at **1.85° rms, changing sign hub to tip**, against the
+booster's **0.61°**.
+
+`blading.sections.section(chord, β1, β2, stagger, …)` already does this
+correctly for all 252 HPC sections: it solves the double-circular-arc join
+so the section reproduces β₁\*, β₂\* **and** the printed stagger, with the
+join position `f` as an output rather than a constant. The fan and booster
+have been calling the same function with a fabricated pair of angles. This
+unit deletes the fabrication.
+
+**What this is not.** Unit 15b's 5.08° rms camber miss belongs to
+`blading/fan_blade.py` — unit 15's *designed* fan blade, which derives
+camber from the aerodynamics and never reads the appendix. This fix does
+not touch that solver and must not be expected to move that number.
+
+### The bands, before the run
+
+| Check | Band | Basis |
+|---|---|---|
+| **f, the max-camber position, fan** | **forward inboard (f < 0.5), aft outboard (f > 0.5)**, crossing near mid-span | the appendix's own `stagger − (β\*_LE+β\*_TE)/2` changes sign hub to tip; a symmetric split can only ever give 0.5 |
+| **f, booster** | **\|f − 0.5\| < 0.10 at every station** | 0.61° rms departure — "nearly a circular arc". **The booster is the control**: if it moves as much as the fan, the change is doing something other than what it claims |
+| Every section still builds | **23 + 14, no `None`** | `camber_line` refuses `f` outside 0.02–0.98, and a transonic tip section at 6.2° of camber is where that would bite |
+| Stagger, as built | **exactly unchanged** | stagger is a separate argument to `section()`; if it moves, the fix has altered something it must not |
+| Fan blade volume vs F2's integral | stays inside G1's **±2 %**, and I predict the *change* is **under 2 %** | chord and the thickness law are untouched; only the camber line's arc length changes, and section area ≈ ∫t·ds |
+| Booster volume | **changes by under 0.5 %** | the control |
+| Published-mass bound (finding 227) | **still a lower bound**: fan < 7.27 kg, booster < 0.28 kg | an airfoil loft against a blade with a dovetail, a shank and a shroud |
+| Booster first flex | **inside ±3 % of 250 Hz** | it is 250.68 now and the control should barely move |
+| Fan first flex | **no band on the absolute** — finding 83's brackets overlap and resolve nothing. Required: the free bracket still contains 80 Hz | |
+| G3 assembled length | **318.08 cm, unchanged to 0.01** | the fan is not in the 318.0 cm chain |
+| G3 interference | **zero, all 32 rows** | chord and count are unchanged, so a change here would be the camber line alone |
+| G3 row-to-row clearance | **all 31 gaps positive** | |
+
+### What the atlas can and cannot follow
+
+`tools/export_atlas_sections.py` emits five columns — radius, chord,
+camber, stagger, tm/c — and cannot carry β\*_LE and β\*_TE, so the export
+is extended here to carry them. **The atlas's own camber line is a
+different family and always has been**: `geometry.js:airfoilSection` uses a
+14-point *parabolic* line, `yc = tan(θ/2)·x(1−x)`, whose maximum is at
+mid-chord by construction, where the solvers use a 400-point double
+circular arc. That is a declared fidelity difference in a viewer, not the
+two-different-tables defect unit G4 removed, and this unit does not create
+it. The export is extended so the columns exist and the difference is a
+recorded choice rather than a data gap.
+
+## Unit G5 after the run — nothing above was edited
+
+### Results, 2026-09-18 (`cd solvers && python -m geometry.assembly --export`)
+
+| Check | Band | Result | |
+|---|---|---|---|
+| f, fan | forward inboard, aft outboard, crossing near mid-span | **0.479 → 0.81**, crosses 0.5 at **42.7 %** span; inboard f oscillates 0.48–0.54 rather than sitting below 0.5 | **PARTIAL** |
+| f, booster | \|f − 0.5\| < 0.10 every station | **0.411 – 0.513**, worst departure **0.089** | MET |
+| Every section builds | 23 + 14, no `None` | **all 37**, none outside the arc family | MET |
+| Stagger as built | exactly unchanged | unchanged — it is a separate argument | MET |
+| Fan volume vs F2 | inside ±2 %, change under 2 % | **−0.658 %** (was −0.325); change **0.33 points** | MET |
+| Booster volume | change under 0.5 % | **−0.239 %** (was −0.226); change **0.013 points** | MET |
+| Published-mass bound | fan < 7.27, booster < 0.28 | **5.561 < 7.272**, **0.135 < 0.284** | MET |
+| Booster first flex | ±3 % of 250 Hz | **249.81 Hz, −0.07 %** | MET |
+| Fan first flex | free bracket contains 80 Hz | **36.02 – 107.48**, contains 80 | MET |
+| G3 assembled length | 318.08 cm unchanged | **318.08** | MET |
+| G3 interference | zero, 32 rows | **zero** | MET |
+| G3 row-to-row clearance | all 31 positive | **all positive**, tightest 7.50 mm | MET |
+
+Engine total volume **−0.52 %** against F2 (was −0.32), worst row 0.94 %,
+inside G1's ±2 %. `exports/e3-engine-assembly.step` 79.9 MB, 1 root /
+37 assemblies / 2,932 instances, unchanged.
+
+### Findings
+
+236. **The booster went back inside its bracket, and the converse test
+     written for exactly that fired on the very next change.** Unit G4 left
+     the booster at 250.68 Hz against a published 250 with the published
+     value 0.68 Hz *below* the twist bracket's soft end, and finding 82 was
+     restated around the number rather than the bracket. The test kept the
+     old claim as a **converse** — `soft > published` — so that a change
+     moving it back would be visible. Building the sections from the
+     printed metal angles gives **249.81 Hz, −0.07 %**, and the published
+     value is strictly inside the bracket again. Finding 82's original form
+     is restored at a quarter of its original error, and the mechanism that
+     caught it is worth more than the number: **a withdrawn claim asserted
+     as its own converse is the cheapest way to notice it coming back.**
+237. **The fan is a mid-loaded section inboard and a strongly aft-loaded
+     one outboard, and a symmetric split could never have said so.** The
+     max-camber position runs **0.48 at the flowpath hub, 0.48–0.54 through
+     the inner half, then climbs to 0.81 at 90 % span** and eases to 0.79
+     at the tip. A symmetric camber split returns 0.5 everywhere by
+     construction. The outboard half is the interesting part: a transonic
+     section wants its shock aft, and 0.81 is further aft than the E³'s own
+     HPC rotors (0.55, unit 12). **The band is recorded as PARTIAL, not
+     met**: step 0 predicted f < 0.5 through the inboard half and the fan
+     wanders either side of mid-chord there instead. The booster is the
+     control and behaves: 0.411–0.513, never more than 0.089 from
+     mid-chord, which is what "modified circular arc" should look like.
+238. **The 3 mm tip-cap bulge was coarse section spacing, not the capping
+     call.** Finding 163 recorded the fan's lofted tip cap standing 3.0 mm
+     proud of its own tip section and attributed it to
+     `makeNSidedSurface` interpolating across the boundary wire — the fan
+     being the largest N-sided patch in the project. On Appendix B's 23
+     sections it is **0.14 mm**, a factor of 21, with no change to the
+     capping code at all: the last loft interval fell from 12.4 cm to
+     1.5 cm, so the ruled surface arrives at the tip almost parallel to the
+     cap and there is nothing left for the cap to interpolate across.
+     Finding 163's mechanism was right and its cause was wrong, and the
+     consequence is practical — **the fix for a bulging cap is sections,
+     not a tolerance.** The fan's mesh tip now lands on the report's own
+     published tip radius of 105.4 cm to 0.02 %, so the check that used to
+     be pinned at a remembered 104.2 is now against a published number.
+239. **Three bands and a pinned tuple were calibrated on a blade that was
+     10 % short, and they failed on the correction rather than on an
+     error.** The fan dovetail's implied flank count, the released-blade
+     airfoil term, the mesh tip radius and the largest vertex count all
+     moved when unit G4 gave the fan its missing root, and `POST.md`'s
+     `(18, 44, 62)` failed on an *improvement* — a disagreement moved
+     inside 1 %. Each is rebanded on what the comparison can actually
+     support rather than widened until it passes: the crush reading keeps
+     the **contrast** between fan and booster (1.79 against 0.98, a factor
+     of 1.83) and drops the claim to a tenth of a flank, because only
+     `r_cg` in that chain is ours and unit G4 moved it 4.4 %; the released
+     blade keeps the **whole-blade** term, which is printed and has stayed
+     seventy-odd tonnes across every geometry (76 → 72.75), and bands the
+     **ratio** 0.70–0.80 that the release-plane argument in 33.94 / CS-E
+     810 actually turns on. The two exact pins — the tuple and the 10,886
+     vertex count — are finding 170's rule broken twice more in files that
+     had already been fixed once, and both become floors.
+240. **Whether Appendix B's two end stations are airfoil or manufacturing
+     stock is worth 16 % of the fan blade, and it is not closed.** The
+     0 %–100 % band spans the stacking-axis box, 41.757 → 103.901 cm; the
+     printed table adds a −9 % row at 36.067 and a 102.5 % row at 105.410.
+     Building only 0–100 % reproduces the superseded read-off almost
+     exactly — mass 4.752 against 4.788 kg, r_cg 70.75 against 70.15 —
+     while all 23 rows give **5.561 kg and 67.04 cm**. Two lines favour the
+     full span: the end rows land on **published flowpath radii** (36.047
+     and 105.4), and Fig 15 plots chord against radius **out to 105 cm**,
+     beyond the box. One line looked like it favoured the short span and
+     does not survive inspection: the printed aspect ratios reproduce from
+     the 0–100 % rows almost exactly (fan 2.605 against 2.597, booster
+     **2.090 against 2.09**) and not from all of them (2.899, 2.192) —
+     but the reports compute aspect ratio on their own box height, so that
+     agreement is **circular** and is evidence about the AR convention
+     rather than about the airfoil. Recorded as the size of an open
+     question, because every band rebanded in finding 239 rests on it.
