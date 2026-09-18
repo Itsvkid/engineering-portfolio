@@ -17,7 +17,7 @@ intermediate fitting.
 
 | | |
 |---|---|
-| Within 1 % | 12 |
+| Within 1 % | 13 |
 | Within 5 % | 38 |
 | Within 10 % | 56 |
 | Worse than 20 % | 23 |
@@ -35,17 +35,17 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | +78.7 | E3 | HPC rotor 2 3F frequency | HPC Fig 34 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | -74.4 | C4 | Rotor 37 mass flow, converged solve | TP-1337 Table I design flow | the solve never reaches a steady state at all -- work swings from -3 to +91 % of design across 1500 iterations while a reversed tip region carries 597 K gas back past the inlet plane. Not a stalled branch; an unsteady flow given to a steady solver (findings 194-197) (finding 197) |
 | +60.8 | E7 | LPT flutter allowable, stage 5 vs stage 1 | LPT Table XI safety factors, which should imply one allowable | **UNRESOLVED** (finding 174) |
+| -54.9 | E3 | fan rotor first flex | CR-165148 Appendix B p.134 (geometry) | the part-span shroud; the published mode is the lowest in-phase one, where the shroud ring travels with the blades (finding 84) |
 | +54.3 | J2 | HPC stage-1 1F rise, rest to max speed | HPC Figs 33-42, mode lines drawn flat across the speed range | **UNRESOLVED** (finding 162) |
 | +54.0 | E3 | HPC stage-1 first flex at 14,000 rpm | HPC Fig 33, read flat across the speed range | **UNRESOLVED** (finding 145) |
 | +50.8 | E3 | HPC rotor 3 1F frequency | HPC Fig 35 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +47.3 | E3 | HPC rotor 1 3F frequency | HPC Fig 33 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
-| -46.8 | E3 | fan rotor first flex | CR-165148 Fig 41 (geometry) | the part-span shroud; the published mode is the lowest in-phase one, where the shroud ring travels with the blades (finding 84) |
 | +45.1 | E3 | LPT stage 1 first flex | CR-168289 Fig 62 (pinned tip) | a rigidly clamped root against a two-tang dovetail, plus hot modulus; the modulus alone accounts for about half (finding 84) |
-| -40.6 | E3 | booster rotor Southwell coefficient | the published Campbell pair | outboard shroud and platform mass not modelled, and the flap-lag coupling of a staggered blade; S goes as f squared so a 7 % read error is 25 % here (finding 85) |
+| -40.5 | E3 | booster rotor Southwell coefficient | the published Campbell pair | outboard shroud and platform mass not modelled, and the flap-lag coupling of a staggered blade; S goes as f squared so a 7 % read error is 25 % here (finding 85) |
 | +39.1 | E3 | HPC rotor 1 2F frequency | HPC Fig 33 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | -38.1 | E5 | LPT Fig 70 disk_D stress concentration | LPT Fig 70 | **UNRESOLVED** (finding 100) |
+| -35.7 | E3 | fan rotor Southwell coefficient | the published Campbell pair | outboard shroud and platform mass not modelled, and the flap-lag coupling of a staggered blade; S goes as f squared so a 7 % read error is 25 % here (finding 85) |
 | +32.7 | E2 | HPT stage-1 disc bore stress, Fig 64 vs Fig 55 | CR-167955 Figs 55 and 64 | **UNRESOLVED** |
-| -30.4 | E3 | fan rotor Southwell coefficient | the published Campbell pair | outboard shroud and platform mass not modelled, and the flap-lag coupling of a staggered blade; S goes as f squared so a 7 % read error is 25 % here (finding 85) |
 | +30.4 | E3 | HPC rotor 2 2F frequency | HPC Fig 34 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +29.6 | E3 | HPC rotor 9 2F frequency | HPC Fig 41 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +28.3 | E3 | HPC rotor 5 3F frequency | HPC Fig 37 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
@@ -107,7 +107,6 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | +3.2 | F2 | fan + booster rotor mass | CR-168219 Table XXVI | the fan+booster component table includes a shaft the whole-engine table may group elsewhere (finding 111) |
 | -3.2 | F2 | HPC rotor 7 airfoil mass | HPC Table X | inherits the section-area bias of finding 109 almost exactly (finding 109) |
 | -2.8 | F2 | HPC rotor 7 root section area | HPC Table X | the double-circular-arc and quarter-sine construction has no leading- or trailing-edge radius, so a built section is thinner than the real one; 20 of 20 comparisons are negative (finding 109) |
-| -2.7 | E3 | booster rotor first flex | CR-165148 Fig 52 (geometry) | none needed -- an unshrouded blade really is a beam (finding 82) |
 | +2.7 | E1 | HPC rotor 2 root centrifugal stress | HPC Table X | area distribution from Table XXII; material from the F1 density measurement, not from Table X's material column (finding 74) |
 | -2.6 | F2 | LPT stator mass | Table XXVI | two documents agreeing; nothing needed (finding 111) |
 | -2.4 | E3 | HPC rotor 3 2F frequency | HPC Fig 35 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
@@ -127,6 +126,7 @@ of ninety-eight is the honest count, and they are listed in section 3.
 | +0.5 | B3 | sfc at max_climb | Table XII | within band; nothing needed |
 | -0.5 | F2 | HPC rotor 7 tip section area | HPC Table X | the double-circular-arc and quarter-sine construction has no leading- or trailing-edge radius, so a built section is thinner than the real one; 20 of 20 comparisons are negative (finding 109) |
 | -0.4 | F2 | HPT rotor mass | Table XXVI | two documents agreeing; nothing needed (finding 111) |
+| +0.3 | E3 | booster rotor first flex | CR-165148 Appendix D p.136 (geometry) | none needed -- an unshrouded blade really is a beam (finding 82) |
 | -0.1 | E4 | inner_tube critical-speed margin | HPT Table XXII | the report rounds the same 1.618 two ways (finding 91) |
 | +0.1 | F1 | HPC rotor 7 blade density | MIL-HDBK-5J handbook density | the reconstruction's own area accuracy; the two candidates are a factor of two apart so the identification is never in doubt (finding 104) |
 | -0.0 | E4 | forward_shaft critical-speed margin | HPT Table XXII | the report rounds the same 1.618 two ways (finding 91) |
@@ -137,8 +137,8 @@ of ninety-eight is the honest count, and they are listed in section 3.
 
 ## 2. Closures
 
-27 met, 12 half met, 4 gated, of 43.
-24 of 28 numeric closures sit inside their own band.
+29 met, 12 half met, 4 gated, of 45.
+26 of 30 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -187,7 +187,9 @@ blocks it. None is open without a reason attached.
 | C5 | the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | — | met |
 | E9 | the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | — | met |
 | D6 | thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | — | gated |
+| D7 | the stage-1 nozzle cooling flow network -- do Figure 15's holes pass Figure 17's flow? | 0.24 | 0.5 | met |
 | K2 | the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it | — | — | met |
+| G3 | the 32 blade rows as ONE STEP assembly at their true stations, and the assembled length against the published 318.0 cm | 0.08 | 2 | met |
 
 ### The two recorded misses
 
@@ -276,9 +278,9 @@ restrains.
 
 ## 5. Index of numbered findings
 
-212 findings, in the `STEP0.md` that owns each one.
+227 findings, in the `STEP0.md` that owns each one.
 
-**Numbers 55, 56, 57 are not used.** They were
+**Numbers 55, 56, 57, 216, 217, 218, 219, 220 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
 section stacking — which were handed to a parallel session and never
 landed. The gap is left rather than closed up, because renumbering
@@ -364,7 +366,7 @@ would break every reference in the commit history.
 | 79 | mechanical | Three printed numbers cannot separate the two loads, and the |
 | 80 | mechanical | Six hundred tonnes of blade pull on one disc. 76 blades, each |
 | 81 | mechanical | The Fig. 64 comparison is gated, not skipped. E2's other closure |
-| 82 | mechanical | An unshrouded blade really is a beam, to 2.7 %. The booster rotor |
+| 82 | mechanical | An unshrouded blade really is a beam, to 2.7 %. |
 | 83 | mechanical | The three blades need three different boundary conditions, and each |
 | 84 | mechanical | The pinned-tip LPT blade reads 45 % high, and temperature is only |
 | 85 | mechanical | The model under-predicts centrifugal stiffening by 30–41 % on both |
@@ -498,4 +500,19 @@ would break every reference in the commit history.
 | 213 | derivative | A loading coefficient is frame-invariant only if both its halves are |
 | 214 | derivative | A conclusion downstream of a corrected number needs re-deriving, not |
 | 215 | derivative | The same sweep found a second one, and it had moved further. Finding |
+| 221 | geometry | A positive axial gap is a proof and a boolean is a sample, and the |
+| 222 | geometry | The compressor has 21 bladed rows and this project has built 20 — |
+| 223 | geometry | Two of the 32 rows are placed on an assumption that nothing checks, |
+| 224 | geometry | The tightest gap in the engine is 0.0 mm and it is the one that |
+| 225 | geometry | The HPT has walls and no blades and the fan has a blade and no |
+| 226 | geometry | The read-off was radially short by 7.2 cm, and the span error was |
+| 227 | geometry | A published per-blade mass cannot check an airfoil loft, and the |
+| 228 | mechanical | "Add the shroud's mass" is the right fix for the LPT and the wrong |
+| 229 | mechanical | A single-blade beam and a bladed-disc system mode are not the same |
+| 230 | thermal | The trailing-edge slots are a quarter of the vane's film area, and |
+| 231 | thermal | The percentages in this section are percentages of a station the |
+| 232 | thermal | Which impingement insert feeds which film row is not printed, and |
+| 233 | thermal | Finding 65's broken definition is not sloppiness; it is the |
+| 234 | thermal | The vane passes its printed flow at a discharge coefficient a |
+| 235 | thermal | The two groups that close are the two at the highest gas Mach, and |
 

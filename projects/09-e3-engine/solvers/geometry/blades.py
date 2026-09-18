@@ -256,35 +256,22 @@ def lpt_rows():
 
 
 def fan_rows():
-    """the fan rotor and the booster rotor, from the sections unit E3 built
-    out of Fig 41's and Fig 52's chord, camber, stagger and thickness"""
-    from mechanical.blade_frequency import _built_sections, _fan
-    f = _fan()
-    counts = f["aero_parameters"]["number_of_blades"]
+    """the fan rotor and the booster rotor, from the section tables the
+    reports print -- CR-165148 Appendix B p.134 (23 stations) and Appendix D
+    p.136 (14), via `mechanical.blade_frequency.appendix_sections`.
+
+    Until 2026-09-18 both rows were lofted from the seven- and five-station
+    read-offs of Fig 41 and Fig 52 while the atlas on the site lofted the
+    appendices, so the project contained two different fan blades. That is
+    finding 159's failure in the form it predicted, and the radius now comes
+    off the table's own height column rather than a span fraction."""
+    from mechanical.blade_frequency import appendix_sections, _fan
+    counts = _fan()["aero_parameters"]["number_of_blades"]
     out = []
-
-    g = f["fan_rotor_mechanical"]["blade_geometry"]
-    a = f["fan_rotor_airfoil"]
-    fig15 = a["fig15"]
-    hub, length = fig15["r_sa_id_in"] * IN, fig15["blade_height_in"] * IN
-    loc = a["max_thickness_location_pct_chord"]
-    ats = [loc["hub"] + (loc["tip"] - loc["hub"]) * h / 100 for h in g["height_pct"]]
-    polys = _built_sections([c * IN / CM for c in g["chord_in"]], g["camber_deg"],
-                            g["stagger_deg"], g["tm_c_pct"], g["tle_c_pct"], ats)
-    out.append(_row_from_points("fan-rotor", "lp", counts[0],
-                                [(hub + h / 100 * length, p)
-                                 for h, p in zip(g["height_pct"], polys)]))
-
-    g = f["booster_blade_mechanical"]["geometry"]
-    ap = f["aero_parameters"]
-    tip = ap["tip_diameter_cm"][1] / 200
-    hub = tip * ap["radius_ratio_inlet"][1]
-    polys = _built_sections([c * IN / CM for c in g["chord_in"]], g["camber_deg"],
-                            g["stagger_deg"], g["tm_c_pct"], g["te_c_pct"],
-                            [50.0] * len(g["height_pct"]))
-    out.append(_row_from_points("booster-rotor", "lp", counts[1],
-                                [(hub + h / 100 * (tip - hub), p)
-                                 for h, p in zip(g["height_pct"], polys)]))
+    for name, kind, n in (("fan-rotor", "fan", counts[0]),
+                          ("booster-rotor", "booster", counts[1])):
+        radii, polys = appendix_sections(kind)
+        out.append(_row_from_points(name, "lp", n, list(zip(radii, polys))))
     return out
 
 

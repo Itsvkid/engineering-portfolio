@@ -10,17 +10,17 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** nine of ten stages built. **1084 test functions**, **212 numbered findings**, **43 closures** — 27 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
+**Status:** nine of ten stages built. **1123 test functions**, **227 numbered findings**, **45 closures** — 29 met, 12 half, 4 gated. Stage H needs a human at a CAD GUI; Stage J is in progress.
 
 | Stage | | State |
 |---|---|---|
 | **A** | sources and transcription — data/*.yaml, every value with a src: | transcribed; four figure gaps remain |
 | **B** | cycle — three Table XII ratings, the mixer, the station table | 1 met, 2 half |
 | **C** | aero — mean-line, through-flow, blading, CFD validation | 7 met, **1 gated** |
-| **D** | thermal — cooling, secondary air, clearance, combustor | 1 met, 1 half, **1 gated** |
+| **D** | thermal — cooling, secondary air, clearance, combustor | 2 met, 1 half, **1 gated** |
 | **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 3 met, 6 half |
 | **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
-| **G** | geometry — 32 blade rows lofted to STEP | 1 met, 2 half |
+| **G** | geometry — 32 blade rows lofted to STEP | 2 met, 2 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 3 met |
 | **J** | publication — meridional plot, Campbell match, glTF | 9 met |
@@ -73,7 +73,9 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **C5** — the HPC's published stall-margin design intent is reproduced -- stages 6-7 least loaded at design, 6-7 loading up at intermediate speed, 8-10 unloading at low speed | — | met |
 | **E9** — the HPC rotor's joint torque as a function of position, bounded by the HP spool torque and by the HPT joint | — | met |
 | **D6** — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim | — | **gated** |
+| **D7** — the stage-1 nozzle cooling flow network -- do Figure 15's holes pass Figure 17's flow? | 0.24 vs 0.5 percent, worst of the pressure chain and the impingement ratios | met |
 | **K2** — the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it | — | met |
+| **G3** — the 32 blade rows as ONE STEP assembly at their true stations, and the assembled length against the published 318.0 cm | 0.08 vs 2.0 cm on the turbomachinery length | met |
 
 ### Figures
 

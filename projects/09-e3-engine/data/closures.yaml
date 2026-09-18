@@ -590,6 +590,47 @@ closures:
       volume (finding 192). Not attempted: the mission sweep and the bearing
       1 and 3 loads, both of which need the balance first.
 
+  - stage: D7
+    what: the stage-1 nozzle cooling flow network -- do Figure 15's holes pass Figure 17's flow?
+    band: 0.5
+    achieved: 0.24
+    units: percent, worst of the pressure chain and the impingement ratios
+    state: met
+    gate: null
+    note: >
+      Three checks, all inside the bands stated before the run. The pressure
+      chain from CPD to delivered band coolant closes to 0.24 % and the
+      impingement pressure ratios to 0.06 %, against a stated 0.5 %. The
+      third asked whether 62.11 mm2 of printed film-hole area per vane can
+      pass the printed 6.30 % of W25 at a physical discharge coefficient: it
+      does, at Cd = 0.798, inside both the demanded 0.5-1.0 and the hoped-for
+      0.6-0.85. Two results arrived that step 0 had not asked for. The feed
+      map from the two impingement inserts to the seven film rows is not
+      printed and does not have to be assumed -- exactly one of the 127
+      subsets of those rows sums to Figure 13(b)'s forward-insert flow, and
+      it is the contiguous forward group (finding 232). And D3's broken
+      backflow definition (finding 65) resolves: the forward cavity is
+      referenced to gas total to 0.015 %, the aft to gas static to 0.004 %,
+      a separation of 47x and 192x, which is the physics of a showerhead on
+      a stagnation point and is what fixes the discharge reference
+      (finding 233).
+    miss: >
+      The closure is met on the vane and fails row by row. Of the four
+      geometry groups only the pressure side (0.825) and the trailing-edge
+      slots (0.639) are in band; the leading-edge showerhead is 0.254 and the
+      suction side 1.999, misses in opposite directions, which is how an
+      aggregate lands in band while its parts do not (finding 234). Nothing
+      was moved to close them: the transfer that would equalise the two is
+      75 of the showerhead's 105 holes. Ordered by gas Mach the two groups
+      that close are the two furthest aft, which is the signature of
+      Figure 17's mixing Mach standing in for a surface static the report
+      never prints for the vane -- it prints it for the blade, as Fig.22
+      (finding 235). Two of my own errors are recorded rather than quietly
+      fixed: the trailing-edge slot area was first excluded on a misreading
+      of Figure 15 (finding 230) and W25 was first inverted out of D3's own
+      bleed total instead of taken from the published corrected flow
+      (finding 231).
+
   - stage: K2
     what: the FPS hardware re-margined at the published growth speed, and GE's "oversized for growth" claim tested against it
     band: null
@@ -612,3 +653,31 @@ closures:
       available (finding 200). Reported as a bound, not a prediction
       (finding 201).
 
+
+  - stage: G3
+    what: the 32 blade rows as ONE STEP assembly at their true stations, and the assembled length against the published 318.0 cm
+    band: 2.0
+    achieved: 0.08
+    units: cm on the turbomachinery length
+    state: met
+    gate: null
+    note: >
+      Four bands, stated before the run, all met. The assembled length --
+      measured on the LOFTED LPT rotor-5 trailing edge, not on the CSV the
+      two assumed offsets were calibrated through -- is 318.08 cm against
+      CR-159584 Table I p.6's 318.0, +0.08 cm inside +-2.0. All 31
+      consecutive row pairs have a strictly positive axial gap, tightest
+      7.5 mm between HPC stator 4 and rotor 5, which is a PROOF of no
+      row-to-row interference rather than a sample: two rows whose axial
+      extents do not overlap cannot touch at any relative angular position
+      (finding 221). Blade-to-blade interference stays zero on all 32 rows
+      at the placed positions, and the 2,890 blades' total volume is
+      -0.41 % against F2's integral, worst row 0.94 %, inside G1's 2 %. The
+      file re-imports through STEPCAFControl_Reader as one root product,
+      37 assemblies and 2,932 instances over 32 distinct solids and 6
+      shells -- an assembly tree, not loose solids at the origin. What it
+      does NOT contain is named in `geometry.assembly.missing_rows()`: the
+      IGV, whose camber Table XXII prints as a 65-series design lift
+      coefficient rather than metal angles (finding 222); the HPT's four
+      airfoil rows, never published; and the fan's vane rows, a
+      transcription debt.

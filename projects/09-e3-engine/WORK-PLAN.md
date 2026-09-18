@@ -761,9 +761,45 @@ step 6.
 # STAGE D — Thermal design · 60 h
 
 ## D1 · HPT cooling, reproduced · 24 h
-- [ ] Flow network per row from the HPT report §3 and the E³ cooling model
+- [~] Flow network per row from the HPT report §3 and the E³ cooling model
       report: supply pressure, orifice, internal passages, film rows, tip
-      cap, TE slots — with the published cooling flow fractions
+      cap, TE slots — with the published cooling flow fractions.
+      **The stage-1 nozzle is done — unit D7**,
+      `solvers/thermal/nozzle_network.py`. The pressure chain from CPD to
+      delivered band coolant closes to **0.24 %** and the impingement
+      ratios to **0.06 %** against a 0.5 % band, and **62.11 mm² of printed
+      film-hole area per vane passes the printed 6.30 % of W25 at
+      Cd = 0.798** — inside both the 0.5–1.0 demanded and the 0.6–0.85
+      hoped for. Two things arrived that step 0 had not asked for: the
+      insert-to-row feed map, which is not printed and does not have to be
+      assumed because **exactly one of the 127 subsets of Figure 17's seven
+      rows sums to Figure 13(b)'s forward-insert flow** (finding 232); and
+      the resolution of D3's broken backflow definition — forward cavity
+      referenced to gas *total* to 0.015 %, aft to gas *static* to 0.004 %,
+      which is a showerhead sitting on a stagnation point and is what fixes
+      the discharge reference (finding 233). **The closure is met on the
+      vane and fails row by row**: two of four groups are in band and the
+      other two miss in opposite directions, the showerhead at 0.254 and
+      the suction side at 1.999, and closing them would take 75 of the
+      showerhead's 105 holes (finding 234). The two that close are the two
+      at highest gas Mach — the signature of Figure 17's *mixing* Mach
+      standing in for a surface static the report prints for the blade and
+      not for the vane (finding 235). Two of my own errors are on the
+      record rather than quietly fixed (findings 214–215). Still to do: the
+      internal passages (no passage areas are printed), and the **blade**,
+      which is the well-posed version of the same question — see D8
+- [ ] **D8 · the stage-1 blade cooling flow network.** The vane needed
+      three figures in three sections to ask whether its holes pass its
+      flow. The blade prints the question properly: **Fig. 24 gives the
+      flow and the geometry of every exit together** (two circuits at 1.63
+      and 1.67 % of W25, six exits summing to the same 3.30), **Fig. 22
+      gives the pitch-line Mach distribution on both surfaces** so each
+      exit converts to its own local static, and **Fig. 26 gives the
+      dovetail supply pressure ratio, 1.35**. The tip cap alone prints
+      eight hole flows and their diameters, and d² scaling already looks
+      like it reproduces two of them from one constant —
+      0.087/0.016 = 5.44 against (0.711/0.305)² = 5.435. This is the check
+      D7 could not make and said so
 - [ ] Internal heat transfer from TP-2232 correlations (validated against
       the data in that report), external from the report's own
       coefficients (§5.4.4: below CF6-based values, especially pressure side)
@@ -836,7 +872,11 @@ exit profile is what D1 used.
       pressure but only the forward cavity reproduces that way**; the aft
       cavity's 1.0 % comes out exactly against the gas *static*, and is
       0.32 % against the total — the thinnest seal in the turbine
-      (finding 65). The remaining disc cavities are still to do
+      (finding 65). **Unit D7 resolved why**: each cavity is referenced to
+      a different gas pressure and each fits its own to better than
+      0.02 %, a separation of 47× and 192× over the swapped pairing, which
+      is the physics of a showerhead on a stagnation point (finding 233).
+      The remaining disc cavities are still to do
 - [ ] Labyrinth seal leakages from clearance and pressure ratio
       (sealing report); sump pressurisation (§5.7)
 - [~] **Thrust balance** on each rotor across the mission; balance-piston
@@ -1146,6 +1186,18 @@ Everything generated from the validated design tables. Nothing traced.
       not written: cadquery 2.8's exporters do not offer it
 - [x] Boolean interference across all generated bodies — **zero on all 32
       rows**, each against a copy of itself one pitch away (finding 116)
+- [x] **The whole engine as ONE STEP assembly** — **unit G3**,
+      `solvers/geometry/assembly.py`. The 32 rows at their true stations
+      on unit J1's axis, **2,890 blades at full count** plus six published
+      annulus walls, `exports/e3-engine-assembly.step`, **73.1 MB**,
+      re-importing as a tree of 37 assemblies and 2,932 instances over 32
+      distinct solids. **Assembled length 318.08 cm against CR-159584
+      Table I's published 318.0**, measured on the lofted LPT rotor-5
+      trailing edge. Row-to-row axial clearance positive on all 31
+      consecutive pairs, tightest 7.5 mm (finding 221). Two absences
+      found by counting against the source: the **IGV**, whose camber
+      Table XXII prints as a 65-series `cl0` (finding 222), and the fan
+      and booster's **9.5 cm** of unchecked axial placement (finding 223)
 - [x] `build.py`: one command regenerates every table, figure and export.
       **29 of 29 solver modules run in 90 s**, each one's output written to
       `build/<module>.txt` so a run can be diffed against the numbers

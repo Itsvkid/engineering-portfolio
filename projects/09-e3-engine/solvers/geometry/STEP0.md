@@ -273,3 +273,282 @@ does not apply to a curved stacking axis.
      needs the core-duct walls, and those are assumed rather than
      published, so it is left undone and stated.
 
+
+---
+
+## Unit G3 — the whole engine as one STEP assembly
+
+Unit G1 wrote **36 STEP files**: one per blade row, plus a compound per
+spool. That is a parts bin. Every row sits at its own local origin, so
+opening all 36 in a CAD system stacks thirty-two blades on top of each
+other at zero — which is exactly the failure mode this unit exists to
+avoid, and the reason it is a unit at all rather than a flag on `export()`.
+
+What is being built is the **assembly**: every row at its true axial
+station on unit J1's engine axis, at full blade count, in one file with a
+product structure a reader can expand, rotate and measure.
+
+**Two things make this more than a `translate()` call.**
+
+*One, the axial layout is not free.* Two of the three joins between module
+datums are **assumed** — the fan stacking axis to HPC rotor 1, and the HPC
+OGV trailing edge across the diffuser and combustor to HPT vane 1. They
+were corrected on 2026-09-10 to **103.4 cm** and **25.3 cm**, whose sum is
+constrained by CR-159584 Table I p.6's published turbomachinery length of
+**318.0 cm**. This unit reads them through `publication.meridional.layout()`
+and keeps no copy (unit J1, finding 159), and the assembled length is then
+checked back against that published 318.0 cm. The offsets were calibrated
+on it, so this is a closure check and not a discovery — but a closure check
+that runs on the *built geometry* rather than on the CSV arithmetic, which
+is the first time that has been possible.
+
+*Two, provenance has to survive the export.* A STEP file outlives the page
+that explains it, the same argument unit J3 makes for `asset.extras`. So
+every node's **name carries its own status** — `PUBLISHED`, `DERIVED` or
+`ASSUMED` — and the two assumed offsets are named in the module nodes that
+depend on them. A reader who opens the file without this repository must
+still be able to tell which surfaces NASA printed and which this project
+supposed.
+
+### The bands, before the run
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Assembled length, fan front flange to LPT rotor-5 TE | **318.0 cm**, CR-159584 Table I p.6 | **±2.0 cm** | the two offsets were calibrated on this sum, so the residual is only the difference between the CSV's R5 trailing-edge z and where the *lofted* blade's own trailing edge lands, hub against tip |
+| Blade-to-blade interference, within a row, at the assembled position | zero | **exactly zero**, all 32 rows | G1's check, re-run on the placed rows — translation along X and rotation about X commute, so a change here would mean the placement is not a rigid motion |
+| **Row-to-row axial clearance** | — | **strictly positive, every consecutive pair** | new to this unit and the only check the assembly enables that G1 could not make. Two rows whose axial extents do not overlap cannot interfere at any relative angular position, so a positive gap is a *proof* and not a sample. A negative gap means the layout is wrong |
+| Total blade volume | sum of F2's trapezoidal integrals × blade count | **±2 %** per row, G1's band | the assembly must not change a volume; if it does, a placement is scaling something |
+| Re-imported structure | one root product, module sub-assemblies, 32 row nodes | **it must re-import as a tree**, not as N solids at the origin | the stated failure mode. Checked by reading the file back with `STEPCAFControl_Reader` |
+
+### What is deliberately left out
+
+- **The HPT's two stages of airfoils.** The E³ never published HPT blade
+  coordinates — Table IV prints an aspect ratio and a throat, which is what
+  unit 14 built a mean-line from, and nothing more. The HPT *annulus* is
+  published (Fig 3, five dimensioned stations) and is included, so the file
+  carries a visible, labelled gap where the HP turbine's blading is.
+- **The combustor.** Its axial coordinates are undimensioned in Figs 1, 22
+  and 79 (unit J3, finding 165). Its *length* is published — CR-135444
+  Table 65 p.239, 17.78 cm — and is already inside the 25.3 cm offset, so
+  the space it occupies is right and its geometry is absent.
+- **The fan annulus.** Three dimensioned radial stations and one axial
+  position is not a contour (unit J1, finding 158). The fan rotor blade is
+  built; no wall is drawn around it.
+- **Discs, shafts, casings, frames, sumps, nacelle.** Four of Stage G's
+  seven bullets, all blocked on transcription (G1's note above).
+- **Tip clearance.** Table XXII's sections are defined *on* the walls, so
+  the blades touch the casing by construction (unit J3, finding 164). The
+  file is the cold aerodynamic definition; it does not model a running gap.
+
+## Unit G3 after the run — nothing above was edited
+
+### Results, 2026-09-17 (`cd solvers && python -m geometry.assembly --export`)
+
+| Check | Band | Result | |
+|---|---|---|---|
+| Assembled length, fan front flange to LPT R5 TE | ±2.0 cm on 318.0 | **318.08 cm, +0.08** | MET |
+| Blade-to-blade, within a row, placed | exactly zero, 32 rows | **32 of 32 clear** | MET |
+| Row-to-row axial clearance | strictly positive, 31 pairs | **tightest 7.5 mm**, none negative | MET |
+| Total blade volume, 2,890 blades | ±2 % per row | **−0.41 % overall, worst row 0.94 %** | MET |
+| Re-imported structure | a tree, not loose solids | **1 root, 37 assemblies, 2,932 instances** | MET |
+
+`exports/e3-engine-assembly.step`, **73.1 MB**, AP214. The file carries
+**32 `MANIFOLD_SOLID_BREP` and 6 `SHELL_BASED_SURFACE_MODEL`** against
+**2,932 `NEXT_ASSEMBLY_USAGE_OCCURRENCE`** — one representation per row,
+instanced round the annulus, which is the only reason full blade counts
+are affordable at all. 19,692 faces in the file; a system that expanded
+every instance would materialise 2,890 solids and about 2.5 million faces,
+so the file is small and the *import* may not be.
+
+`figures/e3-assembly-meridional.png` draws the assembly from the solids.
+Radius is invariant under rotation about the engine axis, so one instance
+per row carries the whole annulus and the figure is the assembly rather
+than a sample of it.
+
+### Findings
+
+221. **A positive axial gap is a proof and a boolean is a sample, and the
+     assembly is the first artefact that could tell the difference.** Unit
+     G1 could only ask whether a blade clears its own neighbour one pitch
+     away, because every row sat at its own origin. Placed, the question
+     becomes whether row *n* clears row *n+1*, and that one has a cheap
+     exact answer: if two rows' axial extents do not overlap they cannot
+     touch at **any** relative angular position, for any blade of either.
+     All 31 consecutive pairs are clear, tightest **7.5 mm between HPC
+     stator 4 and rotor 5**, and the HPC's front stages hold 7.5–8.3 mm
+     while the LPT runs 13–18. No boolean was needed and none would have
+     been as strong — a boolean at one relative angle proves nothing about
+     the other 359.
+
+222. **The compressor has 21 bladed rows and this project has built 20 —
+     the IGV has never reached the section builder, and the reason is a
+     column heading.** Table XXII prints every rotor and stator as
+     β₁\*, β₂\*, camber and stagger, and prints the **IGV as a 65-series
+     design lift coefficient** — `cl0` 0.08 at the hub to 0.80 at midspan,
+     with stagger, thickness and chord but **no metal angles**.
+     `blading.sections.all_sections` walks the `rotors` and `stators`
+     blocks and stops, so the row has been quietly absent from unit 12's
+     section reconstruction, G1's 32 rows, J3's glTF and now this
+     assembly. The block itself is transcribed and correct; the gap is that
+     nothing consumes it. Building it needs a `cl0`-to-camber rule —
+     θ ≈ 25–27° per unit C_l0 for the 65-series — which would be the only
+     **invented** camber in an engine otherwise built from printed angles,
+     so it is left out and named rather than added. This is the same class
+     of error as finding 220's stale sentence: the absence was true, and
+     nothing was structured to ask about it.
+
+223. **Two of the 32 rows are placed on an assumption that nothing checks,
+     and it is worth 9.5 cm.** Every other row's station comes from a
+     printed table — the HPC rows from `hpc-flowpath.csv`'s leading edges,
+     the LPT rows from their own transcribed z. The fan is placed by
+     putting its section's **x = 0, its leading edge**, on Fig 15's
+     stacking-axis Z, which asserts that a fan blade stacks at its leading
+     edge. It does not; it stacks near its centroid. The fan's axial extent
+     is **19.07 cm**, so mid-chord stacking would move the row **9.54 cm
+     forward** — and the booster, which is placed at the fan row's
+     downstream end because no table gives its station at all, would move
+     with it. The 318.0 cm closure does not catch this: it is measured from
+     the fan **front flange**, which is its own assumption at −32.5 cm.
+     So the front of the engine is the one place where the layout is
+     unfalsifiable, and it is exactly where the layout looks most settled.
+     Left as unit J3 placed it, because the STEP file and the glTF must not
+     describe two different engines (unit J1, finding 159) — the correction
+     belongs in one change across both.
+
+224. **The tightest gap in the engine is 0.0 mm and it is the one that
+     means nothing.** The fan-to-booster gap comes out exactly zero, and
+     that is not a clearance result: the booster is *defined* as sitting at
+     the fan row's downstream end, so the check is asking an assumption to
+     confirm itself. A pass and a fail would look identical. The number to
+     report is the **second** tightest, 7.5 mm, which is a real gap between
+     two rows whose stations came from a table — and the rule generalises:
+     in any assembly, a clearance between two parts placed by one another
+     is not a measurement.
+
+225. **The HPT has walls and no blades and the fan has a blade and no
+     wall, and both gaps are the public record rather than the work.** The
+     HPT annulus is dimensioned at five stations (Fig 3) and its airfoils
+     were never published — Table IV gives an aspect ratio and a throat,
+     which is what unit 14 built a mean-line from and is not a section. The
+     fan is the reverse: 23 printed sections (Appendix B) and three
+     dimensioned radial stations that are not a contour (unit J1, finding
+     158). Drawing either missing half would take one plausible assumption
+     and would make the file look complete. Both are left visible, and the
+     meridional figure labels them, because an assembly that shows what the
+     source does not contain is worth more than one that does not.
+
+
+## Unit G4 — the fan and booster onto their printed sections
+
+`blades.py` lofted the fan and the booster from the **seven- and
+five-station read-offs of Fig 41 and Fig 52**, while
+`tools/export_atlas_sections.py` fed the atlas on the site from
+**Appendix B's 23 printed stations and Appendix D's 14**. The data file has
+said `superseded_by: fan_rotor_airfoil.appendix_b` since unit 15b
+transcribed them. So the project has contained **two different fan blades**:
+the table's on the website, and the read-off's in G1's volumes, F2's masses,
+G3's STEP assembly, J3's glTF, J7's site cutaway and E3's frequency model.
+That is finding 159's failure in the form it predicted.
+
+This unit moves every consumer onto the appendices. The read-off blocks stay
+in the data file with their `superseded_by:` intact, because unit 15b's
+finding is about what they cost and rests on them.
+
+**What is expected to move, and why.** The read-off is wrong three ways, and
+the third is the one nobody had counted:
+
+1. angles — **+5.82° of stagger at the hub**, +3.14° on the mean, camber up
+   to +4.25° (`read_off_error_vs_appendix_b`);
+2. chord — 1.2–2.8 % low;
+3. **span** — the read-off runs 41.757 → 103.901 cm, the stacking-axis box
+   from Fig 15. Appendix B runs **36.067 → 105.410 cm**, which is the
+   annulus: 36.067 against a published inlet hub of 36.047 and 105.410
+   against a published tip of 105.4. The blade was **7.2 cm short**, 10 % of
+   its own span, and all of it at the root where the sections are thickest.
+
+### Bands, before the run
+
+| # | Check | Band | Where it stands now |
+|---|---|---|---|
+| 1 | Fan blade mass, Ti-6Al-4V ρ 4430 | **7.27 kg ±15 %** (6.18–8.36), CR-165148 Table VI p.74 | **4.766 kg, −34.4 %** |
+| 2 | Booster blade mass | **0.28 kg ±20 %** (0.224–0.336), same table | **0.135 kg, −51.8 %** |
+| 3 | Lofted solid against the trapezoidal integral of its own sections | G1's **±2 %** per row | fan −0.47 %, booster −0.41 % |
+| 4 | G3 assembled length | **318.0 ±2.0 cm**, unchanged | 318.08 |
+
+Band 1 is the point of the unit. The published per-blade mass is an
+**independent** number — it is not what the sections were transcribed from —
+so it is the first check in this project able to say whether the airfoil the
+CAD builds is the airfoil the engine had. A −34 % blade is not a tolerance
+question; if the appendices are the right sections, most of that gap closes,
+and if it does not close the section construction is wrong in a way the
+angles never showed.
+
+Bands 3 and 4 are stated because *nothing moved* is only a result if it was
+a prediction first. Band 3 is a CAD check — the loft against the integral of
+the same sections — so correcting the sections should leave it where it is,
+or improve it, since 23 stations follow the twist inflection at 75 % span
+that seven cannot carry.
+
+Not attempted: the fan's axial placement (finding 223), which is a separate
+assumption with its own range and belongs in its own unit; and the IGV
+(finding 222), which has no printed metal angles.
+
+## Unit G4 after the run — nothing above was edited
+
+### Results, 2026-09-18 (`cd solvers && python -m geometry.assembly --export`)
+
+| # | Check | Band | Before | After | |
+|---|---|---|---|---|---|
+| 1 | Fan blade mass | 7.27 kg ±15 % | 4.766 kg, −34.4 % | **5.543 kg, −23.8 %** | **MISSED** |
+| 2 | Booster blade mass | 0.28 kg ±20 % | 0.135 kg, −51.8 % | **0.135 kg, −51.9 %** | **MISSED** |
+| 3 | Loft against its own integral | ±2 % per row | fan −0.47, booster −0.41 | **fan −0.325, booster −0.226**; whole engine −0.32 | MET |
+| 4 | Assembled length | 318.0 ±2.0 cm | 318.08 | **318.08** | MET |
+
+`exports/e3-engine-assembly.step` rebuilt: **79.9 MB** against 73.1, 2,890
+blades, re-imports as 1 root, 37 assemblies, 2,932 instances. All 31
+row-to-row gaps still positive, tightest still 7.50 mm, blade-to-blade
+interference still zero on 32 of 32 rows.
+
+**Two of the four bands were missed and the model is not what was wrong.**
+Band 1 moved the right way and stopped less than half way. Band 2 did not
+move at all. Stating them in advance is what makes the next paragraph
+available, because a mass that is 24 % light and a mass that is 52 % light,
+one of which just changed and one of which did not, is a far more specific
+piece of evidence than either number alone.
+
+### Findings
+
+226. **The read-off was radially short by 7.2 cm, and the span error was
+     worth more than every angle error put together.** The three known
+     defects of the seven-station read-off were angular — stagger, camber,
+     chord. The one nobody had counted is that it spans **41.757 →
+     103.901 cm**, which is Fig 15's *stacking-axis box*, while Appendix B
+     spans **36.067 → 105.410 cm**, which is the *annulus* — and the
+     appendix's own end rows prove it, landing on a published inlet hub of
+     36.047 and a published tip of 105.4. The blade was missing **10 % of
+     its span, all of it at the root**, where the sections are thickest and
+     the chord shortest: that is where blade area is greatest per unit
+     radius. Correcting the sections moved the fan's volume **+16.3 %**, and
+     most of it came from the two ends rather than from the angles. A box
+     printed on a figure is not the same object as the blade, and the two
+     were read as if they were.
+
+227. **A published per-blade mass cannot check an airfoil loft, and the
+     booster is the control that proves it.** The fan's blade is 23.8 %
+     light after the correction and the booster's is 51.9 % light — but the
+     booster's geometry barely moved (its read-off spanned 52.32 → 66.90 cm
+     against the appendix's 52.07 → 66.88, and its angle errors are small),
+     so its deficit **cannot be the sections**, and it was the same before
+     the fix and after it. What the loft does not contain is what the
+     published number does: the dovetail, the shank below the flowpath, and
+     on the fan the part-span shroud. Table VI's 7.27 kg is a *blade*, and
+     `blades.py` builds an *airfoil*. Bands 1 and 2 were mis-specified by
+     me, not failed by the model — and the mis-specification was worth
+     making, because the pair of numbers localises the missing mass to the
+     root far better than either one does alone: the smaller blade, whose
+     root is proportionally larger, is missing proportionally more. The
+     honest comparison needs either the root modelled or a published root
+     allowance, and CR-165148 prints neither. Restated for whoever closes
+     it: **the airfoil loft is checkable against the published blade mass
+     only as a lower bound, and the bound is met — 5.543 < 7.27, 0.135 <
+     0.28.**

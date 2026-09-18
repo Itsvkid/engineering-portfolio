@@ -10,6 +10,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "solvers"))
 from mechanical.beam import (  # noqa: E402
     CLAMPED_CLAMPED, CLAMPED_FREE, CLAMPED_PINNED, exact, polygon_properties, uniform,
 )
+import mechanical.blade_frequency as BF  # noqa: E402
 from mechanical.blade_frequency import (  # noqa: E402
     blades, fan_shroud_bracket, hpc_rotor_predictions, hpc_vane_check, southwell_table,
 )
@@ -92,21 +93,95 @@ def test_each_blade_gets_the_tip_condition_its_own_report_names():
     assert BY["fan rotor"].pinned_at is None           # part-span shroud, not a tip
 
 
-def test_the_unshrouded_booster_blade_is_a_beam_to_three_percent():
-    """finding 82 -- the result that licenses the other three"""
+def test_the_unshrouded_booster_blade_is_a_beam_to_under_one_percent():
+    """finding 82 as RESTATED 2026-09-18 on Appendix D's printed sections.
+
+    The read-off geometry gave 243 Hz against a published 250, -2.7 %, and
+    250 sat strictly inside the weak-axis/root-axis twist bracket. On the
+    printed sections the beam gives 250.68, +0.27 %, and the published
+    value now sits 0.68 Hz BELOW the bracket's soft end.
+
+    That is the bracket collapsing onto the answer, not a miss. The bracket
+    is 46 % wide and the agreement is 0.27 %, so "inside the bracket" was
+    never what carried this result -- the number was. This test therefore
+    asserts the number, and asserts only the half of the bracket claim that
+    still means something: the published value is below the root-axis end,
+    so the blade is not behaving as though forced to bend about one axis."""
     b = BY["booster rotor"]
     soft, stiff = b.bracket(0.0, 1)
-    assert abs(soft[0] / b.published_f1_Hz - 1) < 0.15      # the stated +-15 %
-    assert abs(soft[0] / b.published_f1_Hz - 1) < 0.05      # and in fact 2.7 %
-    assert soft[0] < b.published_f1_Hz < stiff[0]           # inside the twist bracket
+    err = soft[0] / b.published_f1_Hz - 1
+    assert abs(err) < 0.15                      # the band stated in step 0
+    assert abs(err) < 0.01                      # and in fact 0.27 %
+    assert b.published_f1_Hz < stiff[0]         # still below the stiff end
+    # and the soft end is now ABOVE the published value, which is the part
+    # of finding 82's old form that was withdrawn. Asserted so that a
+    # future change moving it back is visible rather than silent.
+    assert soft[0] > b.published_f1_Hz
 
 
-def test_the_fan_blade_sits_inside_the_free_bracket_not_the_shrouded_one():
-    """finding 83 -- the lowest in-phase mode barely feels the part-span shroud"""
+def test_the_fan_brackets_now_overlap_so_the_boundary_condition_is_not_resolved():
+    """finding 83 as RESTATED 2026-09-18, and finding 228.
+
+    The old form asserted that the published 80 Hz sits inside the free
+    bracket AND below the shroud-pinned floor, which was the evidence that
+    the lowest in-phase mode barely feels the part-span shroud. Finding
+    226's span correction took the fan blade from 62.14 cm to 69.34 cm --
+    the read-off spanned Fig 15's stacking-axis box, Appendix B spans the
+    annulus -- and a longer blade is softer, so BOTH brackets fell: free
+    43-89 to 36.1-102.7, pinned 84-587 to 73.1-652.5.
+
+    They now overlap, and the published value lies in the overlap. The
+    comparison cannot distinguish the two boundary conditions any more.
+    That is asserted here as the current truth, with the diagnosis, rather
+    than left as a failure whose reason decays -- and it is written as a
+    CONVERSE so that recovering the discrimination breaks this test and
+    forces finding 83 to be restated again."""
     fb = fan_shroud_bracket()
-    assert fb["free"][0] < fb["published"] < fb["free"][1]
-    assert fb["published"] < fb["pinned"][0]
     assert abs(fb["shroud_span"] - 0.55) < 1e-9
+    # what survives: the published mode is still inside the free bracket
+    assert fb["free"][0] < fb["published"] < fb["free"][1]
+    # what is withdrawn: it is inside the shrouded bracket too
+    assert fb["pinned"][0] < fb["published"] < fb["pinned"][1]
+    # and the brackets themselves overlap, which is WHY the test cannot
+    # discriminate. This is the diagnosis, and it is the thing to fix.
+    assert fb["pinned"][0] < fb["free"][1], (
+        "the brackets no longer overlap -- the boundary condition is "
+        "resolvable again and finding 83 needs restating")
+
+
+def test_the_fan_part_span_shrouds_mass_is_not_the_missing_physics():
+    """finding 228 -- the restraint is worth about 90x the mass.
+
+    E7's flutter miss was attributed to a beam pinning a tip shroud without
+    its mass. That diagnosis is right for the LPT and does not transfer to
+    the fan, and the fan's own printed shroud dimensions settle it rather
+    than leaving it an opinion."""
+    f = BF._fan()
+    sh_a = f["fan_rotor_airfoil"]["shroud"]
+    sh_m = f["fan_rotor_mechanical"]["shroud"]
+    base, _ = BF.fan_rotor()
+    span = sh_m["span_pct"] / 100
+    pitch = 2 * math.pi * (base.hub_radius_m + span * base.length_m) / 32
+    mass = pitch * (sh_m["length_cm"] / 100) * (sh_a["thickness_cm"] / 100) * base.rho
+    assert 0.25 < mass < 0.40                      # 287-365 g, elliptical to rectangular
+
+    f0 = base.modes(False, 0.0, 1)[0]
+    m2, _ = BF.fan_rotor()
+    i = min(range(len(m2.x)), key=lambda j: abs(m2.x[j] - span * m2.length_m))
+    h = ((m2.x[i] - m2.x[i - 1]) + (m2.x[i + 1] - m2.x[i])) / 2
+    m2.area = list(m2.area)
+    m2.area[i] += mass / (m2.rho * h)
+    with_mass = m2.modes(False, 0.0, 1)[0]
+
+    base.pinned_at = span
+    restrained = base.modes(False, 0.0, 1)[0]
+    base.pinned_at = None
+
+    d_mass = abs(with_mass / f0 - 1)
+    d_restraint = abs(restrained / f0 - 1)
+    assert d_mass < 0.02, d_mass                   # about 1 %
+    assert d_restraint > 0.9, d_restraint          # about 100 %
+    assert d_restraint / d_mass > 50
 
 
 def test_the_pinned_tip_lpt_blade_misses_and_the_miss_is_recorded():

@@ -52,7 +52,7 @@ STAGES = [
                        "mechanical.attachments", "mechanical.flutter", "mechanical.gas_bending",
                        "mechanical.hpc_rotor"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
-    ("G  geometry", ["geometry.blades", "geometry.ogv"]),
+    ("G  geometry", ["geometry.blades", "geometry.ogv", "geometry.assembly"]),
     ("K  growth", ["growth.margins"]),
     ("I  verification", ["verification.consistency", "verification.sensitivity",
                          "verification.disagreements",
@@ -60,7 +60,7 @@ STAGES = [
     ("J  publication", ["publication.meridional", "publication.campbell",
                         "publication.render", "publication.drawings"]),
 ]
-GEOMETRY = {"geometry.blades"}
+GEOMETRY = {"geometry.blades", "geometry.assembly"}
 
 
 def run(module: str) -> tuple[bool, float, str]:
@@ -128,10 +128,19 @@ def main() -> int:
     if args.export and not args.no_geometry:
         print("\nSTEP export")
         sys.path.insert(0, str(SOLVERS))
+        from geometry.assembly import export as export_assembly  # noqa: E402
         from geometry.blades import export          # noqa: E402
         t0 = time.time()
         written = export()
         print(f"   ok  {len(written)} files in exports/{'':<14}{time.time() - t0:>7.1f} s")
+        # unit G3: the same rows in their true positions, as one assembly.
+        # The parts bin above and the engine below are different artefacts
+        # and both are wanted -- a row on its own is what you measure, the
+        # assembly is what you open.
+        t0 = time.time()
+        p = export_assembly()
+        print(f"   ok  {p.name} "
+              f"{p.stat().st_size / 1e6:.0f} MB{'':<14}{time.time() - t0:>7.1f} s")
 
     print("\n   documents")
     doc_failures = docs()

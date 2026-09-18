@@ -604,3 +604,164 @@ against it.
      **A fourth closure now waits on that one transcription**, and this is
      the first time the connection has been priced rather than asserted.
 
+---
+
+## Unit D7 — the stage-1 nozzle cooling flow network
+
+Stage D's line: *flow network per row from the HPT report §3 and the E³
+cooling model report: supply pressure, orifice, internal passages, film
+rows, tip cap, TE slots.*
+
+The stage-1 nozzle is the row the reports document most completely, and
+it is documented as a **chain**: compressor discharge, through the
+combustor liner, into the bands, into the impingement inserts, across the
+impingement holes, out through the film rows into the gas. Every link in
+that chain has a printed number, and the chain has to close on itself.
+
+### The three things that must agree
+
+**1. The pressure chain.** `p3 = 2.66 MPa`, printed system losses of
+3.15 % on the outer band and 2.12 % on the inner, and printed delivered
+coolant pressures of 2.57 and 2.61 MPa. The losses must reproduce the
+deliveries.
+
+**2. The impingement pressure ratios.** Printed as 1.01 forward and 1.016
+aft, alongside the insert supply and cavity static pressures that define
+them.
+
+**3. The one that is not arithmetic — the film holes must pass the flow.**
+Figure 15 prints a hole diameter and a hole count for every film row: 105
+leading-edge holes at 0.508 mm, three suction-side rows, two
+pressure-side rows, eighteen trailing-edge slots. Figure 13(b) separately
+prints the flow those rows carry — 3.4 % of W25 to the forward insert and
+2.9 % to the aft. **Geometry and flow are printed in different figures and
+were never reconciled here.** Given the pressure difference across the
+holes, inverting for the discharge coefficient tests whether they can both
+be right.
+
+| Check | Band | Basis |
+|---|---|---|
+| Printed losses reproduce the printed band pressures | **±0.5 %** | both printed; this is arithmetic and should be tight |
+| Impingement ratios reproduce from their own pressures | **±0.5 %** | same |
+| Film holes pass the printed flow at a **physical** discharge coefficient | **Cd in 0.5–1.0**, and ideally 0.6–0.85 | the physical range for a sharp-edged orifice. A Cd outside it means the geometry and the flow cannot both be as printed |
+| Backflow margin | **not re-checked here** | unit D3 already did it, and found the aft cavity reproduces against gas static and not the gas total its own definition names (finding 65) |
+
+**Closes when** the pressure chain and the impingement ratios reproduce
+inside 0.5 %, and the film-hole area passes the printed coolant flow at a
+discharge coefficient inside the physical range.
+
+**Disclosure:** a scoping calculation was run before this section was
+written, to establish that the film-hole reconciliation was possible at
+all rather than blocked on a missing dimension. The band above is set by
+the physics of an orifice, not by what that calculation returned.
+
+**Not attempted:** the internal passage network between impingement and
+film (no passage areas are printed), the tip cap and TE slot flows of the
+*blade* (a different row), and the heat transfer — this unit is pressures
+and flows only.
+
+### What happened
+
+The pressure chain closes to **±0.24 %** and the impingement ratios to
+**±0.06 %**, both inside the ±0.5 % this section asked for before it ran.
+The film holes pass the printed flow at a discharge coefficient of
+**0.798** — inside the 0.5–1.0 the band demanded and inside the 0.6–0.85
+it hoped for. On its own stated terms D7 closes.
+
+It closes on the *vane*. It does not close row by row, and the way it
+fails is the interesting part.
+
+Two checks below were not pre-registered. They were found while building
+the third and are reported as such: they are not closures this unit
+claimed in advance.
+
+230. **The trailing-edge slots are a quarter of the vane's film area, and
+     Figure 15 prints both of their dimensions.** A first pass at this
+     section excluded them on my own note that the figure printed one slot
+     dimension — a slot needs two, so the area was called incomputable and
+     the group was dropped. The figure prints `0.559 × 1.63 mm`. Eighteen
+     slots are **16.40 mm² of the vane's 62.11 mm²**, 26 % of the film
+     area, and they carry **2.27 of the 6.30 % of W25**, 36 % of the film
+     flow. Keeping that flow while dropping that area is what made the
+     first pass return Cd = 2.33, which is not a finding about the E³ but
+     a finding about how I read a figure. Recorded because the band was
+     stated first and the first answer failed it.
+
+231. **The percentages in this section are percentages of a station the
+     cycle model does not carry.** Every cooling flow in CR-167955 is a
+     percentage of W25, and the cycle's stations run `w41` and aft — there
+     is no `w25` to take a percentage of. An earlier attempt inverted D3's
+     18.87 % total bleed to get 81.34 kg/s, which is a number derived from
+     the thing it was about to be used to check. The published route is
+     cleaner and independent: the FPS report prints the **core inlet
+     corrected flow, 54.4 kg/s**, and the cycle's own `p25` and `t25` give
+     δ = 1.5577 and √θ = 1.1018, so W25 = **76.91 kg/s** physical. The two
+     routes differ by 5.5 %, and the published one is used.
+
+232. **Which impingement insert feeds which film row is not printed, and
+     does not have to be assumed.** Figure 13(b) prints 3.4 % of W25 to
+     the forward insert and 2.9 % to the aft. Figure 17 prints, in a
+     different section, the flow each of seven film rows carries. Take
+     every one of the 127 subsets of those seven rows and ask which sums
+     to 3.4: **exactly one does**, and it is the contiguous group running
+     back from the leading edge — leading edge, pressure-side forward,
+     suction-side leading, suction-side forward. The remaining three sum
+     to 2.9 without being asked to. Two independently digitised figures
+     agree to the last printed digit, and the agreement hands over a feed
+     map neither of them states.
+
+233. **Finding 65's broken definition is not sloppiness; it is the
+     physics, and it is what fixes the discharge reference.** D3 found
+     that the printed backflow definition, `100 (Ps_coolant − Pt_gas) /
+     Pt_gas`, does not fit both printed margins. Asked which reference
+     fits which cavity, the data answers cleanly: the forward cavity's
+     1.45 % reproduces its printed static from gas **total** to
+     **0.015 %**, the aft cavity's 1.00 % reproduces its static from gas
+     **static** to **0.004 %**, and swapping the two costs 0.68 % each —
+     a separation of 47× and 192×. The forward cavity feeds the
+     leading-edge showerhead, which sits on the stagnation point, where
+     the pressure a hole discharges against *is* the total. Everything the
+     aft cavity feeds is downstream of it and sees a static. The report
+     was right twice and wrote the definition down once.
+
+234. **The vane passes its printed flow at a discharge coefficient a
+     cooling engineer would sign, and the aggregate hides two groups that
+     miss in opposite directions.** Whole vane, 62.11 mm² of film area
+     across 46 vanes passing 4.845 kg/s: **Cd = 0.798**. Of its four
+     groups, the pressure side (0.825) and the trailing-edge slots (0.639)
+     are both in band. The **leading-edge showerhead is 0.254** — a third
+     of the vane's film area carrying a twenty-fifth of its film flow —
+     and the **suction side is 1.999**, the smallest area of the four
+     carrying more than the showerhead and pressure side together. Two
+     misses in opposite directions is exactly how an aggregate lands in
+     band while its parts do not, so the aggregate is reported as met and
+     this is reported as the finding. Nothing was moved to close it: the
+     transfer that would equalise the two coefficients is **15.12 mm²,
+     seventy-five of the showerhead's 105 holes, 71 % of the group**. That
+     is not the two figures drawing a boundary in different places.
+
+235. **The two groups that close are the two at the highest gas Mach, and
+     the figure that would settle the other two exists for the next row
+     down.** Figure 17 is a mixing-loss figure: its Mach number is the
+     mainstream Mach where the coolant joins the gas, which is what a
+     mixing correlation needs and is *not* the static a hole discharges
+     into. The two coincide well aft of the stagnation point and diverge
+     at it. Ordered by gas Mach the four groups run leading edge <
+     suction side < pressure side < trailing edge, and **the two that land
+     in band are the two furthest aft** — the signature of a mixing Mach
+     standing in for a surface static. What would settle it is the vane's
+     own surface static distribution. CR-167955 prints exactly that for
+     the stage-1 **blade** — Figure 22, pitch-line Mach against surface
+     distance, both surfaces — and does not print it for the vane. So this
+     check is bounded by a figure that exists one row downstream.
+
+**The well-posed version of this question is the blade, not the vane, and
+it is a separate unit.** The vane needed three figures in three sections
+to ask it. For the blade, Figure 24 prints the flow and the geometry of
+every exit *together*, Figure 22 prints the surface Mach distribution that
+converts each to a local static, and Figure 26 prints the dovetail supply
+pressure ratio of 1.35. The tip cap alone prints eight hole flows and
+their diameters, and a first look says d² scaling reproduces two of them
+from a single constant — 0.087/0.016 = 5.44 against (0.711/0.305)² =
+5.435. That is unit D8; it is out of scope here because this section's
+"Not attempted" said so before the run.

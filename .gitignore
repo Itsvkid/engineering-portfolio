@@ -44,7 +44,8 @@ CAD-Projects/
 projects/09-e3-engine/sources/
 
 # PF-09 Stage G: generated CAD and build logs. Both are reproducible with
-# `python build.py --export`, and the STEP set is 132 MB.
+# `python build.py --export`: 36 per-row files plus unit G3's 80 MB whole-engine
+# assembly, 215 MB in total.
 projects/09-e3-engine/exports/
 projects/09-e3-engine/build/
 

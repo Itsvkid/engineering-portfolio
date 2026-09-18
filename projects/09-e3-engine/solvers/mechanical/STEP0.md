@@ -379,7 +379,12 @@ validation (mechanical/beam.py)
 
 ### Findings
 
-82. **An unshrouded blade really is a beam, to 2.7 %.** The booster rotor
+82. **An unshrouded blade really is a beam, to 2.7 %.**
+    *RESTATED 2026-09-18 — on Appendix D's printed sections this is
+    **250.68 Hz against 250, +0.27 %**, and the published value now sits
+    just below the bracket's soft end rather than inside it. See "Unit E3
+    re-run on the corrected sections" at the end of this file.*
+    The booster rotor
     — 14.6 cm long, aspect ratio 2.1, no shroud — comes out at 243 Hz
     against a published 250. Nothing was fitted: the sections are built by
     the same double-circular-arc-and-quarter-sine construction C3 unit 12
@@ -389,7 +394,12 @@ validation (mechanical/beam.py)
     licenses the other three**, and it is why METHOD.md says a cantilever
     beam first.
 83. **The three blades need three different boundary conditions, and each
-    report names its own.** The LPT's Fig. 62 is titled *pinned-tip*; the
+    report names its own.**
+    *RESTATED 2026-09-18 — the physical reading below stands, but the fan
+    half no longer demonstrates it: on the corrected span the free and
+    shroud-pinned brackets OVERLAP at the published 80 Hz. See "Unit E3
+    re-run on the corrected sections" at the end of this file.*
+    The LPT's Fig. 62 is titled *pinned-tip*; the
     booster is unshrouded; the fan carries a part-span shroud at 55 %
     height. Applying one condition to all three would have been the
     obvious mistake and would have read the fan 5× stiff and the LPT
@@ -1172,3 +1182,90 @@ inventing a position to report a number at.
      that disagreement rather than only on the disagreement. It is an
      argument for neither station.
 
+
+---
+
+## Unit E3 re-run on the corrected sections, 2026-09-18
+
+Unit G4 moved the fan and booster rotors off the seven- and five-station
+figure read-offs onto CR-165148's printed Appendix B (23 stations) and
+Appendix D (14). Findings 82 and 83 were established on the read-off
+geometry, so neither was assumed to survive. **Both moved. One got better
+and lost its stated form; the other lost its power entirely.**
+
+Nothing below was tuned. The beam, the modulus, the density, the boundary
+conditions and the twist bracket are unchanged; only the sections and the
+radii the blade is built on have changed.
+
+| Blade | Quantity | Read-off | Appendix | Published |
+|---|---|---|---|---|
+| booster | first flex, weak axis | 243.0 Hz, **−2.7 %** | **250.68 Hz, +0.27 %** | 250 |
+| booster | twist bracket | 243–317 | 250.7–366.3 | — |
+| booster | span | 14.58 cm | 14.81 cm | — |
+| fan | first flex, free, weak axis | 43.0 Hz | **36.11 Hz** | 80 |
+| fan | free twist bracket | 43–89 | **36.1–102.7** | — |
+| fan | shroud-pinned bracket | 84–587 | **73.1–652.5** | — |
+| fan | span | 62.14 cm | **69.34 cm** | — |
+
+### Findings
+
+- **Finding 82, restated — an unshrouded blade really is a beam, and on
+    its own printed sections it is a beam to 0.27 %.** The booster rotor comes out
+    at **250.68 Hz against a published 250**, not the 243 the read-off
+    gave. Nothing was fitted; the improvement is entirely the sections and
+    the radii. **But the claim's old form is gone**: the published value no
+    longer sits *strictly inside* the weak-axis/root-axis twist bracket, it
+    sits 0.68 Hz below its soft end. That is not a failure and it is not a
+    near miss — it is the bracket collapsing onto the answer. The bracket
+    is **46 % wide** (250.7 to 366.3 Hz) and the agreement is 0.27 %, two
+    orders finer than the bracket can resolve, so "inside the bracket" was
+    never the load-bearing statement. The load-bearing statement is the
+    number, and the number improved by a factor of ten. The blade behaves
+    as though every section bends about its own weak axis, which for a
+    stubby low-aspect-ratio blade on a large drum (R/L = 3.5) is what one
+    would expect. **This is still the result that licenses the other
+    three.**
+- **Finding 83, restated — the fan test has not changed sign, it has lost
+    its power, and the cause is 7 cm of span.** The old form read: the fan's
+    80 Hz sits inside the free bracket 43–89 and *below* the shroud-pinned
+    floor of 84, therefore the lowest in-phase mode barely feels the
+    part-span shroud. On the corrected geometry the blade is **69.34 cm
+    long, not 62.14** — finding 226's span correction — and a longer blade
+    is softer, so **both** brackets fall: free to 36.1–102.7 and pinned to
+    73.1–652.5. They now **overlap over 73.1–102.7, and the published
+    80 Hz lies inside that overlap.** The comparison can no longer
+    distinguish a free tip from a shroud-pinned one, because the twist
+    bracket has become wider than the gap between the two boundary
+    conditions. **The physical reading of finding 83 is untouched** — the
+    three blades still need the three boundary conditions their own reports
+    name, and applying one to all three is still the obvious mistake. What
+    is withdrawn is the claim that this particular comparison *demonstrates*
+    the shroud is inert in the lowest in-phase mode. It no longer does.
+228. **"Add the shroud's mass" is the right fix for the LPT and the wrong
+     fix for the fan, and the fan's own printed shroud dimensions settle
+     it.** Unit E7's flutter miss was attributed to the beam pinning a tip
+     shroud without its mass, and that diagnosis stands for the LPT, whose
+     shrouds are full interlocked tip shrouds on long blades. It does not
+     transfer. CR-165148 dimensions the fan's part-span shroud completely
+     — 0.89 cm thick, 6.35 cm of chord, 55 % span, 48–82 % of axial chord,
+     nearly elliptical — so its mass is a calculation, not an assumption:
+     **287 to 365 g**, 5.2–6.6 % of the 5.543 kg airfoil, one pitch of
+     material at 55 % span. Put on the beam it is worth
+     **−0.91 % to −1.15 %** on the first flex. The **restraint** at the
+     same station is worth **×2.02**. The missing physics on a part-span
+     shroud is the restraint, not the mass, by a factor of about 90 — and
+     a model that would settle finding 83 needs an *elastic* restraint at
+     55 % span, or a bladed-disc model, not a heavier beam.
+229. **A single-blade beam and a bladed-disc system mode are not the same
+     object, and CR-165148 says so on the same figure.** Fig 45 is titled
+     *fan blade system and fixed-blade frequencies*; the block transcribed
+     from it carries `nodal_diameters_shown: [2]` on the first flex, and at
+     3,653 rpm it prints **140 Hz "lowest in phase" against 150 Hz
+     "fixed"** — two numbers for one mode, ten per cent apart, because one
+     is the 32-blade system and the other is a blade held at its root. At
+     zero speed only one number is printed, 80 Hz, and this project has
+     been comparing it against a single cantilever. Finding 83 already
+     named the mode correctly; what is new is that the *report itself*
+     distinguishes the two at speed and the comparison does not. Any future
+     fan frequency work should compare against the **fixed-blade** line
+     where the report prints one.

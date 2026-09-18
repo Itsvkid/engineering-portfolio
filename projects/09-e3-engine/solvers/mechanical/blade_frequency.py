@@ -198,53 +198,104 @@ def _built_sections(chord_cm, camber_deg, stagger_deg, tm_c_pct, edge_c_pct, pct
     return out
 
 
+def _at_pct(x, xs, ys):
+    """linear in x, clamped at both ends -- the appendix tables run from
+    -9 % to 102.5 % of blade height and the read-off they replace runs 0 to
+    100, so the two end stations extrapolate and are held flat rather than
+    run off the end of a printed trend."""
+    if x <= xs[0]:
+        return ys[0]
+    if x >= xs[-1]:
+        return ys[-1]
+    for i in range(1, len(xs)):
+        if x <= xs[i]:
+            t = (x - xs[i - 1]) / (xs[i] - xs[i - 1])
+            return ys[i - 1] + t * (ys[i] - ys[i - 1])
+    return ys[-1]
+
+
+def appendix_sections(kind):
+    """The fan or booster rotor built from its PRINTED section table.
+
+    CR-165148 **Appendix B p.134** prints 23 stations for the fan rotor and
+    **Appendix D p.136** prints 14 for the booster: percent blade height,
+    section height, chord, stagger, camber, tm/c and the two metal angles.
+    Unit 15b transcribed both. The seven- and five-station read-offs of
+    Fig 41 and Fig 52 that this project built its blades from until now are
+    superseded by them, and the data file says so in its own
+    `superseded_by:` -- the read-off is wrong by **+5.82 deg of stagger at
+    the hub**, up to +4.25 deg of camber, and 1.2-2.8 % of chord, and it is
+    radially short at both ends because it spans the stacking-axis box
+    rather than the annulus.
+
+    **Radius comes from the table, not from a span fraction.** The first and
+    last rows are deliberately off the linear percent-height line because
+    they are the flowpath itself: 36.067 cm against a published inlet hub of
+    36.047, and 105.410 against a published tip of 105.4. Reading the height
+    column rather than the percent column is unit 15b's own instruction.
+
+    **One quantity is not in the appendices and is carried across**: the
+    edge thickness ratio, which Fig 41 and Fig 52 print and the tables do
+    not. It is interpolated from the superseded block onto the new stations
+    by percent blade height. It enters the section shape only near the edges
+    and the appendix supplies everything that sets the section's area.
+
+    Returns (radii in metres, closed polygons in metres).
+    """
+    f = _fan()
+    if kind == "fan":
+        a = f["fan_rotor_airfoil"]["appendix_b"]
+        old = f["fan_rotor_mechanical"]["blade_geometry"]
+        edge_pct, h_old = old["tle_c_pct"], old["height_pct"]
+        # printed at the hub (42 % chord) and the tip (59 %), linear between
+        loc = f["fan_rotor_airfoil"]["max_thickness_location_pct_chord"]
+        ats = [loc["hub"] + (loc["tip"] - loc["hub"]) * h / 100
+               for h in a["percent_blade_height"]]
+    elif kind == "booster":
+        a = f["booster_rotor_airfoil"]["appendix_d"]
+        old = f["booster_blade_mechanical"]["geometry"]
+        edge_pct, h_old = old["te_c_pct"], old["height_pct"]
+        # CR-165148 prints the thickness law but not where the maximum sits;
+        # 50 % chord, stated as an assumption, as unit 12 states it
+        ats = [50.0] * a["stations"]
+    else:
+        raise ValueError(kind)
+
+    edges = [_at_pct(h, h_old, edge_pct) for h in a["percent_blade_height"]]
+    polys = _built_sections(a["chord_cm"], a["camber_deg"], a["stagger_deg"],
+                            [t * 100 for t in a["tm_over_c"]], edges, ats)
+    return [r * CM for r in a["radius_cm"]], polys
+
+
 def fan_rotor():
     f = _fan()
-    g = f["fan_rotor_mechanical"]["blade_geometry"]
-    a = f["fan_rotor_airfoil"]
-    fig15 = a["fig15"]
-    hub, tip = fig15["r_sa_id_in"] * IN, fig15["r_sa_od_in"] * IN
-    length = fig15["blade_height_in"] * IN
     cam = f["fan_rotor_mechanical"]["campbell"]
-
-    # the maximum-thickness location is printed at the hub (42 % chord) and
-    # at the tip (59 %); taken linearly between. The shroud-region values
-    # (55, 58) are printed too and are recorded, not used.
-    loc = a["max_thickness_location_pct_chord"]
-    ats = [loc["hub"] + (loc["tip"] - loc["hub"]) * h / 100 for h in g["height_pct"]]
-    polys = _built_sections([c * IN / CM for c in g["chord_in"]], g["camber_deg"],
-                            g["stagger_deg"], g["tm_c_pct"], g["tle_c_pct"], ats)
-    m = BladeModel("fan rotor", "CR-165148 Fig 41 (geometry), Fig 45 (Campbell)",
+    radii, polys = appendix_sections("fan")
+    hub, tip = radii[0], radii[-1]
+    length = tip - hub
+    m = BladeModel("fan rotor",
+                   "CR-165148 Appendix B p.134 (geometry), Fig 45 (Campbell)",
                    length, hub, E_TI_6AL_4V, RHO_TI_6AL_4V,
                    cam["modes_Hz"]["first_flex"]["at_0"],
                    (cam["max_speed_rpm"], cam["modes_Hz"]["first_flex"]["at_3653_lowest_in_phase"]),
                    pinned_at=None)
     m.shroud_span = f["fan_rotor_mechanical"]["shroud"]["span_pct"] / 100
-    return _fill(m, [(h / 100 * length, p) for h, p in zip(g["height_pct"], polys)]), tip
+    return _fill(m, [(r - hub, p) for r, p in zip(radii, polys)]), tip
 
 
 def booster_rotor():
     f = _fan()
-    g = f["booster_blade_mechanical"]["geometry"]
-    b = f["booster_rotor_airfoil"]
-    ap = f["aero_parameters"]
-    tip = ap["tip_diameter_cm"][1] / 200
-    hub = tip * ap["radius_ratio_inlet"][1]
-    length = tip - hub
     cam = f["booster_blade_mechanical"]["campbell"]
-
-    # CR-165148 prints the booster's thickness law ("quarter-sine to
-    # maximum then 65-series") but not where the maximum sits; 50 % chord,
-    # stated as an assumption.
-    polys = _built_sections([c * IN / CM for c in g["chord_in"]], g["camber_deg"],
-                            g["stagger_deg"], g["tm_c_pct"], g["te_c_pct"],
-                            [50.0] * len(g["height_pct"]))
-    m = BladeModel("booster rotor", "CR-165148 Fig 52 (geometry), Fig 55 (Campbell)",
+    radii, polys = appendix_sections("booster")
+    hub, tip = radii[0], radii[-1]
+    length = tip - hub
+    m = BladeModel("booster rotor",
+                   "CR-165148 Appendix D p.136 (geometry), Fig 55 (Campbell)",
                    length, hub, E_TI_6AL_4V, RHO_TI_6AL_4V,
                    cam["modes_Hz"]["first_flex"]["at_0"],
                    (cam["max_speed_rpm"], cam["modes_Hz"]["first_flex"]["at_3653"]),
                    pinned_at=None)
-    return _fill(m, [(h / 100 * length, p) for h, p in zip(g["height_pct"], polys)])
+    return _fill(m, [(r - hub, p) for r, p in zip(radii, polys)])
 
 
 E_NICKEL = 200.0e9                                 # rear HPC stages, handbook

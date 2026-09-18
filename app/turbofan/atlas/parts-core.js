@@ -180,7 +180,7 @@ const fanModule = [
         // The mid-span shroud ring the E³ fan carries.
         tipShroud(FAN.rHub + (FAN.rTip - FAN.rHub) * FAN.shroudSpan, 0.0, 0.05, 0.012),
       ]),
-    text: "Thirty-two solid titanium blades with a part-span shroud, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic; the root is a 68°-camber subsonic section set almost axially, which is why the blade twists through fifty degrees from hub to tip. The sections here are the report's own, read off its Fig. 41.",
+    text: "Thirty-two solid titanium blades with a part-span shroud, doing about four fifths of the engine's thrust by themselves. The tip runs supersonic; the root is a 68°-camber subsonic section set almost axially, which is why the blade twists through fifty degrees from hub to tip. The 23 sections here are the report's own printed table, Appendix B p.134 \u2014 not the seven points read off its Fig. 41, which understate the hub stagger by almost six degrees.",
     facts: [
       f("Blade count", "32", "CR-168219 sec 5.1.2 p.45"),
       f("Tip radius", "1.054 m", "CR-165148 Table IV"),
@@ -188,7 +188,7 @@ const fanModule = [
       f("Part-span shroud", "55 % span (CR-165148) / 50 % (CR-168219), tungsten-carbide faces", "CR-165148 Fig.46 p.56; CR-168219 sec 5.1.2 p.45"),
       f("Tip relative Mach", "1.41 (design)", "CR-165148 Fig.10; reproduced 1.405 in PF-09 unit 6"),
       f("Material", "Ti-6Al-4V, solid; 7.27 kg per blade", "CR-165148 Table V p.49, Table VI p.74"),
-      f("Sections", "camber 68 → 8°, stagger 12 → 62°, chord 18.5 → 28.7 cm, t/c 10 → 2.6 % at 0/20/40/55/60/80/100 % height", "CR-165148 Fig.41 p.50 (read off)"),
+      f("Sections", "camber 81.4 → 6.2°, stagger −2.7 → 58.3°, chord 18.8 → 28.9 cm, t/c 12.9 → 2.5 %, at 23 printed stations from the annulus hub to the tip", "CR-165148 Appendix B p.134"),
       f("Untwist at speed", "1.6° at the tip at 3,653 rpm; the blade is pre-twisted for it", "CR-165148 Fig.43 p.53"),
     ],
   },
@@ -303,7 +303,7 @@ const fanModule = [
       f("Blade count", "56, unshrouded, Ti-6Al-4V", "CR-165148 Table IV p.47, Table V p.49"),
       f("Tip speed", "261.1 m/s corrected at climb", "CR-165148 Table IV p.47"),
       f("Flow", "22.3 % of the fan flow passes under the island through this rotor; 42 % of that returns to the bypass behind it, 82.4 kg/s enters the core", "CR-165148 Appendix A pp.118–124"),
-      f("Sections", "camber 33 → 8°, stagger 23 → 42°, chord 7.1 → 6.4 cm", "CR-165148 Fig.52 p.63 (read off)"),
+      f("Sections", "camber 35.8 → 8.2°, stagger 22.7 → 40.8°, chord 7.15 → 6.35 cm, at 14 printed stations", "CR-165148 Appendix D p.136"),
     ],
   },
   {
