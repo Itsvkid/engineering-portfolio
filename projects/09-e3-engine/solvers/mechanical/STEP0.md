@@ -1185,6 +1185,17 @@ inventing a position to report a number at.
 
 ---
 
+
+> **Superseded in part, 2026-09-19 (unit E11).** HPC report Figure 30 p.59
+> *draws* the one bolt joint, and calibrated against the published annulus it
+> sits at **r 23.47 cm, z 43.0 cm** — under the stage-5 blade, at the stage
+> 4/5 interface, where the same figure also steps the disc bore from 10.66 to
+> 9.14 cm and where unit F1's measured blade density crosses from titanium to
+> nickel. Finding 189's "no position is published" stands as a statement about
+> the *text*; the position is readable from the figure. On E9's own torque
+> curve the joint therefore carries **12.11 kN·m, 42 % of HP torque** — the
+> lower of the two branches finding 190 priced. See findings 261 and 257–259.
+
 ## Unit E3 re-run on the corrected sections, 2026-09-18
 
 Unit G4 moved the fan and booster rotors off the seven- and five-station
@@ -1423,3 +1434,247 @@ inside BUCKET CREEP and FINITE, whose meshes (Fig 75) are printed without
 a scale. A published René 150 rupture curve would be a second route and is
 in no document on disk — F1 already records MIL-HDBK-5J as carrying none
 of René 77/95/150 or AF115.
+
+---
+
+## Unit E11 — HPC Figure 30, and the bore radius D6 is gated on · step 0, 2026-09-19
+
+Unit D6 is gated, and finding 193 priced the gate: the disc-face term
+`(p3 − p25)·π(r_hub² − r_bore²)` is **+342 to +672 kN forward over bores of
+8 to 20 cm, 3.2 to 6.4 times the annulus term that does close**, so the
+thrust balance is decided by the one term that cannot be computed. The
+missing number is the HPC disc **bore radius**, and unit G3's triage
+(finding, 2026-09-18) recorded that **HPC report Figure 30 p.59 draws the
+whole ten-stage rotor cross-section** — bores, webs, rims, stub shaft, CDP
+seal — undimensioned, over an annulus this project has published at all 21
+rows since Stage A.
+
+This unit digitises that figure and carries the bore through to D6.
+
+### Disclosure: a scoping digitisation preceded this step 0
+
+METHOD.md wants the band before the run, and a calibration cannot be
+designed without first seeing whether the page is to scale at all. So, as
+in Stage L, what the scoping established is written here rather than
+presented as a result:
+
+* the ten drawn blade **tip** lines fit a single (scale, offset) in y
+  against their published radii to **0.046 cm rms**;
+* the same calibration then misses the ten drawn blade **root** lines by up
+  to **1.1 cm**, with the miss ordered by blade span — the drawn blades come
+  out 2–8 % short;
+* adding **one** parameter, an x term, collapses all twenty to **0.054 cm
+  rms**. Its value is a **0.40° rotation**, not a second scale;
+* the bore radii come out near **9 cm aft and 10.7 cm forward**, and two
+  routes to them — the fitted calibration, and a depth below the *published*
+  hub radius of the same stage, which uses the scale but not the intercept —
+  agree to under **0.08 cm**.
+
+Everything below is a check the scoping did not make.
+
+### The bands, stated before the run
+
+| # | Check | Band | Basis |
+|---|---|---|---|
+| 1 | **Held-out prediction.** Fit the calibration on the five odd stages' tips and roots, predict the five even stages' | rms **≤ 0.12 cm**, max **≤ 0.25 cm** | an in-sample residual on a three-parameter fit to twenty points proves less than a fit that has never seen half of them. 0.12 cm is twice the in-sample rms |
+| 2 | **The scan rotation is real, not a fitting artefact.** Odd-only and even-only fits must return the same angle | **≤ 0.15°** apart | a shear that is absorbing a modelling error would not be stable across disjoint halves of the page |
+| 3 | **One scale, not two.** With the rotation taken from the radial fit, the axial scale must match the radial | **≤ 3 %** | a draughtsman's meridional section is isotropic unless it says otherwise; J8's CR-159584 Fig 1 needed 3 % |
+| 4 | **Bootstrap uncertainty on a bore radius** | 95 % interval **≤ 0.25 cm** | this is the number that goes into D6, and it goes in as a band |
+| 5 | **The disc-face term, summed disc by disc, against the single telescoped form** now that both bores and both areas are measured | the per-disc sum is **80 – 110 %** of `(p3−p25)·π(r_hub,10²−r_bore,10²)`; estimate **≈ 95 %** | the telescoped identity is exact only for a drum of constant face area. The forward discs have smaller faces *and* carry little Δp, so the sum should sit just under |
+| 6 | **The D6 verdict survives the measurement** — the disc-face term still dominates the annulus term | **5 – 7 ×**, and the sign forward | finding 193 said 3.2–6.4× over an 8–20 cm bore; a measured 9 cm bore sits at the top of that |
+
+**Closes D6 when** the net axial load on the HP rotor can be formed with the
+bore's uncertainty attached and lands inside a stated band. **Does not close
+it when** a term other than the bore is still missing — in which case the
+gate is rewritten with what is left, and what is left is named.
+
+**Not attempted, and said so before the run:** the disc *webs* and *rims*,
+which this figure also draws and which would feed F2's disc masses and E2's
+peak stress. F2's own closure records that even with every disc digitised it
+would pass by arithmetic and not by evidence, because 320 kg of bearings,
+sumps and drives has no printed geometry at all. This unit reads the bore
+line and stops.
+
+## Unit E11 — after the run · 2026-09-19
+
+Nothing above this line was edited after the run.
+
+`tools/read_hpc_fig30.py` → `data/hpc-disc-profile.yaml`;
+`solvers/mechanical/disc_profile.py`; `tests/test_disc_profile.py`.
+
+| Band | Asked | Got | |
+|---|---|---|---|
+| 1 Held-out prediction, five stages of ten | rms ≤ 0.12 cm, max ≤ 0.25 | **0.068 / 0.161 cm** | met |
+| 2 Rotation stable across disjoint halves | ≤ 0.15° | **0.010°** | met |
+| 3 One scale, not two | ≤ 3 % | **1.38 %** | met |
+| 4 95 % interval on the bore radius | ≤ 0.25 cm | **0.27 / 0.38 / 0.40 / 0.61 cm** | **missed, by every estimator** |
+| 5 Per-disc sum against the telescoped form | 80–110 %, est. 95 % | **99.4 %** | met |
+| 6 Disc-face term still dominates | 5–7 ×, forward | **6.15 ×, forward** | met |
+
+### The calibration
+
+| | |
+|---|---|
+| Fitted on | **20 published radii** — ten rotor blade tips and ten blade roots, `hpc-flowpath.csv` |
+| Radial scale | **49.598 px/cm** at 600 dpi = **1 : 4.80** |
+| Scan rotation | **−0.416°** |
+| In-sample residual | **0.050 cm rms, 0.094 cm max** on a 19–35 cm radius |
+| Held out five stages | **0.068 cm rms, 0.161 cm max** |
+| Axial scale | **48.916 px/cm**, 1.38 % from the radial |
+
+### The numbers the figure gives that nothing prints
+
+| | |
+|---|---|
+| Disc bore, stages 2–4 | **10.71, 10.69, 10.66 cm** |
+| Disc bore, stages 5–10 | **9.14 → 9.08 cm** |
+| CDP seal disc bore | **8.47 cm** |
+| Stage 1 | **no bore** — the disc runs forward and inward into the integral stub shaft |
+| Bolt joint | **r 23.47 cm, z 43.0 cm** — under the stage-5 blade |
+| Bore radius carried into D6 | **9.08 ± 0.32 cm** (stage 10, widest estimator) |
+
+### What it does to D6
+
+| | |
+|---|---|
+| Annulus term, ten HPC rotors (unit D6, unchanged) | **−105.9 kN**, aft |
+| Disc-face term, summed disc by disc | **651 kN forward**, 645–657 over the bore band |
+| Same, telescoped into one area | **654 kN** |
+| Ratio to the annulus term | **6.15 ×** — finding 193 said 3.2–6.4 over an 8–20 cm bore |
+| Where it is made | discs 8–10 carry **57 %**; discs 2–4 carry **12 %** |
+| **D6** | **still gated** — and no longer on the bore |
+
+### Findings
+
+257. **Figure 30 is a scale drawing, and what it needs is a rotation, not a
+     second scale.** A single (scale, offset) in y fits the ten drawn blade
+     tips to **0.038 cm rms** and then misses the ten drawn blade roots by up
+     to **1.1 cm**, with the miss ordered by blade span — the blades come out
+     2–8 % short, which reads exactly like a draughtsman's licence and is
+     not. Forcing the same shear-free form onto all twenty points instead
+     splits the difference (49.51 px/cm against the tips' 53.37 and the
+     roots' 46.52) and fits **3.2× worse, 0.162 cm rms**. One extra
+     parameter, a **0.416° rotation of the scan**, collapses all twenty to
+     **0.050 cm rms** — the tips' own figure, on twice the data — and it is
+     not a fitting artefact: fits on the five odd stages and the five even stages return
+     the same angle to **0.010°**, and each predicts the other five to
+     **0.068 cm rms**. The evidence that the rotation is the whole story is
+     external to the radial fit: a shear-free radial scale disagrees with the
+     axial scale by **8.4 %**, and with the rotation removed the two agree to
+     **1.38 %** — a meridional section is isotropic, so an apparent
+     anisotropy of that size in a 1980s scan should be *looked through*
+     rather than fitted. J8 answered the same page defect on CR-159584 Fig 1
+     with two independent least-squares scales (s_x 0.00199 against s_y
+     0.00205, 3 %); a rotation is the one-parameter form of that, and when the
+     underlying drawing is isotropic it is the right one, because it
+     transfers between the two axes instead of absorbing the error twice.
+
+258. **The bore radius is the one band this unit missed, and it misses by a
+     factor of two and a half depending on which estimator is asked.** Step 0
+     asked for a 95 % interval ≤ 0.25 cm. The analytic prediction variance of
+     the fit gives **0.27 cm**, a bootstrap over the ten calibration stages
+     **0.40**, the same bootstrap on the offset-free depth route **0.38**, and
+     a leave-one-stage-out jackknife **0.61**. All four exceed the band and
+     the widest is 2.4× the narrowest, on the same twenty points. The cause is
+     **extrapolation**: the calibration is anchored between 19.07 and 34.72 cm
+     and the bore sits at 9.08, **10 cm below its lowest anchor, 64 % beyond
+     the fitted span**. A hypothesis stated during the run — that the
+     offset-free route (a depth below the *published* hub of the same stage,
+     which uses the scale and not the intercept) would be materially tighter
+     — was **wrong**: 0.38 against 0.40 cm, because the scale itself carries
+     0.6 % and it is applied over an 18 cm depth. The two routes nevertheless
+     *agree* to **0.08 cm worst** on all nine discs, an order better than
+     either's own interval, which is the usual signature of a shared
+     systematic that neither resamples. The band is recorded as missed and the
+     **widest** estimator is the one carried into D6.
+
+259. **And it does not matter — which is the real result.** Finding 193 rested
+     on the bore sweeping 8 to 20 cm and the disc-face term swinging **342 to
+     672 kN**, a factor of 1.96, so the term "could not be computed". Measured
+     at 9.08 cm with the widest of four uncertainty estimators attached, the
+     same term is **651 kN, moving 1.9 % across the whole band** — because the
+     face area is `π(r_hub² − r_bore²)` and at r_hub 27.4 cm against a bore of
+     9 cm the bore contributes **11 %** of the area. A 0.3 cm uncertainty on
+     the smaller radius of a squared difference is nothing. The gate was
+     never 2× wide because the bore was uncertain; it was 2× wide because the
+     bore was *unknown over a range chosen to be safe*. **One figure read
+     turned a factor of two into two per cent.**
+
+260. **The per-disc sum and the telescoped form agree to 0.6 %, and the two
+     reasons they should not cancel.** Telescoping `Σ Δp_i·A_i` into
+     `(p3 − p25)·A` is exact only for a drum of constant face area, and
+     Figure 30 shows two families — 10.7 cm bores forward of the bolt joint,
+     9.1 cm aft — so the forward discs have **30 % less face area** than the
+     rear ones. Step 0 estimated the sum at **95 %** of the telescoped form on
+     that ground. It comes out **99.4 %**, because the inter-disc hub statics
+     rise by **3,236 kPa** over rotors 2–10 against the compressor's own
+     `p3 − p25` of **3,125 kPa**, +3.5 %, and the two departures very nearly
+     cancel. The estimate was 4.4 points low and the agreement is an accident
+     of two errors, not a property of the drum. What survives is the
+     distribution: the drum's forward thrust is made **almost entirely at the
+     back** — discs 8, 9 and 10 carry **57 %** of 651 kN and discs 2, 3 and 4
+     carry **12 %** — because the pressure rise is geometric and the face area
+     is nearly constant once the bore steps in.
+
+261. **Three independent signatures put the rotor's one structural break at
+     the stage 4/5 interface, and the report's own material column says
+     stage 7.** Figure 30 draws the bolt joint the FPS report names in a
+     single line, and calibrated it sits at **r 23.47 cm, z 43.0 cm** —
+     directly under the stage-5 blade, aft of stator 4. E9's finding 189
+     recorded that **no position is published for either kind of rotor joint**;
+     this is one, undimensioned in print and dimensionable from the annulus.
+     The second signature is in the same figure and needed no interpretation:
+     the **bore steps 10.66 → 9.14 cm between disc 4 and disc 5**, so the
+     forward discs and the aft discs are two different families, and the step
+     is at the joint. The third is unit F1's, from a different table
+     altogether — the blade **density measured from Table X's own airfoil
+     weight and root area crosses from titanium to nickel between stages 4 and
+     5**, where Table X's printed *material* column says stage 7 and where F1
+     found the printed weight at stages 5–6 exceeds the heaviest possible
+     titanium blade. Geometry, structure and mass now agree with each other
+     and against one printed column. E9's finding 190 priced the ambiguity at
+     a factor of 1.67 in joint torque; at the measured position the joint
+     carries **12.11 kN·m, 42 % of HP torque**, which is E9's own lower
+     branch. E9's module is not rebuilt here.
+
+262. **Stage 1 has no bore, and that is why D6's forward face is still
+     open.** Nine of the ten discs hang a web down to a thickened foot whose
+     flat bottom is the bore. The stage-1 disc does not: it is a block that
+     runs forward and inward into the **integral forward stub shaft**, which
+     the figure labels and draws and which carries the fan discharge air the
+     same figure labels as bore cooling. So the drum's **aft** face is
+     bounded (the CDP seal disc, bore 8.47 cm) and its **forward** face is a
+     cone of un-dimensioned inner radius. The disc-face sum above therefore
+     runs discs 2–10 and omits stage 1's own term, which is small in Δp and
+     unknown in area.
+
+### D6's gate, rewritten
+
+The bore is measured, so the gate finding 193 named is lifted. D6 does not
+close, and what is left is four things, each a statement about what is not
+printed rather than about what has not been attempted:
+
+1. the **stage-1 forward face** — drawn in this same figure, inner radius
+   undimensioned (finding 262);
+2. the **HPT rotor's two disc faces**, which carry the same term with the
+   opposite sign across roughly `p3` down to the HPT exit. CR-167955 Fig 63
+   p.114 draws the stage-1 disc profile and dimensions nothing. It is the
+   same kind of digitisation as this one, against a published HPT annulus
+   (Fig 3), and it is **not done**;
+3. the **balance piston** — finding 191: Figs 95–96 give the seal as
+   hardware and never as a load, so no piston area, radius or cavity
+   pressure exists to invert;
+4. the **thrust-bearing capacity** — unit E4's standing gate.
+
+Items 1 and 2 are digitisable from figures on disk. Items 3 and 4 are not
+in any of the forty-one documents, and a piston area invented to make a
+balance close is the fitted number this project exists not to produce.
+
+### What this unit did not do
+
+The disc **webs and rims**, which Figure 30 also draws to the same
+calibration, and which would feed F2's disc masses and E2's peak stress.
+F2's own closure records that even with every disc digitised it would pass
+by arithmetic and not by evidence, because 320 kg of bearings, sumps and
+drives has no printed geometry at all. Step 0 said this unit reads the bore
+line and stops, and it stopped.

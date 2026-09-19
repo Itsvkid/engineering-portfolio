@@ -887,6 +887,15 @@ exit profile is what D1 used.
       that decides the answer is +342 to +672 kN forward, **3.2–6.4× larger**,
       and needs the **disc bore radius** — the same un-digitised profile that
       gates E2 and F2. Findings 191–193.
+      **The bore gate is LIFTED (unit E11, 2026-09-19).** HPC Fig. 30 p.59
+      digitised against the published annulus gives bores of 10.71–10.66 cm
+      on discs 2–4 and 9.14–9.08 on discs 5–10; the disc-face term is
+      **651 kN forward, 6.15×** the annulus term, and the bore's whole
+      uncertainty band is worth **1.9 %** of it where the unmeasured sweep was
+      worth a factor of two. **D6 is still gated**, now on the stage-1 forward
+      face, the HPT rotor's two disc faces (CR-167955 Fig. 63 p.114, drawn and
+      undimensioned), the balance piston and E4's bearing capacity.
+      Findings 257–262.
 - [ ] Rotor bore cooling with fan discharge air (§5.2.2)
 
 *Closes when:* total secondary air lands at Table XI's 16.1 % of W25 and
@@ -949,8 +958,12 @@ published — that is the scatter of creep data.
 ## E2 · Discs · 20 h
 
 Built to [METHOD.md](METHOD.md); step 0 named in the table there.
-- [ ] Disc profiles from the cross-sections (A3) for every rotor stage —
-      **this is what gates the rest of E2** (finding 81)
+- [~] Disc profiles from the cross-sections (A3) for every rotor stage —
+      **this is what gates the rest of E2** (finding 81). **Part done:** unit
+      E11 read the **HPC bore line** off Fig. 30 p.59 (`tools/read_hpc_fig30.py`,
+      0.05 cm rms on twenty published radii, 0.07 on a held-out half). The
+      **webs and rims** of that figure, and **CR-167955 Fig. 63 p.114** — the
+      HPT stage-1 disc, which is what E2 actually needs — are not read
 - [x] Rim load and bore stress — **unit E2**, `solvers/mechanical/disc.py`.
       **The bore doubling for a small hole is demonstrated exactly**
       (2.0000 in the limit, 2.0043 at a/b = 0.10) — E2's stated closure
@@ -1422,6 +1435,12 @@ rotor Campbell diagrams Figs 33–42 (E3's closure), the HPC blade and
 dovetail data of §3.2.3 (E5's first item), the casing, liner and dome
 flowpaths (G), and the combustor liner hole areas (D2). None of those is a
 modelling problem; all of them are figures nobody has digitised.
+Two have since been digitised and both lifted a gate that had stood for
+weeks — Figs 33–42 (2026-09-08, E3's closure evaluated at last) and **Fig. 30
+p.59 (2026-09-19, unit E11, D6's bore gate)**. The method is the same each
+time and it is not hard: calibrate the undimensioned figure on a *published*
+quantity it is drawn over, report the residual, and hold out half the
+calibration points to check it.
 | B | B1 mixer · B2 secondary air · B3 three ratings · B4 annulus | ◧ ▣ ◧ ▣ |
 | C | C1 mean-line · C2 through-flow · C3 sections · C4 CFD | ▣ ▣ ◧ ◧ |
 | D | D1 HPT cooling · D2 combustor · D3 secondary-air map · D4 clearance | ◧ ◧ ◧ ▣ |

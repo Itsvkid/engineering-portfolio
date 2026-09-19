@@ -357,9 +357,15 @@ compressor's radial redistribution (C1 unit 4b finding 17).
 - **HPC rotor Campbell diagrams (Figs 33–42) un-digitised.** This is the
   only thing standing between unit E3's ten predictions and E3's stated
   closure. Second-highest-value item in the A3 backlog.
-- **Disc cross-sections un-digitised.** This now blocks E2's Fig. 64
-  peak-stress comparison and its 120 % burst margin, and will block F2's
-  disc masses. Highest-value item in the A3 backlog.
+- **Disc cross-sections: the HPC BORE LINE is read, the webs and rims are
+  not.** Unit E11 (2026-09-19) digitised **HPC report Fig. 30 p.59** against
+  the published annulus — `data/hpc-disc-profile.yaml`, `tools/read_hpc_fig30.py`
+  — which lifted D6's bore gate (findings 257–262). Still un-digitised, and
+  still blocking: the **webs and rims** of the same figure (F2's disc
+  masses), and **CR-167955 Fig. 63 p.114**, the HPT stage-1 disc profile,
+  which blocks E2's Fig. 64 peak stress, E2's 120 % burst margin and the HPT
+  half of D6's thrust balance. Fig. 30 shows the method works: twenty
+  published radii, 0.05 cm rms, 0.07 cm on a held-out half.
 - Mixer level to Stage H (needs Fig 39/40's mixing-plane area).
 - Takeoff sfc day effect to Stage C (needs component maps).
 - Dunham–Came 1970 and Kacker–Okapuu 1982 papers not on disk; both are

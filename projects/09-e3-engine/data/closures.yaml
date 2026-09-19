@@ -725,16 +725,26 @@ closures:
     units: null
     state: gated
     gate: >
-      GATED on the HPC disc BORE RADIUS, the un-digitised disc profile --
-      the same figure that gates E2's peak stress, E2's burst margin and
-      F2's disc masses (finding 193). The gas-path annulus term closes and
-      is -105.9 kN aft over the ten HPC rotors; the disc-face term, which
-      the annulus control volume excludes, is +342 to +672 kN forward over
-      any plausible bore, 3.2 to 6.4 times larger. The balance is decided by
-      the term that cannot be computed. Also: HPT report Figs 95-96, which
-      the plan item names, give the balance-piston seal as HARDWARE and
-      never as a load -- no thrust, area, radius or cavity pressure
-      (finding 191).
+      The bore-radius gate of finding 193 is LIFTED. Unit E11 digitised HPC
+      report Figure 30 p.59 against the published annulus and the HPC disc
+      bores are 10.71-10.66 cm on discs 2-4 and 9.14-9.08 cm on discs 5-10,
+      with the CDP seal disc at 8.47; the disc-face term is 651 kN forward,
+      6.15 times the -105.9 kN annulus term, and the bore's whole
+      uncertainty band moves it 1.9 percent where the unmeasured 8-20 cm
+      sweep moved it a factor of two (findings 257-259).
+      WHAT IS LEFT, in order of how gettable it is: (1) the stage-1 FORWARD
+      face -- stage 1 has no bore, its disc running into the integral stub
+      shaft, whose inner radius the same figure draws undimensioned (finding
+      262); (2) the HPT rotor's two disc faces, which carry the same term
+      with the opposite sign and which CR-167955 Fig 63 p.114 draws, also
+      undimensioned, over a published HPT annulus -- the same kind of
+      digitisation as E11 and not done; (3) the BALANCE PISTON, finding 191:
+      Figs 95-96 give the seal as hardware and never as a load, so no piston
+      area, radius or cavity pressure exists to invert; (4) the
+      thrust-bearing capacity, unit E4's standing gate. Items 1 and 2 are
+      digitisable from figures on disk; items 3 and 4 are in none of the
+      forty-one documents, and a piston area invented to make a balance
+      close is the fitted number this project exists not to produce.
     note: >
       STEP0 predicted the HPC rotors would push forward and they push aft on
       that control volume -- right about the rotor, wrong about the control

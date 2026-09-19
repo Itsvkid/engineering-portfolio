@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** ten of ten stages built. **1170 test functions**, **249 numbered findings**, **46 closures** — 33 met, 9 half, 4 gated. Stages B, C, D, E, F and G still carry open closures.
+**Status:** ten of ten stages built. **1189 test functions**, **255 numbered findings**, **46 closures** — 33 met, 9 half, 4 gated. Stages B, C, D, E, F and G still carry open closures.
 
 | Stage | | State |
 |---|---|---|
@@ -101,7 +101,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 - **G1** (half) — generated blade volume against Stage F2's integral. the closure also asks the generated engine mass to match F2, whose own total is gated
 - **H2-H3** (gated) — the static structure and the sumps in hand CAD, and every bearing pointed at with its load. Two gates, neither of them the tool. (1) NO BEARING LOAD OR CAPACITY IS PRINTED ANYWHERE: CR-168219 sec 5.7 names all five bearings, their types, sumps, seals and lubrication and gives no lo
 - **E7** (half) — the five LPT flutter safety factors imply one allowable index, and the five agree. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 fro
-- **D6** (gated) — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim. GATED on the HPC disc BORE RADIUS, the un-digitised disc profile -- the same figure that gates E2's peak stress, E2's burst margin and F2's disc masses (finding 193). The gas-path annulus te
+- **D6** (gated) — thrust balance on the HP rotor -- the net axial load and what the balance piston must trim. The bore-radius gate of finding 193 is LIFTED. Unit E11 digitised HPC report Figure 30 p.59 against the published annulus and the HPC disc bores are 10.71-10.66 cm on discs 2-4 and 9.14-9.08
 
 The four gaps that are **transcription, not modelling**: the HPT disc profile has no absolute radial scale (blocks E2's peak stress and burst margin, and F2's disc masses); the HPC §3.2.3 dovetails (E5); the casing, liner and dome flowpaths (G); and the combustor liner hole areas (D2). None is a hard problem — they are figures nobody has digitised.
 

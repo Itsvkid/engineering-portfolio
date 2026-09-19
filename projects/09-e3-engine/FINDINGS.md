@@ -284,7 +284,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-249 findings, in the `STEP0.md` that owns each one.
+255 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -543,4 +543,10 @@ would break every reference in the commit history.
 | 254 | geometry | "Zero clashes through rotation" is a proof on this assembly, not a |
 | 255 | geometry | The assembly's own vane counts are the engine orders GE drew its |
 | 256 | geometry | The one absence is the IGV, and it is unresolved. Rotor 1's |
+| 257 | mechanical | Figure 30 is a scale drawing, and what it needs is a rotation, not a |
+| 258 | mechanical | The bore radius is the one band this unit missed, and it misses by a |
+| 259 | mechanical | And it does not matter — which is the real result. Finding 193 rested |
+| 260 | mechanical | The per-disc sum and the telescoped form agree to 0.6 %, and the two |
+| 261 | mechanical | Three independent signatures put the rotor's one structural break at |
+| 262 | mechanical | Stage 1 has no bore, and that is why D6's forward face is still |
 

@@ -197,6 +197,8 @@ status is **L** against that report, not **—**.
 | PTO gearbox location and drive | **T** | CR-168219 §5.7.2 p.96 |
 | Sump sealing and venting | **T** | CR-168219 §5.7.2–5.7.3 pp.96–98 |
 | HPC rotor construction — inertia-welded, single bolt joint, bore-cooled | **T** | CR-168219 §5.2.2 p.52 |
+| **HPC disc bores, and the bolt joint's position** — discs 2–4 at 10.71/10.69/10.66 cm, discs 5–10 at 9.14→9.08, CDP seal disc 8.47; bolt joint r 23.47 cm z 43.0 cm, under the stage-5 blade; **stage 1 has no bore** (integral stub shaft). Calibrated on the twenty published tip and root radii of `hpc-flowpath.csv` to 0.050 cm rms with a 0.416° scan rotation; 0.068 cm rms on five stages held out — `data/hpc-disc-profile.yaml` | **A** | **HPC report Fig. 30 p.59 (PDF page 68), "Rotor Design Features" — undimensioned and dimensionable**; `tools/read_hpc_fig30.py`, E11 |
+| HPC disc **webs and rims** — drawn in the same Fig. 30 to the same calibration, **not read**; they are what F2's disc masses and E2's peak stress need | **D** | HPC report Fig. 30 p.59 |
 | HPT rotor components — forward HP shaft, inducer disk, stage 1 and 2 disks, interstage seal disk, aft shaft/seal disk, retainers, bolts — stress, concentration, LCF | **L** | HPT report §5.2.1 pp.105–149 |
 | HPT disk finite-element models and stress/life | **L** | HPT report Figs. 61–72 pp.111–124 |
 | LPT rotor — blades, dovetails, disks, seals | **L** | LPT report §4.2 pp.82–108 |
