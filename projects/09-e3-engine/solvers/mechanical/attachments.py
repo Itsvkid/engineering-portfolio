@@ -51,6 +51,53 @@ def _y(name):
 
 # ------------------------------------------- the HPT two-tang dovetail
 
+def hpc_dovetail_is_unpublished():
+    """E5's restated first item, 2026-09-19.
+
+    E5's gate read "HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no
+    blade or dovetail block at all", which reads as work not yet done. It
+    is not: **HPC report sec 3.2.3 "Rotor Blade Design" is a list of design
+    CRITERIA in words and contains no number at all**, and the table it
+    points at -- Table X -- prints the AIRFOIL root stress, not a dovetail
+    stress. Unit E1 reproduces that airfoil column from the blade
+    integral, which is what confirms which stress it is.
+
+    Checked across the source list, not only the HPC report: the words
+    "neck", "tang shear" and "crush" appear in the HPC report exactly
+    twice, both inside sec 3.2.3's criteria list. CR-135444's dovetail
+    stress data (its Figure 72 and Table 62) are the HP TURBINE stage-1
+    blade and the LP turbine blades; its compressor-rotor section (pp.169
+    ff) prints materials and a disc stress distribution and no dovetail
+    stress. Finding 273.
+    """
+    return dict(
+        section="HPC report sec 3.2.3, Rotor Blade Design",
+        criteria_as_printed=[
+            "Maintain 15 % first flex margin over 2/rev at maximum rotor speed",
+            "Maintain 10 % first flex / first torsion margin over low or known "
+            "per-rev stimuli throughout engine operating range",
+            "Restrict reduced velocity parameter / incidence angle combinations "
+            "to General Electric established acceptable values",
+            "Optimize airfoil tilt to minimize gas bending stress",
+            "Meet weak link criteria (HCF strength of disk dovetail > HCF "
+            "strength of blade dovetail > HCF strength of airfoil in first "
+            "three beam modes)",
+            "Optimize dovetail offset to provide maximum allowable vibratory stress",
+            "Provide adequate margins in neck tensile and tang shear stress",
+            "Design to acceptable crush stresses",
+            'Prevent "domino" effect at maximum physical speed'],
+        numbers_in_the_section=0,
+        what_table_x_prints="airfoil root stress (max and centrifugal), "
+                            "not a dovetail stress -- unit E1 reproduces the "
+                            "centrifugal column from the blade integral",
+        searched=["HPC detail design report sec 3.2.3 and Table X",
+                  "CR-168219 sec 5.2",
+                  "CR-135444 compressor rotor pp.169-174",
+                  "CR-168211 ICLS",
+                  "e3-core-design-and-performance"],
+        unpublished=True)
+
+
 def hpt_dovetail_tangs():
     """Fig 81 prints the blade load, the axial chord, two neck widths and
     two combined-with-Kt stresses. The text says the upper tang is 'a
@@ -299,3 +346,10 @@ if __name__ == "__main__":
         print(f"   {b['flange']:<14}{b['bolts']:>7}{b['pressure_MPa']:>8.2f}"
               f"{b['radius_cm']:>8.1f}{b['separating_MN']:>15.2f}"
               f"{b['per_bolt_kN']:>13.1f}{b['bolt_stress_MPa']:>10.0f}")
+
+    u = hpc_dovetail_is_unpublished()
+    print(f"\n7. The HPC dovetail -- E5's restated first item")
+    print(f"   {u['section']}: {len(u['criteria_as_printed'])} design criteria, "
+          f"{u['numbers_in_the_section']} numbers")
+    print(f"   Table X prints the {u['what_table_x_prints']}")
+    print(f"   searched {len(u['searched'])} documents; unpublished: {u['unpublished']}")

@@ -265,13 +265,31 @@ def why_gated():
 
 
 def what_is_not_published():
+    """What this closure still cannot get from the source list.
+
+    Two entries left on 2026-09-19, when unit E4 found the bearing loads
+    printed after all. CR-168211 sec 6.17.1 p.525 and Figs 340-341
+    pp.527-528 give the axial load of both thrust bearings against
+    corrected speed, on a pounds axis and a kN axis -- No. 3 forward,
+    44.5 kN at 94.4 % Nc; No. 1 aft, -82.8 kN at 98.3 % Nf. The old
+    `bearing_1_load=False, bearing_3_load=False` was true of CR-168219
+    sec 5.7, where it was written, and false of the source list. Fifth
+    occurrence of that error in this project; see the agent's rule in
+    sec 9 and finding 269.
+
+    They are kept as keys rather than deleted so that a reader of the
+    history can see the claim change rather than find it gone."""
     return dict(
         piston_area=False, piston_radius=False, cavity_pressures=False,
-        disc_face_areas=False, bearing_1_load=False, bearing_3_load=False,
-        bearing_capacity=False, mission_sweep=False,
-        consequence=("the balance itself is not closed; bearing loads need "
-                     "the disc-face pressures and the mission sweep needs a "
-                     "balance to sweep"))
+        disc_face_areas=False, bearing_capacity=False, mission_sweep=False,
+        bearing_1_load=True, bearing_3_load=True,
+        bearing_loads_src="CR-168211 sec 6.17.1 p.525, Figs 340-341 pp.527-528",
+        consequence=("the balance itself is not closed: the measured bearing "
+                     "load is now a target to hit rather than a missing "
+                     "number, and what is missing is the HPT disc faces, the "
+                     "balance piston and the CDP cavities -- which cancel "
+                     "512 kN of the 556 kN the computable terms give, so they "
+                     "are the other half of the balance and not a correction"))
 
 
 def summary():

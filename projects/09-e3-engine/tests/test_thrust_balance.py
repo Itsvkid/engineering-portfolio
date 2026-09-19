@@ -105,10 +105,23 @@ def test_no_bore_radius_is_chosen():
 def test_the_balance_itself_is_not_claimed():
     n = what_is_not_published()
     for k in ("piston_area", "piston_radius", "cavity_pressures",
-              "disc_face_areas", "bearing_1_load", "bearing_3_load",
-              "bearing_capacity", "mission_sweep"):
+              "disc_face_areas", "bearing_capacity", "mission_sweep"):
         assert n[k] is False, k
     assert "not closed" in n["consequence"]
+
+
+def test_the_bearing_loads_are_published_and_no_longer_claimed_absent():
+    """finding 269 -- they were listed as unpublished for six weeks
+
+    The absence was true of CR-168219 sec 5.7, where the list was written,
+    and false of the source list. Asserted as the converse of the rot: the
+    two keys must be True and must carry the source that settled it, so
+    that reverting them silently breaks a test rather than restoring a
+    comfortable-looking absence."""
+    n = what_is_not_published()
+    assert n["bearing_1_load"] is True
+    assert n["bearing_3_load"] is True
+    assert "CR-168211" in n["bearing_loads_src"]
 
 
 def test_the_summary_says_gated_and_why():

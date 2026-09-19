@@ -111,3 +111,30 @@ def test_no_basic_engine_total_is_produced():
     """the closure is gated, and the module must not quietly supply one"""
     import materials.mass as m
     assert not [n for n in dir(m) if "total" in n.lower() and not n.startswith("_")]
+
+
+# --- F2's restatement, 2026-09-19 -----------------------------------------
+
+def test_f2_restated_states_how_much_of_the_engine_can_be_weighed():
+    """F2's plan closure -- 3,473 kg within 10 % -- is not reachable from
+    the public record, and this puts a number on how far short it falls
+    rather than leaving it as a gate. Finding 112, quantified.
+    """
+    from materials.mass import f2_restated
+    f = f2_restated()
+    assert f["basic_engine_total_attempted"] is False
+    assert 10.0 < f["buildable_pct_of_engine"] < 15.0
+    assert f["no_printed_geometry_kg"] == 320
+    assert len(f["modules_with_geometry"]) == 3
+
+
+def test_f2_restated_checks_what_it_does_build():
+    """The two comparisons the restated closure does make, both already run
+    on 2026-09-07 and neither loosened: built airfoil mass against Table
+    X's ten printed weights within 20 %, and the five module weights two
+    documents each print within 5 %."""
+    from materials.mass import f2_restated
+    f = f2_restated()
+    assert f["built_vs_published_airfoil_worst_pct"] <= 20.0
+    assert f["module_cross_check_worst_pct"] <= 5.0
+    assert f["module_cross_check_count"] == 5

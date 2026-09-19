@@ -1885,3 +1885,194 @@ Figure 63, and only for the shape.
 
 **Not attempted, deliberately**: any disc stress. No solver was run, so the
 target choice above was made on the models and not on the numbers.
+
+---
+
+## Unit E13 — the four Stage E/F closures restated · 2026-09-19
+
+Phase 1 of finishing the project. The owner's instruction, in his words:
+*a restatement must narrow the claim, never widen the tolerance.* Four
+closures had been written to a standard the E³ programme never published,
+and this unit says, for each, what the published record can support and
+what it cannot. Where a restatement makes a closure evaluable, the check
+it demands is run and its band stated first. Nothing was loosened.
+
+### E4's second half — and the restatement began with a correction
+
+**Disclosure.** The figures behind this unit were found during the triage
+that produced finding 269 and were read before the bands below were
+written. The bands are for the checks that read did **not** make.
+
+| Check | Known answer | Band | Basis |
+|---|---|---|---|
+| Printed pound axis against printed kN axis | eleven label pairs | **±0.1 kN** | arithmetic on the axis labels; no reading of the curve at all, so it tests the calibration and not the digitising |
+| Sign of each bearing's load | the report's own sentence | HP **forward**, LP **aft** | CR-168211 p.525: *"Positive thrust is in the forward direction"* |
+| Is the No. 3 load a centrifugal quantity? | — | if it is, it rises as N² — **×1.58** between 76 % and 94.4 % corrected core speed, within ±20 % | E2's finding 78 asked the same question of the HPT rotor and the answer was no; **estimate before computing: it will not be, because a thrust bearing carries a pressure residual** |
+| Calibration against a number it was not given | the printed 44.5 kN at the top of Fig 340's box | **±0.15 kN** | the fit is made on the labelled gridlines; the box edge is not one of them |
+| Bearing capacity | — | — | **not attempted, and not attemptable** |
+
+### Results, 2026-09-19 (`cd solvers && python -m mechanical.rotordynamics`)
+
+```
+7. Thrust-bearing axial load -- PUBLISHED, CR-168211 Figs 340-341
+   printed lb axis vs printed kN axis: 0.048 kN worst
+   No. 3 (HP):  flat at +3.1 kN forward to 75 % Nc, then +44.5 kN at 94.4 %
+   No. 1 (LP):  -82.8 kN aft at 98.3 % Nf -- 1.9x the HP bearing and the other way
+   capacity published: False;  bore published: False
+
+   is it a centrifugal load?  N^2 would give x1.58; measured x14.4 -- a factor of 9.1 out
+   -> centrifugal: False
+
+   what it prices: HP rotor disc faces +654 kN + gas path -98 kN = +556 kN known,
+   against a measured bearing load of +44.5 kN, so the terms D6 cannot compute are
+   worth +512 kN -- the bearing sees 8.0 % of what is known
+```
+
+| Check | Result | Band | Verdict |
+|---|---|---|---|
+| Axis closure | 0.048 kN | ±0.1 kN | pass |
+| Signs | HP forward, LP aft | as printed | pass |
+| Centrifugal? | ×14.4 against ×1.58 | ±20 % of ×1.58 | **rejected, by 9.1×** |
+| Calibration at the box edge | 44.6 vs printed 44.5 | ±0.15 kN | pass |
+| Bearing capacity | **not published anywhere** | — | clause dropped |
+
+**Old wording:** *no rotor critical inside the operating band without a
+damper, and the thrust-bearing load stays inside capacity in both
+directions.*
+**New wording:** *no rotor critical inside the operating band without a
+damper, and the thrust-bearing axial load transcribed from its published
+measurement in both directions.*
+
+Why that is a narrowing: it claims strictly less. It no longer asserts a
+margin, and it records the absence of a capacity as a fact about the
+reports rather than as unfinished work. A catalogue capacity was
+considered and rejected — it would need an assumed bore **and** an assumed
+internal geometry, and a margin two assumptions deep is not a margin.
+
+### Findings
+
+269. **The bearing loads were published all along, and the project had
+     recorded them absent.** E4's gate of 2026-09-07 read *"no bearing
+     load and no bearing capacity is printed anywhere"*. CR-168211
+     Figs 340–341 pp.527–528 print the axial load of **both** thrust
+     bearings against corrected speed, each on a pounds axis and a kN
+     axis, with the sign convention in the same paragraph, and p.525 says
+     the pretest prediction and the test-derived values *"corresponded
+     very well"*. The statement was true of CR-168219 sec 5.7 — where it
+     was written — and false of the source list. **Fifth occurrence in
+     this project**, after the nacelle table, the combustor length, fan
+     Appendix B and HPT Fig 84. The capacity really is absent, and
+     `data/icls-thrust-bearing.yaml` now says so with the five documents
+     searched, which is the form §9 asks for.
+270. **The published bearing load prices what D6 cannot compute, and the
+     price is half a meganewton.** The HP rotor's terms this project can
+     compute — unit E11's disc-face push at the measured bore, +654 kN,
+     and D6's gas-path annulus term, −98 kN — sum to **+556 kN forward**.
+     The measured No. 3 bearing load is **+44.5 kN**. So the HPT disc
+     faces, the balance piston and the CDP seal cavities together cancel
+     **512 kN, 92 % of what is known**, and the bearing sees 8 % of it.
+     That is the strongest statement yet about D6's gate: the missing
+     terms are not a correction, they are the other half of the balance,
+     and a thrust balance closed without them would be out by an order of
+     magnitude rather than by a few per cent.
+271. **A thrust bearing's load is a pressure quantity, not a speed
+     quantity — E2's finding 78 in a different part of the engine.** The
+     No. 3 load is flat at about 3 kN from 25 % to 76 % corrected core
+     speed and then rises to 44.5 kN by 94.4 %. Centrifugally that range
+     is worth ×1.58; the measured rise is **×14.4**, a factor of 9.1 out.
+     The band was stated before the arithmetic and the pre-run estimate
+     said it would be rejected. It is rejected in the same direction and
+     for the same reason the HPT disc stresses were: what limits a part is
+     not always what spins it.
+272. **The digitising method that works on a steep curve fails on a flat
+     one, and it fails quietly.** HPT Fig 5c yields to "the rightmost thin
+     dark run per scan line" because its curves are steep and its page is
+     otherwise empty. Figs 340–341 defeat it: both overplot dense clusters
+     of individual test symbols **on** the drawn line in the same ink
+     weight, and over most of the width the curve is horizontal, so a
+     column scan returns symbols and a row scan returns the same speed for
+     twenty consecutive rows. Three variants were tried and all three
+     returned plausible-looking wrong curves. What survives is what a box
+     edge gives — a **crossing**, which is sharp — so the tool measures
+     the two crossings numerically and the intermediate points are read by
+     eye against numerically located gridlines with half a minor division
+     stated. **On a steep curve read the speed at the printed value, not
+     the value at the printed speed**: the better-posed direction is the
+     one the curve is steep in.
+
+---
+
+### E5's first item — unpublished, not unfinished
+
+No new computation; the unit's seven printed-number checks were all run on
+2026-09-07 and none is touched. What changed is that the gated item was
+read rather than deferred.
+
+**Old wording:** *every attachment has margin on all three stresses and
+the weak-link order holds*, gated on *"HPC dovetails per sec 3.2.3;
+hpc-mechanical.yaml has no blade or dovetail block at all"*.
+**New wording:** *every attachment for which a stress and an allowable are
+both printed has margin, and the weak-link order holds.*
+
+Why that is a narrowing: the old sentence implied a set of attachments the
+reports do not describe. The new one names the set, and the HPC dovetail
+moves from a gate to a recorded absence.
+
+273. **HPC report sec 3.2.3 contains no number.** It is nine design
+     criteria in words — *"maintain 15 % first flex margin over 2/rev"*,
+     *"provide adequate margins in neck tensile and tang shear stress"*,
+     *"design to acceptable crush stresses"*, the weak-link ordering — and
+     it points at Table X, which prints the **airfoil** root stress, the
+     column unit E1 reproduces from the blade integral. Searched beyond
+     the HPC report, because "not published" is a claim about the whole
+     list: the words *neck*, *tang shear* and *crush* occur in the HPC
+     report exactly twice, both inside that criteria list; CR-135444's
+     dovetail stress data (its Fig 72 and Table 62) are the **HP turbine**
+     stage-1 blade and the **LP turbine** blades; and its compressor-rotor
+     section pp.169–174 prints materials, a rotor stress distribution and
+     a disc radial distribution, and no dovetail stress. The E³ programme
+     did not publish an HPC dovetail stress, and nothing downstream can.
+
+---
+
+### E3's closure, restated per point — and the miss survives
+
+See `solvers/publication/campbell.py::e3_restated`, where the reading
+uncertainties already live.
+
+**Old wording:** *first three modes of every HPC stage within 5 % of
+Figs 33–42.*
+**New wording:** *…each point against max(5 %, that point's own reading
+uncertainty).*
+
+Why that is a narrowing and not a widening: the band is never narrower
+than the 5 % the plan asked for, and is widened **only where the figure
+itself cannot answer** — finding 160 had shown 11 of 24 comparisons and
+**every one of the ten first-flex modes** cannot resolve 5 %, so a 5 %
+verdict there was not a test either way. The restatement removes the one
+excuse the old wording left open and asks whether the miss survives it.
+
+276. **It survives, and the arithmetic says the reading is not the
+     cause.** 1 of 24 becomes **2 of 24**. On the thirteen points where
+     5 % *is* resolvable the mean error is **+24.4 % against a mean
+     reading uncertainty of 2.2 %** — an order of magnitude — so no
+     plausible re-reading of those figures closes the gap. The two that
+     pass are stage 3's 2F (−2.4 % against ±3.4) and stage 9's 1F
+     (+8.4 % against ±8.8), and the second passes only because its band
+     is the wide one.
+277. **An FE blade is not recommended, and the reason is a source gap
+     rather than an effort estimate.** Three things decide it. The bias
+     grows monotonically with mode number (1F +15.8, 2F +18.1, 3F +44.0 %
+     over all comparisons), which is a soft-root signature, so the
+     dovetail is what wants modelling. But **the HPC dovetail geometry is
+     unpublished** — finding 273, from the closure restated two sections
+     above — so an FE blade's root would be assumed, and the root is the
+     entire mechanism under test. And it could only ever move the thirteen
+     resolvable points, all of them 2F and 3F, because all ten first-flex
+     comparisons stay unfalsifiable at 5 % whatever the model. Named
+     instead: **one** root-flexibility spring rate, calibrated on a single
+     stage and *predicted* on the other nine. That is falsifiable, costs a
+     day, and tests the mechanism instead of fitting the answer — and if
+     one spring rate does not bring the thirteen inside, root flexibility
+     alone is not the cause and the project will have learned something an
+     FE blade would have hidden inside forty parameters.

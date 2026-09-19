@@ -52,6 +52,10 @@ def _pub():
     return yaml.safe_load((DATA / "e3-fps-published.yaml").read_text())
 
 
+def _y(name):
+    return yaml.safe_load((DATA / name).read_text())
+
+
 # ------------------------------------------------- criticals, from Table XXII
 
 def critical_speed_margins():
@@ -174,6 +178,72 @@ def blade_masses():
     return out
 
 
+def thrust_bearing_loads():
+    """The published thrust-bearing axial loads -- E4's restated second half.
+
+    E4 recorded in 2026-09-07 that "no bearing load and no bearing capacity
+    is printed anywhere". That was true of CR-168219 sec 5.7 and false of
+    the source list: CR-168211 Figs 340-341 print both thrust bearings'
+    axial load against corrected speed, on two axes, with the sign
+    convention stated in the text (finding 269).
+
+    The CAPACITY is still printed nowhere, and neither is a bearing bore,
+    so no margin against capacity is computed here and none is claimed.
+    What is computed is what the published load can be checked against.
+    """
+    d = _y("icls-thrust-bearing.yaml")
+    hp, lp = d["no3_hp_thrust_bearing"], d["no1_lp_thrust_bearing"]
+    return dict(
+        axis_closure_kN=d["axis_closure"]["worst_kN"],
+        hp_forward=hp["box_edge"]["load_kN"] > 0,
+        lp_aft=lp["box_edge"]["load_kN"] < 0,
+        hp_max_published_kN=hp["box_edge"]["load_kN"],
+        hp_max_published_at_pct=hp["box_edge"]["speed_pct_corrected_core"],
+        hp_flat_kN=hp["flat_region"]["load_kN"],
+        hp_flat_to_pct=hp["flat_region"]["speed_pct"][1],
+        lp_max_published_kN=lp["box_edge"]["load_kN"],
+        lp_max_published_at_pct=lp["box_edge"]["speed_pct_corrected_fan"],
+        lp_over_hp=abs(lp["box_edge"]["load_kN"]) / hp["box_edge"]["load_kN"],
+        capacity_published=False, bore_published=False)
+
+
+def is_the_thrust_bearing_load_centrifugal():
+    """Band stated before the run: if the No. 3 thrust bearing's load were a
+    centrifugal quantity it would scale as N^2, so between the top of its
+    flat region and the last published point it would rise by
+    (94.4/76)^2 = 1.54, within +-20 %.
+
+    E2's finding 78 says nothing in the HPT rotor scales as N^2 between its
+    limiting times; this asks the same question of a bearing.
+    """
+    t = thrust_bearing_loads()
+    n_ratio = (t["hp_max_published_at_pct"] / t["hp_flat_to_pct"]) ** 2
+    measured = t["hp_max_published_kN"] / t["hp_flat_kN"]
+    return dict(n_squared=n_ratio, measured=measured,
+                factor_out=measured / n_ratio,
+                centrifugal=abs(measured / n_ratio - 1) <= 0.20)
+
+
+def what_the_bearing_load_says_about_d6():
+    """The No. 3 bearing carries the residual of the HP rotor's axial terms,
+    so the published load PRICES the terms D6 cannot compute.
+
+    D6 has the gas-path annulus term for every rotating row and, since unit
+    E11 measured the HPC disc bore, the compressor drum's disc-face term.
+    It has neither the HPT disc faces nor the balance piston nor the CDP
+    seal cavities. Their sum is what is left over.
+    """
+    from thermal.thrust_balance import disc_face_force, net_hp_gas_load
+    bore_cm = 9.08          # E11's measured aft-family bore, findings 257-259
+    face = disc_face_force(bore_cm / 100)["forward_N"] / 1e3
+    gas = net_hp_gas_load()["net_forward_N"] / 1e3
+    known = face + gas
+    bearing = thrust_bearing_loads()["hp_max_published_kN"]
+    return dict(disc_face_kN=face, gas_path_kN=gas, known_sum_kN=known,
+                bearing_kN=bearing, unmodelled_kN=known - bearing,
+                bearing_as_pct_of_known=100 * bearing / known)
+
+
 def blade_out():
     """The load a released blade throws into the mounts is its own
     centrifugal load, m omega^2 r_cg. For the fan that is the case the
@@ -251,3 +321,27 @@ if __name__ == "__main__":
     for b in blade_out():
         print(f"   {b['blade']:<13}{b['basis']:<32}{b['rpm']:>7,}{b['mass_kg']:>8.3f}"
               f"{b['load_kN']:>9.0f}{b['tonnes']:>9.0f}")
+
+    t = thrust_bearing_loads()
+    print(f"\n7. Thrust-bearing axial load -- PUBLISHED, CR-168211 Figs 340-341")
+    print(f"   printed lb axis vs printed kN axis: {t['axis_closure_kN']:.3f} kN worst")
+    print(f"   No. 3 (HP):  flat at {t['hp_flat_kN']:+.1f} kN forward to "
+          f"{t['hp_flat_to_pct']:.0f} % Nc, then {t['hp_max_published_kN']:+.1f} kN "
+          f"at {t['hp_max_published_at_pct']:.1f} %")
+    print(f"   No. 1 (LP):  {t['lp_max_published_kN']:+.1f} kN aft at "
+          f"{t['lp_max_published_at_pct']:.1f} % Nf -- "
+          f"{t['lp_over_hp']:.1f}x the HP bearing and the other way")
+    print(f"   capacity published: {t['capacity_published']};  "
+          f"bore published: {t['bore_published']}")
+
+    c = is_the_thrust_bearing_load_centrifugal()
+    print(f"\n   is it a centrifugal load?  N^2 would give x{c['n_squared']:.2f}; "
+          f"measured x{c['measured']:.1f} -- a factor of {c['factor_out']:.1f} out")
+    print(f"   -> centrifugal: {c['centrifugal']}")
+
+    d = what_the_bearing_load_says_about_d6()
+    print(f"\n   what it prices: HP rotor disc faces {d['disc_face_kN']:+.0f} kN"
+          f" + gas path {d['gas_path_kN']:+.0f} kN = {d['known_sum_kN']:+.0f} kN known,")
+    print(f"   against a measured bearing load of {d['bearing_kN']:+.1f} kN, so the terms"
+          f" D6 cannot compute are worth {d['unmodelled_kN']:+.0f} kN")
+    print(f"   -- the bearing sees {d['bearing_as_pct_of_known']:.1f} % of what is known")

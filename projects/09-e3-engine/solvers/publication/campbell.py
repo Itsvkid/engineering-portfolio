@@ -102,6 +102,85 @@ def resolvability():
     )
 
 
+def e3_restated():
+    """E3's closure, restated 2026-09-19 against each reading's own
+    uncertainty instead of one flat 5 % band.
+
+    Finding 160 showed that on eleven of the twenty-four comparisons the
+    transcription cannot resolve 5 % at all, and on every one of the ten
+    first-flex modes it cannot: reading a 350 Hz line off a 0-6 kHz axis
+    to half a minor division is +-14 %. A band finer than the reading is
+    not a test.
+
+    The restated band is **max(5 %, that point's own reading uncertainty)**
+    -- never narrower than the 5 % the plan asked for, and widened only
+    where the figure itself cannot answer. That is a narrowing of the
+    CLAIM, not a widening of the tolerance: it removes the one excuse the
+    old wording left open and asks whether the miss survives it.
+
+    It does. 1 of 24 becomes 2 of 24, and the reason is arithmetic: on the
+    thirteen points where 5 % IS resolvable the mean error is far larger
+    than the mean uncertainty, so the reading cannot be the cause.
+    """
+    c = comparisons()
+    for r in c:
+        r["band_pct"] = max(CLOSURE_BAND_PCT, r["unc_pct"])
+        r["inside"] = abs(r["err_pct"]) <= r["band_pct"]
+    res = [r for r in c if r["resolvable"]]
+    return dict(
+        total=len(c),
+        inside_per_point_band=sum(1 for r in c if r["inside"]),
+        inside_flat_5pct=sum(1 for r in c
+                             if abs(r["err_pct"]) <= CLOSURE_BAND_PCT),
+        resolvable=len(res),
+        inside_among_resolvable=sum(1 for r in res
+                                    if abs(r["err_pct"]) <= CLOSURE_BAND_PCT),
+        mean_err_pct=sum(r["err_pct"] for r in c) / len(c),
+        mean_unc_pct=sum(r["unc_pct"] for r in c) / len(c),
+        mean_err_resolvable=sum(r["err_pct"] for r in res) / len(res),
+        mean_unc_resolvable=sum(r["unc_pct"] for r in res) / len(res),
+        reading_can_explain_the_miss=(
+            sum(r["err_pct"] for r in res) / len(res)
+            <= sum(r["unc_pct"] for r in res) / len(res)),
+        rows=c)
+
+
+def is_an_fe_blade_worth_building():
+    """The question E3's restatement raises, answered rather than assumed.
+
+    Three facts decide it:
+
+      1. The bias GROWS with mode number, which is the signature of a root
+         that is softer than a clamp (finding 144).
+      2. The only comparisons a 5 % band can resolve are 2F and 3F -- the
+         reading uncertainty is under 5 % only where the frequency is
+         high. All ten 1F points are unfalsifiable at 5 % and would still
+         be unfalsifiable against an FE blade.
+      3. An FE blade's value is in modelling the dovetail, and **the HPC
+         dovetail geometry is unpublished** (E5's restatement, finding
+         273). The root would have to be assumed, and the root is the
+         entire mechanism under test.
+
+    So: no. Building it would move thirteen points, using an assumed root,
+    against a published line whose own slope this project cannot explain
+    (finding 162). Named instead: a ONE-parameter root-flexibility spring,
+    calibrated on a single stage and PREDICTED on the other nine -- which
+    is falsifiable, costs a day, and tests the mechanism rather than
+    fitting the answer.
+    """
+    r = e3_restated()
+    t = mode_number_trend()
+    return dict(
+        recommend_fe_blade=False,
+        resolvable_points_it_could_move=r["resolvable"],
+        unfalsifiable_points_it_could_not=r["total"] - r["resolvable"],
+        bias_grows_with_mode=t,
+        blocked_on="HPC dovetail geometry is unpublished -- finding 273",
+        cheaper_falsifiable_alternative=(
+            "one root-flexibility spring rate, calibrated on one stage and "
+            "predicted on the other nine"))
+
+
 def mode_number_trend():
     """Does the over-prediction grow with mode number? Reported on the four
     stages that publish all three flexural modes, because the 3F sample is

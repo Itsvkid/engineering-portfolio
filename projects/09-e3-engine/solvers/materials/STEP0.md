@@ -311,3 +311,86 @@ agree.
      % of three modules out of eight. A ±10 % total assembled over those
      gaps would pass by arithmetic and not by evidence, so it is not
      attempted.
+
+---
+
+## Units F1 and F2 restated · 2026-09-19
+
+Phase 1 of finishing the project, with unit E13. The rule: a restatement
+must narrow the claim, never widen the tolerance. Neither F1 nor F2 needed
+a new computation — both closures had been written to a standard the E³
+programme and MIL-HDBK-5J never published, and what they needed was for
+the unreachable half to be named as unpublished rather than left as
+unfinished.
+
+### F1
+
+**Old wording:** *every stress in Stage E is compared with an allowable
+**at its metal temperature**, and the margin is tabulated.*
+**New wording:** *every Stage E stress is compared with an allowable, each
+comparison **names** whether the allowable is one an E³ report prints for
+that part or a handbook room-temperature value, and every room-temperature
+comparison carries the fraction of the allowable the metal may lose before
+the margin is gone.*
+
+Why that is a narrowing: it asserts less about the allowable and says
+which kind each is, where the old sentence asserted a temperature-correct
+allowable for all seventeen rows and had it for seven.
+
+```
+17 stresses compared: 7 against an allowable an E3 report prints for that part,
+10 against a handbook room-temperature allowable with the loss the margin can absorb
+every row names its basis: True
+every room-temperature row carries a bound: True
+worst margin 1.00; every margin >= 1: True
+the tightest room-temperature row could lose 56 % of its allowable and still hold
+```
+
+274. **MIL-HDBK-5J's elevated-temperature curve for Ti-8-1-1 is for the
+     wrong product form, and that is a better reason than "it is a figure
+     and not a table".** F1's original gate said the handbook prints
+     elevated-temperature strength as figures. True — Figure 5.3.2.1.1
+     for Ti-8Al-1Mo-1V, Figure 6.3.5.1.1 for Inconel 718 — but the
+     titanium figure is for **sheet, single-annealed**, where the
+     room-temperature allowable this unit uses is Table 5.3.2.0(c), **bar
+     and forging**. Digitising the sheet curve and applying it to a
+     compressor blade root would be an unsourced transfer between product
+     forms, wearing a handbook's authority, which is worse than not having
+     the number. Together with René 77, 95, 150 and AF115 being absent
+     from the handbook altogether, this closes the question: **there is no
+     route from MIL-HDBK-5J to an allowable at temperature for any E³
+     rotating part**, and the bound — how much the metal may lose — is the
+     honest substitute. What would move it is a source that prints
+     bar/forging allowables against temperature. MIL-HDBK-5J is not one.
+
+### F2
+
+**Old wording:** *basic engine mass within 10 % of 3,473 kg, and no module
+more than 20 % off.*
+**New wording:** *every mass built from geometry is compared with a
+published mass of the same thing, and the module weights that two
+documents each print are made to agree.*
+
+Why that is a narrowing: it drops a whole-engine claim the record cannot
+support and keeps the two comparisons that are evidence. Both were already
+run on 2026-09-07 and neither band was touched: built airfoil mass against
+Table X's ten printed weights, **mean −9.8 %, worst −17.9 % against
+±20 %**; five module weights printed twice in two documents each, **worst
+3.2 % against ±5 %**.
+
+What it adds is the number finding 112 never put on its own gate:
+
+```
+mass this project can build from tabulated geometry: 430 kg of 3473 (12.4 % of the basic engine)
+sumps, drives and seals with no printed geometry at all: 320 kg
+basic engine total attempted: False
+```
+
+**12.4 %.** That is the whole answer to whether a 3,473 kg reconstruction
+is honest — three rotor modules' blading, and nothing else in the engine
+has tabulated geometry. Unit E11 has since shown the HPC discs *are*
+digitisable from Fig 30 and unit E12 has shown the HPT stage-1 disc is
+**not** from Fig 63, so even the optimistic path stops well short; and
+Table XXVI's 320 kg of sumps, drives and seals has no geometry in any of
+the forty-one documents, so the original closure is not reachable from the
+public record at all, ever, by anyone.

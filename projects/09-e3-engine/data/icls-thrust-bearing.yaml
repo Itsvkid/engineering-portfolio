@@ -1,0 +1,109 @@
+# ─────────────────────────────────────────────────────────────────────────
+# ICLS MEASURED THRUST-BEARING AXIAL LOADS — CR-168211 Figs 340, 341 p.527-528
+#
+# Unit E4 (2026-09-07) recorded that "no bearing load and no bearing
+# capacity is printed anywhere".  That was a true statement about
+# CR-168219 sec 5.7 and a FALSE statement about the source list: the ICLS
+# report prints the "on line" calculation of both thrust bearings' axial
+# load against corrected speed, each on a pounds AND a kN axis, with the
+# sign convention stated in its own text.  Finding 269.
+#
+# The capacity is still printed nowhere, and neither is a bearing bore or
+# a DN, so no margin against capacity is computed here and none is claimed.
+# ─────────────────────────────────────────────────────────────────────────
+meta:
+  src: "CR-168211 sec 6.17.1 p.525 and Figs 340-341 pp.527-528 (PDF 552-553, ICLS offset +25)"
+  read: 2026-09-19
+  sign_convention: >
+    "Positive thrust is in the forward direction" -- CR-168211 p.525, in
+    the same paragraph that introduces both figures.  So the HP (No. 3)
+    thrust bearing is loaded FORWARD at every speed and the LP (No. 1)
+    thrust bearing is loaded AFT.
+  what_the_figures_are: >
+    p.525: "Figures 340 and 341 show the 'on line' calculation of the HP
+    (No. 3) and LP (No. 1) thrust bearing axial load.  Pretest predictions
+    of the axial loads were made by using computer techniques developed for
+    engine rotor thrust analysis.  As part of substantiating these
+    calculations, the bearing thrust loads were calculated for each DMS
+    reading using preprogrammed equations and actual test data.  Predicted
+    loads and loads calculated during the test corresponded very well."
+    So the symbols are per-reading values derived from measured pressures
+    and the line is the pretest prediction -- not a strain-gauged load.
+  reading_uncertainty: >
+    Box-edge crossings are measured numerically by
+    tools/read_icls_thrust_bearing.py and are sharp.  Intermediate points
+    are read at the LABELLED gridline VALUES and the SPEED is the quantity
+    read, because on a steep curve the speed is the better-posed direction;
+    +-1.5 % corrected speed, about half a minor division on the x axis.
+    Below 75 % (HP) and 35 % (LP) the curves are flat and the value is
+    quoted instead, at +- half a minor division of the y axis.
+  digitising_note: >
+    A per-column trace was attempted and abandoned.  Both figures overplot
+    dense clusters of individual test symbols ON the drawn curve in the
+    same ink weight, and over most of the width the curve is horizontal, so
+    the rightmost-thin-dark-run method that works on HPT Fig 5c picks
+    symbols instead of the line.  Finding 272.
+
+axis_closure:
+  # arithmetic on the printed axis labels; no reading at all
+  what: the printed kN axis against the printed pounds axis, both figures
+  worst_kN: 0.048
+  note: "11 printed label pairs; 1 lbf = 4.4482216 N, axis is pounds x 10^2"
+
+no3_hp_thrust_bearing:
+  figure: "Fig 340 p.527 -- HP Bearing (Number 3) Thrust Load Versus Percent Corrected Core Speed"
+  direction: forward at all speeds
+  flat_region:
+    speed_pct: [25, 75]
+    load_kN: 3.1
+    load_kN_uncertainty: 2.2
+  box_edge:
+    # measured, tools/read_icls_thrust_bearing.py
+    speed_pct_corrected_core: 94.4
+    load_lbf: 10000
+    load_kN: 44.5
+    measured_from_calibration_kN: 44.6
+  largest_plotted_symbol_kN: 39
+  note: >
+    Flat and small to about 76 % corrected core speed, then a near-vertical
+    rise: the curve crosses the top of its own plot at 94.4 %.  The figure
+    does not extend above 44.5 kN, so no value is published at 100 %.
+
+no1_lp_thrust_bearing:
+  figure: "Fig 341 p.528 -- LP Bearing (Number 1) Thrust Load Versus Percent Corrected Fan Speed"
+  direction: aft at all speeds above about 35 %
+  flat_region:
+    speed_pct: [0, 35]
+    load_kN: -0.5
+    load_kN_uncertainty: 4.4
+  gridline_crossings:
+    # value is the printed gridline; speed is what is read, +-1.5 %
+    - {load_kN: -22.2, load_lbf: -5000,  speed_pct_corrected_fan: 72}
+    - {load_kN: -40.0, load_lbf: -9000,  speed_pct_corrected_fan: 84}
+    - {load_kN: -57.8, load_lbf: -13000, speed_pct_corrected_fan: 89}
+    - {load_kN: -75.6, load_lbf: -17000, speed_pct_corrected_fan: 96}
+  box_edge:
+    speed_pct_corrected_fan: 98.3
+    load_lbf: -18600
+    load_kN: -82.8
+  largest_plotted_symbol_kN: -49
+
+not_published:
+  # checked across the whole source list, not only CR-168219 -- the rule in
+  # section 9 of the designer agent
+  quantities:
+    - bearing capacity, static or dynamic, for any of the five bearings
+    - bearing bore diameter for any of the five bearings
+    - "the DN of any bearing as a number (p.525 names DN only to say the No. 1 and No. 2 outer-race temperatures were representative of low DN bearings)"
+    - No. 2, No. 4 and No. 5 bearing radial loads
+  searched:
+    - CR-168219 sec 5.7 pp.96-100 (names all five bearings, their types,
+      sumps, seals and lubrication; no load, no size)
+    - CR-168211 sec 6.17 pp.525-535 (loads and outer-race temperatures)
+    - CR-168017 controls and accessories
+    - CR-135444 preliminary design
+    - e3-core-design-and-performance
+  what_is_published_instead:
+    max_allowable_outer_race_temperature_C: 204.4
+    src: "CR-168211 p.525 -- 'The maximum allowable outer race temperature of 204.4 C (400 F) was not exceeded at any test point'"
+    measured_max_outer_race_C: {no1: 126.1, no2: 85.0, no3: 152.2}

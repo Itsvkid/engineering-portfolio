@@ -172,3 +172,27 @@ def test_the_gated_hpc_dovetails_are_absent_rather_than_guessed():
     data = pathlib.Path(__file__).resolve().parents[1] / "data"
     hpc = yaml.safe_load((data / "hpc-mechanical.yaml").read_text())
     assert not [k for k in hpc if "dovetail" in k or "blade" in k]
+
+
+# --- E5's restatement, 2026-09-19 -----------------------------------------
+
+def test_the_hpc_dovetail_is_unpublished_not_unfinished():
+    """E5's old gate read as work not yet done. HPC report sec 3.2.3 is a
+    list of nine design criteria in words with no number in it, and the
+    table it points at prints the AIRFOIL root stress. Finding 273.
+
+    Asserted as an absence so no later reader quietly fills it in, and the
+    claim is about the source list rather than one report: five documents
+    are named as searched.
+    """
+    from mechanical.attachments import hpc_dovetail_is_unpublished
+    u = hpc_dovetail_is_unpublished()
+    assert u["unpublished"] is True
+    assert u["numbers_in_the_section"] == 0
+    assert len(u["criteria_as_printed"]) == 9
+    assert len(u["searched"]) >= 5
+    # the criteria that LOOK like they carry numbers, and do not
+    joined = " ".join(u["criteria_as_printed"])
+    assert "neck tensile and tang shear" in joined
+    assert "crush" in joined
+    assert "airfoil root stress" in u["what_table_x_prints"]

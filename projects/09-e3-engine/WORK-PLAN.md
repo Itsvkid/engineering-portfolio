@@ -359,6 +359,8 @@ Second finding: fan hub PR × HPC PR exceeds the printed OPR by 1.4–2.3 %
 — a booster-to-HPC transition loss the report never lists; the solver
 takes it from the OPR and records it (2.22 / 1.84 / 1.41 %).
 
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml` -- *two of the three ratings inside 1.5 %, with the third pinned and its cause tested*. The band does not move and the takeoff point stays a strict xfail. What is new is that the cause is now a test rather than a sentence: the misses sort by rating **day** and not by power, the two sharing ISA+10 agreeing to 0.1 point while the ISA+15 one is 1.35 points away and the *lowest*-power rating is the further of the two (finding 275). Rejected alternative: fan and turbine maps, which the E3 reports print neither of -- a rating closed on a generated map is not a closure.
+
 ## B4 · Station properties and the annulus · 8 h
 - [x] T, p, ṁ at every cycle station; ρ, c_x, Mach at every station a
       report gives a design Mach for — `solvers/e3cycle/stations.py`
@@ -1036,7 +1038,9 @@ Built to [METHOD.md](METHOD.md); step 0 named in the table there.
 *Closes when:* first three modes of every HPC stage within **5 %** of the
 published Campbell lines. **Evaluated 2026-09-08 and NOT met**: 1 of 24
 inside the band, mean +21.4 %. The gate was transcription and it is lifted;
-what remains is a modelling limit, named and measured (findings 143–145). What could be tested
+what remains is a modelling limit, named and measured (findings 143–145).
+
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml`, which carries the new wording, why it is a narrowing rather than a softening, and what would move it further. Restated per point against each reading's own uncertainty -- max(5 %, u), never narrower than 5 % -- because 11 of the 24 comparisons and ALL TEN first-flex modes cannot resolve 5 % (finding 160). The miss survives: 1 of 24 becomes 2 of 24, and on the 13 resolvable points the mean error is +24.4 % against a mean uncertainty of 2.2 %. An FE blade is NOT recommended and finding 277 says why. What could be tested
 was: the booster closes at −2.7 %, the fan and both HPC vanes bracket
 correctly, and two misses are recorded rather than tuned — the pinned-tip
 LPT blade reads 45 % high with the rigid clamp named as the cause
@@ -1079,6 +1083,8 @@ maximum speed as the worst margin. The thrust-bearing half is gated on
 bearing capacities the reports never print and on Stage D's thrust
 balance.
 
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml`, which carries the new wording, why it is a narrowing rather than a softening, and what would move it further. **That gate was half wrong.** CR-168211 Figs 340-341 print BOTH thrust bearings' axial load against corrected speed (finding 269); the capacity, and the bore a catalogue capacity would need, are printed nowhere, so the capacity clause is dropped rather than answered with an assumption.
+
 ## E5 · Attachments and joints · 10 h
 - [ ] HPC dovetails per HPC report §3.2.3 — **GATED**: `hpc-mechanical.yaml`
       has no blade block and no dovetail block at all; only Tables XV–XIX
@@ -1110,6 +1116,8 @@ order holds everywhere it can be checked, every attachment with a printed
 allowable has margin, and the one that does not — the manifold casing
 flange at its own 2× criterion — is recorded as a finding rather than
 smoothed over. The HPC dovetails are gated on transcription.
+
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml`, which carries the new wording, why it is a narrowing rather than a softening, and what would move it further. The HPC dovetail is **unpublished, not untranscribed**: HPC report sec 3.2.3 is nine design criteria in words with no number in it, and the table it points at prints the AIRFOIL root stress (finding 273). Checked across five documents.
 
 ---
 
@@ -1148,6 +1156,8 @@ have to lose over half of it before the worst reached the limit — a
 conclusion that survives the elevated-temperature gate even though the
 number behind it does not (finding 108).
 
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml`, which carries the new wording, why it is a narrowing rather than a softening, and what would move it further. The elevated-temperature gate is **permanent for this handbook**: MIL-HDBK-5J's Ti-8-1-1 temperature curve is for SHEET where its room-temperature table is bar and forging, so digitising it for a blade root would be an unsourced transfer between product forms (finding 274). The restated closure names each row's basis and carries the loss each room-temperature margin can absorb.
+
 ## F2 · Mass · 8 h
 - [x] Mass per blade from geometry and density — **unit F2**,
       `solvers/materials/mass.py`. **The first check of the C3 blading
@@ -1174,6 +1184,8 @@ the 320 kg of sumps, drives and seals has no printed geometry at all. What
 remains buildable is 22–52 % of three modules out of eight, so a total
 assembled over those gaps would pass the band by arithmetic rather than by
 evidence. Not attempted.
+
+> **RESTATED 2026-09-19 (phase 1).** The sentence above is kept as the record of what was promised; the closure this project now claims is in `data/closures.yaml`, which carries the new wording, why it is a narrowing rather than a softening, and what would move it further. The gate is now quantified: **12.4 % of the basic engine has tabulated geometry** -- 430 kg of blading out of 3,473. The restated closure keeps the two comparisons that are evidence (built airfoil mass against Table X, and the five module weights two documents each print) and drops the whole-engine total, which is not reachable from the public record at all.
 
 ---
 

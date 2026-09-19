@@ -157,3 +157,40 @@ def test_the_summary_reports_both_halves():
     assert "1 of 24" in s
     assert "11 of 24" in s
     assert "resonance crossings" in s
+
+
+# --- E3's restatement, 2026-09-19 -----------------------------------------
+
+def test_e3_restated_per_point_and_the_miss_survives():
+    """The band becomes max(5 %, that point's own reading uncertainty) --
+    never narrower than the plan asked, widened only where the figure
+    cannot answer. 1 of 24 becomes 2 of 24. Finding 276."""
+    from publication.campbell import e3_restated
+    r = e3_restated()
+    assert r["total"] == 24
+    assert r["inside_flat_5pct"] == 1
+    assert r["inside_per_point_band"] == 2
+    # every point's band is at least the plan's 5 %
+    assert all(row["band_pct"] >= 5.0 for row in r["rows"])
+
+
+def test_the_reading_uncertainty_cannot_explain_the_e3_miss():
+    """On the thirteen points where 5 % IS resolvable the mean error is an
+    order above the mean uncertainty, so the digitising is not the cause
+    and the model is."""
+    from publication.campbell import e3_restated
+    r = e3_restated()
+    assert r["reading_can_explain_the_miss"] is False
+    assert r["mean_err_resolvable"] > 5 * r["mean_unc_resolvable"]
+
+
+def test_an_fe_blade_is_not_recommended_and_the_reason_is_a_source_gap():
+    """Finding 277. An FE blade's value is its dovetail, and the HPC
+    dovetail geometry is unpublished, so its root would be assumed -- and
+    the root is the mechanism under test."""
+    from publication.campbell import is_an_fe_blade_worth_building
+    f = is_an_fe_blade_worth_building()
+    assert f["recommend_fe_blade"] is False
+    assert "unpublished" in f["blocked_on"]
+    assert f["bias_grows_with_mode"]["monotone"] is True
+    assert f["cheaper_falsifiable_alternative"]

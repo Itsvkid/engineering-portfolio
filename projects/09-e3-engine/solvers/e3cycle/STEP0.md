@@ -417,3 +417,40 @@ mass-weighted model, unchanged and still in the code, gives
 The takeoff column is the reminder that a mixer is a cruise device: the
 sfc gain is the gross-thrust gain multiplied by F_gross/F_net, which is
 about 2.5 at M 0.8 and exactly 1 at sea-level static.
+
+---
+
+## B3 restated · 2026-09-19
+
+Phase 1 of finishing the project. **Old wording:** *sfc at three ratings
+within 1.5 % of Table XII.* **New wording:** *sfc at two of the three
+Table XII ratings inside 1.5 %, with the third pinned and its cause
+tested.*
+
+Why that is a narrowing rather than a softening: the band does not move —
+1.5 % — and the takeoff point stays a **strict xfail** with its size
+pinned between 1.5 and 2.5 %. What the closure stops claiming is that
+three ratings will close; what it starts claiming is something the old
+wording never did, that the *cause* of the third is testable.
+
+Alternative considered and rejected: build fan and turbine maps and solve
+takeoff at constant thrust on the standard day. The E³ reports print
+neither a fan map nor a turbine map, so those maps would be generated
+rather than sourced, and a rating closed on a generated map is not a
+closure.
+
+275. **The three misses sort by rating DAY, not by power setting, and that
+     is falsifiable.** CR-168219 sec 4.4 p.33 flat-rates takeoff at ISA+15
+     and climb and cruise at ISA+10, and Table XII quotes T41 on the
+     flat-rating day and sfc on the standard day (finding 2). If that is
+     the cause, the two ratings sharing +10 °C must agree with each other
+     far better than either agrees with the +15 °C one. They do:
+     **+0.46 and +0.56 % against +1.91 %** — 0.1 point apart against
+     1.35, thirteen times further — and max cruise is the *lowest* power
+     of the three and the *furthest* of the two, so "it gets worse as
+     power rises" does not describe these numbers. Nothing was fitted to
+     make that hold, and a monotone-with-power ordering would have pointed
+     at the model instead. Now
+     `tests/test_e3cycle.py::test_the_misses_cluster_by_RATING_DAY_and_not_by_power`,
+     because a pinned size records *that* a model misses and says nothing
+     about *why*.

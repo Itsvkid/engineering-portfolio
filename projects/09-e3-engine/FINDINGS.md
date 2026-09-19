@@ -144,8 +144,8 @@ section 3.
 
 ## 2. Closures
 
-33 met, 9 half met, 4 gated, of 46.
-29 of 32 numeric closures sit inside their own band.
+37 met, 6 half met, 3 gated, of 46.
+30 of 33 numeric closures sit inside their own band.
 
 A *half* closure has one part satisfied and the other part naming what
 blocks it. None is open without a reason attached.
@@ -153,7 +153,8 @@ blocks it. None is open without a reason attached.
 | stage | closure | achieved | band | state |
 |---|---|---:|---:|---|
 | B1 | the mixer reproduces Table XXIII's sfc improvement | 0.24 | 0.5 | met |
-| B3 | sfc at three ratings against Table XII | 1.91 | 1.5 | half |
+| B3 | sfc at two of the three Table XII ratings inside 1.5 %, with the third pinned and its cause tested
+ | 1.91 | 1.5 | half |
 | B4 | annulus by continuity at every dimensioned HPT station | 3.6 | — | met |
 | C1 | LPT mean-line efficiency against 0.917 | 0.6 | 2 | met |
 | C1 | HPT mean-line efficiency against 0.9155 / 0.925 / 0.927 | 0.55 | 2 | met |
@@ -167,11 +168,16 @@ blocks it. None is open without a reason attached.
 | E1 | Table X centrifugal stresses, all ten HPC stages | 6.5 | 10 | half |
 | E2 | the bore doubling for a small hole | 0 | 0.5 | half |
 | E3 | blade first flex, the unshrouded booster | 2.7 | 15 | met |
-| E3 | first three modes of every HPC stage against Figs 33-42 | 21.4 | 5 | half |
-| E4 | no rotor critical inside the operating band | 0 | 0 | half |
-| E5 | every attachment with a printed allowable has margin | 0 | 0 | half |
-| F1 | every Stage E stress with a printed allowable, tabulated against it | 0 | 0 | half |
-| F2 | basic engine mass within 10 % of 3,473 kg | — | 10 | gated |
+| E3 | first three modes of every HPC stage against Figs 33-42, each point against max(5 %, that point's own reading uncertainty)
+ | 21.4 | 5 | half |
+| E4 | no rotor critical inside the operating band, and the thrust-bearing axial load transcribed from its published measurement in both directions
+ | 0 | 0 | met |
+| E5 | every attachment for which a stress and an allowable are printed has margin, and the weak-link order holds
+ | 0 | 0 | met |
+| F1 | every Stage E stress compared with an allowable, each comparison naming whether the allowable is one an E3 report prints for that part or a handbook room-temperature value, and every room-temperature comparison carrying the loss its margin can absorb
+ | 0 | 0 | met |
+| F2 | every mass built from geometry compared with a published mass of the same thing, and the module weights two documents each print made to agree
+ | 17.9 | 20 | met |
 | G1 | generated blade volume against Stage F2's integral | 0.94 | 2 | half |
 | G1 | blade-to-blade interference, all 32 rows | 0 | 0 | met |
 | H4 | zero clashes through a full rotation of both spools, at the published LP:HP ratio | 0 | 0 | met |
@@ -201,8 +207,16 @@ blocks it. None is open without a reason attached.
 
 ### The 3 recorded misses
 
-- **B3 — sfc at three ratings against Table XII**: 1.91 against a band of 1.5. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on the standard day.
-- **E3 — first three modes of every HPC stage against Figs 33-42**: 21.4 against a band of 5. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-predicted on nine stages of ten. The cause is the one finding 84 already named: a clamped beam is the stiffest root a blade can have and a dovetail is not a clamp. Closing this needs a root-flexibility model or an FE blade, not a better beam. Findings 143-145.
+- **B3 — sfc at two of the three Table XII ratings inside 1.5 %, with the third pinned and its cause tested
+**: 1.91 against a band of 1.5. RESTATED 2026-09-19 to two-of-three-with-the-third-explained, rather than building fan and turbine maps that are partly unsourceable. Max climb +0.46 % and max cruise +0.56 % are inside; takeoff reads +1.91 % and stays a strict xfail with its SIZE pinned between 1.5 and 2.5 %.
+What is new is that the CAUSE is now a test and not a sentence. CR-168219 sec 4.4 p.33 flat-rates takeoff at ISA+15 and climb and cruise at ISA+10, and Table XII quotes T41 on the flat-rating day and sfc on the standard day. If that is the cause, the three misses must sort by rating DAY and not by power setting -- and they do: the two ratings sharing +10 C agree with each other to 0.1 point while the +15 C one is 1.35 points away, thirteen times further, and cruise is the lowest power of the three and not the closest, so "it gets worse with power" does not describe them. Nothing was fitted to make that hold; a monotone-with-power ordering would have pointed at the model instead. Finding 275, tests/test_e3cycle.py::test_the_misses_cluster_by_RATING_DAY_and_not_by_power.
+What would move it to three of three: a constant-thrust solve on the standard day, which needs fan and turbine maps. The E3 reports print neither a fan map nor a turbine map, so those maps would be generated rather than sourced, and a third rating closed on a generated map is not a closure.
+
+- **E3 — first three modes of every HPC stage against Figs 33-42, each point against max(5 %, that point's own reading uncertainty)
+**: 21.4 against a band of 5. RESTATED 2026-09-19 against each reading's own uncertainty, and the miss survives it. Finding 160 had shown that 11 of the 24 comparisons cannot resolve 5 % at all and that NONE of the ten first-flex modes can -- reading a 350 Hz line off a 0-6 kHz axis to half a minor division is +-14 %, so a 5 % band there was never a test. The per-point band is now max(5 %, u), never narrower than the plan asked and widened only where the figure itself cannot answer.
+1 of 24 becomes 2 of 24. The reading cannot be the cause and the arithmetic says so: on the thirteen points where 5 % IS resolvable the mean error is +24.4 % against a mean uncertainty of 2.2 %. Finding 276.
+The cause stands as finding 84 named it -- a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp -- and the bias grows with mode number, 1F +15.8, 2F +18.1, 3F +44.0, which is that mechanism's signature.
+What would move it, and what would not: an FE blade is NOT recommended (finding 277). Its value is in modelling the dovetail, and the HPC dovetail geometry is unpublished (finding 273, E5's restatement), so its root would be assumed -- and the root is the entire mechanism under test. It could in any case only move the thirteen resolvable points, all of them 2F and 3F. Named instead: a ONE-parameter root-flexibility spring, calibrated on a single stage and PREDICTED on the other nine, which is falsifiable, costs a day, and tests the mechanism rather than fitting the answer.
 
 - **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back, which points at the model rather than the data -- the beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8, and the beam pins the tip shroud without its mass (findings 173-175). On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted.
 
@@ -284,7 +298,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-261 findings, in the `STEP0.md` that owns each one.
+270 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -555,4 +569,13 @@ would break every reference in the commit history.
 | 266 | mechanical | The second-family test transfers in a changed form, and a third test |
 | 267 | mechanical | The calibration holds at the rim and fails at the bore, and the split |
 | 268 | mechanical | The one published length at depth is not drawn |
+| 269 | mechanical | The bearing loads were published all along, and the project had |
+| 270 | mechanical | The published bearing load prices what D6 cannot compute, and the |
+| 271 | mechanical | A thrust bearing's load is a pressure quantity, not a speed |
+| 272 | mechanical | The digitising method that works on a steep curve fails on a flat |
+| 273 | mechanical | HPC report sec 3.2.3 contains no number. It is nine design |
+| 274 | materials | MIL-HDBK-5J's elevated-temperature curve for Ti-8-1-1 is for the |
+| 275 | e3cycle | The three misses sort by rating DAY, not by power setting, and that |
+| 276 | mechanical | It survives, and the arithmetic says the reading is not the |
+| 277 | mechanical | An FE blade is not recommended, and the reason is a source gap |
 

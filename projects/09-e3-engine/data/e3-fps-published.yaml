@@ -130,6 +130,12 @@ bearings:
   hp_bearing_count: 2     # "forward thrust bearing and aft intershaft roller" — p.96
   forward_sump: [1, 2, 3]
   aft_sump: [4, 5]
+  thrust_bearing_loads: >
+    MEASURED and published -- CR-168211 Figs 340-341 pp.527-528, transcribed
+    in data/icls-thrust-bearing.yaml. No. 3 (HP) forward, 44.5 kN at 94.4 %
+    corrected core speed; No. 1 (LP) aft, -82.8 kN at 98.3 % corrected fan
+    speed. No bearing CAPACITY, bore or DN is printed in any source; that
+    absence is recorded in the same file with the documents searched.
   pto: driven directly from the compressor stub shaft, radially out through the bottom front-frame strut
   sealing: labyrinth seals pressurised by fan discharge air, both sumps; vented through the LP fan shaft to the aft centre vent tube
   lubrication: jet or underrace; single supply element, separate scavenge elements per sump

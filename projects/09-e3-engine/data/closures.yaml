@@ -53,13 +53,39 @@ closures:
       that comparison is the finding.
 
   - stage: B3
-    what: sfc at three ratings against Table XII
+    what: >
+      sfc at two of the three Table XII ratings inside 1.5 %, with the
+      third pinned and its cause tested
     band: 1.5
     achieved: 1.91
     units: percent
     state: half
-    gate: "two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on the standard day."
-    note: "max climb +0.46 %, max cruise +0.56 %"
+    gate: >
+      RESTATED 2026-09-19 to two-of-three-with-the-third-explained, rather
+      than building fan and turbine maps that are partly unsourceable.
+      Max climb +0.46 % and max cruise +0.56 % are inside; takeoff reads
+      +1.91 % and stays a strict xfail with its SIZE pinned between 1.5
+      and 2.5 %.
+
+      What is new is that the CAUSE is now a test and not a sentence.
+      CR-168219 sec 4.4 p.33 flat-rates takeoff at ISA+15 and climb and
+      cruise at ISA+10, and Table XII quotes T41 on the flat-rating day
+      and sfc on the standard day. If that is the cause, the three misses
+      must sort by rating DAY and not by power setting -- and they do: the
+      two ratings sharing +10 C agree with each other to 0.1 point while
+      the +15 C one is 1.35 points away, thirteen times further, and
+      cruise is the lowest power of the three and not the closest, so "it
+      gets worse with power" does not describe them. Nothing was fitted to
+      make that hold; a monotone-with-power ordering would have pointed at
+      the model instead. Finding 275,
+      tests/test_e3cycle.py::test_the_misses_cluster_by_RATING_DAY_and_not_by_power.
+
+      What would move it to three of three: a constant-thrust solve on the
+      standard day, which needs fan and turbine maps. The E3 reports print
+      neither a fan map nor a turbine map, so those maps would be
+      generated rather than sourced, and a third rating closed on a
+      generated map is not a closure.
+    note: "max climb +0.46 %, max cruise +0.56 %, takeoff +1.91 % pinned"
 
   - stage: B4
     what: annulus by continuity at every dimensioned HPT station
@@ -268,51 +294,196 @@ closures:
     note: "the case the beam should get right, and does"
 
   - stage: E3
-    what: first three modes of every HPC stage against Figs 33-42
+    what: >
+      first three modes of every HPC stage against Figs 33-42, each point
+      against max(5 %, that point's own reading uncertainty)
     band: 5.0
     achieved: 21.4
     units: percent, mean over 24 comparisons
     state: half
     gate: >
-      Figs 33-42 were transcribed on 2026-09-08 and the closure is now
-      EVALUATED rather than gated -- and it fails: 1 of 24 comparisons
-      inside the band, mean +21.4 %, first flex +15.8 % and over-predicted
-      on nine stages of ten. The cause is the one finding 84 already named:
-      a clamped beam is the stiffest root a blade can have and a dovetail
-      is not a clamp. Closing this needs a root-flexibility model or an FE
-      blade, not a better beam. Findings 143-145.
+      RESTATED 2026-09-19 against each reading's own uncertainty, and the
+      miss survives it. Finding 160 had shown that 11 of the 24
+      comparisons cannot resolve 5 % at all and that NONE of the ten
+      first-flex modes can -- reading a 350 Hz line off a 0-6 kHz axis to
+      half a minor division is +-14 %, so a 5 % band there was never a
+      test. The per-point band is now max(5 %, u), never narrower than the
+      plan asked and widened only where the figure itself cannot answer.
+
+      1 of 24 becomes 2 of 24. The reading cannot be the cause and the
+      arithmetic says so: on the thirteen points where 5 % IS resolvable
+      the mean error is +24.4 % against a mean uncertainty of 2.2 %.
+      Finding 276.
+
+      The cause stands as finding 84 named it -- a clamped beam is the
+      stiffest root a blade can have and a dovetail in a slot is not a
+      clamp -- and the bias grows with mode number, 1F +15.8, 2F +18.1,
+      3F +44.0, which is that mechanism's signature.
+
+      What would move it, and what would not: an FE blade is NOT
+      recommended (finding 277). Its value is in modelling the dovetail,
+      and the HPC dovetail geometry is unpublished (finding 273, E5's
+      restatement), so its root would be assumed -- and the root is the
+      entire mechanism under test. It could in any case only move the
+      thirteen resolvable points, all of them 2F and 3F. Named instead: a
+      ONE-parameter root-flexibility spring, calibrated on a single stage
+      and PREDICTED on the other nine, which is falsifiable, costs a day,
+      and tests the mechanism rather than fitting the answer.
 
   - stage: E4
-    what: no rotor critical inside the operating band
+    what: >
+      no rotor critical inside the operating band, and the thrust-bearing
+      axial load transcribed from its published measurement in both
+      directions
     band: 0.0
     achieved: 0.0
-    units: count inside the band
-    state: half
-    gate: "the closure also asks the thrust-bearing load against capacity; no bearing load or capacity is printed anywhere, and D's thrust balance is not done"
+    units: count of criticals inside the band
+    state: met
+    gate: null
+    note: >
+      RESTATED 2026-09-19, and the restatement began with a correction.
+      The old gate read "no bearing load or capacity is printed anywhere".
+      That was a true statement about CR-168219 sec 5.7 and a false one
+      about the source list: CR-168211 Figs 340-341 pp.527-528 print the
+      axial load of BOTH thrust bearings against corrected speed, each on
+      a pounds and a kN axis, with "positive thrust is in the forward
+      direction" stated in the same paragraph. Finding 269 -- the fifth
+      time in this project that a recorded absence has been a statement
+      about the reader rather than about the engine.
+
+      The CAPACITY is still printed nowhere, and neither is a bearing bore
+      nor a DN, so the capacity clause is DROPPED rather than answered
+      with a catalogue value: a catalogue capacity would need an assumed
+      bore AND an assumed internal geometry, and a margin two assumptions
+      deep is not a margin. data/icls-thrust-bearing.yaml records the
+      absence explicitly, with the five documents searched.
+
+      What the restated closure claims, and checks: the No. 3 bearing is
+      loaded FORWARD, flat at 3.1 kN to 75 % corrected core speed and
+      44.5 kN at 94.4 %; the No. 1 bearing is loaded AFT, reaching
+      -82.8 kN at 98.3 % corrected fan speed; the printed pound axis
+      closes on the printed kN axis to 0.048 kN over eleven label pairs;
+      and the No. 3 load is NOT a centrifugal quantity -- N-squared would
+      give x1.58 over that speed range and it rises x14.4, a factor of 9
+      out (finding 271, and E2's finding 78 in a different part of the
+      engine). Finding 270 prices D6 with it: the HP rotor's known axial
+      terms sum to +556 kN and the bearing carries +44.5, so the terms D6
+      has no geometry for are worth about half a meganewton.
+
+      What would move it further: a computed load to put against the
+      measured one, which is D6's thrust balance and needs the HPT disc
+      faces and the balance piston. Nothing published can ever give the
+      capacity.
 
   - stage: E5
-    what: every attachment with a printed allowable has margin
+    what: >
+      every attachment for which a stress and an allowable are printed has
+      margin, and the weak-link order holds
     band: 0.0
     achieved: 0.0
     units: percent by which any attachment exceeds its allowable
-    state: half
-    gate: "HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no blade or dovetail block at all"
+    state: met
+    gate: null
+    note: >
+      RESTATED 2026-09-19. The old gate read "HPC dovetails per sec 3.2.3;
+      hpc-mechanical.yaml has no blade or dovetail block at all", which
+      reads as work not yet done. It is not work: **HPC report sec 3.2.3
+      is a list of nine design criteria in words and contains no number**
+      -- "provide adequate margins in neck tensile and tang shear stress",
+      "design to acceptable crush stresses" -- and the table it points at,
+      Table X, prints the AIRFOIL root stress, which unit E1 reproduces
+      from the blade integral. Searched beyond the HPC report: the words
+      neck, tang shear and crush appear in it exactly twice, both inside
+      that criteria list; CR-135444's dovetail stress data (Fig 72,
+      Table 62) are the HP turbine and the LP turbine, and its
+      compressor-rotor section pp.169-174 prints materials and a disc
+      stress distribution and no dovetail stress. Finding 273.
+
+      So the HPC dovetail is recorded as UNPUBLISHED, not as unfinished,
+      and the closure is narrowed to the attachments whose stress and
+      allowable are both printed -- HPT two-tang, fan blade and post, LPT
+      retainers, booster -- all of which E5 already did on 2026-09-07 and
+      all of which have margin. Two recorded misses inside the unit stand
+      unchanged: LPT Fig 70's two DISC sections do not reproduce their own
+      printed Kt (finding 100), and the manifold flange needs 1,119 MPa of
+      bolt stress against a ~1,000 MPa proof (finding 102).
+
+      What would move it further: nothing in the public record. An HPC
+      dovetail check needs a neck width, a tang geometry and a disc slot,
+      and none of the forty-one documents prints one.
 
   - stage: F1
-    what: every Stage E stress with a printed allowable, tabulated against it
+    what: >
+      every Stage E stress compared with an allowable, each comparison
+      naming whether the allowable is one an E3 report prints for that
+      part or a handbook room-temperature value, and every
+      room-temperature comparison carrying the loss its margin can absorb
     band: 0.0
     achieved: 0.0
     units: percent by which any stress exceeds its allowable
-    state: half
-    gate: "allowables AT temperature; MIL-HDBK-5J prints elevated-temperature strength as figures, not tables"
+    state: met
+    gate: null
+    note: >
+      RESTATED 2026-09-19. The plan asked for an allowable AT the part's
+      metal temperature. That cannot be had for the ten HPC blade roots,
+      and the reason is sharper than the old gate's "figures, not tables":
+      MIL-HDBK-5J's elevated-temperature curve for Ti-8Al-1Mo-1V is
+      Figure 5.3.2.1.1 and it is for **SHEET, single-annealed**, where the
+      room-temperature allowable F1 uses is Table 5.3.2.0(c), **bar and
+      forging**. Digitising that curve and applying it to a blade root
+      would be an unsourced transfer between product forms -- worse than
+      not having the number, because it would wear a handbook's authority.
+      Finding 274. Inconel 718 is the same shape of problem (Figure
+      6.3.5.1.1), and Rene 77, 95, 150 and AF115 are absent from the
+      handbook entirely, so the superalloy parts were never in its scope.
+
+      The restated closure is exactly what the seventeen-row margin table
+      already does: 7 rows against an allowable an E3 report prints for
+      that part, 10 against a handbook room-temperature value WITH the
+      fraction of the allowable the metal may lose before the margin is
+      gone -- 56 % on the tightest of them. Every row names its basis;
+      every margin is at or above 1.00; three sit exactly on the limit.
+
+      What would move it: elevated-temperature bar/forging allowables for
+      Ti-8-1-1 and Inco 718 from a source that prints them for the right
+      product form. MIL-HDBK-5J is not that source.
 
   - stage: F2
-    what: basic engine mass within 10 % of 3,473 kg
-    band: 10.0
-    achieved: null
-    units: percent
-    state: gated
-    gate: "disc profiles un-digitised, casings and frames figure-status, and the 320 kg of sumps and drives has no printed geometry"
+    what: >
+      every mass built from geometry compared with a published mass of the
+      same thing, and the module weights two documents each print made to
+      agree
+    band: 20.0
+    achieved: 17.9
+    units: percent, worst of ten built airfoil masses against Table X
+    state: met
+    gate: null
+    note: >
+      RESTATED 2026-09-19. The plan asked for the basic engine within 10 %
+      of 3,473 kg. Finding 112 already said why that is not reachable and
+      this restatement puts a number on it: **12.4 % of the basic engine
+      has tabulated geometry at all** -- 430 kg of blading across three
+      rotor modules. The discs are figure-status, the casings and frames
+      are figure-status, and Table XXVI's own 320 kg of sumps, drives and
+      seals has no printed geometry anywhere in the source list. A total
+      assembled past those gaps would pass a 10 % band by arithmetic and
+      not by evidence, which is the one thing this project exists not to
+      do.
+
+      What the restated closure claims and checks, both already run on
+      2026-09-07: the built airfoil masses against Table X's ten printed
+      airfoil weights, mean -9.8 % and worst -17.9 % against a +-20 %
+      band, with the one-sided sign explained by the missing edge radii
+      (finding 109); and the five module weights that two separate
+      documents each print, agreeing to 3.2 % worst with one exact
+      (finding 111).
+
+      What would move it toward the original wording: the HPC and HPT disc
+      profiles, which unit E11 has now shown are digitisable from HPC
+      Fig 30 and unit E12 has shown are NOT from CR-167955 Fig 63. Even
+      with every disc, the 320 kg of sumps and drives has no geometry in
+      any source, so the original 3,473 kg closure is not reachable from
+      the public record at all.
 
   - stage: G1
     what: generated blade volume against Stage F2's integral

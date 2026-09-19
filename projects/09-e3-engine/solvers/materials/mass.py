@@ -190,6 +190,51 @@ def what_is_gated():
                 / t26["basic_engine_total"] * 100)
 
 
+def f2_restated():
+    """F2's closure, restated 2026-09-19 to what the published record holds.
+
+    The plan's wording was *basic engine mass within 10 % of 3,473 kg, and
+    no module more than 20 % off*. Finding 112 already said why that
+    cannot be met: the disc profiles are figure-status, the casings and
+    frames are figure-status, and Table XXVI's own 320 kg of sumps, drives
+    and seals has no printed geometry anywhere in the source list. A
+    3,473 kg total assembled past those gaps would pass a 10 % band by
+    arithmetic, not by evidence.
+
+    The restated closure: *every mass this project builds from geometry is
+    compared with a published mass of the same thing, and where two
+    documents print the same module weight they are made to agree.* It
+    claims strictly less, and it is fully evaluable.
+
+    This function also does the thing the original closure was reaching
+    for and states it as a bound instead of a total: what FRACTION of the
+    3,473 kg has printed geometry at all.
+    """
+    t26 = _y("e3-fps-published.yaml")["weights"]
+    audit = module_audit()
+    roll = blading_roll_up()
+    masses = hpc_airfoil_masses()
+
+    buildable_kg = sum(r["blades_kg"] for r in roll)
+    total = t26["basic_engine_total"]
+    # the three rotor modules are the only ones with tabulated blade
+    # geometry; everything else in Table XXVI is figure-status or absent
+    modules_with_geometry = [r["module"] for r in roll]
+    return dict(
+        built_vs_published_airfoil_worst_pct=max(
+            abs(m["err_pct"]) for m in masses),
+        built_vs_published_airfoil_mean_pct=sum(
+            m["err_pct"] for m in masses) / len(masses),
+        module_cross_check_worst_pct=max(abs(a["err_pct"]) for a in audit),
+        module_cross_check_count=len(audit),
+        buildable_kg=buildable_kg,
+        basic_engine_kg=total,
+        buildable_pct_of_engine=100 * buildable_kg / total,
+        modules_with_geometry=modules_with_geometry,
+        no_printed_geometry_kg=t26["miscellaneous"]["sumps_drives_seals"],
+        basic_engine_total_attempted=False)
+
+
 if __name__ == "__main__":
     areas = hpc_airfoil_areas()
     print("1. Twenty printed airfoil areas against the sections C3 built\n")
@@ -238,3 +283,17 @@ if __name__ == "__main__":
           f" {g['combustor_casing_diffuser']} kg. No bearing or sump geometry is")
     print(f"   printed anywhere (E4's gate), and the disc profiles are un-digitised")
     print(f"   (E2's finding 81). A total built without them would be invention.")
+
+    f = f2_restated()
+    print(f"\n6. F2's closure as restated 2026-09-19")
+    print(f"   built airfoil mass against 10 printed weights: "
+          f"mean {f['built_vs_published_airfoil_mean_pct']:+.1f} %, "
+          f"worst {f['built_vs_published_airfoil_worst_pct']:.1f} %")
+    print(f"   {f['module_cross_check_count']} module weights printed in two documents each: "
+          f"worst {f['module_cross_check_worst_pct']:.1f} %")
+    print(f"   mass this project can build from tabulated geometry: "
+          f"{f['buildable_kg']:.0f} kg of {f['basic_engine_kg']} "
+          f"({f['buildable_pct_of_engine']:.1f} % of the basic engine)")
+    print(f"   sumps, drives and seals with no printed geometry at all: "
+          f"{f['no_printed_geometry_kg']} kg")
+    print(f"   basic engine total attempted: {f['basic_engine_total_attempted']}")

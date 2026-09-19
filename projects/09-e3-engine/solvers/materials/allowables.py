@@ -187,6 +187,57 @@ def stage_e_margins():
     return rows
 
 
+def f1_restated():
+    """F1's closure, restated 2026-09-19 to what the published record holds.
+
+    The plan's wording was *every stress in Stage E is compared with an
+    allowable AT ITS METAL TEMPERATURE*. That cannot be met for the ten
+    HPC blade roots, and the reason is sharper than the original gate:
+
+      * MIL-HDBK-5J prints elevated-temperature strength as FIGURES, not
+        tables -- Figure 5.3.2.1.1 for Ti-8Al-1Mo-1V and Figure 6.3.5.1.1
+        for Inconel 718; and
+      * the titanium figure is for SHEET, single-annealed, where the
+        room-temperature allowable F1 uses is Table 5.3.2.0(c), BAR and
+        forging. Digitising the sheet curve and applying it to a blade
+        root would be an unsourced transfer between product forms, which
+        is worse than not having the number (finding 274); and
+      * the handbook has no Rene 77, 95, 150 or AF115 at all, so the
+        superalloy parts were never in its scope.
+
+    The restated closure: *every Stage E stress is compared with an
+    allowable, each comparison NAMES whether the allowable is one an E3
+    report prints for that part at its own condition or a handbook
+    room-temperature value, and every room-temperature comparison carries
+    the fraction of the allowable the metal may lose before the margin is
+    gone.*
+
+    That claims strictly less than the plan did and is fully evaluable.
+    """
+    rows = stage_e_margins()
+    at_T = [r for r in rows if "AT temperature" in r["basis"]
+            or "LCF limit" in r["basis"] or "on the limit" in r["basis"]]
+    at_RT = [r for r in rows if "ROOM temperature" in r["basis"]]
+    return dict(
+        rows=len(rows),
+        e3_printed_allowable=len(at_T),
+        handbook_room_temperature_with_bound=len(at_RT),
+        every_row_has_a_basis=all(r["basis"] for r in rows),
+        every_room_row_has_a_bound=all(
+            0.0 < r["knockdown_to_fail"] < 1.0 for r in at_RT),
+        worst_margin=min(r["margin"] for r in rows),
+        every_margin_at_least_unity=min(r["margin"] for r in rows) >= 1.0,
+        worst_room_temperature_bound=1 - max(
+            r["knockdown_to_fail"] for r in at_RT),
+        superalloys_absent_from_the_handbook=[
+            "Rene 77", "Rene 95", "Rene 150", "AF115"],
+        elevated_temperature_is_a_figure=dict(
+            ti_8_1_1="MIL-HDBK-5J Figure 5.3.2.1.1 -- and it is SHEET, "
+                     "single-annealed, not the bar/forging the RT allowable "
+                     "comes from",
+            inco_718="MIL-HDBK-5J Figure 6.3.5.1.1"))
+
+
 if __name__ == "__main__":
     print("1. The density of every HPC blade, MEASURED from Table X's own")
     print("   airfoil weight and root area and Table XXII's section shapes\n")
@@ -226,3 +277,16 @@ if __name__ == "__main__":
         tc = f"{r['metal_C']}" if r["metal_C"] is not None else "-"
         print(f"   {r['part']:<28}{r['stress_MPa']:>9.0f}{tc:>6}{r['allowable_MPa']:>11.0f}"
               f"{r['margin']:>8.2f}{(1 - r['knockdown_to_fail']) * 100:>9.0f} %  {r['basis'][:44]}")
+
+    f = f1_restated()
+    print(f"\n4. F1's closure as restated 2026-09-19")
+    print(f"   {f['rows']} stresses compared: {f['e3_printed_allowable']} against an "
+          f"allowable an E3 report prints for that part,")
+    print(f"   {f['handbook_room_temperature_with_bound']} against a handbook room-temperature "
+          f"allowable with the loss the margin can absorb stated")
+    print(f"   every row names its basis: {f['every_row_has_a_basis']}")
+    print(f"   every room-temperature row carries a bound: {f['every_room_row_has_a_bound']}")
+    print(f"   worst margin {f['worst_margin']:.2f}; every margin >= 1: "
+          f"{f['every_margin_at_least_unity']}")
+    print(f"   the tightest room-temperature row could lose "
+          f"{f['worst_room_temperature_bound'] * 100:.0f} % of its allowable and still hold")

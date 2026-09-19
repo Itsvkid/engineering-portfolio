@@ -132,3 +132,35 @@ def test_no_allowable_at_temperature_is_invented():
     for r in MARGINS:
         if "MIL-HDBK" in r["basis"]:
             assert "ROOM temperature" in r["basis"]
+
+
+# --- F1's restatement, 2026-09-19 -----------------------------------------
+
+def test_f1_restated_every_comparison_names_its_basis():
+    """F1's closure restated to what the record holds: an allowable an E3
+    report prints for the part, or a handbook room-temperature value with
+    the loss the margin can absorb. Never silently one presented as the
+    other.
+    """
+    from materials.allowables import f1_restated
+    f = f1_restated()
+    assert f["rows"] == 17
+    assert f["e3_printed_allowable"] + f["handbook_room_temperature_with_bound"] \
+        == f["rows"]
+    assert f["every_row_has_a_basis"]
+    assert f["every_room_row_has_a_bound"]
+    assert f["every_margin_at_least_unity"]
+
+
+def test_the_handbook_cannot_give_an_allowable_at_temperature():
+    """Finding 274 -- and the reason is the product form, not the format.
+
+    MIL-HDBK-5J's elevated-temperature curve for Ti-8-1-1 is for SHEET
+    where its room-temperature table is bar and forging, so digitising it
+    for a blade root would be an unsourced transfer between product forms.
+    """
+    from materials.allowables import f1_restated
+    f = f1_restated()
+    assert "SHEET" in f["elevated_temperature_is_a_figure"]["ti_8_1_1"]
+    assert set(f["superalloys_absent_from_the_handbook"]) == {
+        "Rene 77", "Rene 95", "Rene 150", "AF115"}

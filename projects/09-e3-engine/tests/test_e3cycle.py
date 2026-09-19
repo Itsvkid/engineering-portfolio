@@ -7,6 +7,7 @@ import pathlib
 import sys
 
 import pytest
+import yaml
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "solvers"))
 from e3cycle import gas  # noqa: E402
@@ -55,6 +56,39 @@ def test_sfc_miss_is_pinned():
     """the size of the takeoff miss is recorded, so a change is noticed"""
     r = RESULTS["takeoff"]
     assert 0.015 < r.sfc_kg_N_h / r.sfc_published - 1 < 0.025
+
+
+def test_the_misses_cluster_by_RATING_DAY_and_not_by_power():
+    """B3's restatement, 2026-09-19: the pin is not enough on its own -- it
+    records the SIZE of the miss and says nothing about the CAUSE.
+
+    The cause claimed since Stage B is that Table XII is a mixed-day table:
+    CR-168219 sec 4.4 p.33 flat-rates takeoff at ISA+15 and climb and
+    cruise at ISA+10, and Table XII quotes T41 on the flat-rating day and
+    sfc on the standard day. If that is right, the misses must sort by
+    rating DAY, not by power setting -- the two ratings sharing +10 C must
+    agree with each other far better than either agrees with the +15 C one.
+
+    They do: +0.46 and +0.56 % against +1.91 %. This is falsifiable and
+    nothing was fitted to make it hold; had the miss risen monotonically
+    with power it would have pointed at the model instead. Finding 275.
+    """
+    pub = yaml.safe_load(
+        (pathlib.Path(__file__).resolve().parents[1]
+         / "data" / "e3-fps-published.yaml").read_text())["flat_rating"]
+    assert pub["takeoff_delta_isa_K"] != pub["climb_cruise_delta_isa_K"]
+
+    err = {k: RESULTS[k].sfc_kg_N_h / RESULTS[k].sfc_published - 1
+           for k in ("max_climb", "max_cruise", "takeoff")}
+    same_day = abs(err["max_climb"] - err["max_cruise"])
+    other_day = min(abs(err["takeoff"] - err[k])
+                    for k in ("max_climb", "max_cruise"))
+    # the two sharing a day agree an order of magnitude better
+    assert same_day < 0.002
+    assert other_day > 10 * same_day
+    # and it is not a power trend: cruise is the LOWEST power and not the
+    # closest, so "worse as power rises" does not describe these three
+    assert err["max_cruise"] > err["max_climb"]
 
 
 def _mixer_gain(eff, loss):

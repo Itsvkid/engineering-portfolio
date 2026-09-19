@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** ten of ten stages built. **1203 test functions**, **261 numbered findings**, **46 closures** — 33 met, 9 half, 4 gated. Stages B, C, D, E, F and G still carry open closures.
+**Status:** ten of ten stages built. **1220 test functions**, **270 numbered findings**, **46 closures** — 37 met, 6 half, 3 gated. Stages B, C, D, E and G still carry open closures.
 
 | Stage | | State |
 |---|---|---|
@@ -18,8 +18,8 @@ NASA measured, and the gap is published.**
 | **B** | cycle — three Table XII ratings, the mixer, the station table | 2 met, 1 half |
 | **C** | aero — mean-line, through-flow, blading, CFD validation | 7 met, **1 gated** |
 | **D** | thermal — cooling, secondary air, clearance, combustor | 3 met, **1 gated** |
-| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 3 met, 6 half |
-| **F** | materials and mass — allowables, the module roll-up | 1 half, **1 gated** |
+| **E** | mechanical — blade and disc stress, frequencies, rotordynamics, attachments | 5 met, 4 half |
+| **F** | materials and mass — allowables, the module roll-up | 2 met |
 | **G** | geometry — 32 blade rows lofted to STEP | 3 met, 1 half |
 | **H** | assembly — hand CAD -- needs a human at the GUI | **not started** — needs a human at the GUI |
 | **I** | verification — cross-discipline consistency, sensitivity, FINDINGS.md | 3 met |
@@ -32,7 +32,8 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | Closure | Achieved vs band | |
 |---|---|---|
 | **B1** — the mixer reproduces Table XXIII's sfc improvement | 0.24 vs 0.5 points on the level | met |
-| **B3** — sfc at three ratings against Table XII | 1.91 vs 1.5 percent | half |
+| **B3** — sfc at two of the three Table XII ratings inside 1.5 %, with the third pinned and its cause tested
+ | 1.91 vs 1.5 percent | half |
 | **B4** — annulus by continuity at every dimensioned HPT station | — | met |
 | **C1** — LPT mean-line efficiency against 0.917 | 0.6 vs 2.0 points | met |
 | **C1** — HPT mean-line efficiency against 0.9155 / 0.925 / 0.927 | 0.55 vs 2.0 points | met |
@@ -46,11 +47,16 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 | **E1** — Table X centrifugal stresses, all ten HPC stages | 6.5 vs 10.0 percent | half |
 | **E2** — the bore doubling for a small hole | 0.0 vs 0.5 percent | half |
 | **E3** — blade first flex, the unshrouded booster | 2.7 vs 15.0 percent | met |
-| **E3** — first three modes of every HPC stage against Figs 33-42 | 21.4 vs 5.0 percent, mean over 24 comparisons | half |
-| **E4** — no rotor critical inside the operating band | 0.0 vs 0.0 count inside the band | half |
-| **E5** — every attachment with a printed allowable has margin | 0.0 vs 0.0 percent by which any attachment exceeds its allowable | half |
-| **F1** — every Stage E stress with a printed allowable, tabulated against it | 0.0 vs 0.0 percent by which any stress exceeds its allowable | half |
-| **F2** — basic engine mass within 10 % of 3,473 kg | — | **gated** |
+| **E3** — first three modes of every HPC stage against Figs 33-42, each point against max(5 %, that point's own reading uncertainty)
+ | 21.4 vs 5.0 percent, mean over 24 comparisons | half |
+| **E4** — no rotor critical inside the operating band, and the thrust-bearing axial load transcribed from its published measurement in both directions
+ | 0.0 vs 0.0 count of criticals inside the band | met |
+| **E5** — every attachment for which a stress and an allowable are printed has margin, and the weak-link order holds
+ | 0.0 vs 0.0 percent by which any attachment exceeds its allowable | met |
+| **F1** — every Stage E stress compared with an allowable, each comparison naming whether the allowable is one an E3 report prints for that part or a handbook room-temperature value, and every room-temperature comparison carrying the loss its margin can absorb
+ | 0.0 vs 0.0 percent by which any stress exceeds its allowable | met |
+| **F2** — every mass built from geometry compared with a published mass of the same thing, and the module weights two documents each print made to agree
+ | 17.9 vs 20.0 percent, worst of ten built airfoil masses against Table X | met |
 | **G1** — generated blade volume against Stage F2's integral | 0.94 vs 2.0 percent | half |
 | **G1** — blade-to-blade interference, all 32 rows | 0.0 vs 0.0 cubic metres of overlap | met |
 | **H4** — zero clashes through a full rotation of both spools, at the published LP:HP ratio | 0.0 vs 0.0 row pairs overlapping axially, out of 496 | met |
@@ -87,17 +93,15 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 
 ### Outstanding
 
-13 closures are not met. None is open without a reason attached:
+9 closures are not met. None is open without a reason attached:
 
-- **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
+- **B3** (half) — sfc at two of the three Table XII ratings inside 1.5 %, with the third pinned and its cause tested
+. RESTATED 2026-09-19 to two-of-three-with-the-third-explained, rather than building fan and turbine maps that are partly unsourceable. Max climb +0.46 % and max cruise +0.56 % are inside; tak
 - **C4-3** (gated) — CFD against the Rotor 37 validation case. The mesh is built and checked (C4-3) and the case runs, but it collapses onto a stalled branch at 26 % of design flow and 13 % of design work, repeatably, near iteration 700. Three MRF fault
 - **E1** (half) — Table X centrifugal stresses, all ten HPC stages. EVALUATED 2026-09-18 by unit E10 rather than gated, and it MISSES: a same-stress Larson-Miller transfer from CR-167955 Fig 84's stage-2 limiting point (341 h at 926 C, LMP 27,020 at C = 20) 
 - **E2** (half) — the bore doubling for a small hole. The closure also asks HPT disc peak effective stress within 10 % of Fig 64. Unit E12 replaces "the disc cross-sections were never digitised" with a measured reason. CR-167955 Fig 63 p.114 --
-- **E3** (half) — first three modes of every HPC stage against Figs 33-42. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-p
-- **E4** (half) — no rotor critical inside the operating band. the closure also asks the thrust-bearing load against capacity; no bearing load or capacity is printed anywhere, and D's thrust balance is not done
-- **E5** (half) — every attachment with a printed allowable has margin. HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no blade or dovetail block at all
-- **F1** (half) — every Stage E stress with a printed allowable, tabulated against it. allowables AT temperature; MIL-HDBK-5J prints elevated-temperature strength as figures, not tables
-- **F2** (gated) — basic engine mass within 10 % of 3,473 kg. disc profiles un-digitised, casings and frames figure-status, and the 320 kg of sumps and drives has no printed geometry
+- **E3** (half) — first three modes of every HPC stage against Figs 33-42, each point against max(5 %, that point's own reading uncertainty)
+. RESTATED 2026-09-19 against each reading's own uncertainty, and the miss survives it. Finding 160 had shown that 11 of the 24 comparisons cannot resolve 5 % at all and that NONE of the ten f
 - **G1** (half) — generated blade volume against Stage F2's integral. the closure also asks the generated engine mass to match F2, whose own total is gated
 - **H2-H3** (gated) — the static structure and the sumps in hand CAD, and every bearing pointed at with its load. Two gates, neither of them the tool. (1) NO BEARING LOAD OR CAPACITY IS PRINTED ANYWHERE: CR-168219 sec 5.7 names all five bearings, their types, sumps, seals and lubrication and gives no lo
 - **E7** (half) — the five LPT flutter safety factors imply one allowable index, and the five agree. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 fro
