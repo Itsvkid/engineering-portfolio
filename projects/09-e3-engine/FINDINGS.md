@@ -284,7 +284,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-255 findings, in the `STEP0.md` that owns each one.
+261 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -549,4 +549,10 @@ would break every reference in the commit history.
 | 260 | mechanical | The per-disc sum and the telescoped form agree to 0.6 %, and the two |
 | 261 | mechanical | Three independent signatures put the rotor's one structural break at |
 | 262 | mechanical | Stage 1 has no bore, and that is why D6's forward face is still |
+| 263 | mechanical | Figure 63 has no anchor, and D6's gate says otherwise |
+| 264 | mechanical | The dovetail chain is not weak, it is singular |
+| 265 | mechanical | E11's rotation rule transfers, and gets stronger |
+| 266 | mechanical | The second-family test transfers in a changed form, and a third test |
+| 267 | mechanical | The calibration holds at the rim and fails at the bore, and the split |
+| 268 | mechanical | The one published length at depth is not drawn |
 

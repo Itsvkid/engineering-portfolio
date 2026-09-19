@@ -1678,3 +1678,210 @@ F2's own closure records that even with every disc digitised it would pass
 by arithmetic and not by evidence, because 320 kg of bearings, sumps and
 drives has no printed geometry at all. Step 0 said this unit reads the bore
 line and stops, and it stopped.
+
+## Unit E12 — can CR-167955's stage-1 disc be dimensioned? 2026-09-19
+
+E2 has been gated since 2026-09-07 on "the disc cross-sections were never
+digitised", and D6's new gate names the same figure as item 2: **CR-167955
+Figure 63 p.114, "Stage 1 Disk Finite-Element Model"**, described there as
+drawn "over a published HPT annulus". Unit E11 had just dimensioned the HPC
+rotor off an undimensioned figure by calibrating it against a published
+annulus, so this unit asks whether the same thing can be done here — and
+whether E11's four figure-reading rules survive a different report, a
+different draughtsman and a different scan.
+
+**This unit does not produce a disc profile, and that is its result.** It
+establishes what the page can and cannot be calibrated to, and stops there,
+because a profile carried on an unquantified scale is worse than none.
+
+### Bands, fixed before anything was measured
+
+| | band | outcome |
+|---|---|---|
+| C1 | the calibration fits its own published anchors to **≤0.15 cm rms** (E11 got 0.050 on twenty; a hand-traced assembly drawing gets 3×) | **0.050 cm — met** |
+| C2 | held-out family: fit on the blade tips, predict the platforms, **≤0.30 cm** | **not evaluable as stated** — see below |
+| C3 | two figures of the same engine agree on the scale to **≤5 %** | **not attempted** |
+| C4 | a published length at low radius confirms the scale to **≤10 %** | **not measurable** |
+| C5 | the implied 95 % interval on the stage-1 disc **bore** radius is **≤0.5 cm**, which is what a 10 % stress band needs | **failed — 0.80 to 1.17 cm** |
+
+### The E2 target, chosen before any stress was computed
+
+Figures 55 and 64 give the stage-1 disc bore at the same instant as 779 and
+1034 MPa, 33 % apart. **Figure 64 is the target**, for four reasons that are
+about the models and not about which is easier to hit:
+
+1. E2's own closure text already names Fig 64.
+2. Fig 64 is the FINITE/AFINE model **of the disc alone**; Fig 55 is
+   CLASS/MASS, a thin-shell model of the **whole rotor** in which this disc
+   is one of nineteen locations carrying its neighbours' boundary
+   conditions. A profile-derived disc solver is the same idealisation
+   family as Fig 64 and not as Fig 55.
+3. Fig 64 prints eight named locations on one disc at one instant.
+   `rotor_effective_stress`'s own transcription note records that one of
+   Fig 55's nineteen MPa/ksi triples does not convert; Fig 64 has no such
+   defect.
+4. **Figure 63 is the mesh of the model Figure 64 reports.** Read the
+   profile off Fig 63 and compare to Fig 64 and it is one analysis; compare
+   to Fig 55 and it is a disc model against a rotor model.
+
+The cost of that choice must be said, because it makes the target the
+*higher* number: unit E2's own finding is that **not one** of the nineteen
+Fig 55 locations scales as N² between the three limiting times, and the
+stage-1 bore peaks at 875 s rather than at maximum speed. A centrifugal
+disc solver has no thermal term, so a pass against 1034 MPa would need
+explaining rather than accepting, and neither figure separates the
+centrifugal part from the thermal one. E2 is therefore a comparison
+against a number that contains a term the model does not have — which is a
+reason to be careful, not a reason to prefer the other figure.
+
+### Findings
+
+263. **Figure 63 has no anchor, and D6's gate says otherwise**
+     Figure 63 carries no dimension, no centreline, no flowpath and no published
+     length. Its top edge is the **dovetail seat**, which sits below the flowpath
+     hub by a platform-and-shank height nobody prints. D6's gate item 2 describes
+     it as drawn "over a published HPT annulus"; **it is not** — that sentence
+     was written from E11's situation, not from the page. Unit E11's own gate
+     text is corrected here rather than inherited.
+
+     The two figures in CR-167955 that *are* drawn over the published annulus are
+     **Figure 50 p.87** ("E³ HPT Major Design Features", the whole turbine
+     including both disc bores) and **Figure 112 p.180** ("HP Turbine Rotor
+     Module Assembly"). Neither was named in any gate. Figure 112 is taken here
+     because it is the larger drawing at **86.7 px/cm at 600 dpi** — Figure 50
+     has to fit the casing and the CDP air pipe into the same page height, so it
+     is drawn smaller — and because its flowpath features are clean closed lines
+     where Figure 50's are crossed by leaders and labels. Figure 50's own scale
+     is not measured in this unit and is not quoted.
+
+264. **The dovetail chain is not weak, it is singular**
+     The proposed route was to scale Figure 64's magnified dovetail detail on
+     E5's printed neck widths (0.952 / 0.820 cm, finding 98) and transfer to the
+     whole-disc view. At any radius the blade, the post and the two gaps fill the
+     pitch, `w_blade + w_post + 2c = 2πr/76`, so measuring the post at the two
+     tang necks gives two equations for the scale *k* and the offset *r₀*.
+     Subtracting kills *r₀* and leaves
+
+         k · [ (p₁ − p₂) − 2π(y₁ − y₂)/76 ] = −(w₁ − w₂)
+
+     and the bracket is a difference of two quantities of the same size. Over a
+     tang separation of 1.0–2.0 cm the pitch grows **0.083–0.165 cm**; the
+     printed neck widths differ by **0.132 cm**. The determinant is the
+     difference of equals. Propagated: a **0.5 mm** error on the measured
+     post-width step — one line width on this scan — moves the derived scale by
+     **×0.73 to ×1.61**, and 1 mm by **×0.57 to ×4.12**.
+
+     The numbers the route needs are all published. It fails on conditioning, not
+     on availability, and it would have returned a confident wrong answer.
+     `tools/` carries no dovetail reader for that reason.
+
+265. **E11's rotation rule transfers, and gets stronger**
+     E11 found Figure 30 wanted one rotation rather than two scales, and **fitted**
+     the angle to the anchors. This page is a landscape sheet scanned askew and is
+     tilted about five times as far, so the angle can be taken from the **caption
+     text** — a measurement the anchors never see:
+
+     | | angle |
+     |---|---|
+     | caption baseline | **+2.044°** (1371 of 1697 columns, 2.40 px rms) |
+     | caption cap-height line | **+2.094°** |
+     | the two agree to | **0.050°** |
+     | what the four anchors would choose for themselves | **+2.590°** |
+
+     Imposing the caption's +2.069°, fitted to nothing, takes the calibration from
+     **0.249 cm rms to 0.050 cm — a factor of 4.9 — at the cost of no free
+     parameter**, and the scale barely moves (87.21 → 86.67 px/cm, 0.6 %). This is a
+     better test than Fig 30's, where the rotation was fitted and could only be
+     checked against isotropy.
+
+     And it separates two things that Fig 30 could not: the anchors want 2.590°
+     and the page is tilted 2.069°, so **about 0.52° of the apparent tilt is the
+     draughtsman and not the scanner**. That split is only visible because one of
+     the two was measured off the page's own type.
+
+266. **The second-family test transfers in a changed form, and a third test
+     appeared**
+     E11's rule is that the second family of points is what proves the first.
+     Here the literal test — fit the two blade tips, predict the two platforms —
+     is **degenerate**: two points against two parameters. C2 cannot be evaluated
+     as written, and the substitute below was chosen *after* seeing that, which is
+     recorded rather than presented as the plan.
+
+     The substitute is that **each blade's own tip-to-platform span gives the
+     scale on its own**, immune to however the draughtsman stacked the two stages:
+
+     | | drawn span | published span | scale |
+     |---|---|---|---|
+     | stage 1 | 357.2 px | 4.135 cm | **86.38 px/cm** |
+     | stage 2 | 599.2 px | 6.905 cm | **86.78 px/cm** |
+
+     **0.47 % apart**, on two blades whose spans differ by 67 %.
+
+     A third check turned up that nobody asked for and that is worth more than
+     either: **the platform's slope is itself published.** The hub falls 32.58 →
+     32.33 cm across the stage-1 blade and 31.22 → 31.12 across the stage-2 blade.
+     The de-rotated slope of the drawn platform gives **+0.284 cm against a
+     published 0.250** and **+0.066 against 0.100** — both within **0.034 cm**.
+     That is what establishes the line identified is the flowpath hub and not the
+     angel wing below it, and an early read that took the aft angel wing for the
+     platform was caught by exactly this.
+
+267. **The calibration holds at the rim and fails at the bore, and the split
+     is the answer**
+     With σ = 0.0713 cm on n = 4 and 2 degrees of freedom, over anchors spanning
+     31.17–38.07 cm:
+
+     | where | 95 % interval on r | as % of r |
+     |---|---|---|
+     | lowest anchor, 31.2 cm | ±0.24 cm | 0.8 % |
+     | **disc rim, ~30 cm** | **±0.29 cm** | **1.0 %** |
+     | mid web, 22 cm | ±0.70 cm | 3.2 % |
+     | **a bore at 13 cm** | **±1.17 cm** (jackknife ±0.80) | **9.0 %** |
+     | a bore at 10 cm | ±1.33 cm | 13.3 % |
+
+     This is E11's finding 258 again and worse: there the bore sat 64 % beyond a
+     15.6 cm fitted span with twenty points and came out at 0.27–0.61 cm; here it
+     sits about 260 % beyond a 6.9 cm span with four, and comes out at 0.80–1.17.
+
+     **The split is the useful part.** A rotating disc's bore hoop stress goes as
+     ρω²b² in the *rim* radius and depends on the bore radius only weakly — E2's
+     own finding is that the hole's size barely matters, only that there is one —
+     and the rim sits where this calibration is worth **1.0 % of r, so 2 % of a
+     stress**. So the figure is good enough for the term that dominates and not
+     for the one that does not. What it cannot do is fix the disc's radial
+     *extent*, and that is what a profile needs.
+
+268. **The one published length at depth is not drawn**
+     The interstage joint's 52 studs are printed at 0.953 cm and sit at r = 20.6 cm
+     on this calibration, below every flowpath anchor — exactly where an
+     extrapolated scale wants checking. The drawing shows the head and the nut and
+     **hides the shank inside the two flanges**: across the gap between them the
+     median dark run is **10 px** against the **82.6** a 0.953 cm shank would need,
+     and the few tall columns are the disc web crossing behind. C4 is not a miss,
+     it is not measurable, and the consequence is that **nothing independent
+     confirms the scale below the flowpath**.
+
+### Why this stops here
+
+Reading the profile off Figure 63 needs Fig 63's own scale and offset. The
+offset is transferable from Figure 112 at the post top, where this
+calibration is worth 1 % of r. The **scale** has only one candidate: the
+published dovetail axial chord, 3.45 cm, taken as the FE model's rim axial
+width. That is an assumption about what the rim width means, it is worth
+±20 % of a bore stress if it is 10 % wrong, and **the only quantity that
+could check it — the bore radius from Figure 112 — is itself ±9 %.** An
+assumption that cannot be checked by the one measurement available is not a
+calibration, and E2 stays gated with that as its reason instead of "never
+digitised".
+
+**Named next steps, in the order they are worth doing.** (1) Calibrate
+**Figure 50 p.87** the same way and compare — band C3, stated here and not
+attempted, and the only test that puts two independent drawings of the same
+engine against each other; Fig 50 also draws both disc bores in the same view
+as the flowpath, so it is a one-link read where Fig 63 is a two-link chain.
+(2) If the two agree, the bore interval narrows by combining them and the
+dovetail-chord assumption can be tested rather than assumed. (3) Only then
+Figure 63, and only for the shape.
+
+**Not attempted, deliberately**: any disc stress. No solver was run, so the
+target choice above was made on the models and not on the numbers.

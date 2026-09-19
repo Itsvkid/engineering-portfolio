@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** ten of ten stages built. **1189 test functions**, **255 numbered findings**, **46 closures** — 33 met, 9 half, 4 gated. Stages B, C, D, E, F and G still carry open closures.
+**Status:** ten of ten stages built. **1203 test functions**, **261 numbered findings**, **46 closures** — 33 met, 9 half, 4 gated. Stages B, C, D, E, F and G still carry open closures.
 
 | Stage | | State |
 |---|---|---|
@@ -92,7 +92,7 @@ Every solver states its tolerance in a `STEP0.md` **before** the run, and the to
 - **B3** (half) — sfc at three ratings against Table XII. two of three inside the band. Takeoff reads +1.91 % and is a strict xfail with its size pinned; the cause is recorded -- Table XII is a mixed-day table, T41 on the flat-rating day and sfc on
 - **C4-3** (gated) — CFD against the Rotor 37 validation case. The mesh is built and checked (C4-3) and the case runs, but it collapses onto a stalled branch at 26 % of design flow and 13 % of design work, repeatably, near iteration 700. Three MRF fault
 - **E1** (half) — Table X centrifugal stresses, all ten HPC stages. EVALUATED 2026-09-18 by unit E10 rather than gated, and it MISSES: a same-stress Larson-Miller transfer from CR-167955 Fig 84's stage-2 limiting point (341 h at 926 C, LMP 27,020 at C = 20) 
-- **E2** (half) — the bore doubling for a small hole. the closure also asks HPT disc peak effective stress within 10 % of Fig 64; the disc cross-sections were never digitised
+- **E2** (half) — the bore doubling for a small hole. The closure also asks HPT disc peak effective stress within 10 % of Fig 64. Unit E12 replaces "the disc cross-sections were never digitised" with a measured reason. CR-167955 Fig 63 p.114 --
 - **E3** (half) — first three modes of every HPC stage against Figs 33-42. Figs 33-42 were transcribed on 2026-09-08 and the closure is now EVALUATED rather than gated -- and it fails: 1 of 24 comparisons inside the band, mean +21.4 %, first flex +15.8 % and over-p
 - **E4** (half) — no rotor critical inside the operating band. the closure also asks the thrust-bearing load against capacity; no bearing load or capacity is printed anywhere, and D's thrust balance is not done
 - **E5** (half) — every attachment with a printed allowable has margin. HPC dovetails per sec 3.2.3; hpc-mechanical.yaml has no blade or dovetail block at all

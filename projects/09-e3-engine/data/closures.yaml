@@ -234,7 +234,30 @@ closures:
     achieved: 0.0
     units: percent
     state: half
-    gate: "the closure also asks HPT disc peak effective stress within 10 % of Fig 64; the disc cross-sections were never digitised"
+    gate: >
+      The closure also asks HPT disc peak effective stress within 10 % of
+      Fig 64. Unit E12 replaces "the disc cross-sections were never
+      digitised" with a measured reason. CR-167955 Fig 63 p.114 -- the
+      stage-1 disc FE mesh -- carries NO flowpath, NO dimension and NO
+      published length; its top edge is the dovetail seat, below the
+      flowpath hub by an unpublished platform-and-shank height (finding
+      263). The route through Fig 64's magnified dovetail detail and E5's
+      printed neck widths is SINGULAR, not merely weak: the determinant is
+      the pitch growth over the tang separation (0.083-0.165 cm) minus the
+      printed neck-width difference (0.132 cm), so a half-millimetre
+      reading error moves the scale by x0.73-1.61 (finding 264).
+      Fig 112 p.180 IS drawn over the published flowpath and calibrates to
+      0.050 cm rms on four anchors, which is worth 1.0 % of r at the disc
+      RIM -- E2's dominant term, since bore hoop stress goes as the rim
+      radius squared -- but only 9.0 % at a bore 18 cm below the anchors
+      (finding 267). Fig 63's own SCALE then has one candidate left, the
+      published 3.45 cm dovetail axial chord taken as the model's rim axial
+      width, and the only measurement that could check it is the +-9 % bore.
+      TARGET CHOSEN, before any stress was run: Fig 64, not Fig 55, because
+      Fig 63 is the mesh of the model Fig 64 reports. WHAT IS LEFT:
+      calibrate Fig 50 p.87 the same way (it draws both disc bores in the
+      same view as the flowpath, a one-link read), compare the two, and only
+      then read Fig 63 for shape.
 
   - stage: E3
     what: blade first flex, the unshrouded booster
@@ -736,9 +759,16 @@ closures:
       face -- stage 1 has no bore, its disc running into the integral stub
       shaft, whose inner radius the same figure draws undimensioned (finding
       262); (2) the HPT rotor's two disc faces, which carry the same term
-      with the opposite sign and which CR-167955 Fig 63 p.114 draws, also
-      undimensioned, over a published HPT annulus -- the same kind of
-      digitisation as E11 and not done; (3) the BALANCE PISTON, finding 191:
+      with the opposite sign. This item named CR-167955 Fig 63 p.114 as
+      "drawn over a published HPT annulus"; unit E12 checked the page and
+      IT IS NOT -- Fig 63 is an FE mesh with no flowpath, no dimension and
+      no published length on it (finding 263). The figures that are drawn
+      over the published annulus are Fig 50 p.87 and Fig 112 p.180, neither
+      previously named. Fig 112 calibrates to 0.050 cm rms and is worth
+      1.0 % of r at the disc rim but 9.0 % at a bore (finding 267), so the
+      disc FACES -- which are radial extents from bore to hub -- are the
+      part this calibration is worst at. Not done, and now for a measured
+      reason; (3) the BALANCE PISTON, finding 191:
       Figs 95-96 give the seal as hardware and never as a load, so no piston
       area, radius or cavity pressure exists to invert; (4) the
       thrust-bearing capacity, unit E4's standing gate. Items 1 and 2 are
