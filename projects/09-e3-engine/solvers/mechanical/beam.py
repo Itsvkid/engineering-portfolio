@@ -143,12 +143,35 @@ class Beam:
             M[np.ix_(d, d)] += me
         return K, M
 
-    def frequencies(self, n_modes=3, omega=0.0, pinned_at=None, tip_clamped=False):
+    def frequencies(self, n_modes=3, omega=0.0, pinned_at=None, tip_clamped=False,
+                    tip_mass=0.0, tip_rotary_inertia=0.0, tip_spring=None):
         """natural frequencies in Hz. `pinned_at` is a fraction of the
         length at which lateral motion is held (the LPT tip shroud, the
         fan part-span shroud); None is a free cantilever. `tip_clamped`
         also holds the rotation at the far end -- a vane banded at both
-        ends rather than cantilevered from the casing."""
+        ends rather than cantilevered from the casing.
+
+        The three tip terms are unit E7b's, and all three default to the
+        model E3 and E7 were built on, so nothing moves unless a caller
+        asks for it:
+
+        * `tip_mass` -- a lumped mass at the far end, for a tip shroud.
+          **Under `pinned_at = 1.0` this is exactly inert**: the pinned
+          dof is eliminated, so the mass has no displacement in any mode,
+          no kinetic energy, and no effect on any eigenvalue. That is not a
+          numerical smallness, it is the constraint (finding 292).
+        * `tip_rotary_inertia` -- the shroud's moment of inertia about the
+          pin, acting on the tip ROTATION dof, which is not constrained.
+          This is the only channel a tip mass has on a pinned beam.
+        * `tip_spring` -- a lateral stiffness at the far end, N/m, in place
+          of the pin. The rigid pin is this model's k -> infinity limit,
+          and a free tip is its k = 0 limit, so one parameter spans both
+          boundary conditions the reports name.
+        """
+        if tip_spring is not None and pinned_at is not None:
+            raise ValueError(
+                "pin the tip or spring it, not both -- a rigid pin is the "
+                "tip_spring -> infinity limit of the same model")
         K, M = self.assemble(omega)
         fixed = {0, 1}                                    # clamped root
         if pinned_at is not None:
@@ -156,6 +179,10 @@ class Beam:
             fixed.add(2 * node)                           # deflection only
         if tip_clamped:
             fixed.update({2 * self.ne, 2 * self.ne + 1})
+        if tip_spring is not None:
+            K[2 * self.ne, 2 * self.ne] += tip_spring
+        M[2 * self.ne, 2 * self.ne] += tip_mass
+        M[2 * self.ne + 1, 2 * self.ne + 1] += tip_rotary_inertia
         keep = [i for i in range(K.shape[0]) if i not in fixed]
         K, M = K[np.ix_(keep, keep)], M[np.ix_(keep, keep)]
         from scipy.linalg import eigh

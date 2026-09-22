@@ -219,7 +219,11 @@ What would move it to three of three: a constant-thrust solve on the standard da
 The cause stands as finding 84 named it -- a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp -- and the bias grows with mode number, 1F +15.8, 2F +18.1, 3F +44.0, which is that mechanism's signature.
 What would move it, and what would not: an FE blade is NOT recommended (finding 277). Its value is in modelling the dovetail, and the HPC dovetail geometry is unpublished (finding 273, E5's restatement), so its root would be assumed -- and the root is the entire mechanism under test. It could in any case only move the thirteen resolvable points, all of them 2F and 3F. Named instead: a ONE-parameter root-flexibility spring, calibrated on a single stage and PREDICTED on the other nine, which is falsifiable, costs a day, and tests the mechanism rather than fitting the answer.
 
-- **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back, which points at the model rather than the data -- the beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8, and the beam pins the tip shroud without its mass (findings 173-175). On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted.
+- **E7 — the five LPT flutter safety factors imply one allowable index, and the five agree**: 24.4 against a band of 15. NOT MET on the definition STEP0 named before the run (rotor relative exit velocity): the five implied allowables spread 1.61x, worst 24.4 percent. The beam's first-flex frequencies fall 6.1x across the five stages where Table XI implies about 3.8.
+The cause this gate used to name -- "the beam pins the tip shroud without its mass", to be fixed from Figs 64-66 pp.99-101 -- is WRONG, and unit E7b priced it rather than digitising it (findings 292-294). Under the pinned tip the model uses, a lumped mass at the pinned node is eliminated from the eigenproblem, so across shroud masses from 3.8 to 29.5 percent of the airfoil the departure moves 0.01 to 0.13 percentage points. At a FREE tip -- the softest interlock possible, so the most the mass could ever be worth -- it lands at 21.3 to 22.7 percent, WORSE than the 20.4 a free tip with no shroud at all gives. The shroud mass cannot close this at any interlock stiffness, and Figs 64-66 were not opened.
+What the measurement nominates instead is the interlock as a STIFFNESS: one elastic lateral restraint common to all five stages is worth 16.1 percentage points against the mass's 0.13, and at 4.0e6 N/m it would reach 8.3 percent. That value is a FIT -- one parameter chosen to minimise the departure it is asked to close, on five comparisons -- and it is not adopted. Two published routes to the same stiffness (the printed 0.767 cm overhang as a cantilever plate; Fig 66's own 10,490 Hz shroud section frequency) agree to 1.39x and are 13x and 19x STIFFER, and run as a per-stage prediction they leave the departure at 22.5 percent. So the variable is identified and its value is not derivable from printed geometry by a beam.
+What would move it, in order of measured worth: an interlock stiffness from a bladed-disc model with contact compliance (up to 16 pp); frequencies at speed and at temperature (6.3 pp together, and no more); and Table XI's own working, which is not printed. If GE's allowable index is a function of incidence or exit Mach, as flutter boundaries usually are, the premise of the check fails and the 24.4 percent is not a model error -- nothing in the public record distinguishes those two.
+On the INLET reading of Table XI's ambiguous "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent; reported, not adopted. On all FIVE stages the inlet reading is worse than the exit, 25.0 against 24.4.
 
 
 ---
@@ -299,7 +303,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-284 findings, in the `STEP0.md` that owns each one.
+291 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -593,4 +597,11 @@ would break every reference in the commit history.
 | 289 | mechanical | The middle of the HPT rotor does not cancel, and it is larger than |
 | 290 | mechanical | A correction to E12's platform-slope check: it compared unlike |
 | 291 | mechanical | Two gates in this project have now named the wrong variable, and |
+| 292 | mechanical | A lumped mass at a pinned node is exactly inert, and that is a |
+| 293 | mechanical | The property that makes a test survive a uniform bias is what makes |
+| 294 | mechanical | Finding 174's shape argument is refuted from both ends. It reasoned |
+| 295 | mechanical | The interlock is worth an order of magnitude more as a stiffness than |
+| 296 | mechanical | The fitted stiffness is not supported by the published record, and |
+| 297 | mechanical | With five stages every candidate is monotone in stage number, so no |
+| 298 | mechanical | A dict mutated inside a comprehension returns a plausible wrong |
 

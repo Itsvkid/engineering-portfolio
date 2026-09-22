@@ -795,17 +795,55 @@ closures:
     gate: >
       NOT MET on the definition STEP0 named before the run (rotor relative
       exit velocity): the five implied allowables spread 1.61x, worst
-      24.4 percent. The departure is MONOTONE, 39.7 to 63.8 front to back,
-      which points at the model rather than the data -- the beam's
-      first-flex frequencies fall 6.1x across the five stages where Table XI
-      implies about 3.8, and the beam pins the tip shroud without its mass
-      (findings 173-175). On the INLET reading of Table XI's ambiguous
-      "relative flow velocity", stages 1-4 agree to 4.2 percent and stage 5
-      departs 33 percent; reported, not adopted.
+      24.4 percent. The beam's first-flex frequencies fall 6.1x across the
+      five stages where Table XI implies about 3.8.
+
+      The cause this gate used to name -- "the beam pins the tip shroud
+      without its mass", to be fixed from Figs 64-66 pp.99-101 -- is WRONG,
+      and unit E7b priced it rather than digitising it (findings 292-294).
+      Under the pinned tip the model uses, a lumped mass at the pinned node
+      is eliminated from the eigenproblem, so across shroud masses from
+      3.8 to 29.5 percent of the airfoil the departure moves 0.01 to
+      0.13 percentage points. At a FREE tip -- the softest interlock
+      possible, so the most the mass could ever be worth -- it lands at
+      21.3 to 22.7 percent, WORSE than the 20.4 a free tip with no shroud at
+      all gives. The shroud mass cannot close this at any interlock
+      stiffness, and Figs 64-66 were not opened.
+
+      What the measurement nominates instead is the interlock as a
+      STIFFNESS: one elastic lateral restraint common to all five stages is
+      worth 16.1 percentage points against the mass's 0.13, and at
+      4.0e6 N/m it would reach 8.3 percent. That value is a FIT -- one
+      parameter chosen to minimise the departure it is asked to close, on
+      five comparisons -- and it is not adopted. Two published routes to the
+      same stiffness (the printed 0.767 cm overhang as a cantilever plate;
+      Fig 66's own 10,490 Hz shroud section frequency) agree to 1.39x and
+      are 13x and 19x STIFFER, and run as a per-stage prediction they leave
+      the departure at 22.5 percent. So the variable is identified and its
+      value is not derivable from printed geometry by a beam.
+
+      What would move it, in order of measured worth: an interlock stiffness
+      from a bladed-disc model with contact compliance (up to 16 pp);
+      frequencies at speed and at temperature (6.3 pp together, and no
+      more); and Table XI's own working, which is not printed. If GE's
+      allowable index is a function of incidence or exit Mach, as flutter
+      boundaries usually are, the premise of the check fails and the
+      24.4 percent is not a model error -- nothing in the public record
+      distinguishes those two.
+
+      On the INLET reading of Table XI's ambiguous "relative flow velocity",
+      stages 1-4 agree to 4.2 percent and stage 5 departs 33 percent;
+      reported, not adopted. On all FIVE stages the inlet reading is worse
+      than the exit, 25.0 against 24.4.
     note: >
       Torsion is not modelled: the beam gives flexural modes only. Table XI's
       torsional column is carried as published data and compared with
-      nothing.
+      nothing. With five stages every candidate variable is monotone in
+      stage number -- the implied allowable correlates at |r| >= 0.96 with
+      blade length, stage, loading and inlet relative Mach at once -- so no
+      correlation on this data can name a mechanism, and the interlock
+      stiffness is nominated on a measured elasticity and a named physical
+      channel rather than on a fit (finding 297).
 
   - stage: E8
     what: uncorrected root gas bending on all five LPT stages, from the C1 mean-line loads and the transcribed root sections

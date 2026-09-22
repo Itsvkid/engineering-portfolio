@@ -110,9 +110,18 @@ class BladeModel:
                     lambda s: self.rho * _interp(s, self.x, self.area),
                     self.hub_radius_m, elements)
 
-    def modes(self, stiff=False, rpm=0.0, n=3, tip_clamped=False):
+    def modes(self, stiff=False, rpm=0.0, n=3, tip_clamped=False,
+              tip_mass=0.0, tip_rotary_inertia=0.0, tip_spring=None):
+        """`stiff` selects the BEAM AXIS (the root's weak axis rather than
+        each section's own), not a stiffening flag -- finding 161. The three
+        tip terms are unit E7b's and default to no change; `tip_spring`
+        replaces the pin, so it is passed with `pinned_at` suppressed."""
         omega = rpm * 2 * math.pi / 60
-        return self.beam(stiff).frequencies(n, omega, self.pinned_at, tip_clamped)
+        pin = None if tip_spring is not None else self.pinned_at
+        return self.beam(stiff).frequencies(
+            n, omega, pin, tip_clamped,
+            tip_mass=tip_mass, tip_rotary_inertia=tip_rotary_inertia,
+            tip_spring=tip_spring)
 
     def bracket(self, rpm=0.0, n=3):
         return self.modes(False, rpm, n), self.modes(True, rpm, n)

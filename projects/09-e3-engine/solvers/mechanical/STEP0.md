@@ -2470,3 +2470,197 @@ of E2 and 2.4 % of D6). That split is the whole result: after four units on
 three figures, the disc cross-section is still not dimensioned, and the two
 things that would move E2 — a traced profile and a stated speed — are one
 judgement and one re-read, not one more calibration.
+
+---
+
+## Unit E7b — pricing the variable E7's gate names · step 0, 2026-09-22
+
+E7 is half, and **NOT MET at 24.40 % against a 15 % band**. Its gate names
+one cause and one piece of work: *"the beam pins the tip shroud without its
+mass"*, to be fixed by digitising the shroud geometry from **LPT hardware
+report Figs 64–66, pp.99–101**.
+
+Finding 291's rule, written four days ago and already paid twice: **before
+opening a figure to close a gate, write the elasticity of the answer to the
+thing the gate names.** This unit is that pricing and nothing else. The E7
+closure above is not touched.
+
+### Estimate, before the run
+
+The beam pins the tip — `pinned_at = 1.0`, which is Fig 62's own title. A
+lumped mass at a pinned node has zero displacement in every mode, therefore
+zero kinetic energy, therefore **no effect on any eigenvalue**. The only
+channel a tip mass has left is the shroud's rotary inertia about the pin,
+acting on the tip *rotation* dof, which is free: of order
+(m_s/m_b)(e/L)² ≈ 0.15 × (0.005/0.07)² ≈ 8 × 10⁻⁴, i.e. under 0.1 % of
+frequency. And the screen runs at rpm = 0, so the shroud's
+centrifugal-stiffening channel is not in the path either.
+
+**Predicted: the full shroud mass is worth under 0.5 pp of the 24.4.**
+
+### Bands, stated before any number was computed
+
+| | |
+|---|---|
+| **P1** the gate test | full plausible shroud mass on the beam at the **pinned** tip. Moves the worst departure **< 1.5 pp** ⇒ the gate is misnamed and Figs 64–66 are not opened |
+| **P2** the bound | the same mass on a **free** tip — the softest interlock physically possible, so the most the mass could *ever* be worth. Worst departure still above 15 % ⇒ the shroud mass cannot close E7 at **any** interlock stiffness |
+| **P3** what it is instead | at least four other candidates priced on the same footing. A variable is "the" variable only if a plausible change is worth **≥ 10 pp** |
+| E7's own band | **unchanged at 15 %**. Nothing widened, nothing adopted |
+
+### What made the pricing possible without opening the figure
+
+`lpt-design.yaml: tip_shrouds` is cited to *"sec 4.2.1 p.97; Figs.64–66
+pp.99–101"* and E7's gate said it carries no mass, thickness or area. It
+carries more than that: the **overhang length is printed for stages 1–3**
+(0.767, 1.010, 0.988 cm), the **stage-1 shroud thickness is printed**
+(0.270 and 0.292 cm, Fig 66), and so are five interlock surface areas, five
+contact stresses and **four shroud section frequencies** (10,490 to
+15,800 Hz). Thickness × overhang × the pitch at the tip is a mass. Three
+sizes are priced: the printed overhang (the smallest defensible shroud), the
+full platform (tip chord × thickness × pitch plus two seal teeth), and 1.5 ×
+that.
+
+### Result — E7b
+
+| | |
+|---|---|
+| Shroud mass, three sizes | **4.0–9.1 g** (printed overhang) to **25–52 g** (generous) — **3.8 % to 29.5 % of the airfoil** |
+| **P1** pinned tip, as modelled | **−0.01 to −0.13 pp** of the 24.40 against a 1.5 pp band — **THE GATE IS MISNAMED** |
+| **P2** free tip, the upper bound | frequencies fall **22–35 %** and the departure lands at **21.26–22.68 %**, against 20.36 % for a free tip with **no** shroud at all — **the shroud mass cannot close E7, and at the softest boundary condition it moves the closure the wrong way** |
+| **P3** the variable, measured | **the interlock STIFFNESS, worth −16.09 pp** where the interlock mass is worth −0.13 |
+| E7 | **stays NOT MET at 24.40 %.** Nothing adopted |
+
+The P3 table, every candidate on the same footing, percentage points moved
+on the 24.40:
+
+| variable | pp |
+|---|---|
+| shroud mass, pinned tip (as modelled) | **−0.13** |
+| shroud mass, free tip (the upper bound) | −1.72 |
+| velocity station: inlet, **all five** stages | +0.59 |
+| half chord = pitch / root / tip rather than the root–tip mean | +0.17 / +6.28 / −2.81 |
+| second flexural mode rather than the first | −0.76 |
+| centrifugal stiffening at 3,707 rpm | −3.68 |
+| modulus at bulk metal temperature (estimated E(T)) | −2.92 |
+| the two right-signed physical terms together | −6.29 |
+| **elastic interlock stiffness, one value for all five (FITTED)** | **−16.09** |
+| interlock stiffness **predicted** from the printed overhang | −1.95 |
+
+### Findings
+
+292. **A lumped mass at a pinned node is exactly inert, and that is a
+     constraint rather than a smallness.** E7's gate has named the tip-shroud
+     mass as its missing term since 2026-09-09, and under the boundary
+     condition the model actually uses — `pinned_at = 1.0`, which is the
+     title of the report's own Fig 62 — the pinned dof is eliminated from
+     the eigenproblem, so a mass sitting on it has no displacement in any
+     mode, no kinetic energy, and no effect on any frequency. Measured
+     across three shroud sizes spanning 3.8 % to **29.5 %** of the airfoil
+     mass, the worst departure moves **0.01 to 0.13 pp** of a 24.40 % miss —
+     the whole of it through the shroud's rotary inertia about the pin, the
+     one channel left open. The pre-run estimate said under 0.5 pp and the
+     mechanism it gave was the right one. **Figs 64–66 were not opened, and
+     a day of digitising would have bought 0.13 pp.** Third gate in this
+     project to name the wrong variable, after E2's disc bore (0.4 %) and
+     D6's calibration (2.4 %), and the first where the arithmetic is not
+     even arithmetic — it is which dofs are in the matrix.
+293. **The property that makes a test survive a uniform bias is what makes
+     it blind to the fix proposed for it — and both were written in the same
+     unit.** E7's step 0 argued, correctly and as its central design
+     decision, that `SF_published × I_computed` is blind to a *uniform*
+     frequency error and sensitive only to a stage-to-stage one (finding
+     175). A tip mass on five geometrically similar blades **is** very
+     nearly a uniform error: the shroud-to-airfoil mass ratio comes out
+     13.9–18.6 % on the full platform and 3.8–5.0 % on the printed overhang,
+     essentially flat, because a shroud scales with pitch and chord exactly
+     as the airfoil does. So at a free tip the full platform drops every
+     frequency by 22–26 % — an enormous absolute change — and moves the
+     closure **1.95 pp**. The diagnosis in finding 174 and the test design in
+     finding 175 are two paragraphs of one step 0 and they were never
+     checked against each other. **When a test is deliberately made blind to
+     a class of error, check that the cause you then name is not in that
+     class.**
+294. **Finding 174's shape argument is refuted from both ends.** It reasoned
+     that a shroud's mass matters more on the long aft blades, which is the
+     right shape for a departure that runs monotone 39.7 → 63.8 front to
+     back. Measured, the free-tip frequency shift is **−26.3, −23.5, −22.4,
+     −25.3, −26.0 %** — not monotone, and **largest on stage 1, the
+     shortest blade**. And the sign is wrong as well as the shape: a free
+     tip with **no** shroud gives 20.36 % and every shroud mass added to it
+     gives 21.26 to 22.68, so **at the softest boundary condition the shroud
+     mass moves the closure away from its band.** The reasoning was
+     plausible, the arithmetic was never done, and the finding stood for
+     thirteen days.
+295. **The interlock is worth an order of magnitude more as a stiffness than
+     as a mass, which is finding 228 recurring where finding 228 said it
+     would not.** Replacing the rigid pin with one elastic lateral
+     restraint — a single value common to all five stages, k as the pin's
+     k → ∞ limit and a free tip as its k = 0 limit — takes the worst
+     departure from 24.40 % to **8.32 % at k = 4.0 × 10⁶ N/m**, inside the
+     15 % band over a factor of **2.5** in k. Against the mass's 0.13 pp
+     that is **124×**. Finding 228 measured the same ratio on the fan's
+     part-span shroud — restraint ×2.02, mass −1 %, about 90:1 — and said
+     explicitly that *"on a long LPT blade with an interlocked tip shroud
+     the balance is the other way and the mass is the missing term."*
+     **That sentence is wrong and this is the measurement that says so.**
+     The restraint beats the mass at both kinds of shroud, and on the tip
+     shroud by more.
+296. **The fitted stiffness is not supported by the published record, and
+     two printed routes say so independently.** k = 4.0 × 10⁶ N/m is a
+     **fit**: one parameter swept over three decades and chosen to minimise
+     the very departure it is asked to close, on five comparisons. Two
+     routes to the same stiffness from printed numbers, neither fitted to
+     anything: the overhang as a cantilever plate, 3EI/L³ on the printed
+     0.767 cm and 0.27 cm, gives **5.3 × 10⁷ N/m**; Fig 66's own lowest
+     shroud section frequency, 10,490 Hz, with the shroud's mass gives
+     **7.4 × 10⁷**. They agree to **1.39×** and are **13× and 19× stiffer**
+     than the fit. Run per stage as a prediction rather than a fit, the
+     printed stiffnesses (2.1–5.3 × 10⁷ N/m) leave the departure at
+     **22.45 %**, indistinguishable from the free-tip bound — because at
+     that stiffness the interlock is a pin. So the right *variable* is
+     identified and its right *value* is not derivable from the printed
+     geometry by a cantilever-overhang model; what is missing is contact
+     compliance and the neighbouring blade's own deflection, and the printed
+     contact stresses of **8.3–14.3 MPa** say the interlock is barely
+     loaded. **E7 is not closed and the fitted stiffness is not adopted.**
+297. **With five stages every candidate is monotone in stage number, so no
+     correlation on this data can name a mechanism.** The implied allowable
+     correlates with blade length at r = **+0.976**, stage number +0.986,
+     stage loading ψ **−0.966** and inlet relative Mach **−0.963**, all at
+     once, and r(stage, blade length) = **+0.999**. Four mechanisms, one
+     degree of freedom. The interlock stiffness is nominated on a **measured
+     elasticity and a named physical channel**, not because it fits best —
+     and that distinction is the only thing separating this unit's
+     conclusion from curve-fitting five points.
+298. **A dict mutated inside a comprehension returns a plausible wrong
+     number.** The P3 helper popped `rpm` out of its kwargs *inside* the
+     list comprehension, so stage 1 ran at 3,707 rpm and stages 2–5 silently
+     ran at zero. The centrifugal row printed **+0.07 pp** where the answer
+     is **−3.68**, with the right sign for a small effect and no error
+     anywhere. It was caught only because a scratch calculation done before
+     the solver existed had already returned −3.68 and the two disagreed.
+     **The value of computing the answer twice is not the second answer, it
+     is that the two must agree.**
+
+### What is left, and what would move E7
+
+Not the shroud mass, and not Figs 64–66. Three things, in order of what the
+measurement says they are worth:
+
+1. **An interlock stiffness derived rather than fitted** — worth up to
+   16 pp. It needs the interlock's *contact* compliance and the
+   ring-coupling of 110–156 blades, which is a bladed-disc model, not a
+   beam. `coupled_blade_disk_stage1` is transcribed and is the place to
+   start; it is one stage, so it would calibrate and not predict.
+2. **The frequencies at speed and at temperature** — the two physically
+   right-signed terms, together worth 6.3 pp and no more. Both are cheap and
+   neither closes anything on its own. The E(T) curve is an estimate and
+   MIL-HDBK-5J carries no René 77 (finding 274), so it would stay an
+   estimate.
+3. **Table XI's own working** — which station the relative velocity is taken
+   at (finding 173) and whether the allowable is one number at all. It is
+   not printed. If GE's allowable index is a function of incidence or exit
+   Mach, as flutter boundaries usually are, the premise of the whole check
+   fails and the 24.40 % is not a model error at all. **Nothing in the
+   public record distinguishes that from a model error**, and it is the
+   reason E7 should stay half rather than be worked further.
