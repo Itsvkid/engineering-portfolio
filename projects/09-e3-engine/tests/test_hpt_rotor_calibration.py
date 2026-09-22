@@ -111,10 +111,57 @@ def test_each_blade_gives_the_scale_on_its_own_and_they_agree():
     assert r > 1.5
 
 
-def test_the_drawn_platform_slope_matches_the_published_hub_fall():
-    """what proves the line found is the flowpath hub and not the angel wing"""
+def test_the_drawn_platform_slope_has_the_published_sign_on_both_blades():
+    """**This is what E12's third check actually established**, and it
+    survives finding 290 intact: the drawn platform falls outward-to-inward
+    in the published sense on both blades, and by the published order of
+    magnitude, which is what identifies the line as the flowpath hub and not
+    the angel wing half a centimetre below it. Four of four blades across
+    Figures 112 and 50 agree in sign and order. What finding 290 corrects is
+    the arithmetic of one comparison, not the identification."""
     for k, v in CAL["platform_slope_check"].items():
-        assert abs(v["drop_over_window_cm"] - v["published_drop_cm"]) <= 0.05, k
+        assert v["drop_over_window_cm"] > 0, k
+        assert v["published_drop_over_window_cm"] > 0, k
+        ratio = v["drop_over_window_cm"] / v["published_drop_over_window_cm"]
+        assert 0.3 < ratio < 3.0, (k, ratio)
+
+
+def test_the_slope_comparison_is_pro_rated_to_the_drawn_window():
+    """finding 290: the published hub fall is quoted across the WHOLE blade
+    and the drawn window is shorter, so comparing the two directly compares
+    unlike windows. The YAML carries both; only the pro-rated one is
+    comparable, and it is the one the two tests below use."""
+    for k, v in CAL["platform_slope_check"].items():
+        assert v["window_cm"] < v["blade_axial_cm"], k
+        assert v["published_drop_over_window_cm"] == pytest.approx(
+            v["published_drop_cm"] * v["window_cm"] / v["blade_axial_cm"],
+            abs=5e-4), k
+        # and it is NOT the same number, which is why this matters
+        assert abs(v["published_drop_over_window_cm"]
+                   - v["published_drop_cm"]) > 0.03, k
+
+
+def test_the_pro_rated_platform_slope_matches_on_the_stage_2_blade():
+    """finding 290: three parts in ten thousand -- and E12 recorded this
+    blade as a 0.034 cm miss, because it compared a 2.94 cm window against a
+    4.5 cm blade's fall."""
+    v = CAL["platform_slope_check"]["stage2"]
+    assert abs(v["drop_over_window_cm"]
+               - v["published_drop_over_window_cm"]) <= 0.05
+
+
+@pytest.mark.xfail(strict=True, reason="finding 290: recorded failure, not "
+                   "widened. Pro-rated to its own 3.75 cm window of a 5.0 cm "
+                   "blade, the drawn stage-1 platform falls 0.2838 cm against "
+                   "a published 0.1875 -- +0.096 cm, nearly 3x E12's own "
+                   "0.05 cm band. E12 read it as a 0.034 cm pass by comparing "
+                   "the window's drop against the whole blade's fall. The "
+                   "identification stands (see the sign test above); the "
+                   "arithmetic of this one check does not.")
+def test_the_pro_rated_platform_slope_matches_on_the_stage_1_blade():
+    v = CAL["platform_slope_check"]["stage1"]
+    assert abs(v["drop_over_window_cm"]
+               - v["published_drop_over_window_cm"]) <= 0.05
 
 
 # ------------------------------- band C4: not measurable, and the evidence

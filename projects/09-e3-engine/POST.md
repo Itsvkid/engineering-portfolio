@@ -54,8 +54,8 @@ disagreements, and each closure's tolerance was written in a `STEP0.md`
 > a 0–6 kHz axis reads to ±14 %. My model is wrong there, and the reference
 > could never have proved it either way.
 >
-> 107 comparisons, median absolute error 6.4 %. 7 have no explanation and
-> say so.
+> Over a hundred comparisons, median absolute error under 7 %. Seven have
+> no explanation and say so.
 >
 > The part I'd defend hardest is the last drawing sheet. Three of the six
 > sheets in the pack exist to say something **cannot** be drawn: the
@@ -150,7 +150,7 @@ clamped root over-predicts, and the over-prediction grows with mode number
 — median +19.5 %, +25.8 % and +37.8 % for the first, second and third
 flexural modes on the stages that publish all three. That is a named
 modelling limit, and it accounts for most of the project's worst numbers —
-fifteen of the worst twenty-one.
+well over half of the worst twenty-one.
 
 Then the finding I did not go looking for. The Campbell diagrams are read
 off page images, and their transcription records its own precision: half a
@@ -162,10 +162,15 @@ The reference could not have shown it either way. The published closure —
 "1 of 24" — turns out to be two different results added together, and the
 figure now marks the two groups differently.
 
-Across everything: **107 comparisons, median absolute error 6.4 %.** Eighteen
-inside 1 %, forty-four inside 5 %, sixty-two inside 10 %. Seven carry the
-word *unresolved*, which is a legitimate entry — zero would have meant
-inventing causes to fill a column.
+Across everything: **over a hundred comparisons, median absolute error
+under 7 %.** At least eighteen inside 1 %, forty-four inside 5 %, sixty-two
+inside 10 %. Seven carry the word *unresolved*, which is a legitimate entry
+— zero would have meant inventing causes to fill a column.
+
+Those are floors and bounds rather than exact figures, and deliberately so:
+every one of them moves whenever a solver improves or a comparison is
+added, and this file has now had an exact figure go stale on it three
+times — twice on an *improvement*.
 
 ### The gap
 

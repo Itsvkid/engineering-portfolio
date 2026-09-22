@@ -11,7 +11,7 @@ makes them. The prose is written by hand.
 
 ## 1. Every disagreement with a published number, ranked
 
-**107 comparisons** against numbers printed in the NASA reports.
+**108 comparisons** against numbers printed in the NASA reports.
 Each is something a solver computed and a report states, with no
 intermediate fitting.
 
@@ -20,12 +20,12 @@ intermediate fitting.
 | Within 1 % | 19 |
 | Within 5 % | 44 |
 | Within 10 % | 62 |
-| Worse than 20 % | 23 |
-| Median absolute error | **6.40 %** |
+| Worse than 20 % | 24 |
+| Median absolute error | **6.52 %** |
 | **Unresolved** | **7** |
 
 Unresolved means exactly that: a disagreement with no cause yet.
-7 of 107 is the honest count, and they are listed in
+7 of 108 is the honest count, and they are listed in
 section 3.
 
 ### The full ranking
@@ -39,6 +39,7 @@ section 3.
 | -55.0 | E3 | fan rotor first flex | CR-165148 Appendix B p.134 (geometry) | the part-span shroud; the published mode is the lowest in-phase one, where the shroud ring travels with the blades (finding 84) |
 | +54.3 | J2 | HPC stage-1 1F rise, rest to max speed | HPC Figs 33-42, mode lines drawn flat across the speed range | **UNRESOLVED** (finding 162) |
 | +54.0 | E3 | HPC stage-1 first flex at 14,000 rpm | HPC Fig 33, read flat across the speed range | **UNRESOLVED** (finding 145) |
+| +51.8 | E2 | HPT stage-1 disc bore effective stress, constant-thickness bracket | CR-167955 Fig.64 p.115, bore, 40 s into a hot-day accel | the disc is not constant thickness. The bracket runs 770 MPa (solid) to 1570 (small bore) at the measured rim and CONTAINS the published 1034, and the PROFILE is 51 % of it against 0.4 % for the bore radius E2 was gated on and 9 % each for the rim and for Fig 64's unstated speed (finding 284) |
 | +50.8 | E3 | HPC rotor 3 1F frequency | HPC Fig 35 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +47.3 | E3 | HPC rotor 1 3F frequency | HPC Fig 33 | a clamped beam is the stiffest root a blade can have and a dovetail in a slot is not a clamp; the bias grows with mode number, which is what a soft root does (finding 143) |
 | +45.1 | E3 | LPT stage 1 first flex | CR-168289 Fig 62 (pinned tip) | a rigidly clamped root against a two-tang dovetail, plus hot modulus; the modulus alone accounts for about half (finding 84) |
@@ -298,7 +299,7 @@ restrains.
 
 ## 5. Index of numbered findings
 
-270 findings, in the `STEP0.md` that owns each one.
+284 findings, in the `STEP0.md` that owns each one.
 
 **Numbers 55, 56, 57, 216, 217, 218, 219 are not used.** They were
 reserved for C3 units 16 and 17 — the booster rows, the inner OGV and
@@ -578,4 +579,18 @@ would break every reference in the commit history.
 | 275 | e3cycle | The three misses sort by rating DAY, not by power setting, and that |
 | 276 | mechanical | It survives, and the arithmetic says the reading is not the |
 | 277 | mechanical | An FE blade is not recommended, and the reason is a source gap |
+| 278 | mechanical | A four-anchor calibration on two blades measures the page rotation |
+| 279 | mechanical | The caption trick transfers as a measurement and not as a gain, and |
+| 280 | mechanical | The cross-check — two independent drawings of one rotor — and the |
+| 281 | mechanical | They are the same three surfaces, and the check that proves it is the |
+| 282 | mechanical | The disagreement is a scale difference neither figure could ever have |
+| 283 | mechanical | E11's finding 258 and this cross-check are the two halves of one |
+| 284 | mechanical | E2's bore radius was never the binding constraint, and the ladder |
+| 285 | mechanical | The one measurement this unit adds to E2 is the rim, and it is worth |
+| 286 | mechanical | E2's 10 % band cannot be met from the published record, and the |
+| 287 | mechanical | D6 item 2's geometry is done to 2.4 %, and the standing warning about |
+| 288 | mechanical | Two of the four HPT disc-face pressures ARE published, measured, and |
+| 289 | mechanical | The middle of the HPT rotor does not cancel, and it is larger than |
+| 290 | mechanical | A correction to E12's platform-slope check: it compared unlike |
+| 291 | mechanical | Two gates in this project have now named the wrong variable, and |
 

@@ -276,14 +276,27 @@ closures:
       0.050 cm rms on four anchors, which is worth 1.0 % of r at the disc
       RIM -- E2's dominant term, since bore hoop stress goes as the rim
       radius squared -- but only 9.0 % at a bore 18 cm below the anchors
-      (finding 267). Fig 63's own SCALE then has one candidate left, the
-      published 3.45 cm dovetail axial chord taken as the model's rim axial
-      width, and the only measurement that could check it is the +-9 % bore.
-      TARGET CHOSEN, before any stress was run: Fig 64, not Fig 55, because
-      Fig 63 is the mesh of the model Fig 64 reports. WHAT IS LEFT:
-      calibrate Fig 50 p.87 the same way (it draws both disc bores in the
-      same view as the flowpath, a one-link read), compare the two, and only
-      then read Fig 63 for shape.
+      (finding 267). TARGET CHOSEN, before any stress was run: Fig 64, not
+      Fig 55, because Fig 63 is the mesh of the model Fig 64 reports.
+
+      NARROWED 2026-09-22 by unit E14, which did what E12 named: Fig 50 p.87
+      is calibrated (0.027 cm rms on the same four anchors) and put against
+      Fig 112 feature by feature. THE BORE WAS NEVER THE BINDING CONSTRAINT.
+      At the MEASURED rim -- 30.768 cm, the dovetail seat, the one line
+      drawn between platform and disc body, which replaces the 32.455 cm
+      flowpath hub disc.py had been using -- the constant-thickness bracket
+      is 770 to 1570 MPa and contains Fig 64's 1034. Moving the bore across
+      the entire 6.90-8.29 cm disagreement between the two figures moves the
+      answer -0.33 to +0.37 %; the rim measurement is worth 9.1 %; the
+      published speed ambiguity is worth 9.1 %; the PROFILE is worth 51 %
+      (findings 284-286). So this gate is no longer the bore.
+      WHAT IS LEFT, in order: (1) Fig 64 does not say which of two speeds
+      4.9 % apart its "40 s into accel" is -- Fig 53's 13,300 or the
+      dovetail figures' 13,948 -- and that alone is 9.1 % of a bore stress,
+      so a 10 % band cannot be met from the record until CR-167955 p.100 and
+      p.115 are re-read; (2) a traced t(r) for the stage-1 disc, which needs
+      an axial scale and a judgement at every radius about which of several
+      overlapping parts a line belongs to. Neither is another calibration.
 
   - stage: E3
     what: blade first flex, the unshrouded booster
@@ -937,15 +950,44 @@ closures:
       over the published annulus are Fig 50 p.87 and Fig 112 p.180, neither
       previously named. Fig 112 calibrates to 0.050 cm rms and is worth
       1.0 % of r at the disc rim but 9.0 % at a bore (finding 267), so the
-      disc FACES -- which are radial extents from bore to hub -- are the
-      part this calibration is worst at. Not done, and now for a measured
-      reason; (3) the BALANCE PISTON, finding 191:
-      Figs 95-96 give the seal as hardware and never as a load, so no piston
-      area, radius or cavity pressure exists to invert; (4) the
-      thrust-bearing capacity, unit E4's standing gate. Items 1 and 2 are
-      digitisable from figures on disk; items 3 and 4 are in none of the
-      forty-one documents, and a piston area invented to make a balance
-      close is the fitted number this project exists not to produce.
+      disc FACES -- which are radial extents from bore to hub -- were named
+      as the part this calibration is worst at; (3) the BALANCE PISTON,
+      finding 191: Figs 95-96 give the seal as hardware and never as a load,
+      so no piston area or radius exists to invert; (4) the thrust-bearing
+      capacity, unit E4's standing gate.
+
+      ITEM 2 NARROWED 2026-09-22 by unit E14. The geometry is DONE and the
+      warning above does not bite: across the whole 20 % bore disagreement
+      between Figs 50 and 112 the stage-1 disc face area moves 2.37 %,
+      because pi(b^2 - a^2) at a/b = 0.25 is 94 % rim (finding 287). Both
+      HPT disc rims are now measured -- 30.768 and 27.884 cm, the dovetail
+      seats (finding 285). And TWO OF THE FOUR FACE PRESSURES ARE PUBLISHED,
+      measured, which this unit's own step 0 predicted they were not: the
+      cavities on the stage-1 disc AFT face and the stage-2 disc FORWARD
+      face are CR-168211 Fig 210 p.348's forward and aft wheelspace
+      pressures, with the text on p.343 (finding 288 -- the sixth occurrence
+      of that error in this project). At the published interstage pressure
+      those two faces give +314 and -254 kN for a net +60 kN forward, larger
+      than the 44.5 kN the No. 3 bearing carries, and they do not cancel
+      because the forward disc is 23 % larger in area (finding 289).
+      ITEM 2 IS LEFT NEEDING, one quantity per line: the cavity pressure on
+      the stage-1 disc FORWARD face, between the disc and the impeller; the
+      cavity pressure on the stage-2 disc AFT face, forward of the turbine
+      aft seal. Neither is in CR-167955, CR-168219, CR-168211, the HPT
+      cooling model or the core report.
+      NAMED NEXT STEP, with its page so nobody has to find it in a step 0:
+      digitise **CR-168211 Figure 210 p.348 (PDF page 373), "High Pressure
+      Turbine Stage 2 Vane Cooling and Purge Pressures"**, with its text on
+      p.343. It plots the stage-7 feed, the interstage cavity and BOTH
+      wheelspace pressures against HPT corrected speed on a psi and a kPa
+      axis, so it replaces the k = 1 assumption the +60 kN rests on -- k
+      from 0.95 to 1.05 moves it +72 to +47 kN, which is the whole term.
+      Not attempted in unit E14 because it is beyond what a calibration
+      supports and that unit was scoped to the calibration.
+      Items 1 and 2's geometry are digitisable from figures on disk; item 3
+      and the two cavity pressures are in none of the forty-one documents,
+      and a piston area invented to make a balance close is the fitted
+      number this project exists not to produce.
     note: >
       STEP0 predicted the HPC rotors would push forward and they push aft on
       that control volume -- right about the rotor, wrong about the control

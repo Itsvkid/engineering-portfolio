@@ -112,13 +112,27 @@ platform_slope_check:
   stage1:
     drop_over_window_cm: 0.2838
     published_drop_cm: 0.25
-    note: de-rotated slope of the drawn platform against the published fall of the
-      hub radius across the blade
+    window_px: 325
+    window_cm: 3.75
+    blade_axial_cm: 5.0
+    published_drop_over_window_cm: 0.1875
+    note: 'de-rotated slope of the drawn platform against the published fall of the
+      hub radius across the blade. ADDED 2026-09-22, unit E14 finding 290: the published
+      fall is quoted across the WHOLE blade and the drawn window is shorter, so `published_drop_over_window_cm`
+      is the comparable quantity and `published_drop_cm` is not. Pro-rating rests
+      on the drawing being isotropic.'
   stage2:
     drop_over_window_cm: 0.0657
     published_drop_cm: 0.1
-    note: de-rotated slope of the drawn platform against the published fall of the
-      hub radius across the blade
+    window_px: 255
+    window_cm: 2.942
+    blade_axial_cm: 4.5
+    published_drop_over_window_cm: 0.0654
+    note: 'de-rotated slope of the drawn platform against the published fall of the
+      hub radius across the blade. ADDED 2026-09-22, unit E14 finding 290: the published
+      fall is quoted across the WHOLE blade and the drawn window is shorter, so `published_drop_over_window_cm`
+      is the comparable quantity and `published_drop_cm` is not. Pro-rating rests
+      on the drawing being isotropic.'
 independent_scale_check:
   measurable: false
   published_cm: 0.953

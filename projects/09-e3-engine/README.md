@@ -10,7 +10,7 @@ NASA measured, and the gap is published.**
 
 <!-- BEGIN GENERATED: tools/build_readme.py -->
 
-**Status:** ten of ten stages built. **1220 test functions**, **270 numbered findings**, **46 closures** — 37 met, 6 half, 3 gated. Stages B, C, D, E and G still carry open closures.
+**Status:** ten of ten stages built. **1251 test functions**, **284 numbered findings**, **46 closures** — 37 met, 6 half, 3 gated. Stages B, C, D, E and G still carry open closures.
 
 | Stage | | State |
 |---|---|---|

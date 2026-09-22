@@ -103,20 +103,33 @@ def test_the_mode_number_trend_matches_the_post():
 def test_the_beam_bias_share_is_not_overstated():
     """this claim was WRONG when first drafted -- it said twenty of the
     worst twenty-one, which had been true at 98 comparisons and was 16 by
-    the time the post was written"""
+    the time the post was written
+
+    Then 15 by 2026-09-18, then 14 on 2026-09-22 when unit E14's disc-bore
+    row entered the ranking at 8th and pushed one out. THIRD time an exact
+    figure in this file has gone stale, and the second time on work that
+    made the project better -- finding 170's rule, broken once more in the
+    place it was written about. So the prose says *well over half* and the
+    test is a floor: a share that only a worse beam model could increase,
+    and the count it is taken from is checked separately."""
     from verification.disagreements import collect
     rows = collect()
     n = sum(1 for r in rows[:21] if r.stage == "E3")
-    assert n == 15, n
-    claim("fifteen of the worst twenty-one")
+    assert n >= 12, n
+    assert n <= 21
+    claim("well over half of the worst twenty-one")
     assert "twenty of the project's twenty-one worst" not in POST
+    assert "fifteen of the worst twenty-one" not in POST
 
 
 def test_the_overall_disagreement_statistics_match():
     from verification.disagreements import collect, summary
     s = summary(collect())
-    assert s["total"] == 107
-    assert s["median"] == pytest.approx(6.4, abs=0.05)
+    # a floor, for the same reason as the tuple below: the total only ever
+    # grows, and it grew to 108 on 2026-09-22 when E14 added the disc-bore
+    # comparison. The prose says "over a hundred" so that it survives that.
+    assert s["total"] >= 107
+    assert s["median"] < 7.0
     # NOT an exact tuple. It was (18, 44, 62) until 2026-09-18, when unit
     # G5's geometry moved a comparison inside 1 % and the tuple failed on an
     # IMPROVEMENT. That is finding 170's rule broken a second time in this
@@ -130,7 +143,7 @@ def test_the_overall_disagreement_statistics_match():
     assert s["within_1"] < s["within_5"] < s["within_10"] <= s["total"]
     assert s["within_10"] / s["total"] > 0.55
     assert s["unresolved"] == 7
-    claim("**107 comparisons, median absolute error 6.4 %.**")
+    claim("**over a hundred comparisons, median absolute error\nunder 7 %.**")
     claim("Seven carry the")
 
 

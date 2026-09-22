@@ -53,7 +53,7 @@ STAGES = [
                        "mechanical.blade_frequency", "mechanical.rotordynamics",
                        "mechanical.attachments", "mechanical.flutter", "mechanical.gas_bending",
                        "mechanical.hpc_rotor", "mechanical.rupture",
-                       "mechanical.disc_profile"]),
+                       "mechanical.disc_profile", "mechanical.hpt_disc"]),
     ("F  materials", ["materials.allowables", "materials.mass"]),
     ("G  geometry", ["geometry.blades", "geometry.ogv", "geometry.assembly"]),
     ("H4 kinematics", ["geometry.kinematics"]),

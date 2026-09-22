@@ -2076,3 +2076,397 @@ excuse the old wording left open and asks whether the miss survives it.
      one spring rate does not bring the thirteen inside, root flexibility
      alone is not the cause and the project will have learned something an
      FE blade would have hidden inside forty parameters.
+
+---
+
+## Unit E14 — Figure 50 p.87, and the first cross-check between two drawings of one engine · step 0, 2026-09-20
+
+Unit E12 ended by naming, in order, what was worth doing next. The first
+item was its own **band C3, stated and not attempted**: calibrate
+**CR-167955 Figure 50 p.87, "E³ HPT Major Design Features"**, the same way
+Figure 112 was calibrated, and compare the two. Figure 50 draws **both disc
+bores in the same view as the published flowpath**, so it is a one-link
+read where Figure 63 is a two-link chain; and because the two figures are
+independent drawings of one rotor, comparing them is **the only test
+available that does not run through the same page twice**.
+
+This unit does that, and then takes E2 and D6 item 2 as far as the
+calibration honestly carries them.
+
+### Disclosure: an exploratory pass preceded these bands
+
+As in unit E11, the page was opened, the features were located by eye and
+rough radii were computed from a two-point scale before any band was
+written. What that pass fixed is *which feature is which* — where the two
+blades are, which of three stacked lines above each aerofoil is the blade
+tip, where the two bolt joints are, and that the bottom of the rotor is
+three near-cylindrical surfaces and not a cone. **It did not fix any band
+below.** The one number it produced that a band rests on is the page
+rotation, and that is measured off the caption type and is an input, not a
+result. Windows were chosen by looking at the drawing, never by watching a
+residual.
+
+### What is on the page, and what it costs
+
+Figure 50 is a landscape sheet scanned sideways, stamped ORIGINAL PAGE IS
+OF POOR QUALITY, carrying no dimension, no centreline and no scale bar. It
+draws the casing, the CDP air pipe and ten numbered call-outs on the same
+page height as Figure 112's rotor alone, so it is drawn **smaller** — and
+the line weight does not shrink with it. One line width is about 14 px on
+both pages, which is 0.16 cm at Figure 112's 86.7 px/cm and about **0.23 cm
+here**. Two of the four anchors are crossed by call-out leader lines. Both
+of those are reasons to expect a worse fit in centimetres, stated before
+the fit.
+
+### The bands, fixed before the tool was run
+
+| | band | why this number |
+|---|---|---|
+| **E1** | Figure 50 fits the same four published anchors to **≤0.25 cm rms** | E12 set 0.15 cm for Figure 112 and got 0.050. One line width here is 0.23 cm, and 0.25 is one line width. Not a relaxation of E12's band: a different page at a different scale, priced by its own line weight. |
+| **E2r** | the caption-rotation trick transfers: the caption's **baseline and cap-height agree to ≤0.15°**, and imposing that angle does not make the anchor fit worse than no rotation | finding 265 was one page. This asks whether it was a property of that page or of the method. |
+| **E3r** | **the cross-check.** Every feature measured at depth on **both** figures agrees between them to **≤5 %** | E12's band C3, verbatim and unaltered. At r ≈ 20 cm that is 1.0 cm. Features: the two bolt-joint centrelines, and the three near-cylindrical surfaces at the bottom of the rotor. Five common radii from 6.8 to 20.3 cm. |
+| **E4r** | the two figures agree on a radius at depth to **≤0.5 cm** | E12's band C5, the interval a 10 % stress needs. E3r asks whether the two readings are consistent; E4r asks whether they are consistent *tightly enough to be used*. Both are stated because they can part company. |
+| **E5r** | **E2's peak-stress half**: a rotating-disc model lands within **10 %** of Figure 64's stage-1 bore, **1034 MPa at 40 s into a hot-day accel** | the closure's own band, unchanged, so that a miss is recorded as a miss. |
+| **E6r** | **D6 item 2**: the HPT disc-face axial term is computable to **±20 %** | the question is whether the HPT half of the thrust balance can be done as well as E11 did the HPC half, where the measured bore made the term good to 1.9 %. |
+
+### Estimates before computing
+
+* Figure 50's scale **~60 px/cm**, about 0.7× Figure 112's, because it has
+  to fit the casing in.
+* the page rotation is **+0.54°** — measured off the caption, four times
+  smaller than Figure 112's +2.07°, which already says the tilt is a fact
+  about how each sheet was laid on the platen and not about the report.
+* the disc-bore region sits near **r ≈ 7 cm**, *lower* than the 13 cm E12
+  used as its illustrative bore, so the extrapolation E12 priced is worse
+  here, not better.
+* **E5r is expected to fail, and for a reason that is not the bore.** A
+  constant-thickness disc with a small hole should read roughly 1.3–1.4 GPa
+  at 13,300 rpm on a 29–30 cm rim against a published 1034 MPa, because a
+  real disc is thick at the bore and thin at the web. The bore *radius*
+  enters the bore hoop stress only through a (1−ν)/(3+ν)·a² term and should
+  be worth well under 1 % of the answer. If that is right, then the bore
+  radius — the thing E2 has been gated on since 2026-09-07 — is **not the
+  binding constraint**, and saying so with the number is the result.
+* **E6r is expected to fail on pressures, not on geometry.** E11 could
+  close the HPC disc faces because a compressor disc face sees the
+  *gas-path* static at the hub, and Table XXI prints it for every stage. An
+  HPT disc face sees a *secondary-air cavity*, and no cavity pressure
+  anywhere on the rotor is printed. If that is right, the gate moves from
+  the calibration to the source, and it will be written as one quantity per
+  sentence with the documents searched.
+
+### Not attempted, deliberately
+
+* **any disc profile.** Reading t(r) needs an axial scale and a decision, at
+  every radius, about which of several overlapping parts the traced line
+  belongs to — the stage-1 disc, its forward arm, the impeller, the cover.
+  That is a judgement at every point, which is how an assumption gets in.
+  Whether it is worth doing is answered by E5r's arithmetic, not before it.
+* **any balance-piston area.** Finding 191 stands and a good calibration is
+  no licence to invent one.
+* **the third figure.** Figure 63 is not opened in this unit.
+
+## Unit E14 — after the run · 2026-09-22
+
+`python tools/read_hpt_fig50.py` → `data/hpt-fig50-calibration.yaml`;
+`cd solvers && python -m mechanical.hpt_disc`;
+`pytest tests/test_hpt_fig50.py`.
+
+| band | outcome |
+|---|---|
+| E1 anchor fit ≤0.25 cm rms | **0.027 cm — met**, and better than Figure 112's 0.050 on a drawing 0.72× the size |
+| E2r caption lines agree ≤0.15°, rotation not harmful | **0.030° — met**; imposing it is worth **1.000×**, against 4.9× on Figure 112 |
+| E3r every common radius agrees ≤5 % | **failed at 3 of 5** — the two bolt centrelines 1.5 and 3.4 %, the three inner surfaces 12.4–14.0 % |
+| E4r a radius at depth agrees ≤0.5 cm | **failed at 4 of 5** — worst 0.968 cm |
+| E5r disc model within 10 % of Fig 64's 1034 MPa | **failed at +51.8 %** — the bracket is 770–1570 MPa, 2.04:1 wide, and now carries its own row in `verification/disagreements.py` |
+| E6r HPT disc-face term computable to ±20 % | **geometry met at 2.4 %**; the term itself is not computable, and not for a geometric reason |
+
+**No disc profile was produced and no balance-piston area was invented**,
+as step 0 said. Three of the six bands failed and are recorded as strict
+xfails with their causes.
+
+### Findings
+
+278. **A four-anchor calibration on two blades measures the page rotation
+     and nothing else — and that is algebra, not observation.**
+     Step 0 predicted Figure 50 would fit its anchors *worse* in centimetres
+     than Figure 112, because it is drawn 0.72× the size at the same line
+     weight: one line width is **0.225 cm here against 0.162 cm there**. It
+     fits **0.0266 cm rms against 0.0504 — twice as well.** The prediction
+     was wrong, and it was wrong about the mechanism.
+
+     Both figures' four anchors sit at **two** axial stations, one per blade
+     — the tip and the platform of each share an x. A residual rotation δθ
+     therefore shifts one pair relative to the other by tan(δθ)·Δx and does
+     nothing else, and a two-parameter line through four points in two equal
+     groups splits a group offset as ±½. So
+
+         rms  =  ½ · tan(δθ) · Δx / scale
+
+     with δθ the gap between the angle imposed and the angle the anchors
+     would have chosen for themselves. Measured:
+
+     | | Δx | δθ | radial reach | rms | ratio |
+     |---|---|---|---|---|---|
+     | Figure 50 | 690 px | 0.273° | 0.0527 cm | 0.0266 | **0.505** |
+     | Figure 112 | 955 px | 0.521° | 0.1002 cm | 0.0504 | **0.503** |
+
+     Two pages, two scales, two tilts, and the ratio is 0.5 to three
+     decimals on both. **The anchor rms carries no information about line
+     weight, scan quality or reading care.** E12's band C1 and this unit's
+     band E1 are tests of how well the page rotation is known, and nothing
+     else — which is exactly why finding 282 below can happen.
+
+279. **The caption trick transfers as a measurement and not as a gain, and
+     E12's attribution of the residual angle does not generalise.**
+     The two caption lines agree to **0.030°** here against 0.050° on
+     Figure 112, so the method reproduces on a second page. But imposing the
+     angle is worth **1.000×** on the anchor rms (0.02658 → 0.02658) against
+     Figure 112's 4.9×, because by finding 278 the gain scales with the tilt
+     and this sheet was laid a quarter as far askew: **+0.543° against
+     +2.069°**.
+
+     And the sign of the residual angle flips. Figure 112's anchors wanted
+     **more** than the page tilt (+2.590 against +2.069) and E12's finding
+     265 read the excess as *"about 0.52° of the apparent tilt is the
+     draughtsman and not the scanner."* Figure 50's anchors want **less**
+     (+0.270 against +0.543). Same report, same draughtsman, opposite sign,
+     so it is not a property of the draughtsman and that half of finding 265
+     is withdrawn. What survives is that the caption gives an angle the
+     anchors never see, which is still worth having.
+
+280. **The cross-check — two independent drawings of one rotor — and the
+     verdict splits by radius.**
+     Five radii were measured on **both** pages, none of them fitted on and
+     none of them published: the two bolt-joint centrelines and the three
+     near-cylindrical surfaces at the bottom of the rotor.
+
+     | feature | Fig 50 | Fig 112 | difference |
+     |---|---|---|---|
+     | interstage bolt centreline | 20.610 | 20.300 | **+0.309 cm, +1.52 %** |
+     | aft bolt centreline | 17.366 | 16.793 | **+0.573 cm, +3.41 %** |
+     | inner surface 1 | 8.290 | 7.374 | +0.917 cm, **+12.43 %** |
+     | inner surface 2 | 8.060 | 7.100 | +0.961 cm, **+13.53 %** |
+     | inner surface 3 | 7.870 | 6.902 | +0.968 cm, **+14.03 %** |
+
+     Band E3r (≤5 %) is met at 2 of 5; band E4r (≤0.5 cm) at 1 of 5. Neither
+     is widened. This is E12's finding 267 — one calibration, two verdicts —
+     reproduced across **two figures and one reader** instead of across one
+     figure: the same pair of readings is worth 1.5 % at r = 20 cm and 13 %
+     at r = 7.5.
+
+281. **They are the same three surfaces, and the check that proves it is the
+     wall thickness.** A radius at depth is an extrapolation; a wall
+     thickness is a *difference of two radii on the same page*, so whatever
+     dominates the radii cancels out of it. The two figures give **0.230 and
+     0.190 cm** for the two walls, against **0.274 and 0.198 cm** — apart by
+     **0.044 and 0.008 cm** — while the radii themselves are apart by 0.95.
+     So the 13 % is a real disagreement about *where* those surfaces are and
+     not a misidentification of *which* surfaces they are, which was the
+     failure mode this unit was most exposed to.
+
+282. **The disagreement is a scale difference neither figure could ever have
+     detected, and the number is 3.15 % against a 6.09 % detection limit.**
+     The difference grows as the radius falls and vanishes at the anchors,
+     which is the signature of a scale and not an offset; over the 27 cm
+     lever from the anchor mean radius (34.57 cm) down to the bottom of the
+     rotor it implies **+2.2 to +3.5 %, mean +3.15 %**.
+
+     Each figure's four anchors span **6.905 cm**, and that determines its
+     own scale to **±2.84 % (Figure 50) and ±5.39 % (Figure 112) at 95 %**,
+     combined **±6.09 %**. So every one of the five disagreements is inside
+     the two figures' combined 95 % interval: **both readings are consistent
+     and neither is wrong.** The bands fail on *precision*, not on
+     agreement, and those are different verdicts. By finding 278 this could
+     not have been caught by looking harder at either page — the anchor rms
+     is blind to it by construction.
+
+283. **E11's finding 258 and this cross-check are the two halves of one
+     statement, and together they say the error belongs to the figure.**
+     E11 read one figure two ways and got agreement to **0.08 cm**, an order
+     better than either route's interval, and concluded that the shared
+     systematic was invisible to resampling. E14 reads two figures one way
+     and gets a disagreement of **0.95 cm — the full interval.** So: reading
+     the same page again cannot validate an extrapolation, because the error
+     is in the page; only a second page can measure it, and it is worth
+     about a centimetre at r ≈ 7.5 on this report.
+
+284. **E2's bore radius was never the binding constraint, and the ladder
+     says so by two orders of magnitude.** At the measured rim (30.768 cm),
+     the measured bore (7.60 cm), the printed dovetail axial chord as the rim
+     width (3.45 cm) and the speed at which the blade pull is printed
+     (13,948 rpm), the constant-thickness bracket is
+
+     * solid disc, with the 5,882 kN blade pull: **770 MPa**
+     * **Figure 64's published bore: 1034 MPa**
+     * bored disc, same rim, same pull: **1570 MPa**
+
+     — 2.04:1 wide and containing the published value. What moves it:
+
+     | input | span | effect |
+     |---|---|---|
+     | **bore radius**, across the whole disagreement between the two figures | 6.90 → 8.29 cm | **−0.33 → +0.37 %** |
+     | bore radius, an absurd sweep | 5 → 14 cm | −1.1 → +4.9 % |
+     | rim radius, the calibration's own worth | ±1 % of r | ±1.6 % |
+     | **rim radius taken as the flowpath hub**, as `disc.py` did | 32.46 cm | **+9.1 %** |
+     | rim axial width, printed chord → drawn width | 3.45 → 4.4 cm | −2.6 % |
+     | **speed**, 13,948 → 13,300 rpm | published ambiguity | **−9.1 %** |
+     | **the profile**, i.e. the width of the bracket | solid → bored | **51 %** |
+
+     E2 has been gated on the disc cross-sections since 2026-09-07 and E12
+     narrowed the gate to the bore radius. **The bore radius is worth four
+     parts in a thousand of the answer.** E5r fails, and it fails on the
+     profile.
+
+285. **The one measurement this unit adds to E2 is the rim, and it is worth
+     9 %.** `disc.py`'s `stage1_radii()` took the disc's outer radius as the
+     *flowpath hub*, 32.455 cm, because nothing published the dovetail depth.
+     Figure 112 draws exactly one line between the platform and the disc body
+     under each blade, unbroken across it, and it is the dovetail seat:
+     **30.768 cm on stage 1 and 27.884 cm on stage 2**, fitted over 100 and
+     153 columns at 0.77 and 0.73 px rms. That is **1.69 and 3.29 cm** of
+     shank-plus-dovetail, the deeper one being the three-tang blade, which is
+     the plausibility check. Using the flowpath hub instead reads the bore
+     stress **9.1 % high** — nine tenths of E2's whole band, from one line on
+     one drawing.
+
+286. **E2's 10 % band cannot be met from the published record, and the
+     reason is a speed.** Figure 64 prints its stage-1 disc stresses at
+     *"40 s into accel"* and nowhere says at what speed. Two speeds in the
+     same report are that instant: **Figure 53's transient reads 13,300 rpm**
+     at max takeoff, and **both stage-1 dovetail figures — reported in the
+     same section, and the source of the blade pull the same sum needs — are
+     printed at 13,948 rpm** on the growth engine, which §3.2.7 says was
+     limiting throughout for the rotor. They are 4.9 % apart and a bore
+     stress is **9.1 %** apart between them. A *perfect* disc model therefore
+     carries a 9 % published ambiguity before it computes anything. 13,948 is
+     used here because the blade pull entering the same sum is printed at it;
+     the two are never averaged. Named for a re-read: CR-167955 p.100
+     (Fig 53) and p.115 (Fig 64).
+
+287. **D6 item 2's geometry is done to 2.4 %, and the standing warning about
+     disc faces turns out not to bite.** A disc face is a radial extent from
+     bore to rim, so it takes its rim from the 1 %-of-r half of the
+     calibration and its bore from the 13 % half, and it was named before the
+     run as the worst thing this calibration could be asked for. It is not:
+     across the **whole 20 % bore disagreement between the two figures** the
+     stage-1 face area moves **2.37 %**, from 0.2758 to 0.2824 m², because
+     π(b²−a²) at a/b ≈ 0.25 is **94 % rim**. Band E6r is met on the geometry.
+     The gate on D6 item 2 was never the geometry either.
+
+288. **Two of the four HPT disc-face pressures ARE published, measured, and
+     this unit's own step 0 said they were not.**
+     **CR-168211 Figure 210 p.348**, *High Pressure Turbine Stage 2 Vane
+     Cooling and Purge Pressures*, plots the stage-7 feed pressure, the
+     interstage cavity pressure and the **forward and aft wheelspace
+     pressures** against HPT corrected speed on a psi and a kPa axis; the
+     text on p.343 adds that *"no discernible difference existed between the
+     cavity pressure and the forward wheelspace pressure"* and that the
+     backflow margins ran **2.6 to 4.4 kPa (0.39 % to 1 % Δp)** and were
+     never negative. Those two wheelspaces are the cavities on the **stage-1
+     disc's aft face** and the **stage-2 disc's forward face**.
+
+     Step 0 predicted, in writing, that *"no cavity pressure anywhere on the
+     rotor is printed"*. **Sixth occurrence of this error in the project and
+     the second in four days**, and it was caught by the rule finding 269
+     produced: a design report describes hardware, a **test** report
+     publishes what the hardware did. The prediction is recorded as wrong
+     rather than quietly deleted.
+
+289. **The middle of the HPT rotor does not cancel, and it is larger than
+     the bearing it feeds.** At the interstage total pressure the published
+     numbers give — the stage-1 vane gas total 2.526 MPa over Table III's
+     printed 2.25 stage pressure ratio = **1.123 MPa** — the stage-1 disc aft
+     face pushes **+314 kN forward** and the stage-2 disc forward face
+     **−254 kN aft**, netting **+60 kN**, against the **44.5 kN** the No. 3
+     bearing was measured to carry (finding 270). They do not cancel because
+     the stage-1 rim is 30.77 cm and the stage-2 rim 27.88, so the forward
+     disc presents **23 % more area** to the same pressure.
+
+     And because it is a small difference of two large numbers it is
+     sensitive to their ratio: p_aft/p_fwd from 0.95 to 1.05 takes the net
+     from **+72 to +47 kN**. The report states the forward wheelspace equals
+     the interstage cavity *in words*; it says nothing in words about the
+     aft one, so k = 1 is an assumption and the sweep is what it is worth.
+     **Figure 210 plots both, and digitising it is the named next step for
+     D6** — not done here, because it is beyond what a calibration supports
+     and this unit was scoped to the calibration.
+
+290. **A correction to E12's platform-slope check: it compared unlike
+     windows, and pro-rating moves both its numbers.** E12's finding 266
+     called the drawn platform slope *"the third check, worth more than
+     either"* and compared the drop the drawn line falls **over its own
+     window** against the published fall **across the whole blade**. The
+     windows are shorter than the blades: Figure 112's stage-1 window is
+     3.750 cm of a 5.0 cm blade and its stage-2 window 2.942 cm of 4.5 cm.
+     Pro-rated, E12's two numbers become
+
+     | | drawn | E12's comparison | pro-rated | miss |
+     |---|---|---|---|---|
+     | stage 1 | 0.2838 | 0.250 | **0.1875** | **+0.096 cm** |
+     | stage 2 | 0.0657 | 0.100 | **0.0654** | **+0.0003 cm** |
+
+     — so the blade E12 called a 0.034 cm miss is **exact to three parts in
+     ten thousand**, and the other is nearly three times outside E12's own
+     0.05 cm band. Unit E14 pro-rates, and its own two blades come out
+     +0.052 and +0.043 cm against a 0.06 cm band.
+
+     **E12's conclusion survives and its number does not.** What identifies
+     the line as the flowpath hub rather than the angel wing is that the
+     drawn slope has the published **sign and order** on both blades of both
+     figures — four of four — and that is what unit E14's test asserts. The
+     pro-rating itself rests on the drawing being isotropic, which is a
+     weaker assumption than E12's implicit one that the drawn window is the
+     whole blade, but it is an assumption and it is named here.
+     **Resolved 2026-09-22, by the owner**: the test is rewritten to the
+     pro-rated comparison, because a test that asserts a wrong comparison is
+     a stale claim with a green light on it. `data/hpt-rotor-calibration.yaml`
+     now carries `window_cm`, `blade_axial_cm` and
+     `published_drop_over_window_cm` beside the old `published_drop_cm`
+     (regenerating added those keys and moved nothing else). Stage 2 passes
+     at 0.0003 cm; **stage 1 is a strict xfail at +0.096 cm against E12's own
+     0.05 cm band**, with this finding named as the cause. The sign-and-order
+     check — four of four blades across both figures — is a separate test and
+     passes, which is where E12's surviving conclusion now lives.
+
+291. **Two gates in this project have now named the wrong variable, and
+     both were one line of arithmetic away from saying so.** E2 was gated on
+     the HPT disc **bore radius** from 2026-09-07, and E12 narrowed the gate
+     to it again; the bore is worth **0.4 %** of the bore stress (284). D6's
+     item 2 was gated on the **calibration**, on the reasoning — stated
+     before the run, by the owner and by me — that a disc face is a radial
+     extent from bore to rim and so lives in the 9–13 % half of E12's "one
+     calibration, two verdicts"; the face area moves **2.4 %** across the
+     whole bore disagreement (287). In both cases the named variable enters
+     as the **square of a small number** — (1−ν)/(3+ν)·(a/b)² in one,
+     π(b²−a²) with a/b ≈ 0.25 in the other — and both elasticities are one
+     line.
+
+     The general rule, now in §9 of the agent: **before opening a figure to
+     close a gate, write the elasticity of the answer to the thing the gate
+     names.** Under a few per cent and the gate is misnamed. This is the
+     companion to E11's finding 259, *ask whether it is the uncertainty or
+     the sweep that is two wide* — that asks whether a gate is overstated,
+     this asks whether it is about the right quantity at all. A gate is
+     inherited by every later reader as *the* reason, which makes it an
+     absence claim one level up.
+
+### What D6 item 2 still needs, one quantity per line
+
+1. the pressure in the cavity on the **stage-1 disc forward face**, between
+   the disc and the impeller — not found in CR-167955, CR-168219,
+   CR-168211, the HPT cooling model or the core report.
+2. the pressure in the cavity on the **stage-2 disc aft face**, forward of
+   the turbine aft seal — same five documents.
+3. the **balance-piston area or radius** — finding 191, unchanged. Figures
+   95–96 give the seal as hardware and never as a load, and a good
+   calibration is not a licence to invent one.
+
+### Why this stops here
+
+The calibration carries the **rim** (1 % of r, worth 9 % of E2's answer and
+94 % of D6's face area) and does not carry the **bore** (13 %, worth 0.4 %
+of E2 and 2.4 % of D6). That split is the whole result: after four units on
+three figures, the disc cross-section is still not dimensioned, and the two
+things that would move E2 — a traced profile and a stated speed — are one
+judgement and one re-read, not one more calibration.

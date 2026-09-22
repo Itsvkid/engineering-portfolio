@@ -265,9 +265,37 @@ def _nozzle_cooling_network():
     return out
 
 
+def _hpt_disc_bore():
+    """E14 / band E5r. A model-versus-published comparison and so a row here.
+
+    What is deliberately NOT here: the five radii Figures 50 and 112
+    disagree about (findings 280-282). Two drawings disagreeing about where
+    a surface sits is not a model result, and this list is the record of
+    where a MODEL and a published number part company.
+
+    Only the upper end of the bracket is entered. The lower end is the same
+    model with the hole taken out, so entering both would count one
+    comparison twice and would put a deliberately conservative bound into
+    the ranking as if it were a prediction."""
+    from mechanical.hpt_disc import bore_stress_bracket, sensitivity_ladder
+    b = bore_stress_bracket()
+    lad = sensitivity_ladder()
+    return [Disagreement(
+        "HPT stage-1 disc bore effective stress, constant-thickness bracket",
+        "E2", b["upper_MPa"], b["published_fig64_bore_MPa"],
+        "CR-167955 Fig.64 p.115, bore, 40 s into a hot-day accel",
+        f"the disc is not constant thickness. The bracket runs "
+        f"{b['lower_MPa']:.0f} MPa (solid) to {b['upper_MPa']:.0f} (small "
+        f"bore) at the measured rim and CONTAINS the published 1034, and "
+        f"the PROFILE is {lad['profile_effect_pct']:.0f} % of it against "
+        f"0.4 % for the bore radius E2 was gated on and 9 % each for the "
+        f"rim and for Fig 64's unstated speed",
+        units="MPa", finding=284)]
+
+
 HARVESTERS = (_open_questions, _cycle, _hpc_blade_stress, _hpc_density, _hpc_areas_and_masses,
               _hpc_campbell, _blade_frequencies, _rotor_criticals, _geometry,
-              _nozzle_cooling_network)
+              _nozzle_cooling_network, _hpt_disc_bore)
 
 
 def collect():

@@ -77,6 +77,15 @@ BLADES = {
 }
 
 
+def _blade_axial(stage):
+    """the axial length over which the published hub fall is quoted, from the
+    same flowpath table's x column (read off Fig 3's scale, +-0.3 cm)"""
+    pub = yaml.safe_load((ROOT / "data" / "e3-fps-published.yaml").read_text())
+    fp = {r["location"]: r for r in pub["hpt"]["flowpath"]["stations"]}
+    a, b = BLADES[stage]["stations"]
+    return fp[b]["x_cm"] - fp[a]["x_cm"]
+
+
 def published_anchors():
     """the anchor radii are NOT written here: they are the mean of the two
     published flowpath stations that bound each blade"""
@@ -293,11 +302,22 @@ def build() -> dict:
     for s, b in BLADES.items():
         m = feat[s]["platform"]["slope_px_px"] - np.tan(np.radians(rot["deg"]))
         dx = b["plat_win"][1] - b["plat_win"][0]
+        window_cm = dx / cal["px_per_cm"]
+        axial_cm = _blade_axial(s)
         slopes[f"stage{s}"] = dict(
             drop_over_window_cm=round(float(m * dx / cal["px_per_cm"]), 4),
             published_drop_cm=round(pub[s]["drop_cm"], 4),
+            window_px=dx, window_cm=round(float(window_cm), 3),
+            blade_axial_cm=round(float(axial_cm), 3),
+            published_drop_over_window_cm=round(
+                float(pub[s]["drop_cm"] * window_cm / axial_cm), 4),
             note="de-rotated slope of the drawn platform against the "
-                 "published fall of the hub radius across the blade")
+                 "published fall of the hub radius across the blade. ADDED "
+                 "2026-09-22, unit E14 finding 290: the published fall is "
+                 "quoted across the WHOLE blade and the drawn window is "
+                 "shorter, so `published_drop_over_window_cm` is the "
+                 "comparable quantity and `published_drop_cm` is not. "
+                 "Pro-rating rests on the drawing being isotropic.")
 
     return dict(
         meta=dict(
@@ -372,7 +392,10 @@ if __name__ == "__main__":
           f"stage2 {s['stage2']['px_per_cm']:.2f} px/cm, spread {s['spread_pct']:.2f} %")
     for k, v in d["platform_slope_check"].items():
         print(f"platform slope   {k}: drawn {v['drop_over_window_cm']:+.3f} cm "
-              f"against a published {v['published_drop_cm']:.3f}")
+              f"over {v['window_cm']:.2f} cm of a {v['blade_axial_cm']:.1f} cm "
+              f"blade, against a pro-rated "
+              f"{v['published_drop_over_window_cm']:+.4f} "
+              f"(the whole-blade fall is {v['published_drop_cm']:.3f})")
     b = d["independent_scale_check"]
     print(f"bolt check       NOT MEASURABLE -- median {b['median_dark_run_in_gap_px']} px "
           f"of dark across the gap against {b['expected_shank_px_if_drawn']} needed")
